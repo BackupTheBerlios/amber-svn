@@ -11,12 +11,12 @@
 class reportPaged extends Report
 {
   var $layout;
-  var $actpageNo = -1;
+
 
   function _startReport($isSubreport)
   {
     parent::_startReport($isSubreport);
-    $this->actPage =& new Page();
+    $this->actPage =& new WidePage($this->layout);
   }
 
   /** 
@@ -30,7 +30,6 @@ class reportPaged extends Report
 
     $this->actPage->body = $this->_exporter->bufferEnd();
     $this->outPage($this->actPage);
-    $this->endReportBuffering();
     
     $this->_exporter->endReport($this);
   }
@@ -85,7 +84,6 @@ class reportPaged extends Report
     return ($endPageWithoutNewPage == $endPageWithNewPage);           // end of section will be on same page, wether with or without pagebreak
   }
   
-  
   function endNormalSection(&$section, $sectionHeight, $keepTogether)
   {
     $this->_exporter->comment("end Body-Section:1\n");
@@ -99,15 +97,13 @@ class reportPaged extends Report
     $endPage   = floor(($this->posY + $sectionHeight) / $this->layout->printHeight);
 
     for ($page = $startPage; $page <= $endPage; $page++) {
-      if (($page <> $this->actpageNo)) {
-        if ($this->actpageNo >= 0) {
+      if (($page <> $this->actPage->pageNo)) {
+        if ($this->actPage->pageNo >= 0) {
           $this->printPageFooter();
           $this->actPage->body = $this->_exporter->bufferEnd();
           $this->outPage($this->actPage);
         }
-        $this->actpageNo = $page;
-        $this->actPage->reset();
-        $this->actPage->posY = $this->actpageNo * $this->layout->printHeight;
+        $this->actPage->nextPage();
         $this->_exporter->bufferStart();
         $this->printPageHeader();
       }
@@ -154,7 +150,7 @@ class reportPaged extends Report
   
   function newPage()
   {
-    $this->posY = ($this->actpageNo + 1) * $this->layout->printHeight;
+    $this->posY = $this->actpage->posY + $this->layout->printHeight;
   }
 
   
@@ -167,17 +163,7 @@ class reportPaged extends Report
       
   function page()
   {
-    return $this->actpageNo + 1;
-  }
-  
-  function endReportBuffering()
-  {
-    $this->actpageNo = -1;
-  }
-
-  function inReport()
-  {
-    return ($this->actpageNo >= 0);
+    return $this->actPage->pageNo + 1;
   }
 }
 
@@ -251,16 +237,37 @@ class pageLayout
   }
 }
 
-class Page
+
+/**
+ *
+ * @package PHPReport
+ * @subpackage ReportEngine
+ * this class represents a 'wide' page with the parts header, body and footer
+ *  
+ */
+
+
+class WidePage
 {
   var $header;
   var $body;
   var $footer;
   
-  function reset()
+  var $layout;
+  var $pageNo = -1;
+  
+  function WidePage(&$layout)
+  {
+    $this->layout =& $layout;
+    $this->pageNo = -1;
+  }  
+  
+  function nextPage()
   {
     $this->header = '';
     $this->body = '';
     $this->footer = '';
+    $this->pageNo++;
+    $this->posY = $this->pageNo * $this->layout->printHeight;
   }
 }
