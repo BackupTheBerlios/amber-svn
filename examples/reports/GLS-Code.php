@@ -5,10 +5,10 @@ class GLS extends AmberReport_UserFunctions
 
   var $interfaceVersion = 2; //Do not change this
 
-  function Report_FirstFormat(&$report)
+  function Report_FirstFormat(&$report, &$cancel)
   {
     $Me   =& $report->ControlValues;  //now $Me[Text1] is a shorthand for $this->Controls[Text1]->Value
-    $col  =& $report->Columns;
+    $col  =& $report->Cols;
 
     $Me['Feld17'] = 'GLS-Liste nach Gruppen Sam 29.Mai 2004';
     $Me['Feld21'] = 1; #Counter....
@@ -18,6 +18,10 @@ class GLS extends AmberReport_UserFunctions
     $Me['Feld91'] = druckStatusR($report);
     $Me['Feld20'] = $report->Page(); //Page
     $Me['BAbkname1'] = Mid(wennleer($Me['BAbkn'],""),1,9);
+    
+    if ($col['SchMax'] < 5) {
+      $cancel = true;
+    }    
   }
 
   function Report_Open(&$report, &$Cancel)

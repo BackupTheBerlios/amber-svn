@@ -43,7 +43,6 @@ class Report extends AmberObject
   var $PaperHeight;
   var $PaperWidth;
 
-  var $HasData;
   var $ReportHeader;
   var $PageHeader;
   var $GroupHeaders;
@@ -243,8 +242,7 @@ class Report extends AmberObject
       return;
     }
     $this->_fetchDataFromDatabase();
-    $this->_setHasData();
-    if ($this->HasData == 0) {
+    if ($this->_HasData() == 0) {
       $this->OnNoData($cancel);
       if ($cancel) {
         $this->_endReport($isSubreport);
@@ -254,11 +252,13 @@ class Report extends AmberObject
     $maxLevel = count($this->_groupFields);
     $this->Cols =& $this->_data[0];
     $this->_setControlValues();
-    $this->OnFirstFormat();
-
-    $this->_printNormalSection('ReportHeader');
-    $this->_printNormalGroupHeaders($maxLevel, 0);
-
+    $this->OnFirstFormat($cancel);
+    
+    if (!$cancel) {
+      $this->_printNormalSection('ReportHeader');
+      $this->_printNormalGroupHeaders($maxLevel, 0);
+    }
+    
     if (is_null($this->RecordSource)) {   // if no data expected print Detail only once
       $this->_printNormalSection('Detail');
     } else {                              // Loop through all records
@@ -268,12 +268,14 @@ class Report extends AmberObject
         $this->Cols =& $this->_data[$rowNumber];
         $level = $this->_getGroupLevel($this->Cols, $oldRow);
         $this->_setControlValues();
-        $this->OnFirstFormat();
-        $this->_printNormalGroupFooters($maxLevel, $level);
-        $this->_printNormalGroupHeaders($maxLevel, $level);
-        $this->_resetRunningSum($level, $maxLevel);
-        $this->_printNormalSection('Detail');
-        $oldRow =& $this->Cols;
+        $this->OnFirstFormat($cancel);
+        if (!$cancel) {
+          $this->_printNormalGroupFooters($maxLevel, $level);
+          $this->_printNormalGroupHeaders($maxLevel, $level);
+          $this->_resetRunningSum($level, $maxLevel);
+          $this->_printNormalSection('Detail');
+          $oldRow =& $this->Cols;
+        }  
       }
     }
     $this->_printNormalGroupFooters($maxLevel, 0);
@@ -407,16 +409,16 @@ class Report extends AmberObject
   /**
    * @access private
    */
-  function _setHasData()
+  function _HasData()
   {
     if (is_null($this->RecordSource)) {
-      $this->HasData = -1;
+      return -1;
     } elseif (!is_array($this->_data)) {
-      $this->HasData = 0;
+      return 0;
     } elseif (count($this->_data) > 0) {
-      $this->HasData = 1;
+      return 1;
     } else {
-      $this->HasData = 0;
+      return 0;
     }
   }
 
@@ -457,10 +459,11 @@ class Report extends AmberObject
   /**
    * @access private
    */
-  function OnFirstFormat()
+  function OnFirstFormat(&$cancel)
   {
     // Datarow has changed
-    $this->_Code->Report_FirstFormat($this);
+    $cancel = false;
+    $this->_Code->Report_FirstFormat($this, $cancel);
   }
 
   /**

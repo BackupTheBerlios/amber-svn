@@ -9,7 +9,7 @@
  */
 class AmberReport_UserFunctions
 {
-  function Report_FirstFormat(&$report)
+  function Report_FirstFormat(&$report, &$Cancel)
   {
   }
 
