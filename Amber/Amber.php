@@ -4,6 +4,7 @@ require_once 'Report.php';
 
 define('AC_DESIGN', 1);
 define('AC_NORMAL', 2);
+define('__AMBER_BASE__', dirname(__FILE__));
 
 class Amber
 {
