@@ -523,10 +523,22 @@ class Report extends AmberObject
    * @access private
    * @param string
    */
-  function _printDesignSection($section, $GroupByName='')
+  function _printDesignSection(&$section, $GroupByName='')
   {
-    $section->printDesign($GroupByName);
+    if ($section->isNull()) {
+      return 0;
+    } else {
+      if ($GroupByName) {
+        $this->_exporter->sectionPrintDesignHeader($section->EventProcPrefix . ' - ' . $GroupByName);
+      } else {
+        $this->_exporter->sectionPrintDesignHeader($section->EventProcPrefix);
+      }
+      $this->_exporter->startSection($section, $this->Width, $buffer);
+      $section->printDesign($buffer);
+      $this->_exporter->endSection($section, $section->Height, $buffer);
+    }
   }
+
 
  /**
    * @access private

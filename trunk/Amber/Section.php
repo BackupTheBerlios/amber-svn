@@ -160,40 +160,26 @@ class Section
       return $this->Height;
     }
   }
-  
-  
-  
+
   /**
    *
    * @access public
    * @param obj GroupLevel
    *
    */
-  function printDesign($GroupByName='')
+  function printDesign(&$buffer)
   {
-    if ($this->isNull()) {
-      return 0;
-    } else {
-      if ($GroupByName) {
-        $this->_sectionPrintDesignHeader($this->EventProcPrefix . ' - ' . $GroupByName);
-      } else {
-        $this->_sectionPrintDesignHeader($this->EventProcPrefix);
+    // print controls
+    if (isset($this->Controls)) {
+      reset($this->Controls);
+      while (current($this->Controls)) {
+        $key = key($this->Controls);
+        $this->Controls[$key]->printDesign($buffer);
+        next($this->Controls);
       }
-      $this->_parent->_exporter->startSection($this, $this->_parent->Width, $buffer);
-      // print controls
-      if (isset($this->Controls)) {
-        reset($this->Controls);
-        while (current($this->Controls)) {
-          $key = key($this->Controls);
-          $this->Controls[$key]->printDesign($buffer);
-          next($this->Controls);
-        }
-      }
-      $this->_parent->_exporter->endSection($this, $this->Height, $buffer);
     }
   }
-
-
+  
   //////////////////////////////////////////////////////////////////
   // PRIVATE METHODS
   //////////////////////////////////////////////////////////////////
