@@ -41,7 +41,6 @@ class AmberXMLServer extends IXR_Server
     if (is_object($cfgObj) && is_a($cfgObj, 'AmberConfig')) {
       $this->_globalConfig = $cfgObj;
     } else {
-      echo "here";
       die(Amber::showError('Error', 'Given parameter is not an instance of AmberConfig', true));
     }
   }
@@ -78,7 +77,7 @@ class AmberXMLServer extends IXR_Server
     $repClass = $param[2];
     $repCode = $param[3];
     $repOverwrite = $param[4];
-    
+
     $db =& $this->sysDb();
     $dict = NewDataDictionary($db);
     

@@ -332,7 +332,7 @@ class TextBox extends FontBox
       $this->Value = null;
     }
 
-    if ($this->Format) {
+    if ($this->Format != '') {
       $this->_exporter->printNormal($this, Format($this->Value, strval($this->Format), $this->DecimalPlaces));
     } else {
       $this->_exporter->printNormal($this, $this->Value);

@@ -857,6 +857,8 @@ function getStdFormat($locale='', $prec=2)
     $locale = substr(setlocale(LC_TIME, 0),0,2);
   }
 
+  $t  = localeconv();
+  
   if ($locale == "de") {
     return array(
       'general date'    =>  'dd.mm.yyyy hh:nn:ss',
@@ -868,7 +870,7 @@ function getStdFormat($locale='', $prec=2)
       'short time'      =>  'hh:nn',
       'general number'  =>  '',
       'currency'        =>  '#,##0.00 DM',
-      'euro'            =>  '#,##0.00 ',
+      'euro'            =>  '#,##0.00 EUR',
       'fixed'           =>  '0.' . $zero,
       'standard'        =>  '#,##0.' . $zero,
       'percent'         =>  '0.' . $zero . '%',
@@ -888,7 +890,7 @@ function getStdFormat($locale='', $prec=2)
       'short time'      =>  'hh:nn',
       'general number'  =>  '#.#',
       'currency'        =>  '#,##0.00 $',
-      'euro'            =>  '#,##0.00 ',
+      'euro'            =>  '#,##0.00 EUR',
       'fixed'           =>  '0.' . $zero,
       'standard'        =>  '#,##0.' . $zero,
       'percent'         =>  '0.' . $zero . '%',

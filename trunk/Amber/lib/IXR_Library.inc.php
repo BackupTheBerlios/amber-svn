@@ -147,7 +147,7 @@ class IXR_Message {
         if (trim($this->message) == '') {
             return false;
         }
-        $this->_parser = xml_parser_create();
+        $this->_parser = xml_parser_create('');
         // Set XML parser to take the case of tags in to account
         xml_parser_set_option($this->_parser, XML_OPTION_CASE_FOLDING, false);
         // Set XML parser callback functions
