@@ -203,7 +203,7 @@ class pageLayout
     $this->noHeadFoot = $report->noHeadFoot;
     
     $this->unit = 1/20;
-    $this->reportWidth = $report->Width + 30;     //cheat: add 1.5pt in width for border
+    $this->reportWidth = $report->Width;
     if ($report->Orientation == 'portrait') {
       $this->paperWidth = $report->PaperWidth;
       $this->paperHeight = $report->PaperHeight;

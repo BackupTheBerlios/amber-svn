@@ -11,6 +11,14 @@
 
 ExporterFactory::register('null', 'Exporter');
 
+/*  
+    to allow nice boxing (like tables), borders need to overlap.
+    Thus borders must be drawn across the section, to avoid border clipping
+    strategy: make section a bit higher, start section background a bit lower
+    "a bit" is defined with BorderCheat 
+*/
+define ("BorderCheat", 20);
+
 /**
  *
  * @package Amber

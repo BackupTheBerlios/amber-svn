@@ -133,8 +133,8 @@ class ExporterFPdf extends Exporter
 
   function outSectionStart($y, $w, $h, $backColor, $sectionName='')
   {
-    $this->_pdf->SetClipping(0, $y, $w, $h + 2*BorderCheat);
-    $this->_pdf->SetCoordinate(0, -($y + BorderCheat));
+    $this->_pdf->SetClipping(0, $y, $w + 2*BorderCheat, $h + 2*BorderCheat);
+    $this->_pdf->SetCoordinate(0 + BorderCheat, -($y + BorderCheat));
 
     $this->_pdf->SetXY(0, 0 + BorderCheat);
     $this->_pdf->_backColor($backColor);
@@ -144,7 +144,7 @@ class ExporterFPdf extends Exporter
     $ln = 0; //pos after printing
     $align = 'C';
     $backstyle= 1;
-    $this->_pdf->Cell($w, $h, $text, $border, $ln, $align, $fill);
+    $this->_pdf->Cell($w + BorderCheat, $h, $text, $border, $ln, $align, $fill);
   }
 
 

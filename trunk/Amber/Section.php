@@ -21,8 +21,6 @@ class Section
   var $Controls;
 
 
-  var $printed;               // set by printNormal: section got printed (or not...)
-
   //////////////////////////////////////////////////////////////////
   // PRIVATE PROPERTIES
   //////////////////////////////////////////////////////////////////
@@ -138,7 +136,6 @@ class Section
   /**
   *
   * @access public
-  * @param integer  start position (relative to report) to place section in twips
   *
   */
   function printNormal()

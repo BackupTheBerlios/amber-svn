@@ -80,8 +80,8 @@ class ExporterHtml extends Exporter
     $out = "\t<div ";
     $style1['left'] = $this->_html_twips($x);;
     $style1['top'] = $this->_html_twips($y);
-    $style1['height'] = $this->_html_twips($h + BorderCheat);
-    $style1['width'] = $this->_html_twips($w);
+    $style1['height'] = $this->_html_twips($h + 2* BorderCheat);
+    $style1['width'] = $this->_html_twips($w + 2* BorderCheat);
     $style1['overflow'] = 'hidden';
 
     $out .=  'style="' . $this->arrayToStyle($style1) . "\">\n";
@@ -113,7 +113,7 @@ class ExporterHtml extends Exporter
     $style['left'] = 0;
     $style['top'] = $this->_html_twips($y);
     $style['height'] = $this->_html_twips($h + 2 * BorderCheat);
-    $style['width'] = $this->_html_twips($w);
+    $style['width'] = $this->_html_twips($w + 2 * BorderCheat);
 
     echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">";
 
@@ -178,7 +178,7 @@ class ExporterHtml extends Exporter
 
     $style = array();
     $style['top'] = $this->_html_twips($posY);
-    $style['height'] = $this->_html_twips($this->layout->topMargin + 20);
+    $style['height'] = $this->_html_twips($this->layout->topMargin);
     $style['left'] = '0';
     $style['width'] = $this->_html_twips($this->layout->leftMargin + $this->layout->reportWidth + $this->layout->rightMargin);
     $style['background-color'] = '#ffffff';
@@ -196,7 +196,7 @@ class ExporterHtml extends Exporter
     $style = array();
     $style['page-break-after'] = 'always';
     $style['top'] = $this->_html_twips($posY);
-    $style['height'] = $this->_html_twips($this->layout->bottomMargin + 20);
+    $style['height'] = $this->_html_twips($this->layout->bottomMargin);
     $style['left'] = '0';
     $style['width'] = $this->_html_twips($this->layout->leftMargin + $this->layout->reportWidth + $this->layout->rightMargin);
     $style['background-color'] = '#ffffff';
@@ -389,7 +389,7 @@ Class ControlExporterHtml
       $out .= 'top: ' . ExporterHTML::_html_twips($topHtml) . '; ';
     }
     if (($value['Left'] <> $std['Left']) or $borderWidthHtmlChanged) {
-      $leftHtml = $value['Left'] - 1/2 * $BorderWidthHtml - $LeftPaddingHtml + 15;
+      $leftHtml = $value['Left'] - 1/2 * $BorderWidthHtml - $LeftPaddingHtml + BorderCheat;
       $out .= 'left: ' . ExporterHTML::_html_twips($leftHtml) . '; ';
     }
 
