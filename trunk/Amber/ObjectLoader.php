@@ -16,6 +16,8 @@ require_once 'Form.php';
 * @package PHPReport
 * @subpackage ReportEngine
 *
+* @abstract
+*
 */
 class ObjectLoader
 {
@@ -60,6 +62,7 @@ class ObjectLoader
   /**
    *
    * @access public
+   * @abstract
    * @param string
    * @return array
    *
@@ -116,6 +119,12 @@ class ObjectLoaderDb extends ObjectLoader
   var $_data;
   var $sysTable = 'tx_amber_sys_objects';
 
+  /**
+   *
+   * @access public
+   * @param ADOConnection
+   *
+   */
   function setDatabase(&$db)
   {
     if (!is_object($db)) {
@@ -126,6 +135,42 @@ class ObjectLoaderDb extends ObjectLoader
     $this->_db =& $db;
   }
 
+  /**
+   *
+   * @access public
+   * @param string
+   * @return array
+   *
+   */
+  function getList($type)
+  {
+    $types = array_keys($this->objectTypes);
+
+    if (!in_array($type, $types)) {
+      $this->_lastError = 'Requested listing of unsupported object type: "' . $type . '"';
+      return false;
+    }
+
+    if (!isset($this->_db)) {
+      $this->_lastError = 'ObjectLoader: Database needs to be set before attempting to load an object';
+      return false;
+    }
+
+    $dict = NewDataDictionary($this->_db);
+    $sql = 'SELECT name FROM ' . $dict->TableName($this->sysTable) . ' WHERE';
+    $sql .= ' type=' . $this->objectTypes[$type] . ' ORDER BY name';
+    $result = $this->_db->GetAll($sql);
+
+    foreach ($result as $row) {
+      $list[] = $row['name'];
+    }
+    return $list;
+  }
+
+  /**
+   * @access private
+   * @return bool
+   */
   function loadModule()
   {
     $rs =& $this->fetchRecord('module');
@@ -142,6 +187,11 @@ class ObjectLoaderDb extends ObjectLoader
     return true;
   }
 
+  /**
+   * @access private
+   * @param string name of the form
+   * @return Form
+   */
   function &loadForm($formName)
   {
     $rs =& $this->fetchRecord('form', $formName);
@@ -164,8 +214,10 @@ class ObjectLoaderDb extends ObjectLoader
     return $form;
   }
 
-  /*
-   * @returns true on success, false on error
+  /**
+   * @access private
+   * @param string name of the report
+   * @return Report
    */
   function &loadReport($reportName)
   {
@@ -188,32 +240,14 @@ class ObjectLoaderDb extends ObjectLoader
     return $report;
   }
 
-  function getList($type)
-  {
-    $types = array_keys($this->objectTypes);
-
-    if (!in_array($type, $types)) {
-      $this->_lastError = 'Requested listing of unsupported object type: "' . $type . '"';
-      return false;
-    }
-
-  
-    if (!isset($this->_db)) {
-      $this->_lastError = 'ObjectLoader: Database needs to be set before attempting to load an object';
-      return false;
-    }
-
-    $dict = NewDataDictionary($this->_db);
-    $sql = 'SELECT name FROM ' . $dict->TableName($this->sysTable) . ' WHERE';
-    $sql .= ' type=' . $this->objectTypes[$type] . ' ORDER BY name';
-    $result = $this->_db->GetAll($sql);
-
-    foreach ($result as $row) {
-      $list[] = $row['name'];
-    }
-    return $list;
-  }
-  
+  /**
+   *
+   * @access private
+   * @param string type
+   * @param string name
+   * @return ADORecordSet
+   *
+   */
   function &fetchRecord($type, $name = '')
   {
      if (!isset($this->_db)) {
@@ -248,6 +282,12 @@ class ObjectLoaderFile extends ObjectLoader
 {
   var $_basePath;
 
+  /**
+   *
+   * @access public
+   * @param string
+   *
+   */
   function setBasePath($path)
   {
     if (empty($path)) {
@@ -261,6 +301,10 @@ class ObjectLoaderFile extends ObjectLoader
     $this->_basePath = $path;
   }
 
+  /**
+   * @access private
+   * @return bool
+   */
   function loadModule()
   {
     $modPath = $this->_basePath . '/modules/';
@@ -280,6 +324,11 @@ class ObjectLoaderFile extends ObjectLoader
     return true;
   }
 
+  /**
+   * @access private
+   * @param string name of the report
+   * @return Report
+   */
   function &loadReport($reportName)
   {
     $repPath = $this->_basePath . '/reports/';
@@ -305,6 +354,11 @@ class ObjectLoaderFile extends ObjectLoader
     return $report;
   }
 
+  /**
+   * @access private
+   * @param string name of the form
+   * @return Form
+   */
   function &loadForm($formName)
   {
     $formPath = $this->_basePath . '/forms/';
