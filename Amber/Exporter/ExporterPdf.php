@@ -26,40 +26,6 @@ ExporterFactory::register('testpdf', 'ExporterFPdf');
 
 
 
-class reportBuff
-{
-  var $reportPages;    // buffer when inReport
-  var $actpageNo;      // pageNumber
-  var $sectionType;    // 'Head', 'Foot' or ''
-  
-  var $pageLayout;
-  
-  var $posY;
-  
-  function reportBuff($layout)
-  {
-    $this->actpageNo = -1;
-    $this->_report->layout = $layout; 
-  }
-  
-  function out(&$s)
-  {
-    $this->reportPages[$this->actpageNo][$this->sectionType] .= $s . "\n";
-  }
-  
-  function newPage()
-  {
-    $this->posY = ($this->actpageNo + 1) * $this->_report->layout->printHeight;
-  }
-  
-  function page()
-  {
-    return $this->actpageNo + 1;
-  }
-
-}
-
-
 class ExporterFPdf extends Exporter
 {
   var $type = 'fpdf';
@@ -73,7 +39,7 @@ class ExporterFPdf extends Exporter
   {
     $report =& $this->_report;
     $reset = (!$this->_asSubreport);
-    $this->_pdf =& PDF::getInstance($this->_report->layout, $reset);
+    $this->_pdf =& PDF::getInstance($report->layout, $reset);
     if ($report->Controls) {
       foreach (array_keys($report->Controls) as $ctrlName) {
         if (!empty($report->Controls[$ctrlName]->FontName)) {
@@ -84,9 +50,9 @@ class ExporterFPdf extends Exporter
     if ($this->_asSubreport) {
       $this->_pdf->startSubReport();
     } else {  
-      $this->reportBuff =& new reportBuff($this->_report->layout);
+      $this->_report->reportBuff =& new reportBuff($report->layout);
       $this->_pdf->init($this, $report->Width, $this->_report->layout);
-      $this->_pdf->StartReportBuffering($this->reportBuff);
+      $this->_pdf->StartReportBuffering($this->_report->reportBuff);
     }
   }
   
@@ -228,7 +194,7 @@ class ExporterFPdf extends Exporter
 
   function page()
   {
-    return $this->reportBuff->page();
+    return $this->_report->reportBuff->page();
   }
 
   function newPage()

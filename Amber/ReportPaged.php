@@ -11,6 +11,7 @@
 class reportPaged extends Report
 {
   var $layout;
+  var $reportBuff;
 
   /**
    * @access private
@@ -19,6 +20,9 @@ class reportPaged extends Report
   {
     if (isset($this->_exporter)) {
       $this->layout =& new pageLayout($this, $isSubreport, $isDesignMode);
+      if (!$isSubReport) {
+        $this->reportBuff =& new reportBuff($this->layout);
+      }
       $this->_exporter->startReport($this, $isSubreport);
     }
   }
@@ -33,6 +37,41 @@ class reportPaged extends Report
     }
   }
 }
+
+class reportBuff
+{
+  var $reportPages;    // buffer when inReport
+  var $actpageNo;      // pageNumber
+  var $sectionType;    // 'Head', 'Foot' or ''
+  
+  var $pageLayout;
+  
+  var $posY;
+  
+  function reportBuff($layout)
+  {
+    $this->actpageNo = -1;
+    $this->_report->layout = $layout; 
+  }
+  
+  function out(&$s)
+  {
+    $this->reportPages[$this->actpageNo][$this->sectionType] .= $s . "\n";
+  }
+  
+  function newPage()
+  {
+    $this->posY = ($this->actpageNo + 1) * $this->_report->layout->printHeight;
+  }
+  
+  function page()
+  {
+    return $this->actpageNo + 1;
+  }
+
+}
+
+
 
 class pageLayout
 {
@@ -90,3 +129,4 @@ class pageLayout
     $this->printHeight = ($this->paperHeight - $this->topMargin - $this->bottomMargin - $this->pageHeaderHeight - $this->pageFooterHeight); //height of printable area of page (w/o morgins)
   }
 }
+
