@@ -112,14 +112,14 @@ class ExporterHtml extends Exporter
   {
     $style['left'] = 0;
     $style['top'] = $this->_html_twips($y);
-    $style['height'] = $this->_html_twips($h + BorderCheat);
+    $style['height'] = $this->_html_twips($h + 2 * BorderCheat);
     $style['width'] = $this->_html_twips($w);
 
     echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">";
 
     //background Box
     if ($backColor <> 0xFFFFFF) { //not white
-      $style['top'] = $this->_html_twips(BorderCheat);
+      $style['top'] = $this->_html_twips(2 * BorderCheat);
       $style['height'] = $this->_html_twips($h);
       $style['background-color'] = $this->_html_color($backColor);
       echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">&nbsp;</div>";
@@ -168,48 +168,6 @@ class ExporterHtml extends Exporter
       }
     }
     return $css;
-  }
-
-  // Section - html
-
-  function outSectionStart1($y, $width, $height, $backColor, $sectionName='')
-  {
-    $cheatWidth  = 59; // cheat: add 1.5pt to height and 3pt to width so borders get printed in Mozilla ###FIX ME
-    if ($height == 0) {
-      $cheatHeight = 0;
-    } else {
-      $cheatHeight = 15;
-    }
-    $out = "\t<div title=\"" . $sectionName . '-border"';
-
-    $style = array();
-    $style['top'] = $this->_html_twips($y);
-    $style['height'] = $this->_html_twips($height + $cheatHeight);
-    $style['left'] = '0';
-    $style['width'] = $this->_html_twips($this->layout->leftMargin + $width + $this->layout->rightMargin);
-    $style['background-color'] = '#ffffff';
-
-    $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";
-    $out .= "\t<div title=\"" . $sectionName . '"';
-
-    $style = array();
-    $style['position'] = 'absolute';
-    $style['overflow'] = 'hidden';
-    $style['height'] = $this->_html_twips($height);
-    $style['left'] = $this->_html_twips($this->layout->leftMargin);
-    $style['width'] = $this->_html_twips($width + $cheatWidth);
-    $style['background-color'] = $this->_html_color($backColor);
-
-    $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";
-
-    $this->_base->_out($out);
-
-  }
-
-  function outSectionEnd1()
-  {
-    $out .= "\t</div></div>\n";
-    $this->_base->_out($out);
   }
 
   // Page handling - html
@@ -415,25 +373,28 @@ Class ControlExporterHtml
     $TopPaddingHtml = 0;
     $BottomPaddingHtml = 0;
     
-    if ($value['BorderWidth'] == 0) {
+    if ($value['BorderStyle'] == 0) {   // transparent border
+      $BorderWidthHtml = 0;
+    } elseif ($value['BorderWidth'] == 0) {
       $BorderWidthHtml = __HAIRLINEWIDTH__; // 1/pt
     } else {
       $BorderWidthHtml = $value['BorderWidth'] * 20;
     }
-
+    
+    $borderWidthHtmlChanged = (($value['BorderWidth'] <> $std['BorderWidth']) or ($value['BorderStyle'] <> $std['BorderStyle'])); 
 
     // Position
-    if ($value['Top'] <> $std['Top']) {
-      $topHtml = $value['Top'] - 1/2 * $BorderWidthHtml - $TopPaddingHtml + 15;
+    if (($value['Top'] <> $std['Top']) or $borderWidthHtmlChanged) {
+      $topHtml = $value['Top'] - 1/2 * $BorderWidthHtml - $TopPaddingHtml + BorderCheat;
       $out .= 'top: ' . ExporterHTML::_html_twips($topHtml) . '; ';
     }
-    if (($value['Left'] <> $std['Left']) or ($value['BorderWidth'] <> $std['BorderWidth'])) {
+    if (($value['Left'] <> $std['Left']) or $borderWidthHtmlChanged) {
       $leftHtml = $value['Left'] - 1/2 * $BorderWidthHtml - $LeftPaddingHtml + 15;
       $out .= 'left: ' . ExporterHTML::_html_twips($leftHtml) . '; ';
     }
 
     // Height & width
-    if ($value['Height'] <> $std['Height']) {
+    if (($value['Height'] <> $std['Height']) or $borderWidthHtmlChanged) {
       $heightHtml = $value['Height'] - $BorderWidthHtml - $TopPaddingHtml - $BottomPaddingHtml;
       if ($heightHtml < 0) {
         $heightHtml = 0;
@@ -441,7 +402,7 @@ Class ControlExporterHtml
       $out .= 'height: ' . ExporterHTML::_html_twips($heightHtml) . '; ';
     }
 
-    if (($value['Width'] <> $std['Width']) or ($value['BorderWidth'] <> $std['BorderWidth'])) {
+    if (($value['Width'] <> $std['Width']) or $borderWidthHtmlChanged) {
       $widthHtml = $value['Width'] - $BorderWidthHtml - $LeftPaddingHtml- $RightPaddingHtml;
       if ($widthHtml < 0) {
         $widthHtml = 0;
