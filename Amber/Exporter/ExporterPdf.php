@@ -48,7 +48,8 @@ class ExporterFPdf extends Exporter
       }
     }
     if ($this->_asSubreport) {
-      $this->_pdf->startSubReport();
+      $this->_pdf->subReportBuff->push();
+      $this->startcomment("StartSubreport");
     } else {  
       $this->_pdf->init($this, $this->_report->layout);
       $this->_pdf->StartReportBuffering($this->_report->reportBuff);
@@ -59,7 +60,8 @@ class ExporterFPdf extends Exporter
   {
     #echo "pdf->Output();<br>";
     if ($this->_asSubreport) {
-      $this->_pdf->endSubReport();
+      $this->comment("EndSubreport");
+      return $this->_pdf->subReportBuff->pop();
     } else {
       if (!$this->_report->layout->designMode) {
         $this->_report->_printNormalSection('PageFooter');
@@ -82,11 +84,11 @@ class ExporterFPdf extends Exporter
           $this->_report->outPageFooter($pageY, $pageX, $this->_pdf);  
         }
       }
-      $this->sendOutputFile();
+      $this->_sendOutputFile();
     }
   }
-  
-  function sendOutputFile()
+
+  function _sendOutputFile()
   {
     if ($this->createdAs == 'testpdf') {
       print $this->_pdf->Output('out.txt', 'S');
@@ -98,6 +100,16 @@ class ExporterFPdf extends Exporter
       }
     }
   }
+  
+  function comment($s)
+  {
+    $this->_pdf->comment($s);
+  }  
+
+  function startcomment($s)
+  {
+    $this->_pdf->startcomment($s);
+  }  
   
   /*********************************
    *  Section
@@ -303,32 +315,12 @@ class ExporterFPdf extends Exporter
     } else {
       $rep->resetMargin(true);
       $rep->run('pdf', true);
-      $pdf =& $rep->_exporter->_pdf; 
-      $para->content = "\n%Start SubReport\n" . $pdf->subReportBuff->buffer[$pdf->subReportBuff->index+1] . "\n%End SubReport\n"; 
+      $para->content = "\n%Start SubReport\n" . $this->_pdf->subReportBuff->getpopped() . "\n%End SubReport\n"; 
     }
     #$para->content = "(TEST)";
-            
-    $this->_pdf->SetXY($para->x, $para->y);
-    $this->_pdf->SetClipping($para->x, $para->y, $para->width, $para->height);
-    $this->_pdf->SetCoordinate(-$para->x, -$para->y);
-    
-    $this->_pdf->_out($para->content);
-    
-    $this->_pdf->RemoveCoordinate();
-    $this->_pdf->RemoveClipping();
-    $this->_pdf->SetXY($para->x, $para->y);
-    if ($para->borderstyle <> 0) {
-      $this->_pdf->_borderColor($para->bordercolor);
-      if ($para->borderwidth == 0) {
-        $this->_pdf->SetLineWidth(1);
-      } else {
-        $this->_pdf->SetLineWidth($para->borderwidth);
-      }
-      $this->_pdf->Cell($para->width, $para->height, '', 'RLTB', 0, $para->falign, 0);
-    }
+    $this->_pdf->printBoxPdf($para);            
 
   }
-
 
   function printDesign(&$control, &$buffer, $content)
   {

@@ -25,6 +25,11 @@ class subReportBuff
   {
     $this->index--;
     return $this->buffer[$this->index + 1];
+  }
+  
+  function getPopped()
+  {
+    return $this->buffer[$this->index + 1];  
   }  
 } 
  
@@ -210,29 +215,6 @@ class PDF extends FPDF
   }
   
   
-  //////////////////////////////////////////////////////////////////////////
-  //
-  //  startSubReport / endSubReport
-  //
-  //  inside a subreport FPFD's output gets cached in 
-  //  $this->subReportBuff->buffer
-  //  a buffer 
-  //  
-  //
-  //
-  //////////////////////////////////////////////////////////////////////////
-  
-  function startSubReport()
-  {
-    $this->subReportBuff->push();
-    $this->startcomment("StartSubreport");
-  }
-  
-  function endSubReport()
-  {
-    $this->comment("EndSubreport");
-    return $this->subReportBuff->pop();
-  }  
 
 ////////////////////////////////////////////////////////
 //
@@ -363,6 +345,28 @@ class PDF extends FPDF
     }
   }
   
+  function printBoxPdf(&$para)
+  {
+    $this->SetXY($para->x, $para->y);
+    $this->SetClipping($para->x, $para->y, $para->width, $para->height);
+    $this->SetCoordinate(-$para->x, -$para->y);
+    
+    $this->_out($para->content);
+    
+    $this->RemoveCoordinate();
+    $this->RemoveClipping();
+    $this->SetXY($para->x, $para->y);
+    if ($para->borderstyle <> 0) {
+      $this->_borderColor($para->bordercolor);
+      if ($para->borderwidth == 0) {
+        $this->SetLineWidth(1);
+      } else {
+        $this->SetLineWidth($para->borderwidth);
+      }
+      $this->Cell($para->width, $para->height, '', 'RLTB', 0, $para->falign, 0);
+    }
+  }
+
   function _backColor($color)
   {
     $r = ($color >> 16) & 255;
