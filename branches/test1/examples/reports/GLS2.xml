@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<report>
-    <Name>          GLS nach Heimgruppen 1zeilig bunt</Name>
-    <ClassName>     GLS</ClassName>
-    <FileNameDesign>GLS2-Design.xml</FileNameDesign>
-    <FileNameCode>  GLS-Code.php</FileNameCode>
-</report>
-

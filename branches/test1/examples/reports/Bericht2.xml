@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<report>
-    <Name>          Bericht2</Name>
-    <ClassName>     Bericht2</ClassName>
-    <FileNameDesign>Bericht2-Design.xml</FileNameDesign>
-    <FileNameCode>  Bericht2-Code.php</FileNameCode>
-</report>
-
