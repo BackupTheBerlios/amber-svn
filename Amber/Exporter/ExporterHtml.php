@@ -220,7 +220,7 @@ class ExporterHtml extends Exporter
       $style['background-color'] = '#ffffff';
 
       $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";
-      $out .= "\">&nbsp;</div>\n";
+      $out .= "&nbsp;</div>\n";
       echo $out;
 
       $this->_posY += $this->_report->BottomMargin;
