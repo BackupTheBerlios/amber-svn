@@ -49,7 +49,7 @@ class Form extends AmberObject
     $classLoaded = false;
     $className = $data['class'];
 
-    if ((isset($className)) && (!empty($className)) && (!class_exists($className))) {
+    if ((isset($className)) && (!empty($className)) && (!class_exists($className, false))) {
       //eval($data['code']); // code in database is currently being stored without php tags! fix this!
       eval(' ?' . '>' . $data['code'] . '<' . '?php ');
       if (class_exists($className)) {
