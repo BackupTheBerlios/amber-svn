@@ -127,7 +127,7 @@ class ObjectLoaderDb extends ObjectLoader
     }
 
     $dict = NewDataDictionary($this->_db);
-    $sql = 'Select * from ' . $dict->TableName($this->sysTable) . ' where name=' . $this->_db->qstr($reportName);
+    $sql = 'SELECT * FROM ' . $dict->TableName($this->sysTable) . ' WHERE name=' . $this->_db->qstr($reportName);
     $sql .= ' AND type=' . $this->objectTypes['report'];
 
     $rs = $this->_db->SelectLimit($sql, 1);

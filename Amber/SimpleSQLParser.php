@@ -25,11 +25,9 @@ class Parser
 
   function Parser($string = null) {
     $this->loopCount = 0;
-    if (is_string($string)) {
-      $this->lexer = new Lexer(trim($string), 1);
-      $this->lexer->symbols =& $this->symbols;
-      $this->initLexer();
-    }
+    $this->lexer = new Lexer(trim($string), 1);
+    $this->lexer->symbols =& $this->symbols;
+    $this->initLexer();
   }
 
   function initLexer()
@@ -67,7 +65,7 @@ class SimpleSelectParser extends Parser
   function initLexer()
   {
     $this->keywords = array('select', 'from', 'join', 'where', 'group', 'order', 'having', 'order', 'limit');
-    $this->accessKeywords = array('with', 'owneraccess', 'option');
+    $this->accessKeywords = array('with', 'owneraccess', 'option', 'true', 'false');
     $this->symbols = array_flip(array_merge($this->keywords, $this->accessKeywords));
   }
 
@@ -84,15 +82,21 @@ class SimpleSelectParser extends Parser
 
     $this->getTok();
     if (($this->token == '') || ($this->token != 'select')) {
-      Amber::showError('Error', __CLASS__ . '::' . __FUNCTION__ . '(): Not a select query');
-      return;
+      return false;
     }
     $idx = 'select';
     while ($this->token != '') {
       if (!in_array($this->token, $delimiter)) {
         if ($this->token == '.') {
           $tokenTextList .= '.';
-        } else if (in_array($this->getTokText() , $this->accessKeywords)) {
+        } else if (in_array(strtolower($this->getTokText()) , $this->accessKeywords, true)) {
+          $tmpTok = strtolower($this->getTokText());
+          echo $tmpTok;
+          if ($tmpTok == 'false') {
+            $tokenTextList .= ' 0';
+          } elseif ($tmpTok == 'true') {
+            $tokenTextList .= ' 1';
+          }
           // drop access specific keywords
         } else {
           if (strlen($tokenTextList) > 0) {
@@ -128,7 +132,7 @@ class SimpleSelectParser extends Parser
 
     $this->tree[$idx] = trim($tokenTextList);
 
-    return ($this->tree);
+    return $this->tree;
   }
 }
 

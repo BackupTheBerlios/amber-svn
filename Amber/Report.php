@@ -353,6 +353,10 @@ class Report
   function _makeSqlFilter($sql, $filter) {
     $parser = new SimpleSelectParser($sql);
     $sqlParts = $parser->parse();
+    if ($sqlParts == false) {
+      Amber::showError('Error', __CLASS__ . '::' . __FUNCTION__ . '(): Not a select query');
+      die();
+    }
 
     // Apply filter if necessary
     if (!empty($filter)) {
