@@ -110,44 +110,59 @@ class Section
     }
   }
 
+  function isVisible()
+  {
+    $this->_OnFormat($cancel);
+    return (($cancel == true) || ($this->Visible == false));
+  }
+  
+  function hasForceNewPageBefore()
+  {
+    if ($this->_PagePart) { // page-header or -footer
+      return false;
+    } else {  
+      return (($this->ForceNewPage == 1) || ($this->ForceNewPage == 3));
+    }  
+  }
+
+  function hasForceNewPageAfter()
+  {
+    if ($this->_PagePart) { // page-header or -footer
+      return false;
+    } else {  
+      return (($this->ForceNewPage == 2) || ($this->ForceNewPage == 3));
+    }  
+  }
+  
   /**
   *
   * @access public
   * @param integer  start position (relative to report) to place section in twips
   *
   */
-  function printNormal()
+  function printNormal(&$buffer)
   {
-    $this->_RunningSum();
-    $this->_OnFormat($cancel);
-    if (($cancel == true) || ($this->Visible == false)) {
-      $height = 0;
-      $this->printed = false;
-    } else {
-      $this->_startSection($buffer);
-      // print controls
-      $maxHeight = 0;
-      if ((isset($this->Controls)) && (!$cancel)) {
-        $keys = array_keys($this->Controls);
-        foreach ($keys as $key) {
-          $height = $this->Controls[$key]->printNormal($buffer);
-          if ($height > $maxHeight) {
-            $maxHeight = $height;
-          }
+    $maxHeight = 0;
+    if ((isset($this->Controls)) && (!$cancel)) {
+      $keys = array_keys($this->Controls);
+      foreach ($keys as $key) {
+        $height = $this->Controls[$key]->printNormal($buffer);
+        if ($height > $maxHeight) {
+          $maxHeight = $height;
         }
       }
-      if (isset($this->CanGrow) && ($this->CanGrow) && ($this->Height < $maxHeight)) {
-        $height = $maxHeight;
-      } elseif (isset($this->CanShrink) && ($this->CanShrink) && ($this->Height > $maxHeight)) {
-        $height = $maxHeight;
-      } else {
-        $height = $this->Height;
-      }
-      $this->_endSection($height, $buffer);
-      $this->printed = true;
+    }
+    if (isset($this->CanGrow) && ($this->CanGrow) && ($this->Height < $maxHeight)) {
+      return $maxHeight;
+    } elseif (isset($this->CanShrink) && ($this->CanShrink) && ($this->Height > $maxHeight)) {
+      return $maxHeight;
+    } else {
+      return $this->Height;
     }
   }
-
+  
+  
+  
   /**
    *
    * @access public
@@ -164,7 +179,7 @@ class Section
       } else {
         $this->_sectionPrintDesignHeader($this->EventProcPrefix);
       }
-      $this->_startSection($buffer);
+      $this->_parent->_exporter->startSection($this, $this->_parent->Width, $buffer);
       // print controls
       if (isset($this->Controls)) {
         reset($this->Controls);
@@ -174,7 +189,7 @@ class Section
           next($this->Controls);
         }
       }
-      $this->_endSection($this->Height, $buffer);
+      $this->_parent->_exporter->endSection($this, $this->Height, $buffer);
     }
   }
 
@@ -219,34 +234,6 @@ class Section
     $this->_parent->_exporter->sectionPrintDesignHeader($name);
   }
 
-   /**
-   * @access private
-   */
-  function _startSection(&$buffer)
-  {
-    $exporter =& $this->_parent->_exporter;
-    if ((!$this->_PagePart) && (!$exporter->DesignMode)) {
-      if (($this->ForceNewPage == 1) || ($this->ForceNewPage == 3)) {
-        $exporter->newPage();
-      }
-    }
-    $exporter->startSection($this, $this->_parent->Width, $buffer);
-  }
-
-  /**
-   * @access private
-   */
-  function _endSection($height, &$buffer)
-  {
-    $exporter =& $this->_parent->_exporter;
-    $exporter->endSection($this, $height, $buffer);
-    if ((!$this->_PagePart) && (!$exporter->DesignMode)) {
-      if (($this->ForceNewPage == 2) || ($this->ForceNewPage == 3)) {
-        $exporter->newPage();
-      }
-    }
-  }
-
   /**
    * @access private
    */
@@ -255,7 +242,7 @@ class Section
     if (is_array($this->Controls)) {
       $keys = array_keys($this->Controls);
       foreach($keys as $key) {
-        if (isset($this->Controls[$key]->RunningSum)) {
+        if (isset($this->Controls[$key]->RunningSum)) { //optimisation
           $this->Controls[$key]->_RunningSum();
         }
       }

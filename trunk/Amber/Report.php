@@ -500,8 +500,23 @@ class Report extends AmberObject
   function _printNormalSection(&$section)
   {
     //Amber::dumpArray($this);
-    $section->printNormal();
-    $this->_prepareDuplicates($section);
+    $section->_RunningSum();
+    if ($section->isVisible()) {
+      $height = 0;
+    } else {
+      if ($section->hasForceNewPageBefore()) {
+        $this->_exporter->newPage();
+      }
+      $this->_exporter->startSection($section, $this->Width, $buffer);
+      $height = $section->printNormal($buffer);
+      $this->_exporter->endSection($section, $height, $buffer);
+
+
+      if ($section->hasForceNewPageAfter()) {
+        $this->_exporter->newPage();
+      }
+      $this->_prepareDuplicates($section);
+    }
   }
 
    /**
@@ -550,8 +565,7 @@ class Report extends AmberObject
   {
     for ($i = $maxLevel-1; $i >= $level; $i--) {
       if (isset($this->GroupFooters[$i])) {
-        $this->GroupFooters[$i]->printNormal();
-        $this->_prepareDuplicates($this->GroupFooters[$i]);
+        $this->_printNormalSection($this->GroupFooters[$i]);
       }
     }
   }
@@ -577,22 +591,20 @@ class Report extends AmberObject
    */
   function _prepareDuplicates(&$section)
   {
-    if ($section->printed) {
-      //nullify all _oldValue of report
-      if (is_array($this->Controls)) {
-        $keys = array_keys($this->Controls);
-        foreach ($keys as $index) {
-          $ctrl  =& $this->Controls[$index];
-          $ctrl->_OldValue = null;
-        }
+    //nullify all _oldValue of report
+    if (is_array($this->Controls)) {
+      $keys = array_keys($this->Controls);
+      foreach ($keys as $index) {
+        $ctrl  =& $this->Controls[$index];
+        $ctrl->_OldValue = null;
       }
-      //set _oldValue of section
-      if (is_array($section->Controls)) {
-        $keys = array_keys($section->Controls);
-        foreach ($keys as $index) {
-          $ctrl  =& $section->Controls[$index];
-          $ctrl->_OldValue = $ctrl->Value;
-        }
+    }
+    //set _oldValue of section
+    if (is_array($section->Controls)) {
+      $keys = array_keys($section->Controls);
+      foreach ($keys as $index) {
+        $ctrl  =& $section->Controls[$index];
+        $ctrl->_OldValue = $ctrl->Value;
       }
     }
   }
