@@ -140,7 +140,11 @@ class reportPaged extends Report
   {
     $this->layout->fillRestOfPage();
   }
-
+  
+  function newPageIfDirty()
+  {
+    $this->layout->fillRestOfPageIfDirty();
+  }
   
 ///////////////////////////
 //
@@ -238,6 +242,9 @@ class pageLayout
       $this->pagesHorizontal = 1;
     } else {
       $this->printWidth  = ($this->paperWidth - $this->leftMargin - $this->rightMargin); //width of printable area of page (w/o morgins)
+      if ($this->printWidth <= 0) { 
+        Amber::showError('Error: width of printable area too small', 'paper width: ' . $this->paperWidth . '; left margin:' . $this->leftMargin . '; right margin: ' . $this->rightMargin . ';');
+      }  
       $this->pagesHorizontal = floor($this->reportWidth / $this->printWidth) + 1; // No of pages needed to print report
       $this->printHeight = ($this->paperHeight - $this->topMargin - $this->bottomMargin - $this->pageHeaderHeight - $this->pageFooterHeight); //height of printable area of page (w/o margins)
     }
@@ -275,7 +282,7 @@ class pageLayout
     return $this->posY - $this->pagePosY;
   }  
   
-  function fillrestOfPage()
+  function fillRestOfPage()
   {
     $this->newpage = 1;
     if (!$this->noAutoPage) {
@@ -283,6 +290,13 @@ class pageLayout
     } else {
       $this->printHeight = $this->posY - $this->pagePosY;  //set page size to actual position 
     }
+  }
+  
+  function fillRestOfPageIfDirty()
+  {
+    if ($this->pagePosY <> $this->posY) {
+      $this->fillRestOfPage();
+    }  
   }
   
   function addHeight($height)

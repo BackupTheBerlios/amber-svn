@@ -504,7 +504,7 @@ class Report extends AmberObject
       $height = 0;
     } else {
       if ($section->hasForceNewPageBefore()) {
-        $this->newPage();
+        $this->newPageIfDirty();
       }
       $this->_startSection($section, $this->Width);
       $height = $section->printNormal();
@@ -512,7 +512,7 @@ class Report extends AmberObject
 
 
       if ($section->hasForceNewPageAfter()) {
-        $this->newPage();
+        $this->newPageIfDirty();
       }
       $this->_prepareDuplicates($section);
     }
