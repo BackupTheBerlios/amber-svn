@@ -284,7 +284,8 @@ class pageLayout
   {
     $this->newpage = 1;
     if (!$this->noAutoPage) {
-      $this->posY = $this->pagePosY + $this->printHeight;  //move posY to end of page (fill rest of page with space)
+      $this->posY = $this->pagePosY + $this->printHeight + 1;  //move posY to end of page (fill rest of page with space)
+                                                               // +1: make sure, we are on new page
     } else {
       $this->printHeight = $this->posY - $this->pagePosY;  //set page size to actual position 
     }
