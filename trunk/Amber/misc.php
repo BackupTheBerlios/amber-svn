@@ -13,15 +13,6 @@ function microtime_diff($a, $b)
   return $b_sec - $a_sec + $b_dec - $a_dec;
 }
 
-function wennleer($item, $replacement)
-{
-  if (is_null($item) or !isset($item) or ($item == '')) {
-    return $replacement;
-  } else {
-    return $item;
-  }
-}
-
 function MScolor($MSColor)
 {
   if (!is_numeric($MSColor)) {

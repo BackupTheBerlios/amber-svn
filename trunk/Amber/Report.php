@@ -167,14 +167,13 @@ class Report extends AmberObject
     if (!$classLoaded) {
       $this->_Code =& new AmberReport_UserFunctions();
     }
-    
     $this->initialize_report($xml);
   }                                
   
   /**
    *
    * @access public
-   * @param ReportObjectArray
+   * @param array report's design
    *
    */
   function initialize_report($xml)
@@ -247,7 +246,6 @@ class Report extends AmberObject
       }
     }
 
-
     /*
      * Group Levels
      */
@@ -267,7 +265,7 @@ class Report extends AmberObject
     }
     
     // mirror controls and sections into user space
-      $this->_Code->initialize($this);   // this breaks in PHP4; switch to PHP5!
+    $this->_Code->initialize($this);   // this breaks in PHP4; switch to PHP5!
   }
 
   /**
