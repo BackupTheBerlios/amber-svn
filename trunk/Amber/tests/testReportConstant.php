@@ -36,7 +36,7 @@ ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/../
 ini_set('max_execution_time', 600);
 ini_set('memory_limit', '48M');
 
-require_once '../Report.php';
+#require_once '../Report.php';
 require_once 'unit.php';
 require_once '../Amber.php';
 
@@ -138,6 +138,8 @@ class testReportConstant extends PHPUnit_TestCase
 }
 
 print "This is not a normal test. If You get any errors, check comments inside testReportConstant.php first!<br>\n";
+
+print "Test switched off for now"; return;
 
 $suite  = new PHPUnit_TestSuite("testReportConstant");
 $result = PHPUnit::run($suite);

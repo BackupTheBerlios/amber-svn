@@ -173,6 +173,9 @@ class Basic_Format extends myTestCase
     setlocale (LC_ALL, 'de_DE@euro', 'de_DE', 'de', 'ge');
     $this->assertEquals('Hello: Mo, 11.05.1959', Format('1959-05-11', "\"Hello:\" ddd, dd/mm/yyyy"));
     $this->assertEquals('Hello: Mo, 05/11/1959', Format('1959-05-11', "\"Hello:\" ddd, mm/dd/yyyy"));
+    
+    setlocale (LC_ALL, 'de_DE@euro', 'de_DE', 'de', 'ge');
+    $this->assertEquals('Stichtag: 25.01.2005', Format('2005-01-25', "\"Stichtag: \"dd/mm/yyyy"));
 
   }
 
@@ -261,7 +264,7 @@ class Basic_Format extends myTestCase
 
     $this->assertEquals('1234,5678',     Format(1234.5678, "General Number"),  "General Number");
     $this->assertEquals('1.234,57 DM',   Format(1234.5678, "Currency"),        "Currency");
-    $this->assertEquals('1.234,57 ',    Format(1234.5678, "Euro"),            "Euro");
+    $this->assertEquals('1.234,57 €',    Format(1234.5678, "Euro"),            "Euro");
     $this->assertEquals('1.234,57',      Format(1234.5678, "Standard"),         "Standard");
     $this->assertEquals('123456,78%',    Format(1234.5678, "Percent"),   "Percent");
     $this->assertEquals('1,23E+03',     Format(1234.5678, "Scientific"),   "Scientific");

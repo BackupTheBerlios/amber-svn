@@ -9,7 +9,6 @@
 
 ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/../../Amber/');
 
-require_once '../Report.php';
 require_once 'unit.php';
 require_once '../Amber.php';
 
@@ -73,17 +72,17 @@ class testReport extends PHPUnit_TestCase
 
     ob_start();
     $amber->OpenReport('Bericht1', AC_NORMAL, '', 'html');
-    $s = ob_get_contents();
+    $s = trim(ob_get_contents());
     ob_end_clean();
-    $this->assertEquals('[<html>]', "[" . substr($s, 0, 6) . "]",    'Test1a html, normal: <html> without leading stuff');
-    $this->assertEquals("[</html>\n]", "[" . substr($s, -8) . "]",   'Test1b html, normal: </html>\n');
+    $this->assertEquals('[<!DOCTYPE ]', "[" . substr($s, 0, 10) . "]",    'Test1a html, normal: <html> without leading stuff');
+    $this->assertEquals("[</html>]", "[" . substr($s, -7) . "]",   'Test1b html, normal: </html>\n');
 
     ob_start();
     $amber->OpenReport('Bericht1', AC_DESIGN, '', 'html');
-    $s = ob_get_contents();
+    $s = trim(ob_get_contents());
     ob_end_clean();
-    $this->assertEquals('[<html>]', "[" . substr($s, 0, 6) . "]",    'Test2a html, design: <html> without leading stuff');
-    $this->assertEquals("[</html>\n]", "[" . substr($s, -8) . "]",   'Test2b html, design: </html>\n');
+    $this->assertEquals('[<!DOCTYPE ]', "[" . substr($s, 0, 10) . "]",    'Test2a html, design: <html> without leading stuff');
+    $this->assertEquals("[</html>]", "[" . substr($s, -7) . "]",   'Test2b html, design: </html>\n');
 
     ob_start();
     $amber->OpenReport('Bericht1', AC_NORMAL, '', 'testpdf');

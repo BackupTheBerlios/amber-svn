@@ -155,7 +155,7 @@ class Report extends AmberObject
     }
     if (class_exists($className)) {
       $this->_Code =& new $className;
-      $this->_Code->setReport($this);
+      $this->_Code->setReport($this);   // this breaks in PHP4; switch to PHP5!
       $classLoaded = true;
     } else {
       Amber::showError('Error', 'Cannot instantiate undefined class "' . $className . '"');
@@ -281,6 +281,7 @@ class Report extends AmberObject
     $isFirstRecord = true;
     
     if (is_null($this->RecordSource)) {   // if no data expected print Detail only once
+      $this->EvaluateExpressions();  
       $this->_printNormalSection($this->Detail);
     }
     else  // Loop through all records

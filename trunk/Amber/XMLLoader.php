@@ -145,6 +145,7 @@ class XMLLoader
     xml_parser_set_option($parser, XML_OPTION_TARGET_ENCODING, 'iso-8859-1');
     xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
     xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 1);
+    $data = str_replace("&quot;",'"', $data);
     xml_parse_into_struct($parser, $data, $values, $tags);
     xml_parser_free($parser);
 
