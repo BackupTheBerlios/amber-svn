@@ -18,14 +18,21 @@ class reportPaged extends Report
    */
   function _startReport($isSubreport, $isDesignMode)
   {
+    $this->_asSubReport = $isSubreport;
     if (!isset($this->_exporter)) {
       return;
     }
     $this->layout =& new pageLayout($this, $isSubreport, $isDesignMode);
     $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
     $this->mayflower=& $this->_exporter->mayflower;
+    if ($isSubreport) {
+      $this->mayflower->subReportPush();
+      $this->_exporter->startcomment("StartSubreport"); // remove this!!!
+    } else {  
+      $this->mayflower->StartReportBuffering();
+    }
   }
-
+  
   /**
    * @access private
    */
@@ -33,18 +40,45 @@ class reportPaged extends Report
   {
     if (!isset($this->_exporter)) {
       return;
-    }  
+    }
+    if ($this->_asSubReport) {
+      $this->_exporter->newPage();
+      $this->_exporter->comment("EndSubreport");
+      return $this->mayflower->subReportPop();
+    } else {
+      if (!$this->layout->designMode) {
+        $this->_printNormalSection('PageFooter');
+      }  
+   
+      $this->mayflower->endReportBuffering();
+    
+      $firstPage = true;  //first page is out
+  
+      $endPageX = floor($this->layout->_reportWidth / $this->layout->printWidth);
+      foreach(array_keys($this->mayflower->reportPages) as $pageY) {
+        for($pageX = 0; $pageX <= $endPageX; $pageX++) {
+          if (!$firstPage) {
+            $this->_exporter->_pdf->AddPage();
+          }
+          $firstPage = false;
+  
+          $this->outPageHeader($pageY, $pageX, $this->_exporter->_pdf);  
+          $this->outPage($pageY, $pageX, $this->_exporter->_pdf);  
+          $this->outPageFooter($pageY, $pageX, $this->_exporter->_pdf);  
+        }
+      }
+    }
     $this->_exporter->endReport($this);
   }
 
   function page()
   {
-    return $this->_exporter->mayflower->page();
+    return $this->mayflower->page();
   }
 
   function newPage()
   {
-    $this->_exporter->mayflower->newPage();
+    $this->mayflower->newPage();
   }
 
   function outPageHeader($pageY, $pageX, &$exporter)

@@ -14,8 +14,6 @@ class PDF extends FPDF
   //
   //  _out - overwriting FPDF's private _out method used for "printing"
   //
-  //  see startSection/endSection and startReport/endReport below
-  //
   //////////////////////////////////////////////////////////////////////////
   
   function _out($s)
@@ -78,7 +76,7 @@ class PDF extends FPDF
     return $instance;
   }
 
-  function init(&$layout)
+  function startReport(&$layout)
   {
     $this->SetCompression(false);
     $this->SetRightMargin($layout->rightMargin);

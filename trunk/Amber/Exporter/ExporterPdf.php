@@ -204,43 +204,17 @@ class ExporterFPdf extends Exporter
         }
       }
     }
-    if ($asSubreport) {
-      $this->mayflower->subReportPush();
-      $this->startcomment("StartSubreport");
-    } else {  
-      $this->_pdf->init($report->layout);
-      $this->mayflower->StartReportBuffering();
+    if (!$asSubreport) {
+      $this->_pdf->startReport($report->layout);
     }
   }
+  
+  
   
   function endReportSubExporter(&$report)
   {
     if ($this->_asSubreport) {
-      $this->newPage();
-      $this->comment("EndSubreport");
-      return $this->mayflower->subReportPop();
     } else {
-      if (!$this->_report->layout->designMode) {
-        $this->_report->_printNormalSection('PageFooter');
-      }  
-   
-      $this->mayflower->endReportBuffering();
-    
-      $firstPage = true;  //first page is out
-  
-      $endPageX = floor($this->_report->layout->_reportWidth / $this->_report->layout->printWidth);
-      foreach(array_keys($this->mayflower->reportPages) as $pageY) {
-        for($pageX = 0; $pageX <= $endPageX; $pageX++) {
-          if (!$firstPage) {
-            $this->_pdf->AddPage();
-          }
-          $firstPage = false;
-  
-          $this->_report->outPageHeader($pageY, $pageX, $this->_pdf);  
-          $this->_report->outPage($pageY, $pageX, $this->_pdf);  
-          $this->_report->outPageFooter($pageY, $pageX, $this->_pdf);  
-        }
-      }
       $this->_sendOutputFile();
     }
   }
