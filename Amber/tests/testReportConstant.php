@@ -83,10 +83,10 @@ class testReportConstant extends PHPUnit_TestCase
   
   function Compare($reportname)
   {
-    $amber =& $this->setAmberConfig();
     $path = 'adhoc/';
 
     print 'Test1 Html, Normal ' . $reportname . "<br>";
+    $amber =& $this->setAmberConfig();
     ob_start();
     $amber->OpenReport($reportname, AC_NORMAL, '', 'html');
     $s = ob_get_contents();
@@ -96,6 +96,7 @@ class testReportConstant extends PHPUnit_TestCase
     $this->assertEquals($f, $s,  'Test1 Html, Normal ' . $reportname);
 
     print 'Test2 Html, Design ' . $reportname . "<br>";
+    $amber =& $this->setAmberConfig();
     ob_start();
     $amber->OpenReport($reportname, AC_DESIGN, '', 'html');
     $s = ob_get_contents();
@@ -105,6 +106,7 @@ class testReportConstant extends PHPUnit_TestCase
     $this->assertEquals($f, $s,  'Test2 Html, Design ' . $reportname);
 
     print 'Test3 pdf, Design ' . $reportname . "<br>";
+    $amber =& $this->setAmberConfig();
     ob_start();
     $amber->OpenReport($reportname, AC_DESIGN, '', 'testpdf');
     $s = ob_get_contents();
@@ -115,6 +117,7 @@ class testReportConstant extends PHPUnit_TestCase
     $this->assertEquals($f, $s,  'Test3 pdf, Design ' . $reportname);
 
     print 'Test4 pdf, Normal ' . $reportname . "<br>";
+    $amber =& $this->setAmberConfig();
     ob_start();
     $amber->OpenReport($reportname, AC_NORMAL, '', 'testpdf');
     $s = ob_get_contents();

@@ -467,8 +467,8 @@ class SubReport extends Control
 
     // Try to load report
     $amber =& Amber::getInstance();
-    $this->_subReport =& $amber->loadObject('report', $name);
-    if ($this->_subReport == false) {
+    $this->_subReport =& Amber::createAmberObject('report');
+    if ($amber->loadObject('report', $name, $this->_subReport) == false) {
       Amber::showError('Error', 'Could not load subreport "' . htmlspecialchars($name) . '"');
       return 0;
     }

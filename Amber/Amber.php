@@ -29,10 +29,13 @@ class Amber
 
   var $_db; // ADODB database containing data
   var $_sysdb; // ADODB database containig tx_amber_sys_objects
+  
+  var $_stdExporter; //std-exporter: the exporter the report was opened with
 
   function init()
   {
-    if (!$this->loadObject('module', '')) {
+    $dummy =& new nullObject();
+    if (!$this->loadObject('module', '', $dummy)) {
       Amber::showError('Amber::init():', 'Error loading modules');
       die();
     }
@@ -115,10 +118,38 @@ class Amber
     return $amber->_sysdb;
   }
 
+  function &createAmberObject($type, $exporter=null)
+  {
+    $amber =& Amber::getInstance();
+
+    if ($exporter == null) {
+      $exporter = $amber->_stdExporter;
+    }
+    if ($exporter == null) {
+      return new AmberObject();
+    }
+
+    $amber->_stdExporter = $exporter;
+        
+    if ($type == 'report') {
+      if (stristr($type, 'pdf') != false) {
+        return  new report();
+      } else {
+        return  new report();
+      }  
+     } elseif ($type == 'form') {
+      return  new form();
+    } else {
+      return  new AmberObject();
+    }  
+  }
+  
+  
+  
   function OpenReport($reportName, $mode = AC_NORMAL, $filter = '', $type = 'html', $noMargin = false)
   {
-    $rep =& $this->loadObject('report', $reportName);
-    if ($rep == false) {
+    $rep = Amber::createAmberObject('report', $type);
+    if (!$this->loadObject('report', $reportName, $rep)) {
       return false;
     }
 
@@ -149,7 +180,7 @@ class Amber
     $form->run($type);
   }
 
-  function &loadObject($type, $name)
+  function &loadObject($type, $name, &$obj)
   {
     if (!isset($this->_objectLoader)) {
       if ($this->_config->getMedium() == 'db') {
@@ -162,7 +193,7 @@ class Amber
       $this->_objectLoader->setConfig($this->_config);
     }
 
-    $result =& $this->_objectLoader->load($type, $name);
+    $result =& $this->_objectLoader->load($type, $name, $obj);
     if ($result == false) {
       Amber::showError('Error', $this->_objectLoader->getLastError());
       die();
@@ -259,5 +290,8 @@ class Amber
     }
   }
 }
+
+class nullObject
+{}
 
 ?>
