@@ -1,7 +1,7 @@
 #
 # Table structure for table 'tx_amber_sys_objects'
 #
-CREATE TABLE tx_amber_sys_objects (
+CREATE TABLE IF NOT EXISTS tx_amber_sys_objects (
   uid int(11) unsigned DEFAULT '0' NOT NULL auto_increment,
   pid int(11) unsigned DEFAULT '0' NOT NULL,
   tstamp int(11) unsigned DEFAULT '0' NOT NULL,

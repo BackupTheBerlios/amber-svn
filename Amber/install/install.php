@@ -7,6 +7,41 @@ require_once 'Amber/XMLLoader.php';
 
 $filename = __AMBER_BASE__ . '/conf/localconf.xml';
 
+function formatMessage($msg)
+{
+  return '<div align="center"><div style="text-align: left; color: #000000; width: 450; font-size: 10pt; border: #ee0000 2pt solid; background-color: #ffffff; padding: 5px;"><strong>' . $msg . '</strong></div></div>';
+}
+
+function doImport(&$config)
+{
+  $installerPath = __AMBER_BASE__ . '/install/';
+  $amber =& Amber::getInstance($config);
+
+  // Create tx_amber_sys_objects
+  $sysDb =& Amber::sysDb();
+  $sql = file_get_contents($installerPath . '/tx_amber_sys_objects.sql');
+  if ($sql == false) {
+    echo formatMessage('Unable to open tx_amber_sys_objects.sql');
+    return false;
+  }
+  $sysDb->Execute($sql);
+  if ($sysDb->ErrorNo() != 0) {
+    echo formatMessage('Importing tx_amber_sys_objects.sql failed:<p />' . $sysDb->ErrorMsg());
+  }
+
+  // Create table which hold sample data
+  $db =& Amber::currentDb();
+  $sql = @file_get_contents($installerPath . '/sample_data.sql');
+  if ($sql == false) {
+    echo formatMessage('Unable to open sample_data.sql');
+    return false;
+  }
+  $db->Execute($sql);
+  if ($db->ErrorNo() != 0) {
+    echo formatMessage('Importing sample_data.sql failed:<p />' . $db->ErrorMsg());
+  }
+}
+
 $cfg = new AmberConfig();
 if (isset($_POST['doUpdate'])) {
     $props = array(
@@ -26,12 +61,21 @@ if (isset($_POST['doUpdate'])) {
     }
 
     if (!$cfg->toXML($filename)) {
-      $msg = "Unable to update localconf.xml<p />" . htmlentities($filename) . " needs to be writeable";
+      echo formatMessage('Unable to update localconf.xml<p />' . htmlentities($filename) . ' needs to be writeable.');
     } else {
-      $msg = "Configuraton successfully written to:<p />" . htmlentities($filename);
+      echo formatMessage('Configuraton successfully written to:<p />' . htmlentities($filename));
     }
-    echo '<div align="center"><div style="text-align: left; color: #000000; width: 450; font-size: 10pt; border: #ee0000 2pt solid; background-color: #ffffff; padding: 5px;"><strong>' . $msg . '</strong></div></div>';
 }
+if (isset($_POST['doImport'])) {
+  if (!file_exists($filename)) {
+    echo formatMessage('You need to create a localconf.xml before attempting to import the sample database.');
+  } else {
+    $cfg->fromXML($filename);
+    doImport($cfg);
+  }
+}
+
+
 
 // Re-read for display
 $cfg = new AmberConfig();
@@ -48,7 +92,7 @@ if (file_exists($filename)) {
 
   <table align="center" style="width: 450px; border: #b08454 1px dashed;">
     <tr>
-      <td colspan="2"><p><em><strong>Database configuration</strong></em></p></td>
+      <td class="install_header" colspan="2"><p><em><strong>Database configuration</strong></em></p></td>
     </tr>
     <tr>
       <td>Host:</td><td>
@@ -67,7 +111,7 @@ if (file_exists($filename)) {
       <td><input name="dbname" type="text" value="<?php echo htmlspecialchars($cfg->getDbName()) ?>"></td>
     </tr>
     <tr>
-      <td colspan="2"><p><em><strong>Sys_objects</strong></em></p></td>
+      <td class="install_header" colspan="2"><p><em><strong>Sys_objects</strong></em></p></td>
     </tr>
     </tr>
       <td>Medium:</td>
@@ -107,10 +151,22 @@ if (file_exists($filename)) {
 
     <?php } ?>
 
+    <tr>
+      <td class="install_header" colspan="2"><p><em><strong>Write configuration</strong></em></p></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td><input type="submit" name="doUpdate" value="Update localconf.xml" /></td>
+    </tr>
 
     <tr>
-      <td colspan="2" align="center"><input type="submit" name="doUpdate" value="Update localconf.xml"></td>
+      <td class="install_header" colspan="2"><p><em><strong>Import</strong></em></p></td>
     </tr>
+    <tr>
+      <td></td>
+      <td><input type="submit" name="doImport" value="Import Sample database"/></td>
+    </tr>
+
   </table>
 
   <input name="driver" type="hidden" value="mysql"></td>

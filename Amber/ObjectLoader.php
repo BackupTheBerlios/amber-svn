@@ -105,7 +105,7 @@ class ObjectLoaderDb extends ObjectLoader
   {
     $rs =& $this->fetchRecord('module');
     if(!$rs) {
-      return false;
+      return true; // Try to continue even if it has failed
     }
 
     if ($rs->numRows() > 0) {

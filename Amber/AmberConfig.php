@@ -43,7 +43,7 @@ class AmberConfig
       'database', 'sys_objects'
     );
 
-    $fp = fopen($fileName, 'w');
+    $fp = @fopen($fileName, 'w');
     if (!$fp) {
       return false;
     }
