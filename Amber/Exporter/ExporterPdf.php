@@ -124,14 +124,19 @@ class ExporterFPdf extends Exporter
       $this->_pdf->endSubReport();
     } else {  
       $this->endReport1($this->_report->Width);
-      if ($this->createdAs == 'testpdf') {
-        print $this->_pdf->Output('out.txt', 'S');
+      $this->sendOutputFile();
+    }
+  }
+  
+  function sendOutputFile()
+  {
+    if ($this->createdAs == 'testpdf') {
+      print $this->_pdf->Output('out.txt', 'S');
+    } else {
+      if (isset($this->_docTitle)) {
+        $this->_pdf->Output('"' . $this->_docTitle . '.pdf"', 'I');
       } else {
-        if (isset($this->_docTitle)) {
-          $this->_pdf->Output('"' . $this->_docTitle . '.pdf"', 'I');
-        } else {
-          $this->_pdf->Output('out.pdf', 'I');
-        }
+        $this->_pdf->Output('out.pdf', 'I');
       }
     }
   }
