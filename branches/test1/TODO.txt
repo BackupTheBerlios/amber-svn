@@ -1,0 +1,39 @@
+TODO for first public release
+-----------------------------
+
+- examples
+- finish work on documentation
+- sequence diagram (especially for triggers)
+- list of supported attributes
+- combine <report>.xml and <report>-Design.xml
+
+- nice to have: modify sql statement to reflect grouping given in xml
+
+
+BUGS:
+-----
+
+- if we execute a join query which should normally return two columns with the same name, the
+  resulting associative array only contains one of both columns (the first will be overwritten).
+  Same Problem: alias with the same name as a column
+
+  See: http://de3.php.net/manual/en/function.mysql-fetch-assoc.php
+  
+  "[...]If two or more columns of the result have the same field names, the last column will take precedence.
+  To access the other column(s) of the same name, you either need to access the result with numeric indices
+  by using mysql_fetch_row() or add alias names. See the example at the mysql_fetch_array() description
+  about aliases.[...]"
+
+- bug in Format():
+
+  the format expression
+
+          @;"Text"
+          
+  means that a string is displayed if it's not empty/null, otherwise "Text" will be displayed
+
+Important details for inclusion into documentation
+--------------------------------------------------
+- ctype extension required (--> lexer)
+- remember to set locale if your language has special characters
+- grouping: atm the sql statement must include corresponding order by clauses

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<report>
+    <Name>          TestReport</Name>
+    <ClassName>     TestReport</ClassName>
+    <FileNameDesign>TestReport-Design.xml</FileNameDesign>
+    <FileNameCode>  TestReport-Code.php</FileNameCode>
+</report>
+
