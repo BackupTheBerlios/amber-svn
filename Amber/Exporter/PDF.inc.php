@@ -129,7 +129,8 @@ class PDF extends FPDF
   function startSection()
   {
     $this->_inSection++;
-    $this->_sectionBuff[$this->_inSection] = "\n%Start Section:" . ($this->_inSection) . "\n\n";
+    $this->_sectionBuff[$this->_inSection] = '';
+    $this->comment('Start Section:' . ($this->_inSection));
     $this->SetXY(0, 0);
   }
   
@@ -139,7 +140,7 @@ class PDF extends FPDF
       $this->endSectionSubReport($sectionHeight, $keepTogether);
       return;
     }  
-    $this->_out("\n%end Body-Section:" . ($this->_inSection) . "\n\n");
+    $this->comment("end Body-Section:" . ($this->_inSection) . "\n");
     $secBuff = $this->_sectionBuff[$this->_inSection];
     $this->_inSection--;
     $startPage = floor($this->reportBuff->posY / $this->layout->printHeight);
@@ -168,7 +169,7 @@ class PDF extends FPDF
 
   function endSectionSubReport($sectionHeight, $keepTogether)
   {
-    $this->_out("\n%end Subreport-Body-Section:" . ($this->_inSection) . "\n\n");
+    $this->comment("end Subreport-Body-Section:" . ($this->_inSection) . "\n");
     $this->_inSection--;
 
     $this->reportBuff->sectionType = '';
@@ -191,7 +192,7 @@ class PDF extends FPDF
     $this->_inSection--;
     $this->SetCoordinate(0, -$posY);
     $this->SetClipping(0, 0, $this->layout->reportWidth, $height);
-$this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
+    $this->comment("end Head/Foot-Section:" . ($this->_inSection + 1) . "\n");
     $this->_out($this->_sectionBuff[$this->_inSection + 1]);
     $this->RemoveClipping();
     $this->RemoveCoordinate();
@@ -213,12 +214,12 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
   function startSubReport()
   {
     $this->subReportBuff->index++;
-    $this->subReportBuff->buffer[$this->subReportBuff->index] = "\n\n%StartSubreport\n";
+    $this->startcomment("StartSubreport");
   }
   
   function endSubReport()
   {
-    $this->subReportBuff->buffer[$this->subReportBuff->index] .= "\n%EndSubreport\n\n";
+    $this->comment("EndSubreport");
     $this->subReportBuff->index--;
     return $this->subReportBuff->buffer[$this->subReportBuff->index + 1];
   }  
@@ -281,6 +282,16 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
     $this->AddPage();
   }
   
+  function comment($s)
+  {
+    $this->_out("\n%$s\n");
+  }
+  
+  function startComment($s)
+  // this function mere for identity during refactoring. replace with comment
+  {
+    $this->_out("\n\n%$s");
+  }      
   
   function outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff)
   {
