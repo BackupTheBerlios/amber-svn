@@ -215,8 +215,8 @@ class ExporterFPdf extends Exporter
     }
     $para->font = strtolower($para->font);
 
-    //echo "'".$control->FontName."' => '".$this->_fontList[$control->FontName]."'<br>";
-    $this->_pdf->SetFont($this->_fontList[$para->font], $fstyle, $para->fsize);
+    //echo "'".$para->font."' => '".$this->_fontList[$control->FontName]."'<br>";
+    $this->_pdf->SetFont($this->_pdf->_fontList[$para->font], $fstyle, $para->fsize);
 
     $this->_backColor($para->backcolor);
     $this->_textColor($para->forecolor);
