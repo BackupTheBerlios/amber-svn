@@ -108,7 +108,7 @@ class Amber
     echo '<div id="' . $id . '" style="border: solid 3px #ff0000; background-color: #eeeeee; padding: 5px; z-index: 99999; position: relative; margin-top: 10px;">';
     echo '<p align="center"><b>' . $title . '</b></p>';
     echo '<p align="center">' . $text .'</p>';
-    echo '<p align="center"><input type="button" value="Ok" onclick="' . $id . '.style.display = \'none\';" style="width: 80px;" /></p>';
+    echo '<p align="center"><input type="button" value="Ok" onclick="document.getElementById(\'' . $id . '\').style.display = \'none\';" style="width: 80px;" /></p>';
     echo '<p />';
     if (function_exists('debug_backtrace')) {
       Amber::dump(next(debug_backtrace()));
