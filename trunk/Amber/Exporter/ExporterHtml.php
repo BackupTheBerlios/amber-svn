@@ -73,7 +73,7 @@ class ExporterHtml extends Exporter
 
   function comment($s)
   {
-    $this->_base->_out('<!-- ' . htmlspecialchars($s) . " -->\n");
+    $this->_base->_out('<!-- ' . htmlentities($s) . " -->\n");
   }
 
   function outWindowRelative($deltaX, $x, $y, $w, $h, &$dataBuff)
@@ -107,7 +107,7 @@ class ExporterHtml extends Exporter
 
   function outSectionEnd()
   {
-    echo "\t</div name=\"sectionEND\">\n";
+    echo "\t</div>\n";
   }
 
   function outSectionStart($y, $w, $h, $backColor, $sectionName='')
@@ -118,7 +118,7 @@ class ExporterHtml extends Exporter
     $style['width'] = $this->_html_twips($w);
     $style['background-color'] = $this->_html_color($backColor);
 
-    echo "\t<div  name=\"sectionStart\" style=\"" . $this->arrayToStyle($style) . "\">\n";
+    echo "\t<div title=\"sectionStart\" style=\"" . $this->arrayToStyle($style) . "\">\n";
   }
 
 
@@ -175,7 +175,7 @@ class ExporterHtml extends Exporter
     } else {
       $cheatHeight = 15;
     }
-    $out = "\t<div name=\"" . $sectionName . '-border"';
+    $out = "\t<div title=\"" . $sectionName . '-border"';
 
     $style = array();
     $style['top'] = $this->_html_twips($y);
@@ -185,7 +185,7 @@ class ExporterHtml extends Exporter
     $style['background-color'] = '#ffffff';
 
     $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";
-    $out .= "\t<div name=\"" . $sectionName . '"';
+    $out .= "\t<div title=\"" . $sectionName . '"';
 
     $style = array();
     $style['position'] = 'absolute';
@@ -211,7 +211,7 @@ class ExporterHtml extends Exporter
 
   function printTopMargin($posY)
   {
-    $out = "\t<div name=\"TopMargin\"";
+    $out = "\t<div title=\"TopMargin\"";
 
     $style = array();
     $style['top'] = $this->_html_twips($posY);
@@ -228,7 +228,7 @@ class ExporterHtml extends Exporter
 
   function printBottomMargin($posY)
   {
-    $out .= "\t<div name=\"BottomMargin\"";
+    $out .= "\t<div title=\"BottomMargin\"";
 
     $style = array();
     $style['page-break-after'] = 'always';
@@ -402,7 +402,7 @@ Class ControlExporterHtml
     }
     $out .= ">";
 
-    $out .= isset($value) ? nl2br(htmlspecialchars($value)) : '&nbsp;';
+    $out .= isset($value) ? nl2br(htmlentities($value)) : '&nbsp;';
     $out .= "</div>\n";
 
     return $out;
@@ -436,7 +436,7 @@ Class ControlExporterHtml
     if ($value['Height'] <> $std['Height']) {
       $out .= 'height: ' . ExporterHTML::_html_twips($ctrl->Properties['Height']) . '; ';
     }
-      
+
     if (($value['Width'] <> $std['Width']) or ($value['BorderWidth'] <> $std['BorderWidth'])) {
       $widthHtml = $value['Width'] - $BorderWidthHtml - $LeftPaddingHtml- $RightPaddingHtml;
       $out .= 'width: ' . ExporterHTML::_html_twips($widthHtml) . '; ';
@@ -694,7 +694,7 @@ class ComboBoxExporterHtml extends ControlExporterHtml
     $out = "<select>";
     foreach ($value as $idx => $row) {
       $out .= "  " . '<option id="' . htmlspecialchars($idx) . '">';
-      $out .= htmlspecialchars($row) . "</option>\n";
+      $out .= htmlentities($row) . "</option>\n";
     }
     $out .= "</select>\n";
 
