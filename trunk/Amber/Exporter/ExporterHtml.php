@@ -127,7 +127,7 @@ class ExporterHtml extends Exporter
     $style['background-color'] = "#ffffff";
     $style['height'] = $this->_html_twips($paperHeight);
     $style['width'] = $this->_html_twips($this->layout->paperWidth);
-    echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">\n";
+    echo "<div style=\"" . $this->arrayToStyle($style) . "\">\n";
     $this->comment('###PAGE Start###');
   }
 
@@ -141,7 +141,7 @@ class ExporterHtml extends Exporter
     #$style['background-color'] = "#DDDDDD";
     $style['height'] = '2px';
     $style['width'] = '1px';
-    echo "\t<div style=\"" . $this->arrayToStyle($style) . "\"> &nbsp; </div>\n";
+    echo "<div style=\"" . $this->arrayToStyle($style) . "\"> &nbsp; </div>\n";
 
   }
 
