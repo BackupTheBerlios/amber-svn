@@ -47,6 +47,9 @@ class Amber
 
     if (is_null($instance)) {
       $instance = new Amber();
+      if (!is_a($config, 'AmberConfig')) {
+        die(Amber::showError('Error', 'Given parameter is not an instance of AmberConfig', true));
+      }
       $instance->_config = $config;
       $instance->init();
     }

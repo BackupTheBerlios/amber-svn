@@ -34,28 +34,34 @@ class AmberXMLServer extends IXR_Server
    * @param Config
    *
    */
-  function setConfig($cfgObj)
+  function setConfig(&$cfgObj)
   {
     if (is_object($cfgObj) && is_a($cfgObj, 'AmberConfig')) {
       $this->_globalConfig = $cfgObj;
+    } else {
+      echo "here";
+      die(Amber::showError('Error', 'Given parameter is not an instance of AmberConfig', true));
     }
   }
 
   function &currentDb()
   {
-    if (!isset($this->_db)) {
-      $cfg =& $this->_globalConfig;
-      $db =& ADONewConnection($cfg->getDriver());
-      $conResult = $db->PConnect($cfg->getHost(), $cfg->getUsername(), $cfg->getPassword(), $cfg->getDbName());
-      $db->SetFetchMode(ADODB_FETCH_ASSOC);
-      if ($conResult == false) {
-        Amber::showError('Database Error '  . $db->ErrorNo(), $db->ErrorMsg());
-        die();
-      }
-      $this->_db =& $db;
+    $amber =& Amber::getInstance($this->_globalConfig);
+    if (!is_object($amber)) {
+      return false;
+    }
+    
+    return $amber->currentDb();
+  }
+  
+  function &sysDb()
+  {
+    $amber =& Amber::getInstance($this->_globalConfig);
+    if (!is_object($amber)) {
+      return false;
     }
 
-    return $this->_db;
+    return $amber->sysDb();
   }
 
   function writeReportXML($param)
@@ -66,7 +72,7 @@ class AmberXMLServer extends IXR_Server
     $repCode = $param[3];
     $repOverwrite = $param[4];
     
-    $db =& $this->currentDb();
+    $db =& $this->sysDb();
     $dict = NewDataDictionary($db);
     
     // if object exists do update else insert
@@ -96,7 +102,7 @@ class AmberXMLServer extends IXR_Server
 
   function objectExists($type, $name)
   {
-    $db =& $this->currentDb();
+    $db =& $this->sysDb();
     $dict = NewDataDictionary($db);
     
     $sql = 'SELECT uid FROM ' . $dict->TableName($this->sysTableName);
@@ -121,7 +127,7 @@ class AmberXMLServer extends IXR_Server
 
   function getReportList()
   {
-    $db = $this->currentDb();
+    $db = $this->sysDb();
     $dict = NewDataDictionary($db);
     $sql = 'Select name from ' . $dict->TableName($this->sysTableName) . ' WHERE type=' . $this->objectTypes['report'];
 
@@ -130,7 +136,7 @@ class AmberXMLServer extends IXR_Server
   
   function getFormList()
   {
-    $db = $this->currentDb();
+    $db = $this->sysDb();
     $dict = NewDataDictionary($db);
     $sql = 'Select name from ' . $dict->TableName($this->sysTableName) . ' WHERE type=' . $this->objectTypes['form'];
 
@@ -139,7 +145,7 @@ class AmberXMLServer extends IXR_Server
   
   function getForm($name)
   {
-    $db = $this->currentDb();
+    $db = $this->sysDb();
     $dict = NewDataDictionary($db);
     $sql = 'Select * from ' . $dict->TableName($this->sysTableName) . ' WHERE name=' . $db->Quote($name) . ' AND type=' . $this->objectTypes['form'];
 
@@ -148,7 +154,7 @@ class AmberXMLServer extends IXR_Server
   
   function getReport($name)
   {
-    $db = $this->currentDb();
+    $db = $this->sysDb();
     $dict = NewDataDictionary($db);
     $sql = 'Select * from ' . $dict->TableName($this->sysTableName) . ' WHERE name=' . $db->Quote($name) . ' AND type=' . $this->objectTypes['report'];
 
@@ -157,7 +163,7 @@ class AmberXMLServer extends IXR_Server
 
   function getCode($name)
   {
-    $db =& $this->currentDb();
+    $db =& $this->sysDb();
     $dict = NewDataDictionary($db);
     $sql = 'Select code from ' . $dict->TableName($this->sysTableName) . ' where name=' . $db->Quote($name);
 
@@ -168,10 +174,10 @@ class AmberXMLServer extends IXR_Server
 /////////////////////////////////////////////////////////////////////////////
 
 
-$cfg = new AmberConfig();
+$cfg =& new AmberConfig();
 $cfg->fromXML(dirname(__FILE__) . '/Amber/conf/localconf.xml');
 
-$server = new AmberXMLServer();
+$server =& new AmberXMLServer();
 $server->setConfig($cfg);
 $server->processRequest();
 
