@@ -56,11 +56,18 @@ class testSimpleSelectParser extends PHPUnit_TestCase
 
   function testStrings()
   {
-    $parser =& new SimpleSelectParser('SELECT *, "column-name" FROM [table] WHERE b=0');
+    $parser =& new SimpleSelectParser('SELECT *, "column-name" FROM [table 2] WHERE b=\'0\'');
     $result = $parser->parse();
 
-    $this->assertEquals('* ,"column-name"', $result['select']);
-    $this->assertEquals('"table"', $result['from']);
+    $this->assertEquals('*, "column-name"', $result['select']);
+    $this->assertEquals('`table 2`', $result['from']);
+    $this->assertEquals('b = "0"', $result['where']);
+
+    $parser =& new SimpleSelectParser('SELECT *, "column-name" FROM "table 2" WHERE b=0');
+    $result = $parser->parse();
+
+    $this->assertEquals('*, "column-name"', $result['select']);
+    $this->assertEquals('"table 2"', $result['from']);
   }
 
   function testBoolConversion()
@@ -76,6 +83,17 @@ class testSimpleSelectParser extends PHPUnit_TestCase
     $this->assertEquals('b = 0 AND c = 1', $result['where']);
   }
 
+  function testAccessTableNames()
+  {
+    $parser =& new SimpleSelectParser('SELECT customer.*, bill.* FROM customer INNER JOIN bill ON [customer].[id]=[bill].[customer];');
+    $result = $parser->parse();
+
+    $expected = 'customer.*, bill.*';
+    $this->assertEquals($expected, $result['select']);
+
+    $expected = "customer INNER JOIN bill ON `customer`.`id` = `bill`.`customer`";
+    $this->assertEquals($expected, $result['from']); 
+  }
 }
 
 $suite  = new PHPUnit_TestSuite("testSimpleSelectParser");

@@ -64,7 +64,8 @@ class SimpleSelectParser extends Parser
 {
   function initLexer()
   {
-    $this->keywords = array('select', 'from', 'join', 'where', 'group', 'order', 'having', 'order', 'limit');
+    $this->keywords = array('select', 'from', 'join', 'inner', 'outer', 'left', 'right',
+      'on', 'where', 'group', 'order', 'having', 'order', 'limit');
     $this->accessKeywords = array('with', 'owneraccess', 'option', 'true', 'false');
     $this->symbols = array_flip(array_merge($this->keywords, $this->accessKeywords));
   }
@@ -86,31 +87,40 @@ class SimpleSelectParser extends Parser
     }
     $idx = 'select';
     while ($this->token != '') {
+
+      $lastChar = '';
+      if (strlen($tokenTextList) > 0) {
+        $lastChar = $tokenTextList[strlen($tokenTextList) - 1];
+      }
+
+      $newText = '';
       if (!in_array($this->token, $delimiter)) {
         if ($this->token == '.') {
-          $tokenTextList .= '.';
+          $newText = '.';
         } else if ($this->token == 'text_val') {
-          $tokenTextList .= '"' . $this->getTokText() . '"';
+          $newText = '"' . $this->getTokText() . '"';
+        } else if ($this->token == 'name_val') {        
+          $newText = '`' . $this->getTokText() . '`';
         } else if (in_array(strtolower($this->getTokText()) , $this->accessKeywords, true)) {
           $tmpTok = strtolower($this->getTokText());
           if ($tmpTok == 'false') {
-            $tokenTextList .= ' 0';
+            $newText = ' 0';
           } elseif ($tmpTok == 'true') {
-            $tokenTextList .= ' 1';
+            $newText = ' 1';
           }
           // drop access specific keywords
         } else {
-          if (strlen($tokenTextList) > 0) {
-            $lastChar = $tokenTextList[strlen($tokenTextList) - 1];
-          } else {
-            $lastChar = '';
-          }
-          if (($lastChar == '.') || ($this->token  == '(')) {
-            $tokenTextList .= $this->getTokText();
-          } else {
-            $tokenTextList .= ' ' . $this->getTokText();
-          }
+          $newText = $this->getTokText();
         }
+        
+        if (($this->token == '.') || ($this->token == ',')
+          || ($lastChar == '.') || ($this->token  == '('))
+        {
+          $tokenTextList .= $newText;
+        } else {
+          $tokenTextList .= ' ' . trim($newText);
+        }
+    
       } else {
         $this->tree[$idx] = trim($tokenTextList);
         $tokenTextList = '';
@@ -123,9 +133,10 @@ class SimpleSelectParser extends Parser
     if (!empty($tokenTextList)) {
       do {
         $deleted = false;
+        $encoding = mb_detect_encoding($tokenTextList);
         $char = substr($tokenTextList, -1);
-        if (($char == ';') || ($char == ' ')) {
-          $tokenTextList = substr($tokenTextList, 0, strlen($tokenTextList) - 2);
+        if (($char == ';') || ($char === ' ')) {          
+          $tokenTextList = mb_substr($tokenTextList, 0, mb_strlen($tokenTextList, $encoding) - 1, $encoding);
           $deleted = true;
         }
       } while ($deleted);

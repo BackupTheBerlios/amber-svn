@@ -91,7 +91,7 @@ class testLexer extends PHPUnit_TestCase
 
     $token = $lexer->lex();
     $token = $lexer->lex();
-    $this->assertEquals('text_val', $token);
+    $this->assertEquals('name_val', $token);
     $this->assertEquals('customer no', $lexer->tokText);
   }
 }

@@ -225,13 +225,14 @@ function nextToken()
                     }
                 }
 
-                if (($c == '\'') || ($c == '"') || ($c == '[')) { // text string
-                    if ($c == '[') {
-                      $quote = ']';
-                    } else {
-                      $quote = $c;
-                    }
+                if (($c == '\'') || ($c == '"')) { // text string
+                    $quote = $c;
                     $state = 12;
+                    break;
+                }
+
+                if ($c == '[') { // table/column name
+                    $state = 20;
                     break;
                 }
 
@@ -449,6 +450,46 @@ function nextToken()
                     break;
                 }
                 $state = 999;
+                break;
+            // }}}
+
+            // {{{ State 20: Incomplete Access table/column name
+            case 20:
+                $bail = false;
+                while (!$bail) {
+                    switch ($this->get()) {
+                        case '':
+                            $this->tokText = null;
+                            $bail = true;
+                            break;
+                        case "\\":
+                            if (!$this->get()) {
+                                $this->tokText = null;
+                                $bail = true;
+                            }
+                                //$bail = true;
+                            break;
+                        case ']':
+                            $this->tokText = stripslashes(substr($this->string,
+                                       ($this->tokStart+1), ($this->tokLen-2)));
+                            $bail = true;
+                            break;
+                    }
+                }
+                if (!is_null($this->tokText)) {
+                    $state = 21;
+                    break;
+                }
+                $state = 999;
+                break;
+            // }}}
+
+            // {{{ State 21: Complete Access table/column name
+            case 21:
+                $this->skipText = substr($this->string, $this->tokAbsStart,
+                                         $this->tokStart-$this->tokAbsStart);
+                $this->tokStart = $this->tokPtr;
+                return 'name_val';
                 break;
             // }}}
 
