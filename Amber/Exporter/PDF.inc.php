@@ -11,7 +11,6 @@ class reportBuff
 {
   var $reportPages;    // buffer when inReport
   var $actpageNo;      // pageNumber
-  var $sectionType;    // 'Head', 'Foot' or ''
   
   var $posY;
   
@@ -21,10 +20,6 @@ class reportBuff
     $this->_report->layout = $layout; 
   }
   
-  function out(&$s)
-  {
-    $this->reportPages[$this->actpageNo][$this->sectionType] .= $s . "\n";
-  }
   
   function newPage()
   {
@@ -49,6 +44,10 @@ class mayflower
   
   var $inReport = false;
   
+  var $reportBuff;
+  var $sectionType;    // 'Head', 'Foot' or ''
+  var $layout;
+  
   function mayflower(&$reportBuff, &$layout)
   {
     $this->reportBuff =& $reportBuff;
@@ -61,6 +60,8 @@ class mayflower
       $this->sectionBuff[$this->sectionIndex] .= $s . "\n";
     } elseif ($this->subReportIndex) {
       $this->subReportbuff[$this->subReportIndex] .= $s . "\n";
+    } elseif ($this->inReport()) {
+      $this->reportBuff->reportPages[$this->reportBuff->actpageNo][$this->sectionType] .= $s . "\n";
     }  
   }
 
@@ -81,25 +82,20 @@ class mayflower
   
   function reportStartPageHeader()
   {
-    $this->reportBuff->sectionType = 'Head';
+    $this->sectionType = 'Head';
   }  
   function reportStartPageBody()
   {
-    $this->reportBuff->sectionType = '';
+    $this->sectionType = '';
   }  
   function reportStartPageFooter()
   {
-    $this->reportBuff->sectionType = 'Foot';
+    $this->sectionType = 'Foot';
   }  
-  
-  
-  
-  
-  
-  
-  function inSectionOrSubReport()
+   
+  function cached()
   {
-    return (($this->sectionIndex > $this->subReportIndex) or ($this->subReportIndex > 0));
+    return (($this->sectionIndex > $this->subReportIndex) or ($this->subReportIndex > 0) or $this->inReport);
   }
   
   function inSubReport()
@@ -201,10 +197,8 @@ class PDF extends FPDF
   {
     if($this->state <> 2) {
       parent::_out($s);
-    } elseif ($this->mayflower->inSectionOrSubReport()) {
+    } elseif ($this->mayflower->cached()) {
       $this->mayflower->out($s);
-    } elseif ($this->mayflower->inReport()) {
-      $this->mayflower->reportBuff->out($s);
     } else {
       parent::_out($s);
     }
