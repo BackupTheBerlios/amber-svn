@@ -8,8 +8,6 @@
  */
 
 define('FPDF_FONTPATH','fpdf/font/');
-require_once('fpdf/fpdf.php');
-require_once('PDF.inc.php');
 
 ExporterFactory::register('pdf', 'ExporterFPdf');
 ExporterFactory::register('.pdf', 'ExporterFPdf');
@@ -37,6 +35,9 @@ class ExporterFPdf extends Exporter
 
   function &getExporterBasicClass(&$layout, $reset)
   {
+    require_once('fpdf/fpdf.php');
+    require_once('PDF.inc.php');
+
     return PDF::getInstance($layout, $reset);
   }
 
