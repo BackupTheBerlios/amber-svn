@@ -42,7 +42,7 @@ class reportPaged extends Report
       return;
     }
     if ($this->_asSubReport) {
-      $this->_exporter->newPage();
+      $this->newPage();
       $this->_exporter->comment("EndSubreport");
       return $this->mayflower->subReportPop();
     } else {

@@ -213,8 +213,7 @@ class ExporterFPdf extends Exporter
   
   function endReportSubExporter(&$report)
   {
-    if ($this->_asSubreport) {
-    } else {
+    if (!$this->_asSubreport) {
       $this->_sendOutputFile();
     }
   }
