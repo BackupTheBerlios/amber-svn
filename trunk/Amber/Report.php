@@ -906,7 +906,7 @@ class Report extends AmberObject
   {
     $this->_designSection =& new section('');
     $this->_designSection->Name = '<designBorder>';
-    $this->_designSection->Height = 240;
+    $this->_designSection->Height = 240 + BorderCheat;
     $this->_designSection->Visible = true;
     $this->_designSection->BackColor = 0xFFFFFF;
     $this->_designSection->CanGrow = false;
@@ -921,7 +921,7 @@ class Report extends AmberObject
       'Left' => 0,
       'Top' => BorderCheat,
       'Width' => $this->Width,
-      'Height' => max(240 - BorderCheat, 0), 
+      'Height' => 240, 
       'Visible' => true,
       'BackStyle' => 1,
       'BackColor' => 0xDDDDDD, //gray
