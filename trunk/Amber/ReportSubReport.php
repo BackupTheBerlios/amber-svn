@@ -10,9 +10,9 @@
 
 class ReportSubReport extends ReportPaged
 {
-  function _startReport($isSubreport, $isDesignMode)
+  function _startReport($isSubreport)
   {
-    parent::_startReport($isSubreport, $isDesignMode);
+    parent::_startReport($isSubreport);
 
     $this->subReportStartBuffer();
     $this->_exporter->comment("StartSubreport"); // remove this!!!
@@ -23,14 +23,13 @@ class ReportSubReport extends ReportPaged
    */
   function _endReport()
   {
-    $this->newPage();
+    #$this->newPage();
     $this->_exporter->comment("EndSubreport");
     $this->subReportBuff = $this->subReportEndBuffer(); //a real copy
   }
   
   function _startSection(&$section, $width, &$buffer)
   {
-    $this->_exporter->startSection($section, $width, $buffer);
     $section->sectionStartBuffer($this->_exporter);
     $this->_exporter->comment('Start Section:');
   }  
@@ -49,7 +48,6 @@ class ReportSubReport extends ReportPaged
     $this->_exporter->outSectionEnd();
 
     $this->posY += $height;
-    $this->_exporter->endSection($section, $height, $buffer);
   }
   
 ///////////////////////////

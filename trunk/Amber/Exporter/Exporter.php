@@ -41,10 +41,7 @@ class Exporter
   function startReport(&$report, $asSubreport = false, $isDesignMode = false)
   {
     $this->_start = microtime();
-    $this->_report =& $report;
     $this->_asSubreport = $asSubreport;
-    $this->DesignMode = $isDesignMode;
-    $this->_blankPage = true;
     $this->_base =& $this->getExporterBasicClass($report->layout, !$asSubreport);
     $this->startReportSubExporter($report, $asSubreport, $isDesignMode);
   }
@@ -57,14 +54,6 @@ class Exporter
   }
 
   // Section
-  function startSection(&$section, $width, &$buffer)
-  {
-  }
-  
-  function endSection(&$section, $height, &$buffer)
-  {
-  }
-
   function sectionPrintDesignHeader($text='') {}
 
   // Page handling

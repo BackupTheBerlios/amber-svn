@@ -51,11 +51,13 @@
 
 <div class="AmberReport">
 	<div name="Seitenkopfbereich-Header" style="top: 0px; height: 12pt; left: 0; width: 100%; background-color: #999999; font: 8pt arial; border: #000000 solid 1px; border-top: #cccccc solid 1px; border-left: #cccccc solid 1px; margin-bottom: 1px; margin-top: 1px; ">Seitenkopfbereich</div>
-	<div name="Seitenkopfbereich" style="top: 21px; height: 76px; left: 0; width: 664px; background-color: #ccffff; ">
+	<div name="Seitenkopfbereich-border" style="top: 21px; height: 76px; left: 0; width: 871px; background-color: #ffffff; ">
+	<div name="Seitenkopfbereich" style="position: absolute; overflow: hidden; height: 75px; left: 106px; width: 664px; background-color: #ccffff; ">
 		<div class="s42" style="visibility: visible;">Page Header</div>
-	</div>
+	</div></div>
 	<div name="Detailbereich-Header" style="top: 95px; height: 12pt; left: 0; width: 100%; background-color: #999999; font: 8pt arial; border: #000000 solid 1px; border-top: #cccccc solid 1px; border-left: #cccccc solid 1px; margin-bottom: 1px; margin-top: 1px; ">Detailbereich</div>
-	<div name="Detailbereich" style="top: 116px; height: 852px; left: 0; width: 664px; background-color: #ffffff; ">
+	<div name="Detailbereich-border" style="top: 116px; height: 852px; left: 0; width: 871px; background-color: #ffffff; ">
+	<div name="Detailbereich" style="position: absolute; overflow: hidden; height: 851px; left: 106px; width: 664px; background-color: #ffffff; ">
 		<div class="s43" style="visibility: visible;">Arial 8pt</div>
 		<div class="s44" style="visibility: visible;">Times New Roman 12 pt</div>
 		<div class="s45" style="visibility: visible;">Times New Roman 12 pt bold</div>
@@ -85,13 +87,14 @@
 		<div class="s69" style="visibility: visible;">Bericht1</div>
 		<div class="s70" style="border-color: #cccccc; border-style: solid; visibility: visible;">Bericht1:</div>
 		<div class="s71" style="visibility: visible;">Report header/footer should be visible, page header/footer should not be visible</div>
-	</div>
+	</div></div>
 	<div name="Seitenfuﬂbereich-Header" style="top: 967px; height: 12pt; left: 0; width: 100%; background-color: #999999; font: 8pt arial; border: #000000 solid 1px; border-top: #cccccc solid 1px; border-left: #cccccc solid 1px; margin-bottom: 1px; margin-top: 1px; ">Seitenfuﬂbereich</div>
-	<div name="Seitenfuﬂbereich" style="top: 988px; height: 111px; left: 0; width: 664px; background-color: #ccffff; ">
+	<div name="Seitenfuﬂbereich-border" style="top: 988px; height: 111px; left: 0; width: 871px; background-color: #ffffff; ">
+	<div name="Seitenfuﬂbereich" style="position: absolute; overflow: hidden; height: 110px; left: 106px; width: 664px; background-color: #ccffff; ">
 		<div class="s72" style="visibility: visible;">Page Footer (align left)</div>
 		<div class="s73" style="visibility: visible;">Page Footer (align right)</div>
 		<div class="s74" style="visibility: visible;">Page Footer (centered)</div>
-	</div>
+	</div></div>
 
 </div>
 

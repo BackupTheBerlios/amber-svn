@@ -23,7 +23,7 @@ class ExporterTypo3 extends ExporterHtml
 
   function startReportSubExporter(&$report, $asSubreport = false, $isDesignMode = false)
   {
-    $css = $this->getReportCssStyles($this->_report, $this->cssClassPrefix);
+    $css = $this->getReportCssStyles($report, $this->cssClassPrefix);
     $this->setCss($css);
     
     $tmp = "\n\n<!-- Start of AmberReport // -->\n\n<div class=\"AmberReport\">\n";

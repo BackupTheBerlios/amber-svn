@@ -17,9 +17,9 @@ class reportPaged extends Report
   /**
    * @access private
    */
-  function _startReport($isSubreport, $isDesignMode)
+  function _startReport($isSubreport)
   {
-    parent::_startReport($isSubreport, $isDesignMode);
+    parent::_startReport($isSubreport);
     
     $this->posY = 0;
   }
@@ -29,13 +29,20 @@ class reportPaged extends Report
    */
   function _endReport()
   {
-    if (!$this->layout->designMode) {
+    if (!$this->designMode) {
       $this->_printNormalSection($this->PageFooter);
     }  
  
     $this->endReportBuffering();
     $this->posY = 0;
+    
+    $this->outPages();
+    
+    $this->_exporter->endReport($this);
+  }
 
+  function outPages()
+  {
     $firstPage = true;  //first page is out
     $endPageX = floor($this->layout->_reportWidth / $this->layout->printWidth);
     foreach(array_keys($this->reportPages) as $pageY) {
@@ -50,9 +57,8 @@ class reportPaged extends Report
         $this->outPageFooter($pageY, $pageX);  
       }
     }
-    $this->_exporter->endReport($this);
   }
-
+  
   function outPageHeader($pageY, $pageX)
   {
     $x = $this->layout->leftMargin;
@@ -86,7 +92,6 @@ class reportPaged extends Report
 
   function _startSection(&$section, $width, &$buffer)
   {
-    $this->_exporter->startSection($section, $width, $buffer);
     $section->sectionStartBuffer($this->_exporter);
     $this->_exporter->comment('Start Section:');
   }  
@@ -95,14 +100,13 @@ class reportPaged extends Report
   {
     if (!$section->_PagePart) {
       $this->endNormalSection($section, $height, $section->KeepTogether);
-    } elseif ($this->layout->designMode) {
+    } elseif ($this->designMode) {
       $this->endNormalSection($section, $height, false);
     } elseif ($section->_PagePart == 'Foot') {
       $this->pageFooterEnd($section);
     } else {
       $this->pageHeaderEnd($section);
     }
-    $this->_exporter->endSection($section, $height, $buffer);
   }
   
   
@@ -136,19 +140,17 @@ class reportPaged extends Report
         $this->printPageHeader();
       }
       $this->reportStartPageBody();
-      if ($this->_exporter->DesignMode) {
-        $this->_exporter->outSectionStart(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor);
+      $this->_exporter->outSectionStart(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor);
+      if ($this->designMode) {
         $this->_exporter->out($secBuff);
-        $this->_exporter->outSectionEnd();
       } else {
-        $this->_exporter->outSectionStart(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor);
         $formatCount = $page - $startPage + 1;
         $section->_onPrint($cancel, $formatCount);
         if (!$cancel) {
           $this->_exporter->out($secBuff);
         }
-        $this->_exporter->outSectionEnd();
       }      
+      $this->_exporter->outSectionEnd();
     }
     $this->posY += $sectionHeight;
   }
@@ -173,14 +175,14 @@ class reportPaged extends Report
   
   function printPageFooter()
   {
-    if (!$this->layout->designMode) {  
+    if (!$this->designMode) {  
       $this->_printNormalSection($this->PageFooter);
     }  
   }
   
   function printPageHeader()
   {
-    if (!$this->layout->designMode) {  
+    if (!$this->designMode) {  
       $this->_printNormalSection($this->PageHeader);
     }  
   }

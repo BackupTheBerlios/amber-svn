@@ -223,7 +223,8 @@ class Report extends AmberObject
   {
     $this->_installExporter($type);
     $this->_setDocumentTitle($this->Name);
-    $this->_startReport($isSubreport, false);
+    $this->designMode = false;
+    $this->_startReport($isSubreport);
 
     $this->OnOpen($cancel);
     if ($cancel) {
@@ -295,7 +296,8 @@ class Report extends AmberObject
     $this->_installExporter($type);
     $this->_setDocumentTitle($this->Name);
 
-    $this->_startReport($isSubreport, true);
+    $this->designMode = true;
+    $this->_startReport($isSubreport);
 
     $maxLevel = count($this->_groupFields);
 
@@ -710,13 +712,13 @@ class Report extends AmberObject
   /**
    * @access private
    */
-  function _startReport($isSubreport, $isDesignMode)
+  function _startReport($isSubreport)
   {
-    if ($isDesignMode) {
+    if ($this->designMode) {
       $this->initDesignHeader();
     }
-    $this->layout =& new pageLayout($this, $this->_asSubReport, $isDesignMode);
-    $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
+    $this->layout =& new pageLayout($this, $this->_asSubReport, $this->designMode);
+    $this->_exporter->startReport($this, $isSubreport, $this->designMode);
   }
 
   /**
