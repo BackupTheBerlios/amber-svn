@@ -50,7 +50,7 @@ class ExporterFPdf extends Exporter
     if ($this->_asSubreport) {
       $this->_pdf->startSubReport();
     } else {  
-      $this->_pdf->init($this, $report->Width, $this->_report->layout);
+      $this->_pdf->init($this, $this->_report->layout);
       $this->_pdf->StartReportBuffering($this->_report->reportBuff);
     }
   }
@@ -87,7 +87,7 @@ class ExporterFPdf extends Exporter
   
     $firstPage = true;  //first page is out
 
-    $endPageX = floor($this->_pdf->_reportWidth / $this->_report->layout->printWidth);
+    $endPageX = floor($this->_report->layout->_reportWidth / $this->_report->layout->printWidth);
     foreach(array_keys($this->_report->reportBuff->reportPages) as $pageY) {
       for($pageX = 0; $pageX <= $endPageX; $pageX++) {
         if (!$firstPage) {

@@ -151,7 +151,7 @@ class PDF extends FPDF
         $this->_exporter->printPageHeader();
       }
       $this->reportBuff->sectionType = '';
-      $this->outSection(0, $this->reportBuff->posY, $this->_reportWidth, $sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
+      $this->outSection(0, $this->reportBuff->posY, $this->layout->reportWidth, $sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
     }
     $this->reportBuff->posY += $sectionHeight;
   }
@@ -163,7 +163,7 @@ class PDF extends FPDF
 
     $this->reportBuff->sectionType = '';
     $this->SetCoordinate(0, -$this->reportBuff->posY);
-    $this->SetClipping(0, 0, $this->_reportWidth, $sectionHeight);
+    $this->SetClipping(0, 0, $this->layout->reportWidth, $sectionHeight);
 
     $formatCount = 1;
     $this->_exporter->onPrint($cancel, $formatCount);
@@ -180,7 +180,7 @@ class PDF extends FPDF
   {
     $this->_inSection--;
     $this->SetCoordinate(0, -$posY);
-    $this->SetClipping(0, 0, $this->_reportWidth, $height);
+    $this->SetClipping(0, 0, $this->layout->reportWidth, $height);
 $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
     $this->_out($this->_sectionBuff[$this->_inSection + 1]);
     $this->RemoveClipping();
@@ -251,12 +251,11 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
     return $instance;
   }
 
-  function init(&$exporter, $width, &$layout)
+  function init(&$exporter, &$layout)
   {
     $this->_exporter =& $exporter;
     $this->layout = $layout;
     $this->SetCompression(false);
-    $this->_reportWidth = $width;
     $this->reportBuff->posY = 0;
 
     $this->SetCompression(false);

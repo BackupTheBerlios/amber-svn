@@ -130,6 +130,8 @@ class pageLayout
   var $pageHeaderHeight;
   var $pageFooterHeight;
   
+  var $reportWidth;
+  
   //////////////////////
   // 'calculated' fields
   /////////////////////
@@ -139,6 +141,7 @@ class pageLayout
   function pageLayout(&$report, $asSubReport, $designMode)
   {    
     $this->unit = 1/20;
+    $this->reportWidth = $report->Width;
     if ($report->Orientation == 'portrait') {
       $this->paperWidth = $report->PaperWidth;
       $this->paperHeight = $report->PaperHeight;
