@@ -116,8 +116,6 @@ class ExporterHtml extends Exporter
 
   function startSection(&$section, $width, &$buffer)
   {
-    parent::startSection($section, $width, $buffer);
-
     if (!(($section->_PagePart) or ($this->DesignMode))) {
       if ($this->_blankPage) {
         $this->_blankPage = false;
@@ -143,7 +141,6 @@ class ExporterHtml extends Exporter
 
   function endSection(&$section, $height, &$buffer)
   {
-    parent::endSection($section, $width, $buffer);
     $cheatWidth  = 59; // cheat: add 1.5pt to height and 3pt to width so borders get printed in Mozilla ###FIX ME
     if ($height == 0) {
       $cheatHeight = 0;
@@ -211,6 +208,8 @@ class ExporterHtml extends Exporter
   function newPage()
   {
     if ((!$this->_blankPage) and (!$this->DesignMode)) {
+      $this->_report->_printNormalSection('PageFooter');
+      
       $out .= "\t<div name=\"BottomMargin\"";
 
       $style = array();

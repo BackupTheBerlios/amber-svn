@@ -24,6 +24,13 @@ BUGS:
   by using mysql_fetch_row() or add alias names. See the example at the mysql_fetch_array() description
   about aliases.[...]"
 
+- bug in Format():
+
+  the format expression
+
+          @;"Text"
+          
+  means that a string is displayed if it's not empty/null, otherwise "Text" will be displayed
 
 Important details for inclusion into documentation
 --------------------------------------------------
