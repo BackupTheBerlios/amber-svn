@@ -32,7 +32,6 @@ class reportPaged extends Report
       $this->subReportStartBuffer();
       $this->_exporter->comment("StartSubreport"); // remove this!!!
     } else {  
-      $this->StartReportBuffering();
       $this->posY = 0;
     }
   }
@@ -67,16 +66,16 @@ class reportPaged extends Report
           }
           $firstPage = false;
   
-          $this->outPageHeader($pageY, $pageX, $this->_exporter);  
-          $this->outPage($pageY, $pageX, $this->_exporter);  
-          $this->outPageFooter($pageY, $pageX, $this->_exporter);  
+          $this->outPageHeader($pageY, $pageX);  
+          $this->outPage($pageY, $pageX);  
+          $this->outPageFooter($pageY, $pageX);  
         }
       }
     }
     $this->_exporter->endReport($this);
   }
 
-  function outPageHeader($pageY, $pageX, &$exporter)
+  function outPageHeader($pageY, $pageX)
   {
     $x = $this->layout->leftMargin;
     $y = $this->layout->topMargin;
@@ -84,9 +83,9 @@ class reportPaged extends Report
     $h = $this->layout->pageHeaderHeight;
     $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
     $deltaY = $pageY * $this->layout->printHeight - $y;
-    $exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->reportPages[$pageY]['Head']);
+    $this->_exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->reportPages[$pageY]['Head']);
   }
-  function outPage($pageY, $pageX, &$exporter)
+  function outPage($pageY, $pageX)
   {
     $x = $this->layout->leftMargin;
     $y = $this->layout->topMargin + $this->layout->pageHeaderHeight;
@@ -94,9 +93,9 @@ class reportPaged extends Report
     $h = $this->layout->printHeight;
     $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
     $deltaY = $pageY * $this->layout->printHeight - $y;
-    $exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->reportPages[$pageY]['']);
+    $this->_exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->reportPages[$pageY]['']);
   }
-  function outPageFooter($pageY, $pageX, &$exporter)
+  function outPageFooter($pageY, $pageX)
   {
     $x = $this->layout->leftMargin;
     $y = $this->layout->topMargin + $this->layout->pageHeaderHeight + $this->layout->printHeight;
@@ -104,7 +103,7 @@ class reportPaged extends Report
     $h = $this->layout->pageFooterHeight;
     $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
     $deltaY = $pageY * $this->layout->printHeight - $y;
-    $exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->reportPages[$pageY]['Foot']);
+    $this->_exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->reportPages[$pageY]['Foot']);
   }
 
   function _startSection(&$section, $width, &$buffer)
@@ -185,6 +184,14 @@ class reportPaged extends Report
     $this->_endSection($this->_designSection, $height, $buffer);
   }
   
+  function _newPageAvoidsSectionSplit($sectionHeight)           // end of section will be on same page, wether with or without pagebreak
+  {
+    $endPageWithoutNewPage = floor(($this->posY + $sectionHeight) / $this->layout->printHeight);
+    $startNewPage =  (floor($this->posY / $this->layout->printHeight) + 1) * $this->layout->printHeight;
+    $endPageWithNewPage = floor(($startNewPage + $sectionHeight) / $this->layout->printHeight);
+    return ($endPageWithoutNewPage == $endPageWithNewPage);           // end of section will be on same page, wether with or without pagebreak
+  }
+  
   
   function endNormalSection(&$section, $sectionHeight, $keepTogether)
   {
@@ -194,37 +201,31 @@ class reportPaged extends Report
     }  
     $this->_exporter->comment("end Body-Section:1\n");
     $secBuff = $section->sectionEndBuffer($this->_exporter);
-    $startPage = floor($this->posY / $this->layout->printHeight);
-    $endPage   = floor(($this->posY + $sectionHeight) / $this->layout->printHeight);
-    if ($keepTogether and ($startPage <> $endPage)) {                 // section doesn't fit on page and keepTogether
-      $endPageWithoutNewPage = floor(($this->posY + $sectionHeight) / $this->layout->printHeight);
-      $startNewPage =  (floor($this->posY / $this->layout->printHeight) + 1) * $this->layout->printHeight;
-      $endPageWithNewPage = floor(($startNewPage + $sectionHeight) / $this->layout->printHeight);
-      if ($endPageWithoutNewPage == $endPageWithNewPage) {          // end of section will be on same page, wether with or without pagebreak
+    if ($keepTogether) {                 // section doesn't fit on page and keepTogether
+      if ($this->_newPageAvoidsSectionSplit($sectionHeight)) {
         $this->newPage();
-        $startPage = floor($this->posY / $this->layout->printHeight);
-        $endPage   = floor(($this->posY + $sectionHeight) / $this->layout->printHeight);
       }
     }
+    $startPage = floor($this->posY / $this->layout->printHeight);
+    $endPage   = floor(($this->posY + $sectionHeight) / $this->layout->printHeight);
 
     for ($page = $startPage; $page <= $endPage; $page++) {
-      if (($page <> $this->getPageIndex())) {
-        if ($this->getPageIndex() >= 0) {
+      if (($page <> $this->actpageNo)) {
+        if ($this->actpageNo >= 0) {
           $this->printPageFooter();
         }
         $this->setPageIndex($page);
         $this->printPageHeader();
       }
       $this->reportStartPageBody();
-      if (!$this->_exporter->DesignMode) {
-        #$this->outSectionWithCallback(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
+      if ($this->_exporter->DesignMode) {
+        $this->_exporter->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $secBuff);
+      } else {
         $formatCount = $page - $startPage + 1;
         $this->_exporter->onPrint($cancel, $formatCount);
         if (!$cancel) {
           $this->_exporter->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $secBuff);
         }
-      } else {
-        $this->_exporter->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $secBuff);
       }      
     }
     $this->posY += $sectionHeight;
@@ -248,14 +249,14 @@ class reportPaged extends Report
   {
    $buff = $section->sectionEndBuffer($this->_exporter);
    $this->reportStartPageHeader();
-   $this->_exporter->_pageHeaderOrFooterEnd($this->getPageIndex() * $this->layout->printHeight, $this->layout->reportWidth, $this->layout->pageHeaderHeight, $buff);
+   $this->_exporter->_pageHeaderOrFooterEnd($this->actpageNo * $this->layout->printHeight, $this->layout->reportWidth, $this->layout->pageHeaderHeight, $buff);
   }
 
   function pageFooterEnd(&$section)
   {
     $buff = $section->sectionEndBuffer($this->_exporter);
     $this->reportStartPageFooter();
-    $this->_exporter->_pageHeaderOrFooterEnd($this->getPageIndex() * $this->layout->printHeight, $this->layout->reportWidth, $this->layout->pageFooterHeight, $buff);
+    $this->_exporter->_pageHeaderOrFooterEnd($this->actpageNo * $this->layout->printHeight, $this->layout->reportWidth, $this->layout->pageFooterHeight, $buff);
   }
   
   function printPageFooter()
@@ -279,12 +280,12 @@ class reportPaged extends Report
   
   function newPage()
   {
-    $this->posY = ($this->getPageIndex() + 1) * $this->layout->printHeight;
+    $this->posY = ($this->actpageNo + 1) * $this->layout->printHeight;
   }
 
   function posYinPage()
   {
-    return ($this->posY - ($this->getPageIndex() * $this->layout->printHeight));
+    return ($this->posY - ($this->actpageNo * $this->layout->printHeight));
   }
   
 ///////////////////////////
@@ -336,11 +337,6 @@ class reportPaged extends Report
     $this->_setOutBuff();
   }        
   
-  function getPageIndex()
-  {
-    return $this->actpageNo;
-  }  
-  
   function reportStartPageHeader()
   {
     $this->sectionType = 'Head';
@@ -359,14 +355,7 @@ class reportPaged extends Report
     $this->_setOutBuff();
   }  
    
-  function startReportBuffering()
-  {
-    if ($this->inReport()) {
-      Amber::showError('Error', 'startReport: a report is already started!');
-      die();
-    }  
-  }
-  
+
   function endReportBuffering()
   {
     if (!$this->inReport()) {
