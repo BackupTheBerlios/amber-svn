@@ -29,6 +29,7 @@ class Amber
   var $_sysdb; // ADODB database containig tx_amber_sys_objects
 
   var $_stdExporter; //std-exporter: the exporter the report was opened with
+  var $_modulesLoaded = false; // indicates whether modules have been included
 
   /**
    * @static
@@ -38,16 +39,6 @@ class Amber
   function init()
   {
     $this->_objectManager =& new ObjectManager($this);
-    $mgr =& $this->getObjectManager();
-
-    /* Process all modules available */
-    $moduleList = $mgr->getList('module');
-    if (is_array($moduleList)) {
-      foreach ($moduleList as $moduleName) {
-        $moduleObj = $mgr->loadModule($moduleName);
-        $moduleObj->run();
-      }
-    }
   }
 
   /**
@@ -161,6 +152,25 @@ class Amber
     return $amber->_sysdb;
   }
 
+  function loadModules()
+  {
+    if ($this->_modulesLoaded) {
+      return false;
+    }
+    
+    $mgr =& $this->getObjectManager();
+
+    /* Process all modules available */
+    $moduleList = $mgr->getList('module');
+    if (is_array($moduleList)) {
+      foreach ($moduleList as $moduleName) {
+        $moduleObj = $mgr->loadModule($moduleName);
+        $moduleObj->run();
+      }
+    }
+    $this->_modulesLoaded = true;
+  }
+  
   /**
    * @static
    * @access public
@@ -208,6 +218,7 @@ class Amber
         break;
       case AC_NORMAL:
       default:
+        $this->loadModules();
         $rep->run($type);
         break;
     }
