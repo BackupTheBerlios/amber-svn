@@ -47,7 +47,7 @@ class reportPaged extends Report
       return $this->mayflower->subReportPop();
     } else {
       if (!$this->layout->designMode) {
-        $this->_printNormalSection('PageFooter');
+        $this->_printNormalSection($this->PageFooter);
       }  
    
       $this->mayflower->endReportBuffering();

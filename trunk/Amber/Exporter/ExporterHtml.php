@@ -133,7 +133,7 @@ class ExporterHtml extends Exporter
 
         echo $out;
         $this->_posY += $this->_report->TopMargin;
-        $this->_report->_printNormalSection('PageHeader'); // FIXME: this has to be done by the Report class!!!
+        $this->_report->_printNormalSection($this->_report->PageHeader); // FIXME: this has to be done by the Report class!!!
       }
     }
     $buffer = null;
@@ -208,7 +208,7 @@ class ExporterHtml extends Exporter
   function newPage()
   {
     if ((!$this->_blankPage) and (!$this->DesignMode)) {
-      $this->_report->_printNormalSection('PageFooter');
+      $this->_report->_printNormalSection($this->_report->PageFooter);
       
       $out .= "\t<div name=\"BottomMargin\"";
 

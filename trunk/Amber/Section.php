@@ -154,13 +154,13 @@ class Section
    * @param obj GroupLevel
    *
    */
-  function printDesign($GroupLevel=Null)
+  function printDesign($GroupByName='')
   {
     if ($this->isNull()) {
       return 0;
     } else {
-      if ($GroupLevel) {
-        $this->_sectionPrintDesignHeader($this->EventProcPrefix . ' - ' . $GroupLevel->ControlSource);
+      if ($GroupByName) {
+        $this->_sectionPrintDesignHeader($this->EventProcPrefix . ' - ' . $GroupByName);
       } else {
         $this->_sectionPrintDesignHeader($this->EventProcPrefix);
       }

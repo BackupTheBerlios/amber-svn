@@ -255,12 +255,12 @@ class Report extends AmberObject
     $this->OnFirstFormat($cancel);
     
     if (!$cancel) {
-      $this->_printNormalSection('ReportHeader');
+      $this->_printNormalSection($this->ReportHeader);
       $this->_printNormalGroupHeaders($maxLevel, 0);
     }
     
     if (is_null($this->RecordSource)) {   // if no data expected print Detail only once
-      $this->_printNormalSection('Detail');
+      $this->_printNormalSection($this->Detail);
     } else {                              // Loop through all records
       $oldRow =& $this->Cols;
       $keys = array_keys($this->_data);
@@ -273,13 +273,13 @@ class Report extends AmberObject
           $this->_printNormalGroupFooters($maxLevel, $level);
           $this->_printNormalGroupHeaders($maxLevel, $level);
           $this->_resetRunningSum($level, $maxLevel);
-          $this->_printNormalSection('Detail');
+          $this->_printNormalSection($this->Detail);
           $oldRow =& $this->Cols;
         }  
       }
     }
     $this->_printNormalGroupFooters($maxLevel, 0);
-    $this->_printNormalSection('ReportFooter');
+    $this->_printNormalSection($this->ReportFooter);
     $this->_exporter->newPage();
     $this->OnClose();
     $this->_endReport($isSubreport);
@@ -310,15 +310,15 @@ class Report extends AmberObject
 
     $maxLevel = count($this->_groupFields);
 
-    $this->_printDesignSection('ReportHeader');
-    $this->_printDesignSection('PageHeader');
+    $this->_printDesignSection($this->ReportHeader);
+    $this->_printDesignSection($this->PageHeader);
     $this->_printDesignGroupHeaders($maxLevel, 0);
 
-    $this->_printDesignSection('Detail');
+    $this->_printDesignSection($this->Detail);
 
     $this->_printDesignGroupFooters($maxLevel, 0);
-    $this->_printDesignSection('ReportFooter');
-    $this->_printDesignSection('PageFooter');
+    $this->_printDesignSection($this->ReportFooter);
+    $this->_printDesignSection($this->PageFooter);
     $this->_exporter->newPage();
     $this->_endReport($isSubreport);
   }
@@ -497,20 +497,20 @@ class Report extends AmberObject
    * @access private
    * @param string
    */
-  function _printNormalSection($sectionName)
+  function _printNormalSection(&$section)
   {
     //Amber::dumpArray($this);
-    $this->$sectionName->printNormal();
-    $this->_prepareDuplicates($this->$sectionName);
+    $section->printNormal();
+    $this->_prepareDuplicates($section);
   }
 
    /**
    * @access private
    * @param string
    */
-  function _printDesignSection($sectionName)
+  function _printDesignSection($section, $GroupByName='')
   {
-    $this->$sectionName->printDesign();
+    $section->printDesign($GroupByName);
   }
 
  /**
@@ -522,8 +522,7 @@ class Report extends AmberObject
   {
     for ($i = $level; $i < $maxLevel; $i++) {
       if (isset($this->GroupHeaders[$i])) {
-        $this->GroupHeaders[$i]->printNormal();
-        $this->_prepareDuplicates($this->GroupHeaders[$i]);
+        $this->_printNormalSection($this->GroupHeaders[$i]);
       }
     }
   }
@@ -537,7 +536,7 @@ class Report extends AmberObject
   {
     for ($i = $level; $i < $maxLevel; $i++) {
       if (isset($this->GroupHeaders[$i])) {
-        $this->GroupHeaders[$i]->printDesign($this->GroupLevels[$i]);
+        $this->_printDesignSection($this->GroupHeaders[$i], $this->GroupLevels[$i]->ControlSource);
       }
     }
   }
@@ -566,7 +565,7 @@ class Report extends AmberObject
   {
     for ($i = $maxLevel-1; $i >= $level; $i--) {
       if (isset($this->GroupFooters[$i])) {
-        $this->GroupFooters[$i]->printDesign($this->GroupLevels[$i]);
+        $this->GroupFooters[$i]->printDesign($this->GroupLevels[$i]->ControlSource);
       }
     }
   }

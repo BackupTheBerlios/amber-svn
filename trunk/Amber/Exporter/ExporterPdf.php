@@ -330,7 +330,7 @@ class ExporterFPdf extends Exporter
           $this->_pdf->outSection(0, $this->mayflower->posY, $this->mayflower->layout->reportWidth, $sectionHeight, $secBuff);
         }
       } else {
-        $this->_pdf->outSection(0, $this->mayflower->posY, $this->mayflower->layout->reportWidth, $sectionHeight, &$secBuff);
+        $this->_pdf->outSection(0, $this->mayflower->posY, $this->mayflower->layout->reportWidth, $sectionHeight, $secBuff);
       }      
     }
     $this->mayflower->posY += $sectionHeight;
@@ -375,7 +375,7 @@ class ExporterFPdf extends Exporter
   function printPageFooter()
   {
     if (!$this->_report->layout->designMode) {  
-      $this->_report->_printNormalSection('PageFooter');
+      $this->_report->_printNormalSection($this->_report->PageFooter);
     }  
   }
  
@@ -387,7 +387,7 @@ class ExporterFPdf extends Exporter
   function printpageHeader()
   {
     if (!$this->_report->layout->designMode) {  
-      $this->_report->_printNormalSection('PageHeader');
+      $this->_report->_printNormalSection($this->_report->PageHeader);
     }  
   }
   
