@@ -24,8 +24,14 @@ if ($mode != 'design') {
   $mode = 'normal';
 }
 
+$cfgFileName = '../Amber/conf/localconf.xml';
+if (!file_exists($cfgFileName)) {
+  showError('Error: localconf.xml does not exist', 'Amber needs to be configured before you can use it. <br>Use the <a href="../Amber/install/index.php" target="_blank">install tool</a> to set up the database connection.');
+  die();
+}
+
 $cfg = new Config();
-$cfg->fromXML('../Amber/conf/localconf.xml');
+$cfg->fromXML($cfgFileName);
 
 setlocale (LC_CTYPE, 'de_DE', 'de_DE@euro');
 setlocale (LC_TIME, 'de_DE', 'de_DE@euro'); // needed for date, time
