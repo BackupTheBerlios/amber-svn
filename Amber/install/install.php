@@ -1,52 +1,9 @@
-<html>
-  <head>
-    <title>Amber</title>
-  </head>
-  <style><!--
-    body {
-      background: #f4b675;
-      color: #ffffff;
-      font-family: arial;
-    }
-
-    a {
-      color: #ffffff;
-    }
-
-    h1 {
-      color: #000000;
-    }
-  -->
-  </style>
-
-<body>
-
-<h1 align="center">Amber Install Tool</h1>
-
-<p>&nbsp;
-
-<p align="center">
-  <table align="center">
-    <tr>
-      <td width="150" align="center">
-        <a href="../../index.html" target="_top" style="font-weight: bold;">Amber</a>
-      </td>
-      <td width="150" align="center">
-        <a href="../tests/index.html" target="_top" style="font-weight: bold;">Amber - Tests</a>
-      </td>
-      <td width="150" align="center">
-        <a href="index.php" target="_top" style="font-weight: bold;">Amber Install Tool</a>
-      </td>
-    </tr>
-  </table>
-</p>
-
-
 <?php
 
-require_once '../XMLLoader.php';
+require_once 'header.inc';
+require_once 'Amber/XMLLoader.php';
 
-$filename = '../conf/localconf.xml';
+$filename = 'Amber/conf/localconf.xml';
 
 if (isset($_POST['doUpdate'])) {
   if (!updateLocalconf($filename, $_POST)) {
@@ -67,7 +24,7 @@ $conf = $conf['config'];
 
 <p />
 
-<form method="post" action="index.php">
+<form method="post" action="<?php echo $__SELF__; ?>">
 
 
   <table align="center" style="width: 450px; border: #b08454 1px dashed;">
@@ -106,9 +63,9 @@ $conf = $conf['config'];
 
 </form>
 
-
-</body>
-</html>
+<?php
+  require_once 'footer.inc';
+?>
 
 <?php
 
