@@ -1,8 +1,11 @@
 <?php
 
-require_once 'lib/adodb/adodb.inc.php';
+ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/lib/');
+
+require_once 'adodb/adodb.inc.php';
+include_once 'Amber/Amber.php';
 include_once 'Amber/lib/IXR_Library.inc.php';
-include_once 'Amber/Config.php';
+include_once 'Amber/AmberConfig.php';
 
 class AmberXMLServer extends IXR_Server
 {
@@ -30,7 +33,7 @@ class AmberXMLServer extends IXR_Server
    */
   function setConfig($cfgObj)
   {
-    if (is_object($cfgObj) && is_a($cfgObj, 'Config')) {
+    if (is_object($cfgObj) && is_a($cfgObj, 'AmberConfig')) {
       $this->_globalConfig = $cfgObj;
     }
   }
@@ -39,8 +42,8 @@ class AmberXMLServer extends IXR_Server
   {
     if (!isset($this->_db)) {
       $cfg =& $this->_globalConfig;
-      $db =& ADONewConnection($cfg->driver);
-      $conResult = @$db->PConnect($cfg->host, $cfg->username, $cfg->pwd, $cfg->database);
+      $db =& ADONewConnection($cfg->getDriver());
+      $conResult = @$db->PConnect($cfg->getHost(), $cfg->getUsername(), $cfg->getPassword(), $cfg->getDatabase());
       $db->SetFetchMode(ADODB_FETCH_ASSOC);
       if ($conResult == false) {
         Amber::showError('Database Error '  . $db->ErrorNo(), $db->ErrorMsg());
@@ -106,8 +109,9 @@ class AmberXMLServer extends IXR_Server
 
 /////////////////////////////////////////////////////////////////////////////
 
-$cfg = new Config();
-$cfg->fromXML('Amber/conf/localconf.xml');
+
+$cfg = new AmberConfig();
+$cfg->fromXML(dirname(__FILE__) . '/Amber/conf/localconf.xml');
 
 $server = new AmberXMLServer();
 $server->setConfig($cfg);
