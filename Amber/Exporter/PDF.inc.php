@@ -59,7 +59,7 @@ class mayflower
   { 
     if ($this->sectionIndex > $this->subReportIndex) {
       $this->sectionBuff[$this->sectionIndex] .= $s . "\n";
-    } elseif ($this->subReportIndex) {
+    } elseif ($this->subReportIndex > 0) {
       $this->subReportbuff[$this->subReportIndex] .= $s . "\n";
     } elseif ($this->inReport()) {
       $this->reportBuff->reportPages[$this->reportBuff->actpageNo][$this->sectionType] .= $s . "\n";
@@ -69,11 +69,13 @@ class mayflower
   function _setOutBuff()
   { 
     if ($this->sectionIndex > $this->subReportIndex) {
-      $this->pdf->setOutBuffer($this->sectionBuff[$this->sectionIndex]);
-    } elseif ($this->subReportIndex) {
-      $this->pdf->setOutBuffer($this->subReportbuff[$this->subReportIndex]);
+      $this->pdf->setOutBuffer($this->sectionBuff[$this->sectionIndex], 'section');
+    } elseif ($this->subReportIndex > 0) {
+      $this->pdf->setOutBuffer($this->subReportbuff[$this->subReportIndex], 'subReport');
     } elseif ($this->inReport()) {
-      $this->pdf->setOutBuffer($this->reportBuff->reportPages[$this->reportBuff->actpageNo][$this->sectionType]);
+      $this->pdf->setOutBuffer($this->reportBuff->reportPages[$this->reportBuff->actpageNo][$this->sectionType], "report page".$this->sectionType.$this->reportBuff->actpageNo);
+    } else {
+      $this->pdf->unsetBuffer();
     }  
   }
   
@@ -87,19 +89,10 @@ class mayflower
     return ($this->reportBuff->posY - ($this->reportBuff->actpageNo * $this->layout->printHeight));
   }
   
-  function _presetPage()
-  {
-    if ($this->reportBuff->actpageNo > 0) {
-      if (!isset($this->reportBuff->reportPages[$this->reportBuff->actpageNo])) {
-        $this->reportBuff->reportPages[$this->reportBuff->actpageNo] = array('Head'=>'', ''=>'', 'Foot'=>'');
-      }
-    } 
-  }
-  
   function setPageIndex($index)
   {
     $this->reportBuff->actpageNo = $index;
-    $this->_presetPage();
+    $this->_setOutBuff();
   }        
   
   function getPageIndex()
@@ -109,14 +102,11 @@ class mayflower
   
   function enterReport()
   {
-#    $this->reportBuff->actpageNo = -1;
-#    $this->_presetPage();
-#    $this->_setOutBuff();
   }
   
   function exitReport()
   {
-    $this->reportBuff->actpageNo = -1;
+    $this->reportBuff->actpageNo = -2;
     $this->_setOutBuff();
   }
   
@@ -129,28 +119,24 @@ class mayflower
   {
     $this->sectionType = 'Head';
     $this->_setOutBuff();
-  }  
+  }
+    
   function reportStartPageBody()
   {
     $this->sectionType = '';
     $this->_setOutBuff();
-  }  
+  }
+    
   function reportStartPageFooter()
   {
     $this->sectionType = 'Foot';
     $this->_setOutBuff();
   }  
    
-  function cached()
-  {
-    return (($this->sectionIndex > $this->subReportIndex) or ($this->subReportIndex > 0) or $this->inReport());
-  }
-  
   function inSubReport()
   {
     return  ($this->subReportIndex > 0);
   }   
-
 
   function subReportPush()
   {
@@ -162,8 +148,8 @@ class mayflower
   function subReportPop()
   {
     $this->subReportIndex--;
-    return $this->subReportbuff[$this->subReportIndex + 1];
     $this->_setOutBuff();
+    return $this->subReportbuff[$this->subReportIndex + 1];
   }
   
   function subReportGetPopped()
@@ -181,6 +167,7 @@ class mayflower
   function sectionPop()
   {
     $this->sectionIndex--;
+    $this->_setOutBuff();
     return $this->sectionBuff[$this->sectionIndex + 1];
   }
   
@@ -244,7 +231,7 @@ class PDF extends FPDF
   //  see startSection/endSection and startReport/endReport below
   //
   //////////////////////////////////////////////////////////////////////////
-  function _out($s)
+  function _out2($s)
   {
     if($this->state <> 2) {
       parent::_out($s);
@@ -255,24 +242,28 @@ class PDF extends FPDF
     }
   }
   
-  function _out2($s)
+  function _out($s)
   {
     if($this->state <> 2) {
       parent::_out($s);
-    } elseif (isset($this->cache)) {
+    } elseif ($this->incache) {
       $this->cache .= $s . "\n";
     } else {
       parent::_out($s);
     }
   }
   
-  function setOutBuffer(&$buff)
+  function setOutBuffer(&$buff, $info)
   {
-#    $this->cache =& $buff;
+    //info parameter for testing only -- remove if no longer needed
+    $this->cache =& $buff;
+    $this->incache = true;
   }
+  
   function unsetBuffer()
   {
     unset($this->cache);
+    $this->incache = false;
   }    
   
   
