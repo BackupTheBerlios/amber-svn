@@ -40,14 +40,11 @@ class ExporterHtml extends Exporter
 
   function startReportSubExporter(&$report, $asSubreport = false, $isDesignMode = false)
   {
-    $reset = (!$asSubreport);
-    $this->_html =& $this->getExporterBasicClass($report->layout, $reset);
-
     $tmp = '';
     if (!$this->_asSubreport) {
       $tmp = "\n<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n<head>\n";
       $tmp .= "\t<title>" . $this->_docTitle . "</title>\n";
-      $this->_html->_out($tmp);
+      $this->_base->_out($tmp);
 
       $css = $this->getReportCssStyles($this->_report, $this->cssClassPrefix);
       $this->setCSS($css);
@@ -56,7 +53,7 @@ class ExporterHtml extends Exporter
       $tmp = "</head>\n";
       $tmp .= "<body style=\"background-color: #aaaaaa;\">\n";
       $tmp .= "\n\n<!-- Start of AmberReport // -->\n\n<div class=\"AmberReport\">\n";
-      $this->_html->_out($tmp);
+      $this->_base->_out($tmp);
     } else {
       $css = $this->getReportCssStyles($this->_report, 'sub_' . $this->cssClassPrefix);
       $this->setCSS($css);
@@ -66,8 +63,8 @@ class ExporterHtml extends Exporter
   function endReportSubExporter(&$report)
   {
     if (!$this->_asSubreport) {
-      $this->_html->_out("\n</div>\n\n<!-- End of AmberReport // -->\n\n");
-      $this->_html->_out("</body>\n</html>\n");
+      $this->_base->_out("\n</div>\n\n<!-- End of AmberReport // -->\n\n");
+      $this->_base->_out("</body>\n</html>\n");
     }
   }
 
@@ -122,7 +119,7 @@ class ExporterHtml extends Exporter
     $out .= htmlspecialchars($text);
     $out .= "</div>\n";
 
-    $this->_html->_out($out);
+    $this->_base->_out($out);
     $this->_posY += ($height + 2) * 20;
   }
 
@@ -200,7 +197,7 @@ class ExporterHtml extends Exporter
     } else {
       $out .= "\t</div></div>\n";
     }
-    $this->_html->_out($out);
+    $this->_base->_out($out);
     $this->_posY += $height;
     parent::endSection($section, $height, $buffer);
   }
@@ -235,7 +232,7 @@ class ExporterHtml extends Exporter
     $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";
     $out .= "&nbsp;</div>\n";
 
-    $this->_html->_out($out);
+    $this->_base->_out($out);
   }
   
   function printBottomMargin()
@@ -252,7 +249,7 @@ class ExporterHtml extends Exporter
 
     $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";
     $out .= "&nbsp;</div>\n";
-    $this->_html->_out($out);
+    $this->_base->_out($out);
   }
   
   function page()
@@ -302,12 +299,12 @@ class ExporterHtml extends Exporter
       $ret .= "\n//-->\n</style>\n";
     }
 
-    $this->_html->_out($ret);
+    $this->_base->_out($ret);
   }
 
   function dump($var)
   {
-    $this->_html->_out('<div style=" position: absolute; overflow: hidden; align: center; width: 90%; top: ' . $this->_html_twips($this->_posY) . '"><pre style="text-align: left; width: 80%; border: solid 1px #ff0000; font-size: 9pt; background-color: #ffffff; padding: 5px;">' . htmlentities(print_r($var, 1)) . '</pre></div>');
+    $this->_base->_out('<div style=" position: absolute; overflow: hidden; align: center; width: 90%; top: ' . $this->_html_twips($this->_posY) . '"><pre style="text-align: left; width: 80%; border: solid 1px #ff0000; font-size: 9pt; background-color: #ffffff; padding: 5px;">' . htmlentities(print_r($var, 1)) . '</pre></div>');
   }
 
   function arrayToStyle(&$arr)
