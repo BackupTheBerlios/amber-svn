@@ -188,12 +188,7 @@ class ExporterFPdf extends Exporter
    *********************************/
   function setControlExporter(&$ctrl)
   {
-#    $type = strtolower(get_class($ctrl));
-    if ($type != 'subreport') {
-      $ctrl->_exporter =& $this;
-    } else {
-      $ctrl->_exporter =& new ExporterFPdf();
-    }
+    $ctrl->_exporter =& $this;
     // instead of creating a new Exporter for every Controltype
     // we let $this one do the work, after all we only need printNormal and printPreview
   }
