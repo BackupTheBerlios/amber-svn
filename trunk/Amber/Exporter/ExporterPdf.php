@@ -187,6 +187,14 @@ class ExporterFPdf extends Exporter
   var $type = 'fpdf';
   var $_pdf;
 
+
+  function &getExporterBasicClass(&$layout, $reset)
+  {
+    return PDF::getInstance($layout, $reset);
+  }  
+
+
+
   /*********************************
    *  Report-pdf
    *********************************/
@@ -194,7 +202,7 @@ class ExporterFPdf extends Exporter
   function startReportSubExporter(&$report, $asSubreport = false, $isDesignMode = false)
   {
     $reset = (!$asSubreport);
-    $this->_pdf =& PDF::getInstance($report->layout, $reset);
+    $this->_pdf =& $this->getExporterBasicClass($report->layout, $reset);
     $this->mayflower =& mayflower::getInstance($report->layout, $this->_pdf, $reset);
 
     if ($report->Controls) {
@@ -208,9 +216,7 @@ class ExporterFPdf extends Exporter
       $this->_pdf->startReport($report->layout);
     }
   }
-  
-  
-  
+
   function endReportSubExporter(&$report)
   {
     if (!$this->_asSubreport) {
@@ -240,156 +246,6 @@ class ExporterFPdf extends Exporter
   {
     $this->_pdf->startcomment($s);
   }  
-  
-  /*********************************
-   *  Section
-   *********************************/
-
-
-  /**
-  *
-  * for design mode: print border between sections
-  *
-  * @access public
-  * @param  string name of header to print
-  * @return integer height printed in twips
-  */
-  function sectionPrintDesignHeader($text)
-  {
-    $this->mayflower->sectionPush();
-    $this->comment('Start Section:' . ($this->mayflower->getSectionIndexForCommentOnly()));
-    $height = 240; //12pt
-
-    $this->_pdf->_backColor(0xDDDDDD);
-    $this->_pdf->_textColor(0x000000);
-    $this->_pdf->SetFont('helvetica', '', 8);
-    $this->_pdf->SetLineWidth(10); // 0.5pt
-    $this->_pdf->_borderColor(0x000000);
-
-    $border = 1;
-    $this->_pdf->SetXY(0, 0);
-    $this->_pdf->Cell($this->_report->Width, $height, $text, $border, 1, 'L', 1);
-
-    $this->endNormalSection($height+1, true);
-  }
-
-  function startSection(&$section, $width, &$buffer)
-  {
-    parent::startSection($section, $width, $buffer);
-    $this->mayflower->sectionPush();
-    $this->comment('Start Section:' . ($this->mayflower->getSectionIndexForCommentOnly()));
-    $this->_pdf->fillBackColorInWindow($section->BackColor, $section->_report->Width, $section->Height);
-  }
-  
-  function endSection(&$section, $height, &$buffer)
-  {
-    if (!$section->_PagePart) {
-      $this->endNormalSection($height, $section->KeepTogether);
-    } elseif ($this->_report->layout->designMode) {
-      $this->endNormalSection($height, false);
-    } elseif ($section->_PagePart == 'Foot') {
-      $this->pageFooterEnd();
-    } else {
-      $this->pageHeaderEnd();
-    }
-    parent::endSection($section, $height, $buffer);
-  }
-  
-  function endNormalSection($sectionHeight, $keepTogether)
-  {
-    if ($this->mayflower->inSubReport()) {
-      $this->endSectionInSubReport($sectionHeight, $keepTogether);
-      return;
-    }  
-    $this->comment("end Body-Section:1\n");
-    $secBuff = $this->mayflower->sectionPop();
-    $startPage = floor($this->mayflower->posY / $this->mayflower->layout->printHeight);
-    $endPage   = floor(($this->mayflower->posY + $sectionHeight) / $this->mayflower->layout->printHeight);
-    if ($keepTogether and ($startPage <> $endPage)) {
-      if ($this->mayflower->posY > ($startPage * $this->mayflower->layout->printHeight)) { // page not blank
-        $this->mayflower->newPage();
-        $startPage = floor($this->mayflower->posY / $this->mayflower->layout->printHeight);
-        $endPage   = floor(($this->mayflower->posY + $sectionHeight) / $this->mayflower->layout->printHeight);
-      }
-    }
-
-    for ($page = $startPage; $page <= $endPage; $page++) {
-      if (($page <> $this->mayflower->getPageIndex())) {
-        if ($this->mayflower->getPageIndex() >= 0) {
-          $this->printPageFooter();
-        }
-        $this->mayflower->setPageIndex($page);
-        $this->printPageHeader();
-      }
-      $this->mayflower->reportStartPageBody();
-      if (!$this->DesignMode) {
-        #$this->outSectionWithCallback(0, $this->mayflower->posY, $this->layout->reportWidth, $sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
-        $formatCount = $page - $startPage + 1;
-        $this->onPrint($cancel, $formatCount);
-        if (!$cancel) {
-          $this->_pdf->outSection(0, $this->mayflower->posY, $this->mayflower->layout->reportWidth, $sectionHeight, $secBuff);
-        }
-      } else {
-        $this->_pdf->outSection(0, $this->mayflower->posY, $this->mayflower->layout->reportWidth, $sectionHeight, $secBuff);
-      }      
-    }
-    $this->mayflower->posY += $sectionHeight;
-  }
-  
-  function endSectionInSubReport($sectionHeight, $keepTogether)
-  {
-    $this->comment("end Subreport-Body-Section:2\n");
-    $buff = $this->mayflower->sectionPop();
-
-    $this->mayflower->reportStartPageBody();
-
-    $formatCount = 1;
-    $this->onPrint($cancel, $formatCount);
-    if (!$cancel) {
-      $this->_pdf->outSection(0, $this->mayflower->posY, $this->mayflower->layout->reportWidth, $sectionHeight, $buff);
-    }
-
-    $this->mayflower->posY += $sectionHeight;
-  }
-
-
-  function pageHeaderEnd()
-  {
-   $this->mayflower->reportStartPageHeader();
-   $buff = $this->mayflower->sectionPop();
-   $this->_pdf->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->mayflower->layout->printHeight, $this->mayflower->layout->reportWidth, $this->mayflower->layout->pageHeaderHeight, $buff);
-  }
-
-  function pageFooterEnd()
-  {
-    $this->mayflower->reportStartPageFooter();
-    $buff = $this->mayflower->sectionPop();
-    $this->_pdf->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->mayflower->layout->printHeight, $this->mayflower->layout->reportWidth, $this->mayflower->layout->pageFooterHeight, $buff);
-  }
-
-  /*
-  * callback function for PDF: init printing of page footer if necessary
-  *
-  * @access public
-  */
-  function printPageFooter()
-  {
-    if (!$this->_report->layout->designMode) {  
-      $this->_report->_printNormalSection($this->_report->PageFooter);
-    }  
-  }
- 
-  /*
-  * callback function for PDF: init printing of page header if necessary
-  *
-  * @access public
-  */
-  function printpageHeader()
-  {
-    if (!$this->_report->layout->designMode) {  
-      $this->_report->_printNormalSection($this->_report->PageHeader);
-    }  
-  }
   
   function Bookmark($txt,$level=0,$y=0)
   {
