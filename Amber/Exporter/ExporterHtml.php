@@ -207,11 +207,11 @@ class ExporterHtml extends Exporter
   {
     $classList = array(
       #'null'      => 'NullExporterHtml'
-      'Label'     => 'LabelExporterHtml',
-      'Rectangle' => 'RectangleExporterHtml',
-      'TextBox'   => 'TextBoxExporterHtml',
-      'SubReport' => 'SubReportExporterHtml');
-    $type = get_class($ctrl);
+      'label'     => 'LabelExporterHtml',
+      'rectangle' => 'RectangleExporterHtml',
+      'textbox'   => 'TextBoxExporterHtml',
+      'subreport' => 'SubReportExporterHtml');
+    $type = strtolower(get_class($ctrl));
     if (!array_key_exists($type, $classList)) {
       $type = 'SubReport';  // FIXME: Null-Object for unknown Controltypes
     }
