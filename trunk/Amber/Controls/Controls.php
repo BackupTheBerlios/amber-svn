@@ -126,7 +126,7 @@ class Control
   * @param int
   *
   */
-  function prepareDesign()
+  function &prepareDesign()
   {
     $ctrl = $this;
     $ctrl->visible = true;
@@ -211,7 +211,7 @@ class Rectangle extends Control
 
   function printDesign()
   {
-    $ctrl = $this->prepareDesign();
+    $ctrl =& $this->prepareDesign();
     $this->_exporter->printDesign($ctrl, '');
   }
 }
@@ -340,7 +340,7 @@ class TextBox extends FontBox
 
   function printDesign()
   {
-    $ctrl = $this->prepareDesign();
+    $ctrl =& $this->prepareDesign();
     $this->_exporter->printDesign($ctrl, $ctrl->ControlSource);
   }
 
@@ -403,7 +403,7 @@ class Label extends FontBox
 
   function printDesign()
   {
-    $ctrl = $this->prepareDesign();
+    $ctrl =& $this->prepareDesign();
     $this->_exporter->printDesign($ctrl, $ctrl->Caption);
   }
 
@@ -505,7 +505,7 @@ class SubReport extends Control
 
   function printDesign()
   {
-    $ctrl = $this->prepareDesign();
+    $ctrl =& $this->prepareDesign();
     $this->_exporter->printDesign($ctrl, $ctrl->Name);
   }
 }

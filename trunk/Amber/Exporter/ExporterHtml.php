@@ -375,10 +375,6 @@ Class ControlExporterHtml
 
   function printNormal(&$control, $content)
   {
-    if (!$control->isVisible()) {
-      return;
-    }
-
     echo $this->getTag($control, $content);
   }
 
@@ -397,7 +393,9 @@ Class ControlExporterHtml
 
     } else {
       $style = $this->getStyle($control, $control->Properties, $this->_stdValues);
-      $out .= ' style="' . trim($style) . '"';
+      if (!empty($style)) {
+        $out .= ' style="' . trim($style) . '"';
+      }
     }
     $out .= ">";
 

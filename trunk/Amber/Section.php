@@ -146,9 +146,11 @@ class Section
     if ((isset($this->Controls)) && (!$cancel)) {
       $keys = array_keys($this->Controls);
       foreach ($keys as $key) {
-        $height = $this->Controls[$key]->printNormal();
-        if ($height > $maxHeight) {
-          $maxHeight = $height;
+        if ($this->Controls[$key]->isVisible()) {
+          $height = $this->Controls[$key]->printNormal();
+          if ($height > $maxHeight) {
+            $maxHeight = $height;
+          }
         }
       }
     }
