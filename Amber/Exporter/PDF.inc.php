@@ -48,19 +48,19 @@ class PDF extends FPDF
 
   function newPage()
   {
-    $this->_posY = ($this->_actPageNo + 1) * $this->_printHeight;
+    $this->_posY = ($this->_actPageNo + 1) * $this->layout->printHeight;
   }
 
   function pageHeaderEnd()
   {
    $this->_sectionType = 'Head';
-   $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->_printHeight, $this->layout->pageHeaderHeight);
+   $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->layout->printHeight, $this->layout->pageHeaderHeight);
   }
 
   function pageFooterEnd()
   {
     $this->_sectionType = 'Foot';
-    $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->_printHeight, $this->layout->pageFooterHeight);
+    $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->layout->printHeight, $this->layout->pageFooterHeight);
   }
 
         
@@ -144,13 +144,13 @@ class PDF extends FPDF
     $this->_out("\n%end Body-Section:" . ($this->_inSection) . "\n\n");
     $secBuff = $this->_sectionBuff[$this->_inSection];
     $this->_inSection--;
-    $startPage = floor($this->_posY / $this->_printHeight);
-    $endPage   = floor(($this->_posY + $sectionHeight) / $this->_printHeight);
+    $startPage = floor($this->_posY / $this->layout->printHeight);
+    $endPage   = floor(($this->_posY + $sectionHeight) / $this->layout->printHeight);
     if ($keepTogether and ($startPage <> $endPage)) {
-      if ($this->_posY > ($startPage * $this->_printHeight)) { // page not blank
+      if ($this->_posY > ($startPage * $this->layout->printHeight)) { // page not blank
         $this->newPage();
-        $startPage = floor($this->_posY / $this->_printHeight);
-        $endPage   = floor(($this->_posY + $sectionHeight) / $this->_printHeight);
+        $startPage = floor($this->_posY / $this->layout->printHeight);
+        $endPage   = floor(($this->_posY + $sectionHeight) / $this->layout->printHeight);
       }
     }
 
@@ -270,7 +270,7 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
 #    $this->_headerHeight = $layout->pageHeaderHeight;
 #    $this->_footerHeight = $layout->pageFooterHeight;
 #    $this->_printWidth  = $layout->printWidth;
-    $this->_printHeight = $layout->printHeight;
+#    $this->_printHeight = $layout->printHeight;
     $this->_reportWidth = $width;
     $this->_posY = 0;
 
@@ -288,10 +288,10 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
   
   function outPageHeader($pageY, $pageX, $dataBuff)
   {
-    $y = $this->tMargin;
-    $this->SetClipping($this->lMargin, $y, $this->layout->printWidth, $this->layout->pageHeaderHeight);
-    $deltaX = $this->lMargin - $pageX * $this->layout->printWidth;
-    $deltaY = $pageY * $this->_printHeight - $y;
+    $y = $this->layout->topMargin;
+    $this->SetClipping($this->layout->leftMargin, $y, $this->layout->printWidth, $this->layout->pageHeaderHeight);
+    $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
+    $deltaY = $pageY * $this->layout->printHeight - $y;
     $this->SetCoordinate($deltaX, $deltaY);
     $this->_out($dataBuff);
     $this->RemoveCoordinate();
@@ -299,10 +299,10 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
   }
   function outPage($pageY, $pageX, $dataBuff)
   {
-    $y = $this->tMargin + $this->layout->pageHeaderHeight;
-    $this->SetClipping($this->lMargin, $y, $this->layout->printWidth, $this->_printHeight);
-    $deltaX = $this->lMargin - $pageX * $this->layout->printWidth;
-    $deltaY = $pageY * $this->_printHeight - $y;
+    $y = $this->layout->topMargin + $this->layout->pageHeaderHeight;
+    $this->SetClipping($this->layout->leftMargin, $y, $this->layout->printWidth, $this->layout->printHeight);
+    $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
+    $deltaY = $pageY * $this->layout->printHeight - $y;
     $this->SetCoordinate($deltaX, $deltaY);
     $this->_out($dataBuff);
     $this->RemoveCoordinate();
@@ -310,10 +310,10 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
   }
   function outPageFooter($pageY, $pageX, $dataBuff)
   {
-    $y = $this->tMargin + $this->layout->pageHeaderHeight + $this->_printHeight;
-    $this->SetClipping($this->lMargin, $y, $this->layout->printWidth, $this->layout->pageFooterHeight);
-    $deltaX = $this->lMargin - $pageX * $this->layout->printWidth;
-    $deltaY = $pageY * $this->_printHeight - $y;
+    $y = $this->layout->topMargin + $this->layout->pageHeaderHeight + $this->layout->printHeight;
+    $this->SetClipping($this->layout->leftMargin, $y, $this->layout->printWidth, $this->layout->pageFooterHeight);
+    $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
+    $deltaY = $pageY * $this->layout->printHeight - $y;
     $this->SetCoordinate($deltaX, $deltaY);
     $this->_out($dataBuff);
     $this->RemoveCoordinate();
@@ -463,7 +463,7 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
       $this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$this->PageNo());
     } else {
       if($y == -1)
-        $y = $this->_posY - ($this->_actPageNo * $this->_printHeight);
+        $y = $this->_posY - ($this->_actPageNo * $this->layout->printHeight);
       $p = $this->_actPageNo + 1;
       if ($p <= 0)
         $p = 1;
