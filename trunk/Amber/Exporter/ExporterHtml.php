@@ -104,7 +104,7 @@ class ExporterHtml extends Exporter
 
   function outSectionEnd()
   {
-    echo "\t</div name='sectionEND'>\n";
+    echo "\t</div name=\"sectionEND\">\n";
   }
 
   function outSectionStart($y, $w, $h, $backColor, $sectionName='')
@@ -115,7 +115,7 @@ class ExporterHtml extends Exporter
     $style['width'] = $this->_html_twips($w);
     $style['background-color'] = $this->_html_color($backColor);
 
-    echo "\t<div  name='sectionStart' style=\"" . $this->arrayToStyle($style) . "\">\n";
+    echo "\t<div  name=\"sectionStart\" style=\"" . $this->arrayToStyle($style) . "\">\n";
   }
 
 
@@ -268,11 +268,6 @@ class ExporterHtml extends Exporter
   {
     if (!$this->_asSubreport) {
       $ret = "\t<style type=\"text/css\">\n<!--\n";
-#      if ($this->getUserAgent() == 'msie') {
-        $ret .= ".AmberReport { position: absolute; }\n";
-#      } else {
-#        $ret .= ".AmberReport { position: relative; }\n";
-#      }
       $ret .= ".AmberReport div { position: absolute; overflow: hidden; }\n";
       $ret .= $css;
       $ret .= "\n-->\n</style>\n";
