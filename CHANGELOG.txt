@@ -1,3 +1,7 @@
+20040716:
+- Introduced class ObjectLoader: abstraction layer for loading and accessing report definitions from either database or file system
+- minor code cleanups
+
 20040715:
 - Introduced a basic install tool
 - examples/index.php: use localconf.xml instead of configs-array

@@ -10,7 +10,7 @@
 require_once 'misc.php';
 require_once 'Section.php';
 require_once 'Config.php';
-require_once 'XMLLoader.php';
+require_once 'ObjectLoader.php';
 require_once 'SimpleSQLParser.php';
 require_once 'Exporter/ExporterFactory.php';
 require_once 'Controls/ControlFactory.php';
@@ -71,8 +71,6 @@ class Report
   var $_Code;     // user defined call back methods
   var $_ClassName;
 
-
-  var $_xmlLoader; // holds XMLLoader object
   var $_reportDir = '.';
   var $_globalConfig;
 
@@ -86,7 +84,6 @@ class Report
   function Report()
   {
     $this->_globalConfig = new ConfigNull();
-    $this->_xmlLoader = new XMLLoader();
   }
 
   /**
@@ -112,12 +109,12 @@ class Report
    * @param bool
    *
    */
-  function setCacheEnabled($value)
+  /*function setCacheEnabled($value)
   {
     if (is_bool($value)) {
       $this->_xmlLoader->setCacheEnabled($value);
     }
-  }
+  }*/
 
   /**
    *
@@ -125,10 +122,10 @@ class Report
    * @return bool True or false depending on whether caching is enabled or disabled.
    *
    */
-  function getCacheEnabled()
+  /*function getCacheEnabled()
   {
     return $this->_xmlLoader->getCacheEnabled();
-  }
+  }*/
 
   /**
    * Sets the directory where files used for caching will be written to.
@@ -142,7 +139,7 @@ class Report
    * @param string name of the directory
    *
    */
-  function setCacheDir($dirName)
+  /*function setCacheDir($dirName)
   {
     if (!is_dir($dirName)) {
       showError('Error', 'setCacheDir(): Directory name given is not a directory or does not exist: ' . htmlentities($dirName));
@@ -153,7 +150,7 @@ class Report
     } else{
       $this->_xmlLoader->setCacheDir($dirName);
     }
-  }
+  }*/
 
   /**
    *
@@ -161,10 +158,10 @@ class Report
    * @return string Current directory in which files for caching purposes will be stored.
    *
    */
-  function getCacheDir()
+  /*function getCacheDir()
   {
     return $this->_xmlLoader->getCacheDir();
-  }
+  }*/
 
   /**
    * Sets the directory that contains the report files
@@ -235,44 +232,56 @@ class Report
     return $this->_db;
   }
 
+  /*
+   * @todo quick&dirty: needs to be rewritten
+   */
+  var $_loaderType = 'file';
+  /*
+   * @todo quick&dirty: needs to be rewritten
+   */
+  function setLoader($type)
+  {
+    $this->_loaderType = $type;
+  }
+
   /**
    *
    * @access public
-   * @param string file name of XML report config file
+   * @param string name of the report to load
    *
    */
-  function loadDb($reportName)
+  function load($reportName)
   {
     $db = $this->currentDb();
-    $dict = NewDataDictionary($db);
-    $sysTable = 'amber_sys_objects';
-    $sql = 'Select * from ' . $dict->TableName($sysTable) . ' where name=' . $db->qstr($reportName);
 
-    $rs = $db->SelectLimit($sql, 1);
-    if (!$rs) {
-      showError('Database Error ' . $db->ErrorNo(), $db->ErrorMsg());
+    $objLoader = new ReportLoader();
+
+    if ($this->_loaderType == 'db') {
+      $loadResult = $objLoader->loadFromDb($this->_db, $reportName);
+    } else {
+      $loadResult = $objLoader->loadFromFile($this->_reportDir, $reportName);
+    }
+
+    if ($loadResult == false) {
+      showError('Error ', 'An error occured when trying to open the report');
       die();
     }
-    $arr = $rs->FetchRow();
-    if (!$arr) {
-      showError('Error ', 'Report not found in database');
-      die();
-    }
 
-    if (isset($arr['name'])) {
-      $this->Name = $arr['name'];
-    }
+    $this->Name = $objLoader->getName();
 
-    // FIXME: That's not a nice solution! Rewrite XMLLoader?
-    $res =& XMLLoader::_makeXmlTree($arr['design']);
+    $res =& $objLoader->getDesign();
     $this->_xml = $res['report'];
 
     $classLoaded = false;
-    $className = $arr['class'];
+    $className = $objLoader->getClassName();
     if ($className) {
-      eval($arr['code']);
+      if ($this->_loaderType == 'db') {
+        eval($objLoader->getCode()); // code in database is currently being stored without php tags! fix this!
+      } else {
+        eval(' ?' . '> ' . $objLoader->getCode() . ' <' . '?php ');
+      }
       if (class_exists($className)) {
-        $this->_Code =& new $arr['class'];
+        $this->_Code =& new $className;
         $classLoaded = true;
       } else {
         showError('Error', 'Cannot instatiate undefined class "' . $className . '"');
@@ -282,40 +291,6 @@ class Report
       $this->_Code =& new phpReport_UserFunctions();
     }
     $this->_ClassName = get_class($this->_Code);
-
-    // Continue with common initialization
-    $this->_afterLoad();
-  }
-
-  /**
-   *
-   * @access public
-   * @param string file name of XML report config file
-   *
-   */
-  function loadFile($reportName)
-  {
-    if (empty($this->_reportDir)) { // This should never happen!
-      $this->_reportDir = '.';
-    }
-
-    // Load XML
-    $res =& $this->_xmlLoader->getArray($this->_reportDir . '/' . $reportName . '.xml');
-    $param = $res['report'];
-    if (isset($param['Name'])) {
-      $this->Name = $param['Name'];
-    }
-
-    $res =& $this->_xmlLoader->getArray($this->_reportDir . '/' . $param['FileNameDesign']);
-    $this->_xml = $res['report'];
-
-    if (isset($param['FileNameCode']) && isset($param['ClassName'])) {
-      $this->_ClassName = $param['ClassName'];
-      include_once $this->_reportDir . '/' . $param['FileNameCode'];
-      $this->_Code =& new $param['ClassName'];
-    } else {
-      $this->_Code =& new phpReport_UserFunctions();
-    }
 
     // Continue with common initialization
     $this->_afterLoad();

@@ -18,11 +18,12 @@ class Amber
   {
     $rep =& new Report();
     $rep->setConfig($this->_config);
-    $rep->setCacheDir('cache');
-    $rep->setCacheEnabled(true);
+    //$rep->setCacheDir('cache');
+    //$rep->setCacheEnabled(true);
     $rep->setReportDir('reports');
-    //$rep->loadFile($reportName);
-    $rep->loadDb($reportName);
+    //$rep->setLoader('file');
+    $rep->setLoader('db');
+    $rep->load($reportName);
     $rep->Filter = $filter;
 
     // Run it
