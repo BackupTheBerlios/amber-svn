@@ -132,7 +132,46 @@ class reportTestBuilder
       $ctl['zIndex'] = $this->zIndex;
     }
     return $ctl;  
-  }  
+  }
+  
+  function getXML()
+  { 
+    $s = '<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>'."\n";
+    $s .= $this->_makeXML("report", $this->report);
+    return $s;
+  }                                                 
+  
+  function _makeXML($tagName, &$data, $blanks='')
+  { 
+    $blanks2 = $blanks . '  ';
+    $isIndexed = array_key_exists(strtolower($tagName), array("grouplevels"=>1, "controls"=>1, "groupheaders"=>1, "groupfooters"=>1, "width"=>1));
+    $s = '';   
+    if (!is_numeric($tagName)) {
+      $s  .= $blanks . "<$tagName>\n";
+    } else {
+      $s .= $blanks . '<item id="' . $tagName . "\">\n";
+      $s .= $blanks2 . "<index>$tagName</index>\n";
+    }  
+    $keys = array_keys($data);
+    $idx = 0;
+    foreach ($keys as $key) {
+      if ($isIndexed) {
+        $idx++;
+        $s .= $this->_makeXML($idx, $data[$key], $blanks2);
+      } elseif (is_array($data[$key])) {
+        $s .= $this->_makeXML($key, $data[$key], $blanks2);
+      } else {
+        $s .= $blanks2 . "<$key>" . $data[$key] . "</$key>\n";
+      }  
+    }
+    
+    if (!is_numeric($tagName)) {
+      $s .= $blanks . "</$tagName>\n";
+    } else {
+      $s .= $blanks . "</item>\n";
+    }
+    return $s;      
+  }
 }
     
     

@@ -148,8 +148,6 @@ class Report extends AmberObject
   {
     $this->Name = $data->name;
     $this->hReport = objectHandler::getHandle($this);
-    $res =& XMLLoader::_makeXMLTree($data->design);
-    $xml = $res['report'];
 
     $classLoaded = false;
     $className = $data->class;
@@ -167,20 +165,23 @@ class Report extends AmberObject
     if (!$classLoaded) {
       $this->_Code =& new AmberReport_UserFunctions();
     }
-    $this->initialize_report($xml);
+
+    $this->initialize_report($data->design);
   }                                
   
   /**
    *
    * @access public
-   * @param array report's design
+   * @param string report's design as XML
    *
    */
-  function initialize_report($xml)
+  function initialize_report($strXML)
   {
     //
     // Continue with common initialization
     //
+    $res =& XMLLoader::_makeXMLTree($strXML);
+    $xml = $res['report'];
     $this->Width = $xml['Width'];
     if (isset($xml['Printer'])) {
       $prt =& $xml['Printer'];

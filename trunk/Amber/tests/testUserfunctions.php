@@ -109,7 +109,7 @@ class TestReport1 extends AmberReport_UserFunctions
     $ctl =& $rep->createControl('textfield', 'Text3', $sec, 0, 0*1440, 1*240);
     $ctl =& $rep->createControl('textfield', 'Text4', $sec, 0, 1*1440, 1*240);
     $ctl =& $rep->createControl('textfield', 'Text5', $sec, 0, 0*1440, 2*240);
-    return $rep->report;
+    return $rep->getXML();
   }
 }
 
@@ -192,7 +192,7 @@ class TestReportSum extends AmberReport_UserFunctions
     $ctl =& $rep->createControl('textfield', 'sumSoll9', $sec, 2*1440, 0*240);
     $ctl =& $rep->createControl('textfield', 'sumHaben9', $sec, 3*1440, 0*240);
     $ctl =& $rep->createControl('textfield', 'sumSaldo9', $sec, 4*1440, 0*240);
-    return $rep->report;
+    return $rep->getXML();
   }
   
   function getData()
@@ -291,7 +291,7 @@ class ExampleInvoiceList extends AmberReport_UserFunctions
     $ctl =& $rep->createControl('textfield', 'sumSoll9', $sec, 2*1440, 0*240);
     $ctl =& $rep->createControl('textfield', 'sumHaben9', $sec, 3*1440, 0*240);
     $ctl =& $rep->createControl('textfield', 'sumSaldo9', $sec, 4*1440, 0*240);
-    return $rep->report;
+    return $rep->getXML();
   }
   
   function getData()
