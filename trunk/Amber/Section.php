@@ -179,6 +179,20 @@ class Section
       }
     }
   }
+
+  function sectionStartBuffer(&$exporter)
+  {
+    $this->NewBuffer = '';
+    $this->OldBuffer =& $exporter->getOutBuffer();
+    $exporter->setOutBuffer($this->NewBuffer);
+  }
+  
+  function sectionEndBuffer(&$exporter)
+  {
+    $exporter->setOutBuffer($this->OldBuffer);
+    return $this->NewBuffer;
+  }
+
   
   //////////////////////////////////////////////////////////////////
   // PRIVATE METHODS

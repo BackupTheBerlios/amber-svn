@@ -113,18 +113,22 @@ class Exporter
   {
   }
   
-  function setOutBuffer(&$buff, $info)
+  function setOutBuffer(&$buff)
   {
-    //info parameter for testing only -- remove if no longer needed
     $this->_base->cache =& $buff;
     $this->_base->incache = true;
   }
+
+  function &getOutBuffer()
+  {
+    return $this->_base->cache;
+  }  
   
   function unsetBuffer()
   {
     unset($this->_base->cache);
     $this->_base->incache = false;
-  }    
+  }
 }
 
 ?>
