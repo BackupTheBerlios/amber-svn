@@ -41,7 +41,7 @@ class reportPaged extends Report
 
   function page()
   {
-    return $this->reportBuff->page();
+    return $this->_exporter->mayflower->page();
   }
 
   function newPage()
