@@ -430,7 +430,10 @@ Class ControlExporterHtml
     }
 
     // Height & width
-    $out .= 'height: ' . ExporterHTML::_html_twips($ctrl->Properties['Height']) . '; ';
+    if ($value['Height'] <> $std['Height']) {
+      $out .= 'height: ' . ExporterHTML::_html_twips($ctrl->Properties['Height']) . '; ';
+    }
+      
     if (($value['Width'] <> $std['Width']) or ($value['BorderWidth'] <> $std['BorderWidth'])) {
       $widthHtml = $value['Width'] - $BorderWidthHtml - $LeftPaddingHtml- $RightPaddingHtml;
       $out .= 'width: ' . ExporterHTML::_html_twips($widthHtml) . '; ';
