@@ -367,19 +367,40 @@ class Report extends AmberObject
    */
   function _fetchDataFromDatabase()
   {
+    static $uniqueId = 0;
     if (empty($this->RecordSource)) {
       return;
     }
-    $sql = $this->_makeSqlFilter($this->RecordSource, $this->Where);
-
-    // Execute query
     $db =& Amber::currentDb();
+    $createdTemporaryTable = false;
+    
+    // Apply where clause
+    $sql = $this->_makeSqlFilter($this->RecordSource, $this->Where);
+    
+    // Select into temporary table if necessary
+    // NOTE: Filter is only implemented for use with MySQL
+    if (($this->Filter != '') && ($db->databaseType == 'mysql')) {
+      $uniqueId++;
+      $createdTemporaryTable = true;
+      $sql = 'CREATE TEMPORARY TABLE temp' . $uniqueId . ' (' . $sql . ')';
+      $db->Execute($sql);
+
+      // Apply filter
+      $sql = 'SELECT * FROM temp' . $uniqueId;
+      $sql = $this->_makeSqlFilter($sql, $this->Filter);
+    }
+    // Get records
     $this->_data =& $db->GetAll($sql);
     if (empty($this->_data)) {
       if ($db->ErrorNo() != 0) {
         Amber::showError('Database Error ' . $db->ErrorNo(), $db->ErrorMsg());
         die();
       }
+    }
+
+    if ($createdTemporaryTable) {
+      $sql = 'DROP TEMPORARY TABLE IF EXISTS temp' . $uniqueId;
+      $db->Execute($sql);
     }
   }
 
