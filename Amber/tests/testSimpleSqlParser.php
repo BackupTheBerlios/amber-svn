@@ -65,8 +65,6 @@ class testSimpleSelectParser extends PHPUnit_TestCase
     $result = $parser->parse();
 
     $this->assertEquals('b = 0 AND c = 1', $result['where']);
-
-    print_r($result);
   }
 
 }

@@ -9,6 +9,7 @@
       <br>
       <a href="Amber/tests/testbasic.php" target="_blank">Testbasic</a><br>
       <a href="Amber/tests/testLexer.php" target="_blank">TestLexer</a><br>
+      <a href="Amber/tests/testSimpleSqlParser.php" target="_blank">TestSimpleSQLParser</a><br>
       <a href="Amber/tests/testReport.php" target="_blank">TestReport</a><br>
     </td>
   </tr>
