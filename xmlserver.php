@@ -1,7 +1,5 @@
 <?php
 
-ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/lib/');
-
 require_once 'adodb/adodb.inc.php';
 include_once 'Amber/Amber.php';
 include_once 'Amber/lib/IXR_Library.inc.php';

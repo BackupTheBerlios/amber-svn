@@ -1,7 +1,5 @@
 <?php
 
-ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/../../lib/');
-
 require_once 'header.inc';
 require_once 'Amber/Amber.php';
 require_once 'Amber/AmberConfig.php';

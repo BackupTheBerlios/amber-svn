@@ -7,7 +7,6 @@
 *
 */
 
-ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/../../lib/');
 ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/../../Amber/');
 
 require_once '../Report.php';
