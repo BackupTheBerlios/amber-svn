@@ -208,19 +208,6 @@ class Section
   }
 
   /**
-  *
-  * for design mode: print border between sections
-  *
-  * @access private
-  * @param  string name of header to print
-  * @return integer height printed in twips
-  */
-  function _sectionPrintDesignHeader($name)
-  {
-    $this->_parent->_exporter->sectionPrintDesignHeader($name);
-  }
-
-  /**
    * @access private
    */
   function _RunningSum()
