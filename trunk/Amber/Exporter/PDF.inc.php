@@ -25,11 +25,7 @@ class reportBuff
   {
     $this->posY = ($this->actpageNo + 1) * $this->_report->layout->printHeight;
   }
-  
-  function page()
-  {
-    return $this->actpageNo + 1;
-  }
+
 
 }
 
@@ -51,6 +47,9 @@ class mayflower
   function mayflower(&$layout, &$pdf)
   {
     $this->reportBuff =& new reportBuff($layout);
+    $this->posY =& $this->reportBuff->posY;
+    $this->reportPages =& $this->reportBuff->reportPages;
+    $this->actpageNo =& $this->reportBuff->actpageNo;
     $this->layout =& $layout;
     $this->pdf =& $pdf;
   }  
@@ -62,7 +61,7 @@ class mayflower
     } elseif ($this->subReportIndex > 0) {
       $this->pdf->setOutBuffer($this->subReportbuff[$this->subReportIndex], 'subReport');
     } elseif ($this->inReport()) {
-      $this->pdf->setOutBuffer($this->reportBuff->reportPages[$this->reportBuff->actpageNo][$this->sectionType], "report page".$this->sectionType.$this->reportBuff->actpageNo);
+      $this->pdf->setOutBuffer($this->reportPages[$this->actpageNo][$this->sectionType], "report page".$this->sectionType.$this->actpageNo);
     } else {
       $this->pdf->unsetBuffer();
     }  
@@ -70,23 +69,28 @@ class mayflower
   
   function pageNo()
   {
-    return $this->reportBuff->page();
-  }  
-  
+    return $this->page();
+  }
+   
+  function page()
+  {
+    return $this->actpageNo + 1;
+  }
+
   function posYinPage()
   {
-    return ($this->reportBuff->posY - ($this->reportBuff->actpageNo * $this->layout->printHeight));
+    return ($this->posY - ($this->actpageNo * $this->layout->printHeight));
   }
   
   function setPageIndex($index)
   {
-    $this->reportBuff->actpageNo = $index;
+    $this->actpageNo = $index;
     $this->_setOutBuff();
   }        
   
   function getPageIndex()
   {
-    return $this->reportBuff->actpageNo;
+    return $this->actpageNo;
   }  
   
   function enterReport()
@@ -96,13 +100,13 @@ class mayflower
   
   function exitReport()
   {
-    $this->reportBuff->actpageNo = -2;
+    $this->actpageNo = -2;
     $this->_setOutBuff();
   }
   
   function inReport()
   {
-    return ($this->reportBuff->actpageNo >= 0);
+    return ($this->actpageNo >= 0);
   }      
   
   function reportStartPageHeader()
