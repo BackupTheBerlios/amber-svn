@@ -8,7 +8,7 @@
  
 class subReportBuff
 {
-  var $subReportsubReportIndex;
+  var $subReportIndex;
   var $subReportbuff;
   var $sectionIndex;
   var $sectionBuff;
@@ -27,6 +27,10 @@ class subReportBuff
     return (($this->sectionIndex > $this->subReportIndex) or ($this->subReportIndex > 0));
   }
   
+  function inSubReport()
+  {
+    return  ($this->subReportIndex > 0);
+  }   
 
 
   function subReportPush()
@@ -179,7 +183,7 @@ class PDF extends FPDF
   
   function endSection($sectionHeight, $keepTogether)
   {
-    if ($this->subReportBuff->subReportIndex) {
+    if ($this->subReportBuff->inSubReport()) {
       $this->endSectionSubReport($sectionHeight, $keepTogether);
       return;
     }  
