@@ -316,7 +316,7 @@ class pageLayout
     if ($this->noAutoPage) {
       return false;
     } else {  
-      $startNewPage =  (floor($this->posY / $this->printHeight) + 1) * $this->printHeight;
+      $startNewPage =  (floor($this->posY / $this->printHeight) + 1) * $this->printHeight +1; // +1 to make sure, we are on a new page (strange rounding problem: X=3, floor(X)=2)
       $endPageWithoutNewPage = floor(($this->posY + $sectionHeight) / $this->printHeight);
       $endPageWithNewPage = floor(($startNewPage + $sectionHeight) / $this->printHeight);
       return ($endPageWithoutNewPage == $endPageWithNewPage);
