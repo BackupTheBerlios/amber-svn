@@ -160,8 +160,17 @@ class ObjectLoaderFile extends ObjectLoader
   function loadModule()
   {
     $modPath = $this->_basePath . '/modules/';
-    foreach (glob($modPath . '*.php') as $filename) {
-      include_once $modpath . $filename;
+
+    // There's no modules directory...
+    if (!is_dir($modPath)) {
+      return true;
+    }
+
+    $modFiles = glob($modPath . '*.php');
+    if (is_array($modFiles)) {
+      foreach ($modFiles as $filename) {
+        include_once $modpath . $filename;
+      }
     }
 
     return true;

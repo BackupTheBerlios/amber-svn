@@ -60,28 +60,28 @@ class testReport extends PHPUnit_TestCase
     $amber =& $this->setAmberConfig();
 
     ob_start();
-    $amber->OpenReport('SimpleReport', AC_NORMAL, '', 'html');
+    $amber->OpenReport('Bericht1', AC_NORMAL, '', 'html');
     $s = ob_get_contents();
     ob_end_clean();
     $this->assertEquals('[<html>]', "[" . substr($s, 0, 6) . "]",    'Test1a html, normal: <html> without leading stuff');
     $this->assertEquals("[</html>\n]", "[" . substr($s, -8) . "]",   'Test1b html, normal: </html>\n');
 
     ob_start();
-    $amber->OpenReport('SimpleReport', AC_DESIGN, '', 'html');
+    $amber->OpenReport('Bericht1', AC_DESIGN, '', 'html');
     $s = ob_get_contents();
     ob_end_clean();
     $this->assertEquals('[<html>]', "[" . substr($s, 0, 6) . "]",    'Test2a html, design: <html> without leading stuff');
     $this->assertEquals("[</html>\n]", "[" . substr($s, -8) . "]",   'Test2b html, design: </html>\n');
 
     ob_start();
-    $amber->OpenReport('SimpleReport', AC_NORMAL, '', 'testpdf');
+    $amber->OpenReport('Bericht1', AC_NORMAL, '', 'testpdf');
     $s = ob_get_contents();
     ob_end_clean();
     $this->assertEquals('[%PDF-]', "[" . substr($s, 0, 5) . "]",  'Test3a pdf, normal');
     $this->assertEquals("[%%EOF\n]", "[" . substr($s, -6) . "]",     'Test3b pdf, normal');
 
     ob_start();
-    $amber->OpenReport('SimpleReport', AC_DESIGN, '', 'testpdf');
+    $amber->OpenReport('Bericht1', AC_DESIGN, '', 'testpdf');
     $s = ob_get_contents();
     ob_end_clean();
     $this->assertEquals('[%PDF-]', "[" . substr($s, 0, 5) . "]",  'Test4a pdf, Design');
