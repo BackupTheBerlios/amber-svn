@@ -46,14 +46,12 @@ class Exporter
     $this->_asSubreport = $asSubreport;
     $this->DesignMode = $isDesignMode;
     $this->_blankPage = true;
-    $this->_exporterInit();
   }
 
   function endReport(&$report)
   {
     $this->newPage();
     //$this->dump('Exec time: ' . microtime_diff($this->_start, microtime()));
-    $this->_exporterExit();
   }
 
   // Section
@@ -61,6 +59,8 @@ class Exporter
   {
     $this->_sections[] =& $section;
   }
+
+  
 
   function endSection(&$section, $height, &$buffer)
   {
