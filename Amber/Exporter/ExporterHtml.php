@@ -64,23 +64,16 @@ class ExporterHtml extends Exporter
         $ctrl->_exporter->_saveStdValues($ctrl);
         $css .= $this->getCssStyle($ctrl, $cssClassPrefix) . "\n";
         $ctrl->_exporter->cssClassPrefix = $cssClassPrefix;
-        if ($ctrl->ControlType == 112) {      //subreport XXX FIX THIS: direct reference to Controltype!!!!!
-
-          #ooops: $ctrl->report isn't set yet! (gets opened with ctrl->printNormal, when the control is actually printed)
-          //$css .= $ctrl->_report->_exporter->getReportCssStyles($ctrl->_report, $ctrl->_report->EventProcPrefix);
-        }
       }
     }
-
     return $css;
   }
 
   function endReport(&$report)
   {
     parent::endReport($report);
-
-    echo "\n</div>\n\n<!-- End of AmberReport -->\n\n";
     if (!$this->_asSubreport) {
+      echo "\n</div>\n\n<!-- End of AmberReport -->\n\n";
       echo "</body>\n</html>\n";
     }
   }
