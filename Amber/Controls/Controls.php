@@ -10,7 +10,7 @@
 ControlFactory::register('100', 'Label');
 ControlFactory::register('101', 'Rectangle');
 //ControlFactory::register('104', 'CommandButton');
-ControlFactory::register('106', 'Dummy'); // Checkbox
+ControlFactory::register('106', 'CheckBox');
 ControlFactory::register('109', 'TextBox');
 ControlFactory::register('111', 'ComboBox');
 ControlFactory::register('112', 'SubReport');
@@ -541,6 +541,43 @@ class ComboBox extends Control
         $this->_data[$row[$bound]] = $row[1];
       }
     }
+  }
+}
+
+/**
+*
+* @package PHPReport
+* @subpackage Controls
+*
+**/
+class CheckBox extends Control
+{
+  /**
+  *
+  * @access public
+  *
+  */
+  function Checkbox($hReport)
+  {
+    parent::Control($hReport);
+    
+    $newProperties =
+      array(
+        'ControlSource'   => '',
+        'HideDuplicates' => false
+      );
+      
+    $this->_registerProperties($newProperties);
+  }
+
+  function printNormal(&$buffer)
+  {
+    $this->_exporter->printNormal($this, $buffer, $this->Value);
+  }
+
+  function printDesign(&$buffer)
+  {
+    $this->_exporter->printDesign($this, $buffer, true);
   }
 }
 

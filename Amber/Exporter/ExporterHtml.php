@@ -207,6 +207,7 @@ class ExporterHtml extends Exporter
       'textbox'   => 'TextBoxExporterHtml',
       'subreport' => 'SubReportExporterHtml',
       'combobox' => 'ComboBoxExporterHtml',
+      'checkbox' => 'CheckboxExporterHtml',
       'dummy' => 'DummyExporterHtml'
     );
     $type = strtolower(get_class($ctrl));
@@ -518,7 +519,44 @@ class SubReportExporterHtml extends ControlExporterHtml
  * @subpackage Exporter
  *
  */
+class CheckBoxExporterHtml extends ControlExporterHtml
+{
+  function getTag(&$control, $value=Null)
+  {
+    $tmpCtrl = $control;
+    
+    $tmpCtrl->Width = 11 * 15;
+    $tmpCtrl->Height = 11 * 15;
+    $tmpCtrl->FontWeight = 700;
+    
+    if ($value == true) {
+      $value = 'X';
+    } else {
+      $value = '';
+    }
+    
+    return parent::getTag($tmpCtrl, $value);
+  }
+  
+  function getStyle(&$ctrl, &$value, &$std)
+  {
+    $out = parent::getStyle($ctrl, $value, $std);
 
+    $out .= ' font-family: "small fonts", sans-serif; ';
+    $out .= ' font-size: 6pt; ';
+    $out .= ' font-weight: 700; ';
+    $out .= ' text-align: center;';
+    
+    return $out;
+  }
+}
+
+/**
+ *
+ * @package PHPReport
+ * @subpackage Exporter
+ *
+ */
 class ComboBoxExporterHtml extends ControlExporterHtml
 {
   function getTag(&$control, $value=Null)

@@ -421,7 +421,8 @@ class Report extends AmberObject
   /**
    * @access private
    */
-  function _setControlValues() {
+  function _setControlValues()
+  {
     // set values of control bound to columns
     if (is_array($this->Controls)) {
       $keys = array_keys($this->Controls);
@@ -438,13 +439,16 @@ class Report extends AmberObject
         }
       }
     }
+    //Amber::showError('test', Amber::dump($this->Controls, true));
   }
 
   /**
    * @access private
    * @param int
    */
-  function OnOpen(&$cancel) { // Design is loaded, Data will come now
+  function OnOpen(&$cancel)
+  {
+    // Design is loaded, Data will come now
     $cancel = false;
     $this->_Code->Report_Open($this, $cancel);
   }
@@ -452,14 +456,18 @@ class Report extends AmberObject
   /**
    * @access private
    */
-  function OnFirstFormat() { // Datarow has changed
+  function OnFirstFormat()
+  {
+    // Datarow has changed
     $this->_Code->Report_FirstFormat($this);
   }
 
   /**
    * @access private
    */
-  function OnNoData(&$cancel) { //Data expected but none given
+  function OnNoData(&$cancel)
+  {
+    //Data expected but none given
     $cancel = false;
     $this->_Code->Report_NoData($this, $cancel);
   }
@@ -467,14 +475,18 @@ class Report extends AmberObject
   /**
    * @access private
    */
-  function OnClose() { // Datarow has changed
+  function OnClose()
+  {
+    // Datarow has changed
     $this->_Code->Report_Close($this);
   }
 
   /**
    * @access private
    */
-  function OnPage() { // NewPage is executed; gets only called from class pdage...
+  function OnPage()
+  {
+    // NewPage is executed; gets only called from class pdage...
     $this->_Code->Report_Page($this);
   }
 
@@ -518,7 +530,8 @@ class Report extends AmberObject
    * @param int
    * @param int
    */
-  function _printDesignGroupHeaders($maxLevel, $level) {
+  function _printDesignGroupHeaders($maxLevel, $level)
+  {
     for ($i = $level; $i < $maxLevel; $i++) {
       if (isset($this->GroupHeaders[$i])) {
         $this->GroupHeaders[$i]->printDesign($this->GroupLevels[$i]);
@@ -531,7 +544,8 @@ class Report extends AmberObject
    * @param int
    * @param int
    */
-  function _printNormalGroupFooters($maxLevel, $level) {
+  function _printNormalGroupFooters($maxLevel, $level)
+  {
     for ($i = $maxLevel-1; $i >= $level; $i--) {
       if (isset($this->GroupFooters[$i])) {
         $this->GroupFooters[$i]->printNormal();
@@ -545,7 +559,8 @@ class Report extends AmberObject
    * @param int
    * @param int
    */
-  function _printDesignGroupFooters($maxLevel, $level) {
+  function _printDesignGroupFooters($maxLevel, $level)
+  {
     for ($i = $maxLevel-1; $i >= $level; $i--) {
       if (isset($this->GroupFooters[$i])) {
         $this->GroupFooters[$i]->printDesign($this->GroupLevels[$i]);
