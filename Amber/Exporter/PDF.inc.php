@@ -48,9 +48,9 @@ class mayflower
   var $sectionType;    // 'Head', 'Foot' or ''
   var $layout;
   
-  function mayflower(&$reportBuff, &$layout, &$pdf)
+  function mayflower(&$layout, &$pdf)
   {
-    $this->reportBuff =& $reportBuff;
+    $this->reportBuff =& new reportBuff($layout);
     $this->layout =& $layout;
     $this->pdf =& $pdf;
   }  
@@ -91,6 +91,7 @@ class mayflower
   
   function enterReport()
   {
+    $this->mayflower->reportBuff->posY = 0;
   }
   
   function exitReport()
@@ -183,26 +184,11 @@ class mayflower
     }  
     $this->exitReport();
   }
-
-    
 } 
  
 class PDF extends FPDF
 {
 
-////////////////////////////////////////////////////////
-//
-// stuff to move
-//
-//////////////////////////////////////////////////////// 
-
-////////////////////////////////////////////////////////
-//
-// stuff to sort out
-//
-//////////////////////////////////////////////////////// 
-
-  
   //////////////////////////////////////////////////////////////////////////
   //
   //  _out - overwriting FPDF's private _out method used for "printing"
@@ -235,38 +221,6 @@ class PDF extends FPDF
     $this->incache = false;
   }    
   
-  
-
-  
-  
-       
-
-  //////////////////////////////////////////////////////////////////////////
-  //
-  // startSection / endSection 
-  //
-  // inside a section the FPDF's output gets cached in $this->_buff
-  // any positioning inside a section is relative to the section, not the page
-  //
-  // when the section ends, the output is processed and possible divided vertical
-  // among several pages (page header and footer are output when needed)
-  // the section's KeepTogether property is taken into account
-  //
-  //////////////////////////////////////////////////////////////////////////
-  
-  
-
-  function outSectionWithCallback($x, $y, $w, $h, $callCnt, &$exporter, &$secBuff)
-  {
-    $exporter->onPrint($cancel, $callCnt);
-    if (!$cancel) {
-      $this->outSection($x, $y, $w, $h, &$secBuff);
-    }
-  }
-
-  
-  
-
 ////////////////////////////////////////////////////////
 //
 // stuff to stay
@@ -293,13 +247,13 @@ class PDF extends FPDF
    *
    */
    
-  function &getInstance(&$reportBuff, &$layout, $reset)
+  function &getInstance(&$layout, $reset)
   {
     static $instance = null;
     if (is_null($instance) or $reset) {
       $size = array($layout->paperWidth, $layout->paperHeight);
       $instance = new PDF('p', $layout->unit, $size);
-      $instance->mayflower =& new mayflower($reportBuff, $layout, $instance);
+      $instance->mayflower =& new mayflower($layout, $instance);
     }
 
     return $instance;
@@ -308,9 +262,7 @@ class PDF extends FPDF
   function init(&$exporter, &$layout)
   {
     $this->_exporter =& $exporter;
-    $this->layout = $layout;
     $this->SetCompression(false);
-    $this->mayflower->reportBuff->posY = 0;
 
     $this->SetCompression(false);
     $this->SetRightMargin($layout->rightMargin);
@@ -517,16 +469,16 @@ class PDF extends FPDF
   var $outlines=array();
   var $OutlineRoot;
 
-  function Bookmark($txt,$level=0,$y=0)
+  function Bookmark1($txt,$level=0,$y=0, $pageNo, $posYinPage, $inReport)
   {
-    if (!$this->mayflower->inReport()) {
+    if (!$inReport) {
       if($y==-1)
         $y=$this->GetY();
       $this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$this->PageNo());
     } else {
       if($y == -1)
-        $y = $this->mayflower->posYinPage();
-      $p = $this->mayflower->pageNo();
+        $y = $posYinPage;
+      $p = $pageNo;
       if ($p <= 0)
         $p = 1;
 

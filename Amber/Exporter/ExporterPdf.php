@@ -38,7 +38,7 @@ class ExporterFPdf extends Exporter
   function startReportSubExporter(&$report, $asSubreport = false, $isDesignMode = false)
   {
     $reset = (!$asSubreport);
-    $this->_pdf =& PDF::getInstance($report->reportBuff, $report->layout, $reset);
+    $this->_pdf =& PDF::getInstance($report->layout, $reset);
     $this->mayflower =& $this->_pdf->mayflower;
     if ($report->Controls) {
       foreach (array_keys($report->Controls) as $ctrlName) {
@@ -48,7 +48,7 @@ class ExporterFPdf extends Exporter
       }
     }
     if ($asSubreport) {
-      $this->_pdf->mayflower->subReportPush();
+      $this->mayflower->subReportPush();
       $this->startcomment("StartSubreport");
     } else {  
       $this->_pdf->init($this, $report->layout);
@@ -61,7 +61,7 @@ class ExporterFPdf extends Exporter
     if ($this->_asSubreport) {
       $this->newPage();
       $this->comment("EndSubreport");
-      return $this->_pdf->mayflower->subReportPop();
+      return $this->mayflower->subReportPop();
     } else {
       if (!$this->_report->layout->designMode) {
         $this->_report->_printNormalSection('PageFooter');
@@ -260,6 +260,11 @@ class ExporterFPdf extends Exporter
       $this->_report->_printNormalSection('PageHeader');
     }  
   }
+  
+  function Bookmark($txt,$level=0,$y=0)
+  {
+    $this->_pdf->Bookmark1($txt, $level, $y, $this->mayflower->pageNo(), $this->mayflower->posYinPage(), $this->mayflower->inReport());
+  }
 
 
   /*********************************
@@ -382,7 +387,7 @@ class ExporterFPdf extends Exporter
     } else {
       $rep->resetMargin(true);
       $rep->run('pdf', true);
-      $para->content = "\n%Start SubReport\n" . $this->_pdf->mayflower->subReportGetPopped() . "\n%End SubReport\n"; 
+      $para->content = "\n%Start SubReport\n" . $this->mayflower->subReportGetPopped() . "\n%End SubReport\n"; 
     }
     #$para->content = "(TEST)";
     $this->_pdf->printBoxPdf($para);            

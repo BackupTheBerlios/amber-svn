@@ -23,10 +23,8 @@ class reportPaged extends Report
       return;
     }
     $this->layout =& new pageLayout($this, $isSubreport, $isDesignMode);
-    if (!$isSubReport) {
-      $this->reportBuff =& new reportBuff($this->layout);
-    }
     $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
+    $this->reportBuff=& $this->_exporter->mayflower->reportBuff;
   }
 
   /**
