@@ -163,7 +163,7 @@ class PDF extends FPDF
         $this->_exporter->printPageHeader();
       }
       $this->_sectionType = '';
-      $this->outSection($sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
+      $this->outSection(0, $this->_posY, $this->_reportWidth, $sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
     }
     $this->_posY += $sectionHeight;
   }
@@ -296,10 +296,10 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
     $this->RemoveClipping();
   }
   
-  function outSection($sectionHeight, $callCnt, &$exporter, &$secBuff)
+  function outSection($x, $y, $w, $h, $callCnt, &$exporter, &$secBuff)
   {
-    $this->SetCoordinate(0, -$this->_posY);
-    $this->SetClipping(0, 0, $this->_reportWidth, $sectionHeight);
+    $this->SetCoordinate(-$x, -$y);
+    $this->SetClipping(0, 0, $w, $h);
 
     if (!$exporter->DesignMode) {
       $exporter->onPrint($cancel, $callCnt);

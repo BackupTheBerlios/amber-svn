@@ -146,7 +146,7 @@ class ExporterFPdf extends Exporter
     $this->printPageFooter();
 
     $this->_pdf->endReportBuffering();
-    
+  
     $firstPage = true;  //first page is out
 
     $endPageX = floor($this->_pdf->_reportWidth / $this->layout->printWidth);
@@ -157,13 +157,13 @@ class ExporterFPdf extends Exporter
         }
         $firstPage = false;
 
-        $this->outPageHeader($pageY, $pageX, $this->_pdf->_reportPages[$pageY]['Head']);  
-        $this->outPage($pageY, $pageX, $this->_pdf->_reportPages[$pageY]['']);  
-        $this->outPageFooter($pageY, $pageX, $this->_pdf->_reportPages[$pageY]['Foot']);  
+        $this->outPageHeader($pageY, $pageX);  
+        $this->outPage($pageY, $pageX);  
+        $this->outPageFooter($pageY, $pageX);  
       }
     }
   }
-  function outPageHeader($pageY, $pageX, $dataBuff)
+  function outPageHeader($pageY, $pageX)
   {
     $x = $this->layout->leftMargin;
     $y = $this->layout->topMargin;
@@ -171,9 +171,9 @@ class ExporterFPdf extends Exporter
     $h = $this->layout->pageHeaderHeight;
     $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
     $deltaY = $pageY * $this->layout->printHeight - $y;
-    $this->_pdf->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff);
+    $this->_pdf->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->_pdf->_reportPages[$pageY]['Head']);
   }
-  function outPage($pageY, $pageX, $dataBuff)
+  function outPage($pageY, $pageX)
   {
     $x = $this->layout->leftMargin;
     $y = $this->layout->topMargin + $this->layout->pageHeaderHeight;
@@ -181,9 +181,9 @@ class ExporterFPdf extends Exporter
     $h = $this->layout->printHeight;
     $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
     $deltaY = $pageY * $this->layout->printHeight - $y;
-    $this->_pdf->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff);
+    $this->_pdf->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->_pdf->_reportPages[$pageY]['']);
   }
-  function outPageFooter($pageY, $pageX, $dataBuff)
+  function outPageFooter($pageY, $pageX)
   {
     $x = $this->layout->leftMargin;
     $y = $this->layout->topMargin + $this->layout->pageHeaderHeight + $this->layout->printHeight;
@@ -191,7 +191,7 @@ class ExporterFPdf extends Exporter
     $h = $this->layout->pageFooterHeight;
     $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
     $deltaY = $pageY * $this->layout->printHeight - $y;
-    $this->_pdf->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff);
+    $this->_pdf->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->_pdf->_reportPages[$pageY]['Foot']);
   }
 
   /*********************************
