@@ -216,24 +216,13 @@ class Report extends AmberObject
   /**
    *
    * @access public
-   * @return int current page number
-   *
-   */
-  function Page()
-  {
-    return $this->_exporter->page();
-  }
-
-  /**
-   *
-   * @access public
    * @param string 'html', 'pdf' (synonyms: '.pdf', 'fpdf') depending on which exporter to use
    *
    */
   function run($type, $isSubreport)
   {
     $this->_installExporter($type);
-    $this->_exporter->setDocumentTitle($this->Name);
+    $this->_setDocumentTitle($this->Name);
     $this->_startReport($isSubreport, false);
 
     $this->OnOpen($cancel);
@@ -280,7 +269,7 @@ class Report extends AmberObject
     }
     $this->_printNormalGroupFooters($maxLevel, 0);
     $this->_printNormalSection($this->ReportFooter);
-    $this->_exporter->newPage();
+    $this->newPage();
     $this->OnClose();
     $this->_endReport($isSubreport);
   }
@@ -304,7 +293,7 @@ class Report extends AmberObject
   function printDesign($type, $isSubreport)
   {
     $this->_installExporter($type);
-    $this->_exporter->setDocumentTitle($this->Name);
+    $this->_setDocumentTitle($this->Name);
 
     $this->_startReport($isSubreport, true);
 
@@ -319,7 +308,7 @@ class Report extends AmberObject
     $this->_printDesignGroupFooters($maxLevel, 0);
     $this->_printDesignSection($this->ReportFooter);
     $this->_printDesignSection($this->PageFooter);
-    $this->_exporter->newPage();
+    $this->newPage();
     $this->_endReport($isSubreport);
   }
 
@@ -382,26 +371,6 @@ class Report extends AmberObject
         Amber::showError('Database Error ' . $db->ErrorNo(), $db->ErrorMsg());
         die();
       }
-    }
-  }
-
-  /**
-   * @access private
-   */
-  function _startReport($isSubreport, $isDesignMode)
-  {
-    if (isset($this->_exporter)) {
-      $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
-    }
-  }
-
-  /**
-   * @access private
-   */
-  function _endReport()
-  {
-    if (isset($this->_exporter)) {
-      $this->_exporter->endReport($this);
     }
   }
 
@@ -505,15 +474,15 @@ class Report extends AmberObject
       $height = 0;
     } else {
       if ($section->hasForceNewPageBefore()) {
-        $this->_exporter->newPage();
+        $this->newPage();
       }
-      $this->_exporter->startSection($section, $this->Width, $buffer);
+      $this->_startSection($section, $this->Width, $buffer);
       $height = $section->printNormal($buffer);
-      $this->_exporter->endSection($section, $height, $buffer);
+      $this->_endSection($section, $height, $buffer);
 
 
       if ($section->hasForceNewPageAfter()) {
-        $this->_exporter->newPage();
+        $this->newPage();
       }
       $this->_prepareDuplicates($section);
     }
@@ -529,13 +498,13 @@ class Report extends AmberObject
       return 0;
     } else {
       if ($GroupByName) {
-        $this->_exporter->sectionPrintDesignHeader($section->EventProcPrefix . ' - ' . $GroupByName);
+        $this->sectionPrintDesignHeader($section->EventProcPrefix . ' - ' . $GroupByName);
       } else {
-        $this->_exporter->sectionPrintDesignHeader($section->EventProcPrefix);
+        $this->sectionPrintDesignHeader($section->EventProcPrefix);
       }
-      $this->_exporter->startSection($section, $this->Width, $buffer);
+      $this->_startSection($section, $this->Width, $buffer);
       $section->printDesign($buffer);
-      $this->_exporter->endSection($section, $section->Height, $buffer);
+      $this->_endSection($section, $section->Height, $buffer);
     }
   }
 
@@ -668,6 +637,70 @@ class Report extends AmberObject
 
     return count($this->_groupFields);
   }
+
+//////////////////////////////////////////////////
+// 
+// functions to encapsulate calls to _exporter
+//
+//////////////////////////////////////////////////
+
+  /**
+   * @access private
+   */
+  function _startReport($isSubreport, $isDesignMode)
+  {
+    if (isset($this->_exporter)) {
+      $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
+    }
+  }
+
+  /**
+   * @access private
+   */
+  function _endReport()
+  {
+    if (isset($this->_exporter)) {
+      $this->_exporter->endReport($this);
+    }
+  }
+  
+  function _setDocumentTitle($name)
+  {
+    $this->_exporter->setDocumentTitle($name);
+  } 
+
+  function _startSection(&$section, $width, &$buffer)
+  {
+    $this->_exporter->startSection($section, $width, $buffer);
+  }  
+
+  function _endSection(&$section, $height, &$buffer)
+  {
+    $this->_exporter->endSection($section, $height, $buffer);
+  }  
+
+  function sectionPrintDesignHeader($title)
+  {
+    $this->_exporter->sectionPrintDesignHeader($title);
+  }   
+
+
+  /**
+   *
+   * @access public
+   * @return int current page number
+   *
+   */
+  function page()
+  {
+    return $this->_exporter->page();
+  }
+  
+  function newPage()
+  {
+    $this->_exporter->newPage();
+  }  
 }
+
 
 ?>
