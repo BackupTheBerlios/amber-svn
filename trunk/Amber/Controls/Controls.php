@@ -472,9 +472,9 @@ class SubReport extends Control
       Amber::showError('Error', 'Could not load subreport "' . htmlspecialchars($name) . '"');
       return 0;
     }
-    
-    $this->_subReport->setSubReport();
-    
+
+    $this->_subReport->setSubReport(true);
+
     // Construct filter
     if (($this->LinkChildFields != null) && ($this->LinkMasterFields != null)) {
       $linkChild = explode(';', $this->LinkChildFields);
@@ -496,10 +496,10 @@ class SubReport extends Control
         }
       }
       $this->_subReport->Filter = implode(' AND ', $reportFilterArray);
-    }  
-    
+    }
+
     $this->_exporter->printNormal($this, $this->Value);
-    
+
     return $this->stdHeight(); ##FIX ME: actual height
   }
 

@@ -243,12 +243,12 @@ class Report extends AmberObject
     $this->Cols =& $this->_data[0];
     $this->_setControlValues();
     $this->OnFirstFormat($cancel);
-    
+
     if (!$cancel) {
       $this->_printNormalSection($this->ReportHeader);
       $this->_printNormalGroupHeaders($maxLevel, 0);
     }
-    
+
     if (is_null($this->RecordSource)) {   // if no data expected print Detail only once
       $this->_printNormalSection($this->Detail);
     } else {                              // Loop through all records
@@ -265,7 +265,7 @@ class Report extends AmberObject
           $this->_resetRunningSum($level, $maxLevel);
           $this->_printNormalSection($this->Detail);
           $oldRow =& $this->Cols;
-        }  
+        }
       }
     }
     $this->_printNormalGroupFooters($maxLevel, 0);
@@ -288,7 +288,7 @@ class Report extends AmberObject
     $this->_installExporter($type);
     $this->_setDocumentTitle($this->Name);
 
-    $this->_setDesignMode();
+    $this->_setDesignMode(true);
     $this->initDesignHeader();
 
     $this->_startReport();
@@ -632,7 +632,7 @@ class Report extends AmberObject
 
     return count($this->_groupFields);
   }
-  
+
   function initDesignHeader()
   {
     $this->_designSection =& new section('');
@@ -646,7 +646,7 @@ class Report extends AmberObject
     $this->_designSection->EventProcPrefix = '';
     $this->_designSection->_parent =& $this;
     $this->_designSection->_OnFormatFunc = 'allSections_Format';
-    
+
     $ctlProp = array(
       'Name' => '',
       'Left' => 0,
@@ -671,7 +671,7 @@ class Report extends AmberObject
       'TextAlign' => 0,
       'FontItalic' => false,
       'FontUnderline' => false,
-      
+
       'Caption' => 'Test'
     );
 
@@ -679,12 +679,12 @@ class Report extends AmberObject
     $this->_exporter->setControlExporter($ctl);
     $this->_designSection->Controls['label'] =& $ctl;
   }
-  
+
   function sectionPrintDesignHeader($text)
   {
     $this->_designSection->Controls['label']->Caption = $text;
     $buffer = '';
-    
+
     $this->_startSection($this->_designSection, $this->Width);
     $height = $this->_designSection->printNormal();
     $this->_endSection($this->_designSection, $height);
@@ -693,56 +693,56 @@ class Report extends AmberObject
   function _setDocumentTitle($name)
   {
     $this->_exporter->setDocumentTitle($name);
-  } 
+  }
 
 
 //////////////////////////////////////////////////
-// 
+//
 // functions to encapsulate calls to _exporter
 //
 //////////////////////////////////////////////////
 
 
-  function setContinous($switch=true)
+  function setContinous($value)
   {
-    $this->noAutoPage($switch);
+    $this->setNoAutoPage($value);
   }
 
-  function _setDesignMode()
+  function _setDesignMode($value)
   {
-    $this->noHeadFoot(true);
-    $this->ignoreOnPrint = true;
-    $this->ignoreKeepTogether = true;
-    $this->printHeadFootAsNormalSection = true;
+    $this->setNoHeadFoot($value);
+    $this->ignoreOnPrint = $value;
+    $this->ignoreKeepTogether = $value;
+    $this->printHeadFootAsNormalSection = $value;
   }
 
-  function setSubReport($switch=true)
+  function setSubReport($value)
   {
-    $this->asSubReport = $switch;
-    $this->noAutoPage($switch);
-    $this->noMargins($switch);
-    $this->noHeadFoot($switch);
+    $this->asSubReport = $value;
+    $this->setNoAutoPage($value);
+    $this->setNoMargins($value);
+    $this->setNoHeadFoot($value);
   }
-  
-  function noAutoPage($switch=true)
+
+  function setNoAutoPage($value)
   {
-    $this->noAutoPage = $switch;
+    $this->noAutoPage = $value;
   }
-  
-  function noMargins($switch=true)
+
+  function setNoMargins($value)
   {
-    $this->noMargins = $switch;
+    $this->noMargins = $value;
   }
-  
-  function noHeadFoot($switch=true)
+
+  function setNoHeadFoot($value)
   {
-    $this->noHeadFoot = $switch;
+    $this->noHeadFoot = $value;
   }
-  
+
   function _startReport()
   {
     $this->layout =& new pageLayout($this);
-    
+
     $this->_exporter->startReport($this, $this->asSubReport, true);
   }
 
@@ -752,15 +752,15 @@ class Report extends AmberObject
   function _endReport()
   {
   }
-  
+
   function _startSection(&$section, $width)
   {
-  }  
+  }
 
   function _endSection(&$section, $height)
   {
-  }  
-  
+  }
+
   /**
    *
    * @access public
@@ -770,16 +770,16 @@ class Report extends AmberObject
   function page()
   {
   }
-  
+
   function newPage()
   {
-  }  
-  
+  }
+
   function Bookmark($txt,$level=0,$y=0)
   {
     //Bookmarks only for paged reports -- nothing for subReports
   }
-  
+
   function outSection($formatCount, $posY, $sectionHeight, &$secBuff, &$section)
   {
     $this->_exporter->outSectionStart($posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $section->Name);
@@ -790,7 +790,7 @@ class Report extends AmberObject
       if (!$cancel) {
         $this->_exporter->out($secBuff);
       }
-    }      
+    }
     $this->_exporter->outSectionEnd();
   }
 }

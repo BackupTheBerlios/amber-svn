@@ -128,12 +128,10 @@ class Amber
     }
 
     $rep->Filter = $filter;
-    if ($noMargin == true) {
-      $rep->noMargins();
-    }
+    $rep->setNoMargins($noMargin);
 
     if (($type == 'html') || ($type == 'typo3')) {
-      $rep->setContinous();
+      $rep->setContinous(true);
     }
 
     // Run it
