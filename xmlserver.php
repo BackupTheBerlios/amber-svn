@@ -10,6 +10,8 @@ include_once 'Amber/AmberConfig.php';
 class AmberXMLServer extends IXR_Server
 {
   var $_globalConfig;
+  var $sysTableName = 'tx_amber_sys_objects';
+  var $objectTypes = array('report' => 1, 'module' => 2);
 
   function AmberXMLServer()
   {
@@ -18,7 +20,7 @@ class AmberXMLServer extends IXR_Server
   function processRequest()
   {
     $this->IXR_Server(array(
-      'Amber.writeXML' => 'this:writeXML',
+      'Amber.writeReportXML' => 'this:writeReportXML',
       'Amber.fileExists' => 'this:fileExists',
       'Amber.getReportList' => 'this:getReportList',
       'Amber.getCode' => 'this:getCode'
@@ -43,7 +45,7 @@ class AmberXMLServer extends IXR_Server
     if (!isset($this->_db)) {
       $cfg =& $this->_globalConfig;
       $db =& ADONewConnection($cfg->getDriver());
-      $conResult = @$db->PConnect($cfg->getHost(), $cfg->getUsername(), $cfg->getPassword(), $cfg->getDatabase());
+      $conResult = $db->PConnect($cfg->getHost(), $cfg->getUsername(), $cfg->getPassword(), $cfg->getDbName());
       $db->SetFetchMode(ADODB_FETCH_ASSOC);
       if ($conResult == false) {
         Amber::showError('Database Error '  . $db->ErrorNo(), $db->ErrorMsg());
@@ -55,25 +57,55 @@ class AmberXMLServer extends IXR_Server
     return $this->_db;
   }
 
-
-  function writeXML($a)
+  function writeReportXML($param)
   {
-    $fileName = $a[0];
-    $xmlData = $a[1];
+    $repName = $param[0];
+    $repDesign = $param[1];
+    $repClass = $param[2];
+    $repCode = $param[3];
+    $repOverwrite = $param[4];
+    
+    $db =& $this->currentDb();
+    $dict = NewDataDictionary($db);
+    
+    // if object exists do update else insert
+    if ($this->objectExists($this->objectTypes['report'], $repName)) {
+      $sql = 'UPDATE ' . $dict->TableName($this->sysTableName) . ' SET ';
+      $sql .= 'design=' . $db->Quote($repDesign) . ', ';
+      $sql .= 'class=' . $db->Quote($repClass);
+      if ($repOverwrite == true) {
+        $sql .= ', code=' . $db->Quote($repCode);
+      }
+      $sql .= ' WHERE name=' . $db->Quote($repName) . ' AND type=' . $this->objectTypes['report'];
+    } else {
+      $sql = 'INSERT INTO ' . $dict->TableName($this->sysTableName) . ' VALUES ';
+      $sql .= '(null, 0, 0, 0, 0, 0, 0, 0, 0, ';
+      $sql .= $db->Quote($repName) . ', ';
+      $sql .= $db->Quote($repDesign) . ', ';
+      $sql .= $db->Quote($repClass) . ', ';
+      $sql .= $db->Quote($repCode) . ', 1, 1);';
+    }
+    
+    if (!$db->Execute($sql)) {
+      return new IXR_Error(1, 'Database Error: ' . $db->ErrorMsg());
+    }
+    
+    return true;
+  }
 
-    if (!is_string($fileName)) {
-      return new IXR_Error(1, 'Parameter Error: File name must be a string');
-    }
-    if (!is_string($xmlData)) {
-      return new IXR_Error(2, 'Parameter Error: XML data must be a string');
+  function objectExists($type, $name)
+  {
+    $db =& $this->currentDb();
+    $dict = NewDataDictionary($db);
+    
+    $sql = 'SELECT uid FROM ' . $dict->TableName($this->sysTableName);
+    $sql .= ' WHERE name=' . $db->Quote($name) . ' AND type=' . $type;
+    
+    if (!$db->GetOne($sql)) {
+      return false;
     }
 
-    $fp = fopen($fileName, 'w');
-    if (!$fp) {
-      return new IXR_Error(3, 'Unable to open file for writing');
-    }
-    fwrite($fp, $xmlData);
-    fclose($fp);
+    return true;
   }
 
   function fileExists($fileName)
@@ -90,18 +122,16 @@ class AmberXMLServer extends IXR_Server
   {
     $db = $this->currentDb();
     $dict = NewDataDictionary($db);
-    $sysTable = 'tx_amber_sys_objects';
-    $sql = 'Select name from ' . $dict->TableName($sysTable);
+    $sql = 'Select name from ' . $dict->TableName($this->sysTableName);
 
     return $db->GetAll($sql);
   }
 
   function getCode($name)
   {
-    $db = $this->currentDb();
+    $db =& $this->currentDb();
     $dict = NewDataDictionary($db);
-    $sysTable = 'tx_amber_sys_objects';
-    $sql = 'Select code from ' . $dict->TableName($sysTable) . ' where name=' . $db->Quote($name);
+    $sql = 'Select code from ' . $dict->TableName($this->sysTableName) . ' where name=' . $db->Quote($name);
 
     return $db->GetOne($sql);
   }
