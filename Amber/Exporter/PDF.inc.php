@@ -15,6 +15,17 @@ class subReportBuff
   {
     $this->buffer[$this->index] .= $s . "\n";
   }
+  
+  function push()
+  {
+   $this->index++;
+  }
+   
+  function pop()
+  {
+    $this->index--;
+    return $this->buffer[$this->index + 1];
+  }  
 } 
  
 class PDF extends FPDF
@@ -213,15 +224,14 @@ class PDF extends FPDF
   
   function startSubReport()
   {
-    $this->subReportBuff->index++;
+    $this->subReportBuff->push();
     $this->startcomment("StartSubreport");
   }
   
   function endSubReport()
   {
     $this->comment("EndSubreport");
-    $this->subReportBuff->index--;
-    return $this->subReportBuff->buffer[$this->subReportBuff->index + 1];
+    return $this->subReportBuff->pop();
   }  
 
 ////////////////////////////////////////////////////////
