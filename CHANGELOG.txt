@@ -1,6 +1,8 @@
 20040719:
 - location where amber_sys_objects are stored may now be set via localconf.xml
 - updated Install Tool
+- objectloader: no blanks outside <?php ?>
+- form xml-file: insert trailing ?> in code-file
 
 20040718:
 - htmlExporter: now invariant to setlocale (even inch and cm)
