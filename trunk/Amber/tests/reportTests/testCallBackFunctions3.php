@@ -211,7 +211,7 @@ class testCallBackFunctions3 extends AmberReport_UserFunctions
 //TEST  
   function assertHtml($html)
   {
-print $html;
+    #print $html;     // remove comment to see wats going on
     $test =& $this->test;
     $id = get_class($this) . '->assertHtml'; 
     $test->assertEquals(1, $this->calls['Report_Open'], $id . ' Report_Open');
