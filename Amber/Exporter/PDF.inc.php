@@ -65,6 +65,26 @@ class mayflower
     }  
   }
 
+  function pageNo()
+  {
+    return $this->reportBuff->page();
+  }  
+  
+  function posYinPage()
+  {
+    return ($this->reportBuff->posY - ($this->reportBuff->actpageNo * $this->layout->printHeight));
+  }
+  
+  function setPageIndex($index)
+  {
+     $this->reportBuff->actpageNo = $index;
+  }        
+  
+  function getPageIndex()
+  {
+    return $this->reportBuff->actpageNo;
+  }  
+  
   function enterReport()
   {
     $this->inReport = true;
@@ -169,13 +189,13 @@ class PDF extends FPDF
   function pageHeaderEnd()
   {
    $this->mayflower->reportStartPageHeader();
-   $this->_pageHeaderOrFooterEnd($this->mayflower->reportBuff->actpageNo * $this->layout->printHeight, $this->layout->pageHeaderHeight);
+   $this->_pageHeaderOrFooterEnd($this->mayflower->reportBuff->getPageIndex() * $this->layout->printHeight, $this->layout->pageHeaderHeight);
   }
 
   function pageFooterEnd()
   {
     $this->mayflower->reportStartPageFooter();
-    $this->_pageHeaderOrFooterEnd($this->mayflower->reportBuff->actpageNo * $this->layout->printHeight, $this->layout->pageFooterHeight);
+    $this->_pageHeaderOrFooterEnd($this->mayflower->reportBuff->getPageIndex() * $this->layout->printHeight, $this->layout->pageFooterHeight);
   }
 
         
@@ -265,11 +285,11 @@ class PDF extends FPDF
     }
 
     for ($page = $startPage; $page <= $endPage; $page++) {
-      if (($page <> $this->mayflower->reportBuff->actpageNo)) {
-        if ($this->mayflower->reportBuff->actpageNo >= 0) {
+      if (($page <> $this->mayflower->getPageIndex())) {
+        if ($this->mayflower->getPageIndex() >= 0) {
           $this->_exporter->printPageFooter();
         }
-        $this->mayflower->reportBuff->actpageNo = $page;
+        $this->mayflower->setPageIndex($page);
         $this->_exporter->printPageHeader();
       }
       $this->mayflower->reportStartPageBody();
@@ -553,8 +573,8 @@ class PDF extends FPDF
       $this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$this->PageNo());
     } else {
       if($y == -1)
-        $y = $this->mayflower->reportBuff->posY - ($this->mayflower->reportBuff->actpageNo * $this->layout->printHeight);
-      $p = $this->mayflower->reportBuff->actpageNo + 1;
+        $y = $this->mayflower->posYinPage();
+      $p = $this->mayflower->pageNo();
       if ($p <= 0)
         $p = 1;
 
@@ -910,4 +930,4 @@ class PDF extends FPDF
   }
 
 
-?> 
+?>
