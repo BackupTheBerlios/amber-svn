@@ -17,8 +17,8 @@ class Amber
     $db = Amber::currentDb();
     $m = new ModuleLoader();
     if ($this->_config->sys_objects['medium'] == 'db') {
-    //  $m->loadFromDb($db);
-    //} else {
+      $m->loadFromDb($db);
+    } else {
       $m->loadFromFile('modules/');
     }
   }
