@@ -106,7 +106,7 @@ class Amber
   {
     $v = $var;
 
-    echo Amber::dumpArray($v);
+    echo Amber::_dumpArray($v);
   }
   
   function _dumpScalar($var)
@@ -149,7 +149,7 @@ class Amber
       }
       $result .= '</table>';
     } else {
-      Amber::_dumpScalar($v);
+      $result = Amber::_dumpScalar($v);
     }
 
     return $result;
