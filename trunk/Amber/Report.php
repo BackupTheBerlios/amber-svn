@@ -67,14 +67,20 @@ class Report extends AmberObject
   var $_data; // Holds result of the database query
   var $_groupFields; // contains field names by which to group
   var $_exporter;
+  var $layout;
 
   var $_Code;     // user defined call back methods
   var $_ClassName;
 
-  var $_reportDir = '.';
   var $_globalConfig;
 
   var $asSubReport;
+  var $ignoreOnPrint;
+  var $ignoreKeepTogether;
+  var $noAutoPage;
+  var $noMargins;
+  var $noHeadFoot;
+  var $printHeadFootAsNormalSection;
 
   //////////////////////////////////////////////////////////////////
   // PUBLIC METHODS
@@ -740,14 +746,9 @@ class Report extends AmberObject
 //
 //////////////////////////////////////////////////
 
-
-  function setContinous($value)
-  {
-    $this->setNoAutoPage($value);
-  }
-
   function _setDesignMode($value)
   {
+    $this->setNoAutoPage($value);
     $this->setNoHeadFoot($value);
     $this->ignoreOnPrint = $value;
     $this->ignoreKeepTogether = $value;

@@ -129,7 +129,7 @@ class Amber
     $rep->setNoMargins($noMargin);
 
     if (($type == 'html') || ($type == 'typo3')) {
-      $rep->setContinous(true);
+      $rep->setNoAutoPage(true);
     }
 
     // Run it
