@@ -127,7 +127,7 @@ class ExporterFPdf extends Exporter
     $ln = 0; //pos after printing
     $align = 'C';
     $fill = 1;
-    $this->_pdf->Cell($section->_parent->Width, $section->Height, $text, $border, $ln, $align, $fill);
+    $this->_pdf->Cell($section->_report->Width, $section->Height, $text, $border, $ln, $align, $fill);
   }
 
   function endSection(&$section, $height, &$buffer)

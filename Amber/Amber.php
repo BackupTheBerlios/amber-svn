@@ -87,9 +87,7 @@ class Amber
         $this->_objectLoader->setDatabase(Amber::currentDb());
       } else {
         $this->_objectLoader =& new ObjectLoaderFile();
-        //$this->_objectLoader->setBasePath('modules/');
-        Amber::showError('Error', 'Loading from file not yet done');
-        die();
+        $this->_objectLoader->setBasePath('.');
       }
       $this->_objectLoader->setConfig($this->_config);
     }
@@ -108,7 +106,7 @@ class Amber
 
     echo Amber::_dumpArray($v);
   }
-  
+
   function _dumpScalar($var)
   {
     return '<div align="center"><pre style="text-align: left; width: 80%; border: solid 1px #ff0000; font-size: 9pt; color: #000000; background-color: #ffffff; padding: 5px; z-index: 99999; position: relative;">' . htmlentities(print_r($var, 1)) . '</pre></div>';
@@ -157,7 +155,7 @@ class Amber
 
   function showError($title, $text)
   {
-    $id = 'Error' . mt_rand();
+    $id = 'AmberError' . mt_rand();
 
     echo '<div id="' . $id . '" style="border: solid 3px #ff0000; background-color: #eeeeee; padding: 5px; z-index: 99999; position: relative; margin-top: 10px;">';
     echo '<p align="center"><b>' . $title . '</b></p>';

@@ -16,12 +16,12 @@ if (isset($_GET['rep'])) {
 if (isset($_GET['export'])) {
   $type = $_GET['export'];
 } else {
-  $type = 'html';            //aktuelle Werte vgl. Exporter.php und die dazugehörigen includes.
+  $type = 'html';  // for a list of possible values see ExporterFactory.php and corresponding include files
 }
 
 $mode = 'normal';
 if (isset($_GET['mode'])) {
-  $mode = $_GET['mode'];     // 'design' or 'normal'
+  $mode = $_GET['mode'];  // 'design' or 'normal'
 }
 
 $cfgFileName = '../Amber/conf/localconf.xml';

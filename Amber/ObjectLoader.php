@@ -121,18 +121,18 @@ class ObjectLoaderDb extends ObjectLoader
     $data = $rs->FetchRow();
 
     if (!$data) {
-      $this->_lastError = 'Report "' . $reportName . '" not found in databse';
+      $this->_lastError = 'Report "' . $reportName . '" not found in database';
       return false;
     }
+
+    $data['code'] = '<?php ' . $data['code'] . ' ?>';
 
     $report =& new Report();
     $report->setConfig($this->_globalConfig);
     $report->initialize($data);
-    //$report->_installExporter('html');
 
     return $report;
   }
-
 }
 
 /*
@@ -142,28 +142,54 @@ class ObjectLoaderDb extends ObjectLoader
  */
 class ObjectLoaderFile extends ObjectLoader
 {
-  function loadReport($dirName, $reportName)
+  var $_basePath;
+
+  function setBasePath($path)
   {
-    $xmlLoader = new XMLLoader();
-
-    if (empty($dirName)) {
-      $this->_reportDir = '.';
+    if (empty($path)) {
+      $this->_basePath = '.';
     }
 
-    $res =& $xmlLoader->getArray($dirName . '/' . $reportName . '.xml');
-    $param = $res['report'];
-    if (isset($param['Name'])) {
-      $this->_data['name'] = $param['Name'];
+    if (!is_dir($path)) {
+      Amber::showError('ObjectLoaderFile::setBasePath(): Argument given is not a directory: ' . htmlentities($path));
+      die();
     }
+    $this->_basePath = $path;
+  }
 
-    $this->_data['design'] = file_get_contents($dirName . '/' . $param['FileNameDesign']);
-
-    if (isset($param['FileNameCode']) && isset($param['ClassName'])) {
-      $this->_data['class'] = $param['ClassName'];
-      $this->_data['code'] = file_get_contents($dirName . '/' . $param['FileNameCode']);
+  function loadModule()
+  {
+    $modPath = $this->_basePath . '/modules/';
+    foreach (glob($modPath . '*.php') as $filename) {
+      include_once $modpath . $filename;
     }
 
     return true;
+  }
+
+  function &loadReport($reportName)
+  {
+    $repPath = $this->_basePath . '/reports/';
+    $xmlLoader = new XMLLoader();
+
+    $res =& $xmlLoader->getArray($repPath . '/' . $reportName . '.xml');
+    $param = $res['report'];
+    if (isset($param['Name'])) {
+      $data['name'] = $param['Name'];
+    }
+
+    $data['design'] = file_get_contents($repPath . '/' . $param['FileNameDesign']);
+
+    if (isset($param['FileNameCode']) && isset($param['ClassName'])) {
+      $data['class'] = $param['ClassName'];
+      $data['code'] = file_get_contents($repPath . '/' . $param['FileNameCode']);
+    }
+
+    $report =& new Report();
+    $report->setConfig($this->_globalConfig);
+    $report->initialize($data);
+
+    return $report;
   }
 }
 

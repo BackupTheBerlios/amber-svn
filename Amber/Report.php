@@ -156,8 +156,8 @@ class Report
     $className = $data['class'];
 
     if ((isset($className)) && (!class_exists($className))) {
-      eval($data['code']); // code in database is currently being stored without php tags! fix this!
-      //eval(' ?' . '>' . $data['code'] . '<' . '?php ');
+      //eval($data['code']); // code in database is currently being stored without php tags! fix this!
+      eval(' ?' . '>' . $data['code'] . '<' . '?php ');
       if (class_exists($className)) {
         $this->_Code =& new $className;
         $classLoaded = true;
