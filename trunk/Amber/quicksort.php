@@ -31,10 +31,9 @@
  */
 class quicksort {
 
-    var $array;      // array to sort
-    var $keys;       // array [0..n-1] of keys for $array
-    var $cmpClass;   // Classname which contains the cmp function
-     
+    var $array;       // array to sort
+    var $keys;        // array [0..n-1] of keys for $array
+    var $sortColumns; // array $name => $ascend, where -1 = descending, +1 = ascending    
      
     function sort()
     {
@@ -44,7 +43,7 @@ class quicksort {
   
       $firstElement = 0;
       $lastElement = count($this->array) - 1;
-      $res = $this->cmpClass->Report_CompareRows($this->array[$this->keys[$firstElement]], $this->array[$this->keys[$firstElement]]); 
+      $res = $this->cmp($this->array[$this->keys[$firstElement]], $this->array[$this->keys[$firstElement]]); 
       if ($res !== 0) {
         return false; // no compare function given
       } else {  
@@ -63,11 +62,11 @@ class quicksort {
   
       while ($fromLeft <= $fromRight) {
   
-        while ($this->cmpClass->Report_CompareRows($this->array[$this->keys[$fromLeft]], $middleElement) < 0) {
+        while ($this->cmp($this->array[$this->keys[$fromLeft]], $middleElement) < 0) {
           $fromLeft++;
         }
               
-        while ($this->cmpClass->Report_CompareRows($this->array[$this->keys[$fromRight]], $middleElement) > 0) {
+        while ($this->cmp($this->array[$this->keys[$fromRight]], $middleElement) > 0) {
           $fromRight--;
         }
   
@@ -92,6 +91,15 @@ class quicksort {
       $this->keys[$b] =& $memory;
     #}        
   }
+  
+  function cmp(&$rowA, &$rowB)
+  {
+    foreach ($this->sortColumns as $name => $ord) {
+      if      ($rowA[$name] > $rowB[$name]) return  $ord;
+      elseif  ($rowA[$name] < $rowB[$name]) return -$ord;
+    }
+    return 0;
+  }    
 } 
 
 

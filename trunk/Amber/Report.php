@@ -264,16 +264,8 @@ class Report extends AmberObject
       }
     }
 
-    // Create a list of fields by which to group
-    $this->_groupFields = array();
-    if (is_array($this->GroupLevels)) {
-      foreach ($this->GroupLevels as $group) {
-        array_push($this->_groupFields, $group->ControlSource);
-      }
-    }
-    
     // mirror controls and sections into user space
-    $this->_Code->initialize($this);   // this breaks in PHP4; switch to PHP5!
+    $this->_Code->initialize($this);
   }
 
   /**
@@ -303,7 +295,7 @@ class Report extends AmberObject
       }
     }
     
-    $maxLevel = count($this->_groupFields);
+    $maxLevel = count($this->GroupLevels);
     $isFirstRecord = true;
     
     if (is_null($this->RecordSource)) {   // if no data expected print Detail only once
@@ -377,7 +369,7 @@ class Report extends AmberObject
     $this->initDesignHeader();
 
     $this->_startReport();
-    $maxLevel = count($this->_groupFields);
+    $maxLevel = count($this->GroupLevels);
 
     $this->_printDesignSection($this->ReportHeader);
     $this->_printDesignSection($this->PageHeader);
@@ -570,7 +562,17 @@ class Report extends AmberObject
     $sorter = new quicksort();
     $sorter->array =& $this->_data;
     $sorter->keys =& $keys;
-    $sorter->cmpClass =& $this->_Code;
+    $levelIdxs = array_keys($this->GroupLevels);
+    foreach ($levelIdxs as $levelIdx) {
+      $grp =& $this->GroupLevels[$levelIdx];
+      if ($grp->ControlSource[1] != '=') {
+        if ($grp->SortOrder == 0) { 
+          $sorter->sortColumns[$grp->ControlSource] = 1;   // ascending
+        } else {
+          $sorter->sortColumns[$grp->ControlSource] = -1;  // descending
+        }        
+      }
+    }
     $sorter->sort();
   }
 
@@ -581,6 +583,9 @@ class Report extends AmberObject
   function reTypeNumericColumns()                                        
   { 
     $rowNo = count($this->_data);
+    if ((!$rowNo) || (!$this->_dataIsNumeric)) {
+      return;
+    }  
     foreach ($this->_dataIsNumeric as $colname => $type) {
       if (($type == 'I') || ($type == 'R')) {
         for ($i = 0; $i < $rowNo; $i++) {
@@ -877,14 +882,15 @@ class Report extends AmberObject
    */
   function _getGroupLevel(&$row, &$oldRow)
   { 
-    foreach ($this->_groupFields as $idx => $fieldName) {
+    $cnt = count($this->GroupLevels);
+    for($idx = 0; $idx < $cnt; $idx++) {
+      $fieldName = $this->GroupLevels[$idx]->ControlSource;
       if ($row[$fieldName] != $oldRow[$fieldName]) {
         #echo "new level: $idx - $row[$fieldName] - $oldRow[$fieldName] <br>";
         return $idx;
       }
     }
-
-    return count($this->_groupFields);
+    return $cnt;
   }
 
   /**

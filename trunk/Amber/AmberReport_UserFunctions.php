@@ -14,7 +14,6 @@ class AmberReport_UserFunctions
   function Report_Open(&$Cancel) { }
   function Report_ComputeColumns(&$Cancel, &$col)  { $this->Report_OnLoadData($Cancel); }
   function Report_OnLoadData(&$Cancel) { $Cancel = false; }
-  function Report_CompareRows(&$rowA, &$rowB) {return 'noSort!'; }
   function Report_NoData(&$Cancel) { $Cancel = true; }
   function Report_EvaluateExpressions() { }
   function Report_OnNextRecord() { }
@@ -41,12 +40,16 @@ class AmberReport_UserFunctions
     // Columns
     $this->col =& $report->Cols;
     
-    // Section
+    // Sections
     $keys = array_keys($report->Sections);
     foreach ($keys as $key) {
       $prefix = $report->Sections[$key]->EventProcPrefix;
       $this->$prefix =& $report->Sections[$key];
     }
+    
+    // GroupLevels
+    $this->GroupLevels =& $report->GroupLevels;
+    $this->GroupLevel =& $report->GroupLevels;  // Access Compatability
   }
   
   function &getReport()
