@@ -80,17 +80,17 @@ class ExporterHtml extends Exporter
     $out = "\t<div ";
     $style1['left'] = $this->_html_twips($x);;
     $style1['top'] = $this->_html_twips($y);
-    $style1['height'] = $this->_html_twips($h);
+    $style1['height'] = $this->_html_twips($h + BorderCheat);
     $style1['width'] = $this->_html_twips($w);
     $style1['overflow'] = 'hidden';
 
-    $out .=  ' style="' . $this->arrayToStyle($style1) . "\">\n";
+    $out .=  'style="' . $this->arrayToStyle($style1) . "\">\n";
 
     $out .= "\t<div ";
     $style2['left'] = $this->_html_twips(-$deltaX);
     $style2['overflow'] = 'visible';
 
-    $out .=  ' style="' . $this->arrayToStyle($style2) . "\">\n";
+    $out .=  'style="' . $this->arrayToStyle($style2) . "\">\n";
 
     $out .= $dataBuff;
 
@@ -115,15 +115,16 @@ class ExporterHtml extends Exporter
     $style['height'] = $this->_html_twips($h + BorderCheat);
     $style['width'] = $this->_html_twips($w);
 
-    echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">\n";
+    echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">";
 
     //background Box
-    if ($style['background-color'] <> 0xFFFFFF) { //not white
+    if ($backColor <> 0xFFFFFF) { //not white
       $style['top'] = $this->_html_twips(BorderCheat);
       $style['height'] = $this->_html_twips($h);
       $style['background-color'] = $this->_html_color($backColor);
-      echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">&nbsp;</div>\n";
-    }  
+      echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">&nbsp;</div>";
+    }
+    echo "\n";
   }
 
 
