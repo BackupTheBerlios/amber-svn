@@ -207,7 +207,7 @@ class reportPaged extends Report
     $formatCount = 1;
     $this->_exporter->onPrint($cancel, $formatCount);
     if (!$cancel) {
-      $this->_pdf->outSection(0, $this->mayflower->posY, $this->mayflower->layout->reportWidth, $sectionHeight, $buff);
+      $this->_pdf->outSection(0, $this->mayflower->posY, $this->layout->reportWidth, $sectionHeight, $buff);
     }
 
     $this->mayflower->posY += $sectionHeight;
@@ -217,14 +217,14 @@ class reportPaged extends Report
   {
    $this->mayflower->reportStartPageHeader();
    $buff = $this->mayflower->sectionPop();
-   $this->_pdf->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->layout->printHeight, $this->mayflower->layout->reportWidth, $this->mayflower->layout->pageHeaderHeight, $buff);
+   $this->_pdf->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->layout->printHeight, $this->layout->reportWidth, $this->layout->pageHeaderHeight, $buff);
   }
 
   function pageFooterEnd()
   {
     $this->mayflower->reportStartPageFooter();
     $buff = $this->mayflower->sectionPop();
-    $this->_pdf->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->layout->printHeight, $this->mayflower->layout->reportWidth, $this->mayflower->layout->pageFooterHeight, $buff);
+    $this->_pdf->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->layout->printHeight, $this->layout->reportWidth, $this->layout->pageFooterHeight, $buff);
   }
   
   function printPageFooter()
@@ -245,8 +245,4 @@ class reportPaged extends Report
   {
     $this->_pdf->Bookmark($txt, $level, $y, $this->mayflower->page(), $this->mayflower->posYinPage(), $this->mayflower->inReport());
   }
-
-
-
-
 }

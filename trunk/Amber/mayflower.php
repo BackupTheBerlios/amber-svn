@@ -194,7 +194,7 @@ class mayflower
   
   function getSectionIndexForCommentOnly()
   {
-    return $this->sectionIndex;
+    return '';
   } 
   
   

@@ -98,7 +98,7 @@ class PDF extends FPDF
   function startComment($s)
   // this function mere for identity during refactoring. replace with comment
   {
-    $this->_out("\n\n%$s");
+    $this->_out("\n%$s\n");
   }      
   
   function outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff)
