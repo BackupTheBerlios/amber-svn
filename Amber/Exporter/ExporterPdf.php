@@ -158,11 +158,25 @@ class ExporterFPdf extends Exporter
     } elseif ($this->_report->layout->designMode) {
       $this->_pdf->endSection($height, false);
     } elseif ($section->_PagePart == 'Foot') {
-      $this->_pdf->pageFooterEnd();
+      $this->pageFooterEnd();
     } else {
-      $this->_pdf->pageHeaderEnd();
+      $this->pageHeaderEnd();
     }
     parent::endSection($section, $height, $buffer);
+  }
+
+  function pageHeaderEnd()
+  {
+   $this->mayflower->reportStartPageHeader();
+   $buff = $this->mayflower->sectionPop();
+   $this->_pdf->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->mayflower->layout->printHeight, $this->mayflower->layout->reportWidth, $this->mayflower->layout->pageHeaderHeight, $buff);
+  }
+
+  function pageFooterEnd()
+  {
+    $this->mayflower->reportStartPageFooter();
+    $buff = $this->mayflower->sectionPop();
+    $this->_pdf->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->mayflower->layout->printHeight, $this->mayflower->layout->reportWidth, $this->mayflower->layout->pageFooterHeight, $buff);
   }
 
   /*

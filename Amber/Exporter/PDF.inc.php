@@ -196,36 +196,6 @@ class PDF extends FPDF
 //
 //////////////////////////////////////////////////////// 
 
-
-
-  //////////////////////////////////////////////////////////////////////////
-  //
-  // startReport / endReport 
-  //
-  // inside a report the FPDF's output gets cached in 
-  // where 
-  //      $this->mayflower->reportBuff->actpageNo     is the current page number and
-  //
-  // when the report ends, the output is processed and possible divided horizontal
-  // among several pages, if the report is wider than one page
-  //
-  //////////////////////////////////////////////////////////////////////////
-       
-
-
-  function pageHeaderEnd()
-  {
-   $this->mayflower->reportStartPageHeader();
-   $this->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->layout->printHeight, $this->layout->pageHeaderHeight);
-  }
-
-  function pageFooterEnd()
-  {
-    $this->mayflower->reportStartPageFooter();
-    $this->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->layout->printHeight, $this->layout->pageFooterHeight);
-  }
-
-        
 ////////////////////////////////////////////////////////
 //
 // stuff to sort out
@@ -337,16 +307,6 @@ class PDF extends FPDF
     $this->mayflower->reportBuff->posY += $sectionHeight;
   }
 
-  function _pageHeaderOrFooterEnd($posY, $height)
-  {
-    $buff = $this->mayflower->sectionPop();
-    $this->SetCoordinate(0, -$posY);
-    $this->SetClipping(0, 0, $this->layout->reportWidth, $height);
-    $this->comment("end Head/Foot-Section:1\n");
-    $this->_out($buff);
-    $this->RemoveClipping();
-    $this->RemoveCoordinate();
-  }
   
   
 
@@ -427,6 +387,16 @@ class PDF extends FPDF
     $this->RemoveClipping();
   }
   
+  function _pageHeaderOrFooterEnd($posY, $width, $height, &$buff)
+  {
+    $this->SetCoordinate(0, -$posY);
+    $this->SetClipping(0, 0, $width, $height);
+    $this->comment("end Head/Foot-Section:1\n");
+    $this->_out($buff);
+    $this->RemoveClipping();
+    $this->RemoveCoordinate();
+  }
+
   function outSection($x, $y, $w, $h, $callCnt, &$exporter, &$secBuff)
   {
     $this->SetCoordinate(-$x, -$y);
