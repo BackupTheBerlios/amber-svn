@@ -18,7 +18,7 @@ class ReportLoader extends ObjectLoader
   function loadFromDb($db, $reportName)
   {
     $dict = NewDataDictionary($db);
-    $sysTable = 'amber_sys_objects';
+    $sysTable = 'tx_amber_sys_objects';
     $sql = 'Select * from ' . $dict->TableName($sysTable) . ' where name=' . $db->qstr($reportName);
 
     $rs = $db->SelectLimit($sql, 1);

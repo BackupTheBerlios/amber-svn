@@ -9,6 +9,7 @@
 
 include_once 'Exporter.php';
 include_once 'ExporterHtml.php';
+include_once 'ExporterTypo3.php';
 include_once 'ExporterPdf.php';
 
 /**

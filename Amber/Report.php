@@ -428,6 +428,14 @@ class Report
     $this->OnClose();
   }
 
+  function resetMargin()
+  {
+    $this->LeftMargin = 0;
+    $this->RightMargin = 0;
+    $this->TopMargin = 0;
+    $this->BottomMargin = 0;
+  }
+
   /**
    *
    * Print the report in 'design' mode (of course no modification possible)

@@ -15,11 +15,14 @@ function dump($var)
 function showError($title, $text)
 {
   echo '<table width="100%"><tr><td align="center">';
-  echo '<div style="width: 50%; border: solid 3px #ff0000; background-color: #eeeeff; padding: 5px;">';
+  echo '<div style="width: 50%; border: solid 3px #ff0000; background-color: #eeeeff; padding: 5px; z-index: 99999; position: relative;">';
   echo '<p align="center"><b>' . $title . '</b></p>';
   echo '<p align="center">' . $text .'</p>';
   echo '</div>';
   echo '</td></tr></table><p>';
+  if (function_exists('debug_backtrace')) {
+    dump(next(debug_backtrace()));
+  }
 }
 
 function microtime_diff($a, $b)
