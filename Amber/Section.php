@@ -79,29 +79,25 @@ class Section
     } else {
       $this->EventProcPrefix = $data['Name'];
     }
-    $s = $data['EventProcPrefix'].'_Format';
+    $s = $data['EventProcPrefix'] . '_Format';
     if (method_exists($this->_parent->_Code, $s)) {
       $this->_OnFormatFunc = $s;
     } else {
       $this->_OnFormatFunc = 'allSections_Format'; // null-OnFormat
     }
 
-    $s = $data['EventProcPrefix'].'_Print';
+    $s = $data['EventProcPrefix'] . '_Print';
     if (method_exists($this->_parent->_Code, $s)) {
       $this->_OnPrintFunc = $s;
     } else {
       $this->_OnPrintFunc = 'allSections_Print'; // null-OnPrint
     }
 
-    /**
-     * @todo FIXTHIS
-     */
     if (!empty($data['Controls'])) {
       foreach ($data['Controls'] as $c) {
         $ctl =& ControlFactory::create($c['ControlType'], $c);
         if ($ctl == false) {
-          showError('Error', 'Unknown control type: ' . htmlentities($c['ControlType']));
-          die();
+          showError('Warning', 'Skipping unsupported control type: ' . htmlentities($c['ControlType']));
         } else {
           $this->Controls[] =& $ctl;
           $parent->Controls[$ctl->Name] =& $ctl;
@@ -121,13 +117,13 @@ class Section
   {
     $this->_RunningSum();
     $this->_OnFormat($cancel);
-    if ($cancel or !$this->Visible) {
+    if (($cancel == true) || ($this->Visible == false)) {
       $height = 0;
     } else {
       $this->_startSection($buffer);
       // print controls
       $maxHeight = 0;
-      if (isset($this->Controls) && !$cancel) {
+      if ((isset($this->Controls)) && (!$cancel)) {
         $keys = array_keys($this->Controls);
         foreach ($keys as $key) {
           $height = $this->Controls[$key]->printNormal($buffer);
@@ -223,8 +219,8 @@ class Section
   function _startSection(&$buffer)
   {
     $exporter =& $this->_parent->_exporter;
-    if ((!$this->_PagePart) and (!$exporter->DesignMode)) {
-      if (($this->ForceNewPage == 1) or ($this->ForceNewPage == 3)) {
+    if ((!$this->_PagePart) && (!$exporter->DesignMode)) {
+      if (($this->ForceNewPage == 1) || ($this->ForceNewPage == 3)) {
         $exporter->newPage();
       }
     }
@@ -238,8 +234,8 @@ class Section
   {
     $exporter =& $this->_parent->_exporter;
     $exporter->endSection($this, $height, $buffer);
-    if ((!$this->_PagePart) and (!$exporter->DesignMode)) {
-      if (($this->ForceNewPage == 2) or ($this->ForceNewPage == 3)) {
+    if ((!$this->_PagePart) && (!$exporter->DesignMode)) {
+      if (($this->ForceNewPage == 2) || ($this->ForceNewPage == 3)) {
         $exporter->newPage();
       }
     }

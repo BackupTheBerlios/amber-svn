@@ -55,9 +55,9 @@ class testReport extends PHPUnit_TestCase
     $rep =& new Report();
     $rep->setConfig($cfg);
 
-    $rep->setReportDir(__AMBER_BASE__ . '/../examples/reports');
+    $rep->setReportDir('reports');
     $rep->setLoader('file');
-    $rep->load('Bericht2');
+    $rep->load('Bericht1');
 
     return $rep;
 
