@@ -40,7 +40,7 @@ class AmberXMLServer extends IXR_Server
     if (!isset($this->_db)) {
       $cfg =& $this->_globalConfig;
       $db =& ADONewConnection($cfg->driver);
-      $conResult = @$db->PConnect($cfg->host, $cfg->user, $cfg->pwd, $cfg->database);
+      $conResult = @$db->PConnect($cfg->host, $cfg->username, $cfg->pwd, $cfg->database);
       $db->SetFetchMode(ADODB_FETCH_ASSOC);
       if ($conResult == false) {
         showError('Database Error '  . $db->ErrorNo(), $db->ErrorMsg());
@@ -106,14 +106,8 @@ class AmberXMLServer extends IXR_Server
 
 /////////////////////////////////////////////////////////////////////////////
 
-$configs = array(
-  'intern-dev.sbz.de' => 'examples/config-sbz.xml',
-  'josh.intern' => 'examples/config-josh.xml',
-  'pock3' => 'examples/config-pock3.xml'
-);
-
 $cfg = new Config();
-$cfg->fromXML($configs[$_SERVER['SERVER_NAME']]);
+$cfg->fromXML('Amber/conf/localconf.xml');
 
 $server = new AmberXMLServer();
 $server->setConfig($cfg);

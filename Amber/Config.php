@@ -20,7 +20,7 @@ class Config
   var $driver;
   var $host;
   var $database;
-  var $user;
+  var $username;
   var $password;
 
   function fromXML($fileName)
@@ -52,7 +52,7 @@ class ConfigNull extends Config
   var $driver ='';
   var $host = '';
   var $database = '';
-  var $user = '';
+  var $username = '';
   var $password = '';
 }
 

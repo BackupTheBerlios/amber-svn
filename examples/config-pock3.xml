@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<config>
-  <driver>mysql</driver>
-  <host>pock3</host>
-  <database>sbz</database>
-  <user>root</user>
-  <password />
-</config>

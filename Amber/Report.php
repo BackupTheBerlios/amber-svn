@@ -223,7 +223,7 @@ class Report
     if (!isset($this->_db)) {
       $cfg =& $this->_globalConfig;
       $db =& ADONewConnection($cfg->driver);
-      $conResult = @$db->PConnect($cfg->host, $cfg->user, $cfg->pwd, $cfg->database);
+      $conResult = @$db->PConnect($cfg->host, $cfg->username, $cfg->pwd, $cfg->database);
       $db->SetFetchMode(ADODB_FETCH_ASSOC);
       if ($conResult == false) {
         showError('Database Error '  . $db->ErrorNo(), $db->ErrorMsg());

@@ -1,4 +1,9 @@
-asdn20040711:
+20040715:
+- Introduced a basic install tool
+- examples/index.php: use localconf.xml instead of configs-array
+- xmlserver.php: use localconf.xml instead of configs-array
+
+20040711:
 - Display error message if phpDocumentor cannot be found
 
 20040708:

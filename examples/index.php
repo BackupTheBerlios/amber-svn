@@ -24,13 +24,8 @@ if ($mode != 'design') {
   $mode = 'normal';
 }
 
-$configs = array(
-  'intern-dev.sbz.de' => 'config-sbz.xml',
-  'josh.intern' => 'config-josh.xml',
-  'pock3' => 'config-pock3.xml'
-);
 $cfg = new Config();
-$cfg->fromXML($configs[$_SERVER['SERVER_NAME']]);
+$cfg->fromXML('../Amber/conf/localconf.xml');
 
 setlocale (LC_CTYPE, 'de_DE', 'de_DE@euro');
 setlocale (LC_TIME, 'de_DE', 'de_DE@euro'); // needed for date, time

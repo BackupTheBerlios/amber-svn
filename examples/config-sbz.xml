@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<config>
-  <driver>mysql</driver>
-  <host>localhost</host>
-  <database>typo3_dev</database>
-  <user>root</user>
-  <password />
-</config>

@@ -1,5 +1,7 @@
 <?php
 
+require_once 'misc.php';
+
 /**
  *
  * @package PHPReport
