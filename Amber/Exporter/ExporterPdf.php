@@ -38,7 +38,7 @@ class ExporterFPdf extends Exporter
   function _exporterInit()
   {
     $report =& $this->_report;
-    $reset = (!$this->_asSubreport);
+    $reset = (!$this->_report->layout->_asSubreport);
     $this->_pdf =& PDF::getInstance($report->layout, $reset);
     if ($report->Controls) {
       foreach (array_keys($report->Controls) as $ctrlName) {
@@ -47,7 +47,7 @@ class ExporterFPdf extends Exporter
         }
       }
     }
-    if ($this->_asSubreport) {
+    if ($this->_report->layout->_asSubreport) {
       $this->_pdf->startSubReport();
     } else {  
       $this->_pdf->init($this, $this->_report->layout);
@@ -58,7 +58,7 @@ class ExporterFPdf extends Exporter
   function _exporterExit()
   {
     #echo "pdf->Output();<br>";
-    if ($this->_asSubreport) {
+    if ($this->$this->_report->layout->_asSubreport) {
       $this->_pdf->endSubReport();
     } else {
       if (!$this->DesignMode) {
