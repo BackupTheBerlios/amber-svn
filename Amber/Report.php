@@ -392,7 +392,7 @@ class Report
     $sql = $this->_makeSqlFilter($this->RecordSource, $this->Filter);
 
     // Execute query
-    $db = Amber::currentDb();
+    $db =& Amber::currentDb();
     $this->_data =& $db->GetAll($sql);
     if (empty($this->_data)) {
       if ($db->ErrorNo() != 0) {
