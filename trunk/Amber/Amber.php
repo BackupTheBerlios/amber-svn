@@ -170,12 +170,13 @@ class Amber
    * @param bool
    * @access public
    */
-  function OpenReport($reportName, $mode = AC_NORMAL, $where = '', $type = 'html', $noMargin = false)
+  function openReport($reportName, $mode = AC_NORMAL, $where = '', $type = 'html', $noMargin = false)
   {
     $mgr =& $this->getObjectManager();
     
     $rep =& $mgr->loadReport($reportName);
     if (!$rep) {
+      Amber::showError('Amber', 'Error while loading report "' . $reportName . '"');
       return false;
     }
 
@@ -196,16 +197,6 @@ class Amber
         $rep->run($type);
         break;
     }
-  }
-
-  function OpenForm($formName, $mode = AC_NORMAL, $filter = '', $type = 'html')
-  {
-    $form =& $this->loadObject('form', $formName);
-    if ($form == false) {
-      return false;
-    }
-    $form->Filter = $filter;
-    $form->run($type);
   }
 
   function &loadObject($type, $name)

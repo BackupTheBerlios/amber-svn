@@ -86,17 +86,20 @@ class Report extends AmberObject
   // PUBLIC METHODS
   //////////////////////////////////////////////////////////////////
 
-  /**
-   * @access public
-   */
-  function Report()
-  {
-    parent::AmberObject();
-  }
-
-  /**
+   /**
+   * A filter may be applied <b>after</b> the query has been executed.
+   *
+   * You may specify a filter similar to {@link setWhere}. In contrast to {@link setWhere}
+   * this <b>does not</b> affect the RecordSource directly but is applied separately <b>after</b>
+   * the initial data retrieval.
+   *
+   * Example:
+   * <pre>
+   *    $report->setFilter('name = Bob');
+   * </pre>
    *
    * @access public
+   * @param string
    * @see setWhere()
    *
    */
@@ -108,8 +111,18 @@ class Report extends AmberObject
   }
 
   /**
+   * Extends the WHERE clause of the query when data for the report is being fetched.
+   *
+   * Parameter $where will be appended (AND) to an already existing WHERE clause of RecordSource
+   * if necessary.
+   *
+   * Example:
+   * <pre>
+   *    $report->setWhere('name = "Alice" OR name = "Bob"');
+   * </pre>
    *
    * @access public
+   * @param string
    * @see setFilter()
    *
    */
@@ -336,10 +349,12 @@ class Report extends AmberObject
 
   /**
    *
-   * @access private
+   * @param string SQL statement
+   * @param string Additional WHERE-clause that needs to be appended
+   * @access protected
    *
    */
-  function _makeSqlFilter($sql, $filter)
+  function _makeSqlFilter($sql, $where)
   {
     $parser = new SimpleSelectParser($sql);
     $sqlParts = $parser->parse();
@@ -349,11 +364,11 @@ class Report extends AmberObject
     }
 
     // Apply filter if necessary
-    if (!empty($filter)) {
+    if (!empty($where)) {
       if ($sqlParts['where'] == '') {
-        $sqlParts['where'] = $filter;
+        $sqlParts['where'] = $where;
       } else {
-        $sqlParts['where'] = '(' . $sqlParts['where'] . ') AND (' . $filter . ')';
+        $sqlParts['where'] = '(' . $sqlParts['where'] . ') AND (' . $where . ')';
       }
     }
 
@@ -371,7 +386,7 @@ class Report extends AmberObject
 
   /**
    *
-   * @access private
+   * @access protected
    *
    */
   function _fetchDataFromDatabase()
@@ -414,7 +429,8 @@ class Report extends AmberObject
   }
 
   /**
-   * @access private
+   * @access protected
+   * @return int
    */
   function _HasData()
   {
@@ -430,7 +446,7 @@ class Report extends AmberObject
   }
 
   /**
-   * @access private
+   * @access protected
    */
   function _setControlValues()
   {
@@ -453,7 +469,7 @@ class Report extends AmberObject
   }
 
   /**
-   * @access private
+   * @access protected
    * @param int
    */
   function OnOpen(&$cancel)
@@ -464,7 +480,8 @@ class Report extends AmberObject
   }
 
   /**
-   * @access private
+   * @access protected
+   * @param int
    */
   function OnFirstFormat(&$cancel)
   {
@@ -474,7 +491,8 @@ class Report extends AmberObject
   }
 
   /**
-   * @access private
+   * @access protected
+   * @param int
    */
   function OnNoData(&$cancel)
   {
@@ -484,7 +502,7 @@ class Report extends AmberObject
   }
 
   /**
-   * @access private
+   * @access protected
    */
   function OnClose()
   {
@@ -493,7 +511,7 @@ class Report extends AmberObject
   }
 
   /**
-   * @access private
+   * @access protected
    */
   function OnPage()
   {
@@ -502,12 +520,11 @@ class Report extends AmberObject
   }
 
   /**
-   * @access private
-   * @param string
+   * @access protected
+   * @param Section
    */
   function _printNormalSection(&$section)
   {
-    //Amber::dumpArray($this);
     $section->_RunningSum();
     if ($section->isVisible()) {
       $height = 0;
@@ -528,7 +545,8 @@ class Report extends AmberObject
   }
 
    /**
-   * @access private
+   * @access protected
+   * @param Section
    * @param string
    */
   function _printDesignSection(&$section, $GroupByName='')
@@ -549,7 +567,7 @@ class Report extends AmberObject
 
 
  /**
-   * @access private
+   * @access protected
    * @param int
    * @param int
    */
@@ -562,8 +580,8 @@ class Report extends AmberObject
     }
   }
 
-/**
-   * @access private
+  /**
+   * @access protected
    * @param int
    * @param int
    */
@@ -577,7 +595,7 @@ class Report extends AmberObject
   }
 
   /**
-   * @access private
+   * @access protected
    * @param int
    * @param int
    */
@@ -591,7 +609,7 @@ class Report extends AmberObject
   }
 
   /**
-   * @access private
+   * @access protected
    * @param int
    * @param int
    */
@@ -605,9 +623,8 @@ class Report extends AmberObject
   }
 
   /**
-   * @access private
-   * @param bool printed: section was printed
-   * @param obj  section printed
+   * @access protected
+   * @param Section
    */
   function _prepareDuplicates(&$section)
   {
@@ -630,7 +647,7 @@ class Report extends AmberObject
   }
 
   /**
-   * @access private
+   * @access protected
    * @param int
    * @param int
    */
@@ -660,7 +677,7 @@ class Report extends AmberObject
   }
 
   /**
-   * @access private
+   * @access protected
    * @param array
    * @param array
    * @return int
@@ -677,6 +694,9 @@ class Report extends AmberObject
     return count($this->_groupFields);
   }
 
+  /**
+   * @access protected
+   */
   function initDesignHeader()
   {
     $this->_designSection =& new section('');
@@ -724,6 +744,9 @@ class Report extends AmberObject
     $this->_designSection->Controls['label'] =& $ctl;
   }
 
+  /**
+   * @access protected
+   */
   function sectionPrintDesignHeader($text)
   {
     $this->_designSection->Controls['label']->Caption = $text;
@@ -734,6 +757,9 @@ class Report extends AmberObject
     $this->_endSection($this->_designSection, $height);
   }
 
+  /**
+   * @access protected
+   */
   function _setDocumentTitle($name)
   {
     $this->_exporter->setDocumentTitle($name);
@@ -746,6 +772,10 @@ class Report extends AmberObject
 //
 //////////////////////////////////////////////////
 
+  /**
+   * @access public
+   * @param bool
+   */
   function _setDesignMode($value)
   {
     $this->setNoHeadFoot($value);
@@ -754,6 +784,10 @@ class Report extends AmberObject
     $this->printHeadFootAsNormalSection = $value;
   }
 
+  /**
+   * @access public
+   * @param bool
+   */
   function setSubReport($value)
   {
     $this->asSubReport = $value;
@@ -762,21 +796,36 @@ class Report extends AmberObject
     $this->setNoHeadFoot($value);
   }
 
+  /**
+   * @access public
+   * @param bool
+   */
   function setNoAutoPage($value)
   {
     $this->noAutoPage = $value;
   }
 
+  /**
+   * @access public
+   * @param bool
+   */
   function setNoMargins($value)
   {
     $this->noMargins = $value;
   }
 
+  /**
+   * @access public
+   * @param bool
+   */
   function setNoHeadFoot($value)
   {
     $this->noHeadFoot = $value;
   }
 
+  /**
+   * @access protected
+   */
   function _startReport()
   {
     $this->layout =& new pageLayout($this);
@@ -784,6 +833,14 @@ class Report extends AmberObject
     $this->_exporter->startReport($this, $this->asSubReport, true);
   }
 
+  /**
+   * @access public
+   * @param int
+   * @param int
+   * @param int
+   * @param string
+   * @param Section
+   */
   function outSection($formatCount, $posY, $sectionHeight, &$secBuff, &$section)
   {
     $this->_exporter->outSectionStart($posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $section->Name);
