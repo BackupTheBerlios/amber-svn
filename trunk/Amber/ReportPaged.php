@@ -54,10 +54,10 @@ class reportPaged extends Report
         $this->_exporter->outWindowRelative($deltaX, $x, $y, $w, $h, $this->layout->header);
   
         $y = $this->layout->topMargin + $this->layout->pageHeaderHeight;
-        $h = $this->layout->printHeight();
+        $h = $this->layout->printHeight;
         $this->_exporter->outWindowRelative($deltaX, $x, $y, $w, $h, $this->layout->body);
   
-        $y = $this->layout->topMargin + $this->layout->pageHeaderHeight + $this->layout->printHeight();
+        $y = $this->layout->topMargin + $this->layout->pageHeaderHeight + $this->layout->printHeight;
         $h = $this->layout->pageFooterHeight;
         $this->_exporter->outWindowRelative($deltaX, $x, $y, $w, $h, $this->layout->footer);
         $this->_exporter->endPage();
@@ -259,7 +259,7 @@ class pageLayout
     }
 
     if (!$this->noAutoPageY) {
-      $this->_printHeight = ($this->paperHeight - $this->topMargin - $this->bottomMargin - $this->pageHeaderHeight - $this->pageFooterHeight); //height of printable area of page (w/o margins)
+      $this->printHeight = ($this->paperHeight - $this->topMargin - $this->bottomMargin - $this->pageHeaderHeight - $this->pageFooterHeight); //height of printable area of page (w/o margins)
     }  
 
     $this->pageNo = -1;
@@ -271,19 +271,24 @@ class pageLayout
     $this->body = '';
     $this->footer = '';
     $this->pageNo++;
+    $this->newpage = 0;
     if ($this->noAutoPageY) {
       $this->pagePosY = $this->posY;
     } else {  
-      $this->pagePosY = $this->pageNo * $this->_printHeight;
+      $this->pagePosY = $this->pageNo * $this->printHeight;
     }  
   }
   
   function getPageWithOffset($offset)
   {
     if ($this->noAutoPageY) {
-      return 0;
+      if ($this->pageNo < 0) {
+        return 0;
+      } else {
+        return $this->pageNo + $this->newpage;
+      }    
     } else { 
-      return floor(($offset + $this->posY) / $this->_printHeight);
+      return floor(($offset + $this->posY) / $this->printHeight);
     }  
   }
   
@@ -294,8 +299,11 @@ class pageLayout
   
   function fillrestOfPage()
   {
+    $this->newpage = 1;
     if (!$this->noAutoPageY) {
-      $this->posY = $this->pagePosY + $this->_printHeight;
+      $this->posY = $this->pagePosY + $this->printHeight;  //move posY to end of page (fill rest of page with space)
+    } else {
+      $this->printHeight = $this->posY - $this->pagePosY;  //set page size to actual position 
     }  
   }
   
@@ -313,23 +321,14 @@ class pageLayout
     }
   }
   
-  function printHeight()
-  {
-    if ($this->noAutoPageY) {
-      return ($this->posY - $this->pagePosY);
-    } else {
-      return $this->_printHeight; 
-    }
-  }      
-  
   function newPageAvoidsSectionSplit($sectionHeight)  // end of section will be on same page, wether with or without pagebreak
   {
     if ($this->noAutoPageY) {
       return false;
     } else {  
-      $startNewPage =  (floor($this->posY / $this->_printHeight) + 1) * $this->_printHeight;
-      $endPageWithoutNewPage = floor(($this->posY + $sectionHeight) / $this->_printHeight);
-      $endPageWithNewPage = floor(($startNewPage + $sectionHeight) / $this->_printHeight);
+      $startNewPage =  (floor($this->posY / $this->printHeight) + 1) * $this->printHeight;
+      $endPageWithoutNewPage = floor(($this->posY + $sectionHeight) / $this->printHeight);
+      $endPageWithNewPage = floor(($startNewPage + $sectionHeight) / $this->printHeight);
       return ($endPageWithoutNewPage == $endPageWithNewPage);
     }
   }
