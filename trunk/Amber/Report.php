@@ -908,7 +908,7 @@ class Report extends AmberObject
     $this->_designSection->Name = '<designBorder>';
     $this->_designSection->Height = 240;
     $this->_designSection->Visible = true;
-    $this->_designSection->BackColor = 0xDDDDDD;
+    $this->_designSection->BackColor = 0xFFFFFF;
     $this->_designSection->CanGrow = false;
     $this->_designSection->CanShrink = false;
     $this->_designSection->KeepTogether = false;
@@ -919,9 +919,9 @@ class Report extends AmberObject
     $ctlProp = array(
       'Name' => '',
       'Left' => 0,
-      'Top' => 0,
+      'Top' => BorderCheat,
       'Width' => $this->Width,
-      'Height' => 240,
+      'Height' => max(240 - BorderCheat, 0), 
       'Visible' => true,
       'BackStyle' => 1,
       'BackColor' => 0xDDDDDD, //gray

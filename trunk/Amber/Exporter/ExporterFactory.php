@@ -18,7 +18,7 @@ include_once 'ExporterPdf.php';
     strategy: make section a bit higher, start section background a bit lower
     "a bit" is defined with BorderCheat 
 */
-define ("BorderCheat", 40);
+define ("BorderCheat", 20);
 
 /**
  *
