@@ -23,6 +23,38 @@ ExporterFactory::register('testpdf', 'ExporterFPdf');
  * @subpackage Exporter
  *
  */
+
+
+class pageLayout
+{
+  var $unit;          //unit in pt 
+  
+  var $paperwidth;
+  var $paperheight;
+  var $orientation;
+  
+  var $rightMargin;
+  var $leftMargin;
+  var $topMargin;
+  var $bottomMargin;
+  
+  var $pageHeaderHeight;
+  var $pageFooterHeight;
+
+  function set_orientation($orientation)
+  {
+    $orientations = array('portrait' => 'p', 'landscape' => 'l');
+    if (!isset($orientations[$orientation])) {
+      $this->orientation = 'p';
+    } else {
+      $this->orientation = $orientations[$orientation];
+    }
+  }
+}
+
+
+
+
 class ExporterFPdf extends Exporter
 {
   var $type = 'fpdf';
@@ -38,12 +70,14 @@ class ExporterFPdf extends Exporter
   function _exporterInit()
   {
     $report =& $this->_report;
-
-    $orient = $this->_pdf_orientation($report->Orientation);
-    $size = array($report->PaperWidth, $report->PaperHeight);
+    $layout =& new pageLayout();
+    $layout->unit = 1/20;
+    $layout->set_orientation($report->Orientation);
+    $layout->paperWidth = $report->PaperWidth;
+    $layout->paperHeight = $report->PaperHeight;
     #Amber::dump($size);
     $reset = (!$this->_asSubreport);
-    $this->_pdf =& PDF::getInstance($orient, 1/20, $size, $reset);
+    $this->_pdf =& PDF::getInstance($layout, $reset);
     if ($report->Controls) {
       foreach (array_keys($report->Controls) as $ctrlName) {
         if (!empty($report->Controls[$ctrlName]->FontName)) {
@@ -59,22 +93,16 @@ class ExporterFPdf extends Exporter
       $this->_pdf->SetLeftMargin($report->LeftMargin);
       $this->_pdf->SetTopMargin($report->TopMargin);
       $this->_pdf->SetAutoPageBreak(false, $report->BottomMargin);
+      $this->_pdf->_actPageNo = -1;
       if ($this->DesignMode) {
-        $this->startReport1($report->Width);
+        $this->_pdf->init($this, $report->Width, 0, 0);
       } else {
-        $this->startReport1($report->Width, $report->PageHeader->Height, $report->PageFooter->Height);
+        $this->_pdf->init($this, $report->Width, $report->PageHeader->Height, $report->PageFooter->Height);
       }
+      $this->_pdf->StartReportBuffering();
     }
   }
   
-  function startReport1($width, $headerHeight=0, $footerHeight=0)
-  {
-    $this->_pdf->_actPageNo = -1;
-    $this->_pdf->init($this, $width, $headerHeight, $footerHeight);
-    $this->_pdf->StartReportBuffering();
-  }
-  
-
   function _exporterExit()
   {
     #echo "pdf->Output();<br>";
@@ -389,15 +417,4 @@ class ExporterFPdf extends Exporter
     }
   }
 
-  function _pdf_orientation($orientation)
-  {
-    $orientations = array('portrait' => 'p', 'landscape' => 'l');
-    if (!isset($orientations[$orientation])) {
-      return 'p';
-    } else {
-      return $orientations[$orientation];
-    }
-  }
 }
-
-

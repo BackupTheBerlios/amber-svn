@@ -39,28 +39,6 @@ class PDF extends FPDF
   //
   //////////////////////////////////////////////////////////////////////////
        
-  function endReport()
-  {
-    $this->_exporter->printPageFooter();
-
-    $this->endReportBuffering();
-    
-    $firstPage = true;  //first page is out
-
-    $endPageX = floor($this->_reportWidth / $this->_printWidth);
-    foreach(array_keys($this->_reportPages) as $pageY) {
-      for($pageX = 0; $pageX <= $endPageX; $pageX++) {
-        if (!$firstPage) {
-          $this->AddPage();
-        }
-        $firstPage = false;
-
-        $this->outPageHeader($pageY, $pageX, $this->_reportPages[$pageY]['Head']);  
-        $this->outPage($pageY, $pageX, $this->_reportPages[$pageY]['']);  
-        $this->outPageFooter($pageY, $pageX, $this->_reportPages[$pageY]['Foot']);  
-      }
-    }
-  }
 
 
   function page()
@@ -273,12 +251,13 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
    *
    */
    
-  function &getInstance($orient, $unit, $size, $reset)
+  function &getInstance(&$layout, $reset)
   {
     static $instance = null;
 
     if (is_null($instance) or $reset) {
-      $instance = new PDF($orient, $unit, $size);
+      $size = array($layout->paperWidth, $layout->paperHeight);
+      $instance = new PDF($layout->orientation, $layout->unit, $size);
     }
 
     return $instance;
@@ -287,6 +266,7 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
   function init(&$exporter, $width, $headerHeight=0, $footerHeight=0)
   {
     $this->_exporter =& $exporter;
+    $this->SetCompression(false);
     $this->_reportWidth = $width;
     $this->_headerHeight = $headerHeight;
     $this->_footerHeight = $footerHeight;
