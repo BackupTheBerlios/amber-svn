@@ -4,16 +4,22 @@ function druckstatusR(&$r)
 {
   $tname = $r->RecordSource;
   If (IsNull($tname)) {
-       $tname = "Keine Tabelle";
-  }     
-  If (Left($tname, 7) == "SELECT ") {
-       $tname = "SQL direkt";
+       $tname = 'Keine Tabelle';
   }
-  
-  $Rname = $r->Name;
-  $d = " am " . Format(Now(), "ddd dd.mmm.yyyy") . " um " . Format(Now(), "hh.nn");
-  return  "Ausdruck von Bericht:[" . $Rname . "] Tabelle/Abfrage: (" . $tname . ")" . $d . ")";
+  If (Left($tname, 7) == 'SELECT ') {
+       $tname = 'SQL direkt';
+  }
 
+  if (!is_a($r, 'AmberObject')) {
+    $Rname = 'Falscher Parameter!!!';
+  } else {
+    $Rname = $r->Name;
+  }
+
+  $d = ' am ' . Format(Now(), 'ddd dd.mmm.yyyy') . ' um ' . Format(Now(), 'hh.nn');
+  $s = $_SERVER['SERVER_NAME'];
+
+  return  'Bericht: [' . $Rname . '] Tabelle/Abfrage: (' . $tname . ')' . $d .  ' Server: [' . $s . ']';
 }
 
 
@@ -41,4 +47,5 @@ d = " am " + Format$(Now, "ddd dd.mmm.yyyy") + " um " + Format$(Now, "hh.nn")
 druckstatusR = "Ausdruck von Bericht:[" + Rname + "] Tabelle/Abfrage: (" + tname + ")" + d + "   DB:[" + db.Name + "] (MSAcc" + db.Version + ")"
 End Function
 */
+
 ?>

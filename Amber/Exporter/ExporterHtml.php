@@ -404,7 +404,7 @@ Class ControlExporterHtml
     }
     $out .= ">";
 
-    $out .= isset($value) ? htmlspecialchars($value) : '&nbsp;';
+    $out .= isset($value) ? nl2br(htmlspecialchars($value)) : '&nbsp;';
     $out .= "</div>\n";
 
     return $out;
