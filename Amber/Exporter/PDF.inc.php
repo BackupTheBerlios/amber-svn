@@ -9,46 +9,119 @@ class PDF extends FPDF
 {
   
   var $_inSection;
+  var $_inReport;
   var $_buff;
+  var $_reportPages;
+  var $_actPageNo;
+  
+    
   function _out($s)
   {
-    if ($this->_inSection) {
+    if($this->state <> 2) {
+      parent::_out($s);      
+    } elseif ($this->_inSection) {
       $this->_buff .= $s . "\n";
       #parent::_out($s);
+    } elseif ($this->_inReport) {
+      $this->_reportPages[$this->_actPageNo] .= $s . "\n";
     } else {
       parent::_out($s);
     }
   }
   
-  function sectionFlush()
-  {
-    parent::_out($this->_buff);   
-  }  
-
   function sectionStart()
   {
     $this->_buff = '';
     $this->_inSection = true;
   }
   
-  function sectionEnd($xstart, $height, $width)
+  function sectionEnd($sectionHeight)
   {
     $this->_inSection = false;
+    $startPage = floor($this->_posY / $this->_printHeight);
+    $endPage   = floor(($this->_posY + $sectionHeight) / $this->_printHeight);
+
+    for ($page = $startPage; $page <= $endPage; $page++) {
+      $this->_actPageNo = $page;
+      $this->SetCoordinate(0, -$this->_posY);
+      $this->SetClipping(0, 0, $this->_reportWidth, $sectionHeight);
+      $this->_out($this->_buff);
+      $this->RemoveClipping();   
+      $this->RemoveCoordinate();
+    }
+    $this->_posY += $sectionHeight;
   }  
       
+  function reportStart($width)
+  {
+    $this->_reportWidth = $width;
+    $this->_printWidth  = ($this->w - $this->lMargin - $this->rMargin); //width of printable area of page (w/o morgins)
+    $this->_printHeight = ($this->h - $this->tMargin - $this->bMargin); //height of printable area of page (w/o morgins)
+    $this->_posY = 0;
+    $this->_actPageNo = 0;
+
+    $this->SetFont('helvetica');    // need to set font, drawcolor, fillcolor before AddPage 
+    $this->SetDrawColor(0, 0, 0);   // else we get strange errors. prb fpdf does some optimisations which we break
+    $this->SetFillColor(0, 0, 0);
+    $this->AddPage();
+    $this->_inReport = true;
+  }
+  
+  function reportEnd()
+  {
+    $this->_inReport = false;
+    $firstPage = true;  //first page is out
+    
+    $endPageX = floor($this->_reportWidth / $this->_printWidth);
+    foreach(array_keys($this->_reportPages) as $pageY) {
+      for($pageX = 0; $pageX <= $endPageX; $pageX++) {
+        if (!$firstPage) {
+          $this->AddPage();
+        }  
+        $firstPage = false;
+        $this->SetClipping($this->lMargin, $this->tMargin, $this->_printWidth, $this->_printHeight);
+        $deltaX = $this->lMargin - $pageX * $this->_printWidth;
+        $deltaY = $pageY * $this->_printHeight - $this->tMargin;
+        $this->SetCoordinate($deltaX, $deltaY);
+        $this->_out($this->_reportPages[$pageY]);
+        $this->RemoveCoordinate();
+        $this->RemoveClipping();
+      }
+    } 
+  }  
+
+
+
+
+
+
+
 
   
   
   
   
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+  /**
+  *
+  * Origin of coordinates is moved to (x,y) 
+  * 
+  * @access public
+  * @param  number x-coordinate of origin  
+  * @param  number y-coordinate of origin
+  */
+  function SetCoordinate($x, $y)
+  {
+    $this->_out(sprintf('q 1 0 0 1 %.2f %.2f cm', $x * $this->k, $y * $this->k));
+  }
+
+  function RemoveCoordinate()
+  {
+    $this->_out('Q');
+  }
+
+ 
   
   
   
@@ -159,47 +232,208 @@ class PDF extends FPDF
   }
 
 
-  /*var $_paperSize =
-    ( '4A0' => array('w'=>	1682	, 'h' =>	2378	),
-      '2A0' => array('w'=>	1189	, 'h' =>	1682	),
-      'A0'  => array('w'=>	 841	, 'h' =>	1189	),
-      'A1'  => array('w'=>	 594	, 'h' =>	 841	),
-      'A2'  => array('w'=>	 420	, 'h' =>	 594	),
-      'A3'  => array('w'=>	 297	, 'h' =>	 420	),
-      'A4'  => array('w'=>	 210	, 'h' =>	 297	),
-      'A5'  => array('w'=>	 148	, 'h' =>	 210	),
-      'A6'  => array('w'=>	 105	, 'h' =>	 148	),
-      'A7'  => array('w'=>	  74	, 'h' =>	 105	),
-      'A8'  => array('w'=>	  52	, 'h' =>	  74	),
-      'A9'  => array('w'=>	  37	, 'h' =>	  52	),
-      'A10' => array('w'=>	  26	, 'h' =>	  37	),
-      'B0'  => array('w'=>	1000	, 'h' =>	1414	),
-      'B1'  => array('w'=>	 707	, 'h' =>	1000	),
-      'B2'  => array('w'=>	 500	, 'h' =>	 707	),
-      'B3'  => array('w'=>	 353	, 'h' =>	 500	),
-      'B4'  => array('w'=>	 250	, 'h' =>	 353	),
-      'B5'  => array('w'=>	 176	, 'h' =>	 250	),
-      'B6'  => array('w'=>	 125	, 'h' =>	 176	),
-      'B7'  => array('w'=>	  88	, 'h' =>	 125	),
-      'B8'  => array('w'=>	  62	, 'h' =>	  88	),
-      'B9'  => array('w'=>	  44	, 'h' =>	  62	),
-      'B10' => array('w'=>	  31	, 'h' =>	  44	),
-      'C0'  => array('w'=>	 917	, 'h' =>	1297	),
-      'C1'  => array('w'=>	 648	, 'h' =>	 917	),
-      'C2'  => array('w'=>	 458	, 'h' =>	 648	),
-      'C3'  => array('w'=>	 324	, 'h' =>	 458	),
-      'C4'  => array('w'=>	 229	, 'h' =>	 324	),
-      'C5'  => array('w'=>	 162	, 'h' =>	 229	),
-      'C6'  => array('w'=>	 114	, 'h' =>	 162	),
-      'C7'  => array('w'=>	  81	, 'h' =>	 114	),
-      'C8'  => array('w'=>	  57	, 'h' =>	  81	),
-      'C9'  => array('w'=>	  40	, 'h' =>	  57	),
-      'C10' => array('w'=>	  28	, 'h' =>	  40	),
-      'Letter' => array('w'=>	216	, 'h' =>	279	),
-      'Legal' => array('w'=>	216	, 'h' =>	356	),
-      'Executive' => array('w'=>	190	, 'h' =>	254	),
-      'Ledger/Tabloid' => array('w'=>	279	, 'h' =>	432	));
-*/
+  
+  /********************************************
+  *
+  *  changed methods of fpdf
+  *
+  *********************************************/
+  
+  
+  
+ /*********
+  *  constructor (add new unit)
+  *
+  * + elseif($unit=='twips')
+  * + $this->k=1/20;  
+  *
+  */ 
+  
+  
+  function PDF($orientation='P',$unit='mm',$format='A4')
+{
+	//Some checks
+	$this->_dochecks();
+	//Initialization of properties
+	$this->page=0;
+	$this->n=2;
+	$this->buffer='';
+	$this->pages=array();
+	$this->OrientationChanges=array();
+	$this->state=0;
+	$this->fonts=array();
+	$this->FontFiles=array();
+	$this->diffs=array();
+	$this->images=array();
+	$this->links=array();
+	$this->InFooter=false;
+	$this->lasth=0;
+	$this->FontFamily='';
+	$this->FontStyle='';
+	$this->FontSizePt=12;
+	$this->underline=false;
+	$this->DrawColor='0 G';
+	$this->FillColor='0 g';
+	$this->TextColor='0 g';
+	$this->ColorFlag=false;
+	$this->ws=0;
+	//Standard fonts
+	$this->CoreFonts=array('courier'=>'Courier','courierB'=>'Courier-Bold','courierI'=>'Courier-Oblique','courierBI'=>'Courier-BoldOblique',
+		'helvetica'=>'Helvetica','helveticaB'=>'Helvetica-Bold','helveticaI'=>'Helvetica-Oblique','helveticaBI'=>'Helvetica-BoldOblique',
+		'times'=>'Times-Roman','timesB'=>'Times-Bold','timesI'=>'Times-Italic','timesBI'=>'Times-BoldItalic',
+		'symbol'=>'Symbol','zapfdingbats'=>'ZapfDingbats');
+	//Scale factor
+	if($unit=='pt')
+		$this->k=1;
+	elseif($unit=='mm')
+		$this->k=72/25.4;
+	elseif($unit=='cm')
+		$this->k=72/2.54;
+	elseif($unit=='in')
+		$this->k=72;
+  elseif(is_numeric($unit))
+    $this->k=$unit;  
+	else
+		$this->Error('Incorrect unit: '.$unit);
+	//Page format
+	if(is_string($format))
+	{
+		$format=strtolower($format);
+		if($format=='a3')
+			$format=array(841.89,1190.55);
+		elseif($format=='a4')
+			$format=array(595.28,841.89);
+		elseif($format=='a5')
+			$format=array(420.94,595.28);
+		elseif($format=='letter')
+			$format=array(612,792);
+		elseif($format=='legal')
+			$format=array(612,1008);
+		else
+			$this->Error('Unknown page format: '.$format);
+		$this->fwPt=$format[0];
+		$this->fhPt=$format[1];
+	}
+	else
+	{
+		$this->fwPt=$format[0]*$this->k;
+		$this->fhPt=$format[1]*$this->k;
+	}
+	$this->fw=$this->fwPt/$this->k;
+	$this->fh=$this->fhPt/$this->k;
+	//Page orientation
+	$orientation=strtolower($orientation);
+	if($orientation=='p' or $orientation=='portrait')
+	{
+		$this->DefOrientation='P';
+		$this->wPt=$this->fwPt;
+		$this->hPt=$this->fhPt;
+	}
+	elseif($orientation=='l' or $orientation=='landscape')
+	{
+		$this->DefOrientation='L';
+		$this->wPt=$this->fhPt;
+		$this->hPt=$this->fwPt;
+	}
+	else
+		$this->Error('Incorrect orientation: '.$orientation);
+	$this->CurOrientation=$this->DefOrientation;
+	$this->w=$this->wPt/$this->k;
+	$this->h=$this->hPt/$this->k;
+	//Page margins (1 cm)
+	$margin=28.35/$this->k;
+	$this->SetMargins($margin,$margin);
+	//Interior cell margin (1 mm)
+	$this->cMargin=$margin/10;
+	//Line width (0.2 mm)
+	$this->LineWidth=.567/$this->k;
+	//Automatic page break
+	$this->SetAutoPageBreak(true,2*$margin);
+	//Full width display mode
+	$this->SetDisplayMode('fullwidth');
+	//Compression
+	$this->SetCompression(true);
+}
+
+
+
+ /*********
+  *  SetFont (remove optimisation)
+  *
+  *	- if($this->FontFamily==$family and $this->FontStyle==$style and $this->FontSizePt==$size)
+  *	-    return;
+  *
+  */ 
+  
+ function SetFont($family,$style='',$size=0)
+{
+	//Select a font; size given in points
+	global $fpdf_charwidths;
+
+	$family=strtolower($family);
+	if($family=='')
+		$family=$this->FontFamily;
+	if($family=='arial')
+		$family='helvetica';
+	elseif($family=='symbol' or $family=='zapfdingbats')
+		$style='';
+	$style=strtoupper($style);
+	if(is_int(strpos($style,'U')))
+	{
+		$this->underline=true;
+		$style=str_replace('U','',$style);
+	}
+	else
+		$this->underline=false;
+	if($style=='IB')
+		$style='BI';
+	if($size==0)
+		$size=$this->FontSizePt;
+	//Test if font is already selected
+#	if($this->FontFamily==$family and $this->FontStyle==$style and $this->FontSizePt==$size)
+#		return;
+	//Test if used for the first time
+	$fontkey=$family.$style;
+	if(!isset($this->fonts[$fontkey]))
+	{
+		//Check if one of the standard fonts
+		if(isset($this->CoreFonts[$fontkey]))
+		{
+			if(!isset($fpdf_charwidths[$fontkey]))
+			{
+				//Load metric file
+				$file=$family;
+				if($family=='times' or $family=='helvetica')
+					$file.=strtolower($style);
+				$file.='.php';
+				if(defined('FPDF_FONTPATH'))
+					$file=FPDF_FONTPATH.$file;
+				include($file);
+				if(!isset($fpdf_charwidths[$fontkey]))
+					$this->Error('Could not include font metric file');
+			}
+			$i=count($this->fonts)+1;
+			$this->fonts[$fontkey]=array('i'=>$i,'type'=>'core','name'=>$this->CoreFonts[$fontkey],'up'=>-100,'ut'=>50,'cw'=>$fpdf_charwidths[$fontkey]);
+		}
+		else
+			$this->Error('Undefined font: '.$family.' '.$style);
+	}
+	//Select it
+	$this->FontFamily=$family;
+	$this->FontStyle=$style;
+	$this->FontSizePt=$size;
+	$this->FontSize=$size/$this->k;
+	$this->CurrentFont=&$this->fonts[$fontkey];
+	if($this->page>0)
+		$this->_out(sprintf('BT /F%d %.2f Tf ET',$this->CurrentFont['i'],$this->FontSizePt));
+}
+ 
+  
+  
+  
+  
+  
+  
 
 }
 ?>
