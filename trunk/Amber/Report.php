@@ -408,6 +408,11 @@ class Report extends AmberObject
       $createdTemporaryTable = true;
       $sql = 'CREATE TEMPORARY TABLE temp' . $uniqueId . ' (' . $sql . ')';
       $db->Execute($sql);
+      if ($db->errorNo() != 0) {
+        Amber::showError('Database error while trying to create temporary table ('
+          . $db->errorNo() . ')', $db->errorMsg());
+        die();
+      }
 
       // Apply filter
       $sql = 'SELECT * FROM temp' . $uniqueId;
