@@ -475,7 +475,7 @@ class SubReport extends Control
     $linkMaster = explode(';', $this->LinkMasterFields);
     foreach ($linkChild as $idx => $lc) {
       $propName = $linkMaster[$idx];
-      $rep =& ObjectHandler::getObject($this->_hReport - 1); // WAHHHHHHHHHHHHHHHH! Bug in Object Handler?!
+      $rep =& ObjectHandler::getObject($this->_hReport);
       $reportFilterArray[] = $lc . '=' . $rep->Cols[$propName];
     }
     $this->_subReport->Filter = implode(' AND ', $reportFilterArray);

@@ -41,8 +41,8 @@ class ObjectHandler
   function getHandle(&$obj)
   {
     $me =& ObjectHandler::getInstance();
-    $me->_list[$me->_id] =& $obj;
     $me->_id ++;
+    $me->_list[$me->_id] =& $obj;
     return $me->_id;
   }
   
