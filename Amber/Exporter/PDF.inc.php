@@ -25,6 +25,59 @@ class PDF extends FPDF
         'courier new' => 'courier');
 
 
+////////////////////////////////////////////////////////
+//
+// methods to move
+//
+//////////////////////////////////////////////////////// 
+
+  //////////////////////////////////////////////////////////////////////////
+  //
+  // startReport / endReport 
+  //
+  // inside a report the FPDF's output gets cached in 
+  //      $this->_reportPages[$this->_actPageNo][$this->_sectionType]
+  // where 
+  //      $this->_actPageNo     is the current page number and
+  //      $this->_sectionType   is 'Head' for page header, 'Foot' for page footer or '' for page body
+  //
+  // when the report ends, the output is processed and possible divided horizontal
+  // among several pages, if the report is wider than one page
+  //
+  //////////////////////////////////////////////////////////////////////////
+       
+  function startReport(&$exporter, $width, $headerHeight=0, $footerHeight=0)
+  {
+    $this->_actPageNo = -1;
+    $this->init($exporter, $width, $headerHeight, $footerHeight);
+    $this->StartReportBuffering();
+  }
+  
+  function endReport()
+  {
+    $this->_exporter->printPageFooter();
+
+    $this->endReportBuffering();
+    
+    $firstPage = true;  //first page is out
+
+    $endPageX = floor($this->_reportWidth / $this->_printWidth);
+    foreach(array_keys($this->_reportPages) as $pageY) {
+      for($pageX = 0; $pageX <= $endPageX; $pageX++) {
+        if (!$firstPage) {
+          $this->AddPage();
+        }
+        $firstPage = false;
+
+        $this->outPageHeader($pageY, $pageX, $this->_reportPages[$pageY]['Head']);  
+        $this->outPage($pageY, $pageX, $this->_reportPages[$pageY]['']);  
+        $this->outPageFooter($pageY, $pageX, $this->_reportPages[$pageY]['Foot']);  
+      }
+    }
+  }
+        
+        
+        
   /**
    *
    * @access public
@@ -81,6 +134,26 @@ class PDF extends FPDF
       parent::_out($s);
     }
   }
+  
+  function endReportBuffering()
+  {
+    if (!$this->_inReport) {
+      Amber::showError('Error', 'endReport: no report open');
+      die();
+    }  
+    $this->_inReport = false;
+  }
+  
+  function startReportBuffering()
+  {
+    if ($this->_inReport) {
+      Amber::showError('Error', 'startReport: a report is already started!');
+      die();
+    }  
+    $this->_inReport = true;
+  }
+  
+       
 
   //////////////////////////////////////////////////////////////////////////
   //
@@ -126,33 +199,33 @@ class PDF extends FPDF
       if (($page <> $this->_actPageNo)) {
         if ($this->_actPageNo >= 0) {
           $this->_exporter->printPageFooter();
-          $this->_sectionType = 'Foot';
         }
         $this->_actPageNo = $page;
-        $this->_sectionType = 'Head';
         $this->_exporter->printPageHeader();
-        $this->_sectionType = 'Head';
       }
-
       $this->_sectionType = '';
-      $this->SetCoordinate(0, -$this->_posY);
-      $this->SetClipping(0, 0, $this->_reportWidth, $sectionHeight);
-
-      if (!$this->_exporter->DesignMode) {
-        $formatCount = $page - $startPage + 1;
-        $this->_exporter->onPrint($cancel, $formatCount);
-        if (!$cancel) {
-          $this->_out($secBuff);
-        }
-      } else {
-        $this->_out($secBuff);
-      } 
-      $this->RemoveClipping();
-      $this->RemoveCoordinate();
+      $this->outSection($sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
     }
     $this->_posY += $sectionHeight;
   }
 
+  function outSection($sectionHeight, $callCnt, &$exporter, &$secBuff)
+  {
+    $this->SetCoordinate(0, -$this->_posY);
+    $this->SetClipping(0, 0, $this->_reportWidth, $sectionHeight);
+
+    if (!$exporter->DesignMode) {
+      $exporter->onPrint($cancel, $callCnt);
+      if (!$cancel) {
+        $this->_out($secBuff);
+      }
+    } else {
+      $this->_out($secBuff);
+    } 
+    $this->RemoveClipping();
+    $this->RemoveCoordinate();
+  }
+  
   function endSectionSubReport($sectionHeight, $keepTogether)
   {
     $this->_out("\n%end Subreport-Body-Section:" . ($this->_inSection) . "\n\n");
@@ -233,28 +306,9 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
   }  
 
 
-  //////////////////////////////////////////////////////////////////////////
-  //
-  // startReport / endReport 
-  //
-  // inside a report the FPDF's output gets cached in 
-  //      $this->_reportPages[$this->_actPageNo][$this->_sectionType]
-  // where 
-  //      $this->_actPageNo     is the current page number and
-  //      $this->_sectionType   is 'Head' for page header, 'Foot' for page footer or '' for page body
-  //
-  // when the report ends, the output is processed and possible divided horizontal
-  // among several pages, if the report is wider than one page
-  //
-  //////////////////////////////////////////////////////////////////////////
-
-
-  function startReport(&$exporter, $width, $headerHeight=0, $footerHeight=0)
+  
+  function init(&$exporter, $width, $headerHeight=0, $footerHeight=0)
   {
-    if ($this->_inReport) {
-      Amber::showError('Error', 'startReport: a report is already started!');
-      die();
-    }  
     $this->_exporter =& $exporter;
     $this->_reportWidth = $width;
     $this->_headerHeight = $headerHeight;
@@ -262,45 +316,11 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
     $this->_printWidth  = ($this->w - $this->lMargin - $this->rMargin); //width of printable area of page (w/o morgins)
     $this->_printHeight = ($this->h - $this->tMargin - $this->bMargin - $this->_footerHeight - $this->_headerHeight); //height of printable area of page (w/o morgins)
     $this->_posY = 0;
-    $this->_actPageNo = -1;
 
     $this->SetFont('helvetica');    // need to set font, drawcolor, fillcolor before AddPage
     $this->SetDrawColor(0, 0, 0);   // else we get strange errors. prb fpdf does some optimisations which we break
     $this->SetFillColor(0, 0, 0);
     $this->AddPage();
-    $this->_inReport = true;
-  }
-  
-  function endReport()
-  {
-    $this->_exporter->printPageFooter();
-
-    $this->endReportBuffering();
-    
-    $firstPage = true;  //first page is out
-
-    $endPageX = floor($this->_reportWidth / $this->_printWidth);
-    foreach(array_keys($this->_reportPages) as $pageY) {
-      for($pageX = 0; $pageX <= $endPageX; $pageX++) {
-        if (!$firstPage) {
-          $this->AddPage();
-        }
-        $firstPage = false;
-
-        $this->outPageHeader($pageY, $pageX, $this->_reportPages[$pageY]['Head']);  
-        $this->outPage($pageY, $pageX, $this->_reportPages[$pageY]['']);  
-        $this->outPageFooter($pageY, $pageX, $this->_reportPages[$pageY]['Foot']);  
-      }
-    }
-  }
-  
-  function endReportBuffering()
-  {
-    if (!$this->_inReport) {
-      Amber::showError('Error', 'endReport: no report open');
-      die();
-    }  
-    $this->_inReport = false;
   }
   
   function outPageHeader($pageY, $pageX, $dataBuff)
