@@ -651,10 +651,16 @@ class CheckBoxExporterHtml extends ControlExporterHtml
     $tmpCtrl->Height = 11 * 15;
     $tmpCtrl->FontWeight = 700;
 
-    if ($value == true) {
+    $tmpCtrl->BackStyle = true;
+    if ($value === 0) {
+      $value = '';
+      $tmpCtrl->BackColor = 0xFFFFFF;
+    } elseif (is_numeric($value)) {
       $value = 'X';
+      $tmpCtrl->BackColor = 0xFFFFFF;
     } else {
       $value = '';
+      $tmpCtrl->BackColor = 0xCCCCCC;
     }
 
     return parent::getTag($tmpCtrl, $value);
@@ -668,7 +674,9 @@ class CheckBoxExporterHtml extends ControlExporterHtml
     $out .= ' font-size: 6pt; ';
     $out .= ' font-weight: 700; ';
     $out .= ' text-align: center;';
-
+    $out .= ' border-width: 1px;';      //border properties do exist, but Access doesn't care about them
+    $out .= ' border-color:#000000;';
+    $out .= ' border-style:solid;';
     return $out;
   }
 }
