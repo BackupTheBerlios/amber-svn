@@ -3,7 +3,7 @@
 include_once 'Amber/lib/IXR_Library.inc.php';
 
 //$client = new IXR_Client('http://intern-dev.sbz.de/report/xmlserver.php');
-$client = new IXR_Client('http://localhost/~joe/report/xmlserver.php');
+$client = new IXR_Client('http://localhost/amber/xmlserver.php');
 
 $client->debug = true;
 
@@ -11,7 +11,7 @@ $client->debug = true;
 //    die('Something went wrong: '.$client->getErrorCode().' : '.$client->getErrorMessage());
 //}
 
-if (!$client->query('Amber.getReportList', 'GLS')) {
+if (!$client->query('Amber.getFormList')) {
     die('Something went wrong: '.$client->getErrorCode().' : '.$client->getErrorMessage());
 }
 

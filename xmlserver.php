@@ -9,7 +9,7 @@ class AmberXMLServer extends IXR_Server
 {
   var $_globalConfig;
   var $sysTableName = 'tx_amber_sys_objects';
-  var $objectTypes = array('report' => 1, 'module' => 2);
+  var $objectTypes = array('report' => 1, 'module' => 2, 'form' => 3);
 
   function AmberXMLServer()
   {
@@ -21,6 +21,9 @@ class AmberXMLServer extends IXR_Server
       'Amber.writeReportXML' => 'this:writeReportXML',
       'Amber.fileExists' => 'this:fileExists',
       'Amber.getReportList' => 'this:getReportList',
+      'Amber.getReport' => 'this:getReport',
+      'Amber.getFormList' => 'this:getFormList',
+      'Amber.getForm' => 'this:getForm',
       'Amber.getCode' => 'this:getCode'
     ));
   }
@@ -120,7 +123,34 @@ class AmberXMLServer extends IXR_Server
   {
     $db = $this->currentDb();
     $dict = NewDataDictionary($db);
-    $sql = 'Select name from ' . $dict->TableName($this->sysTableName);
+    $sql = 'Select name from ' . $dict->TableName($this->sysTableName) . ' WHERE type=' . $this->objectTypes['report'];
+
+    return $db->GetAll($sql);
+  }
+  
+  function getFormList()
+  {
+    $db = $this->currentDb();
+    $dict = NewDataDictionary($db);
+    $sql = 'Select name from ' . $dict->TableName($this->sysTableName) . ' WHERE type=' . $this->objectTypes['form'];
+
+    return $db->GetAll($sql);
+  }
+  
+  function getForm($name)
+  {
+    $db = $this->currentDb();
+    $dict = NewDataDictionary($db);
+    $sql = 'Select * from ' . $dict->TableName($this->sysTableName) . ' WHERE name=' . $db->Quote($name) . ' AND type=' . $this->objectTypes['form'];
+
+    return $db->GetAll($sql);
+  }
+  
+  function getReport($name)
+  {
+    $db = $this->currentDb();
+    $dict = NewDataDictionary($db);
+    $sql = 'Select * from ' . $dict->TableName($this->sysTableName) . ' WHERE name=' . $db->Quote($name) . ' AND type=' . $this->objectTypes['report'];
 
     return $db->GetAll($sql);
   }
