@@ -129,6 +129,7 @@ class ObjectLoaderDb extends ObjectLoader
     }
 
     $obj = new AmberObjectRaw;
+    $obj->type = $data['type'];
     $obj->name = $data['name'];
     $obj->class = $data['class'];
     $obj->code = $data['code'];
@@ -308,6 +309,7 @@ class ObjectLoaderFile extends ObjectLoader
     }
 
     $obj = new AmberObjectRaw;
+    $obj->type = $this->objectTypes['module'];
     $obj->name = basename($name, '.php');
     $obj->code = file_get_contents($modPath . '/' . $name . '.php');
 
@@ -328,6 +330,7 @@ class ObjectLoaderFile extends ObjectLoader
     $param = $res['report'];
 
     $obj = new AmberObjectRaw;
+    $obj->type = $this->objectTypes['report'];
     if (isset($param['Name'])) {
       $obj->name = $param['Name'];
     }

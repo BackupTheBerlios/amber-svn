@@ -11,6 +11,7 @@ require_once 'ObjectLoader.php';
 
 class AmberObjectRaw
 {
+  var $type;
   var $name;
   var $class;
   var $code;

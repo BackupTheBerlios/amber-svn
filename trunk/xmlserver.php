@@ -10,6 +10,7 @@ class AmberXMLServer extends IXR_Server
   var $_globalConfig;
   var $sysTableName = 'tx_amber_sys_objects';
   var $objectTypes = array('report' => 1, 'module' => 2, 'form' => 3);
+  var $amber;
 
   function AmberXMLServer()
   {
@@ -17,6 +18,8 @@ class AmberXMLServer extends IXR_Server
 
   function processRequest()
   {
+    $this->amber =& Amber::getInstance($this->_globalConfig);
+    
     $this->IXR_Server(array(
       'Amber.ping' => 'this:ping',
       'Amber.writeReportXML' => 'this:writeReportXML',
@@ -26,7 +29,10 @@ class AmberXMLServer extends IXR_Server
       'Amber.setReportCode' => 'this:setReportCode',
       'Amber.getFormList' => 'this:getFormList',
       'Amber.getForm' => 'this:getForm',
-      'Amber.getCode' => 'this:getCode'
+      'Amber.getCode' => 'this:getCode',
+      'ObjectManager.getList' => 'this:getList',
+      'ObjectManager.loadObject' => 'this:loadObject',
+      'ObjectManager.saveObject' => 'this:saveObject',
     ));
   }
 
@@ -187,6 +193,33 @@ class AmberXMLServer extends IXR_Server
     $sql = 'Select code from ' . $dict->TableName($this->sysTableName) . ' where name=' . $db->Quote($name);
 
     return $db->GetOne($sql);
+  }
+  
+  function getList($type)
+  {
+    $mgr =& $this->amber->getObjectManager();
+    return $mgr->getList($type);
+  }
+  
+  function loadObject($param)
+  {
+    $type = $param[0];
+    $name = $param[1];
+
+    $mgr =& $this->amber->getObjectManager();
+    return $mgr->loadObject($type, $name);
+  }
+  
+  function saveObject($param)
+  {
+    $type = $param[0];
+    $name = $param[1];
+    $obj  = $param[2];
+
+    $mgr =& $this->amber->getObjectManager();
+    $mgr->saveObject($type, $name, $obj);
+    
+    return true;
   }
 }
 
