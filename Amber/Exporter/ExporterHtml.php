@@ -650,9 +650,9 @@ class CheckBoxExporterHtml extends ControlExporterHtml
     $tmpCtrl->Width = 11 * 15;
     $tmpCtrl->Height = 11 * 15;
     $tmpCtrl->FontWeight = 700;
-
     $tmpCtrl->BackStyle = true;
-    if ($value === 0) {
+    
+    if (($value === '0') || ($value === 0)) {
       $value = '';
       $tmpCtrl->BackColor = 0xFFFFFF;
     } elseif (is_numeric($value)) {

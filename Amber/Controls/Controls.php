@@ -328,6 +328,9 @@ class TextBox extends FontBox
 
   function printNormal(&$buffer)
   {
+    if ($this->Value == '0000-00-00 00:00:00') {
+      $this->Value = null;
+    }
     if ($this->Format) {
       $this->_exporter->printNormal($this, $buffer, Format($this->Value, strval($this->Format), $this->DecimalPlaces));
     } else {
