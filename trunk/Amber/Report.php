@@ -646,7 +646,7 @@ class Report extends AmberObject
     $this->_designSection->Name = '<designBorder>';
     $this->_designSection->Height = 240;
     $this->_designSection->Visible = true;
-    $this->_designSection->BackColor = 0xFFFFFF;
+    $this->_designSection->BackColor = 0xDDDDDD;
     $this->_designSection->CanGrow = false;
     $this->_designSection->CanShrink = false;
     $this->_designSection->KeepTogether = false;
@@ -656,16 +656,16 @@ class Report extends AmberObject
     
     $ctlProp = array(
       'Name' => '',
-      'Left' => 2,
-      'Top' => 2,
-      'Width' => $this->Width-4,
-      'Height' => 236,
+      'Left' => 0,
+      'Top' => 0,
+      'Width' => $this->Width,
+      'Height' => 240,
       'Visible' => true,
       'BackStyle' => 1,
       'BackColor' => 0xDDDDDD, //gray
-      'BorderStyle' => 1,
+      'BorderStyle' => 0,
       'BorderColor' => 0, // black
-      'BorderWidth' => 0, // as small as possible ("Haarlinie")
+      'BorderWidth' => 1, // 1pt
       'BorderLineStyle' => 0,
       'zIndex' => 0,
       'Value' => '',
@@ -684,12 +684,12 @@ class Report extends AmberObject
 
     $ctl =& ControlFactory::create(100, $ctlProp, $this->hReport);
     $this->_exporter->setControlExporter($ctl);
-    $this->_designSection->Controls['Label'] =& $ctl;
+    $this->_designSection->Controls['label'] =& $ctl;
   }
   
   function sectionPrintDesignHeader($text)
   {
-    $this->_designSection->Controls['Label']->Caption = $text;
+    $this->_designSection->Controls['label']->Caption = $text;
     $buffer = '';
     
     $this->_startSection($this->_designSection, $this->Width, $buffer);

@@ -56,12 +56,6 @@ class ReportContinous extends Report
     $this->_exporter->_posY += $height;
   }
   
-  
-  function sectionPrintDesignHeader($text)
-  {
-    $this->_exporter->sectionPrintDesignHeader($text);
-  }
-
   function page()
   {
     return $this->_pageNo;

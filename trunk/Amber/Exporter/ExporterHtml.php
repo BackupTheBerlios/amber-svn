@@ -95,45 +95,6 @@ class ExporterHtml extends Exporter
 
   // Section - html
 
-  /**
-  *
-  * for design mode: print border between sections
-  *
-  * @access public
-  * @param  string name of header to print
-  * @return integer height printed in twips
-  */
-  function sectionPrintDesignHeader($text)
-  {
-    $cheatHeight = 29;
-    $cheatWidth  = 59;
-
-    $height = 12; //12pt
-
-    $out .= "\t<div name=\"" . htmlspecialchars($text) . '-Header"';
-
-    $style = array();
-    $style['top'] = $this->_html_twips($this->_posY);
-    $style['height'] = $height . 'pt';
-    $style['left'] = '0';
-    $style['width'] = '100%';
-    $style['background-color'] = '#999999';
-    $style['font'] = '8pt arial';
-    $style['border'] = '#000000 solid 1px';
-    $style['border-top'] = '#cccccc solid 1px';
-    $style['border-left'] = '#cccccc solid 1px';
-    $style['margin-bottom'] = '1px';
-    $style['margin-top'] = '1px';
-
-    $out .=  ' style="' . $this->arrayToStyle($style) . "\">";
-    $out .= htmlspecialchars($text);
-    $out .= "</div>\n";
-
-    $this->_base->_out($out);
-    $this->_posY += ($height + 2) * 20;
-  }
-
-
   function out(&$secBuff)
   {
     $this->_base->_out($secBuff);
@@ -518,7 +479,7 @@ class FontBoxExporterHtml extends ControlExporterHtml
     }
 
     if ($value['FontName'] <> $std['FontName']) {
-      $out .= 'font-family: "' . $ctrl->Properties['FontName'] . '"; ';
+      $out .= "font-family: '" . $ctrl->Properties['FontName'] . "'; ";
     }
 
     if ($value['FontUnderline'] <> $std['FontUnderline']) {
