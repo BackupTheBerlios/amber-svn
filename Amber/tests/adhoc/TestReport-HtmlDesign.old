@@ -1,0 +1,107 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<title>TestReport</title>
+	<style type="text/css">
+<!--
+.AmberReport { position: relative; }
+.AmberReport div { position: absolute; overflow: hidden; }
+.s42	/* Bezeichnungsfeld11 */ { top: 9px; left: 9px; height: 45px; width: 642px; background-color: #33cccc; border-width: 1pt; border-color: #000000; border-style: solid; z-index: 10; visibility: visible; font-weight: 700; font-size: 26pt; font-family: "Arial"; text-align: center; color: #ffffff; }
+.s43	/* Bezeichnungsfeld0 */ { top: 48px; left: 13px; height: 17px; width: 109px; border-width: 1px; border-color: #000000; border-style: solid; z-index: 10; visibility: visible; font-weight: 500; font-size: 8pt; font-family: "Arial"; text-align: left; color: #000000; }
+.s44	/* Bezeichnungsfeld1 */ { top: 74px; left: 13px; height: 24px; width: 174px; border-width: 1px; border-color: #000000; border-style: solid; z-index: 20; visibility: visible; font-weight: 500; font-size: 13pt; font-family: "Times New Roman"; text-align: left; color: #000000; }
+.s45	/* Bezeichnungsfeld2 */ { top: 107px; left: 13px; height: 24px; width: 221px; border-width: 1px; border-color: #000000; border-style: solid; z-index: 30; visibility: visible; font-weight: 700; font-size: 13pt; font-family: "Times New Roman"; text-align: left; color: #000000; }
+.s46	/* Bezeichnungsfeld3 */ { top: 140px; left: 13px; height: 24px; width: 224px; border-width: 1px; border-color: #000000; border-style: solid; z-index: 40; visibility: visible; font-style: italic; font-weight: 500; font-size: 13pt; font-family: "Times New Roman"; text-align: left; color: #ff00ff; }
+.s47	/* Bezeichnungsfeld4 */ { top: 173px; left: 13px; height: 24px; width: 250px; border-width: 1px; border-color: #000000; border-style: solid; z-index: 50; visibility: visible; font-weight: 500; font-size: 13pt; font-family: "Times New Roman"; text-decoration: underline; text-align: left; color: #ff6600; }
+.s48	/* Bezeichnungsfeld5 */ { top: 206px; left: 13px; height: 24px; width: 355px; border-width: 1px; border-color: #000000; border-style: solid; z-index: 60; visibility: visible; font-style: italic; font-weight: 700; font-size: 13pt; font-family: "Times New Roman"; text-decoration: underline; text-align: left; color: #000000; }
+.s49	/* Bezeichnungsfeld6 */ { top: 9px; left: 330px; height: 17px; width: 109px; border-width: 1pt; border-color: #000000; border-style: solid; z-index: 70; visibility: visible; font-weight: 500; font-size: 8pt; font-family: "Arial"; text-align: left; color: #000000; }
+.s50	/* Bezeichnungsfeld7 */ { top: 34px; left: 330px; height: 21px; width: 95px; border-width: 4pt; border-color: #000000; border-style: solid; z-index: 80; visibility: visible; font-weight: 500; font-size: 8pt; font-family: "Arial"; text-align: left; color: #000000; }
+.s51	/* Bezeichnungsfeld9 */ { top: 62px; left: 330px; height: 17px; width: 109px; border-width: 1pt; border-color: #000000; border-style: dotted; z-index: 90; visibility: visible; font-weight: 500; font-size: 8pt; font-family: "Arial"; text-align: left; color: #000000; }
+.s52	/* Bezeichnungsfeld10 */ { top: 84px; left: 330px; height: 17px; width: 109px; border-width: 1pt; border-color: #000000; border-style: dashed; z-index: 100; visibility: visible; font-weight: 500; font-size: 8pt; font-family: "Arial"; text-align: left; color: #000000; }
+.s53	/* Rechteck17 */ { top: 502px; left: 9px; height: 70px; width: 348px; background-color: #ffff00; border-width: 5pt; border-color: #99ccff; border-style: solid; z-index: 110; visibility: visible; }
+.s54	/* Rechteck18 */ { top: 462px; left: 295px; height: 101px; width: 75px; background-color: #00ff00; border-width: 2pt; border-color: #993366; border-style: dashed; z-index: 120; visibility: visible; }
+.s55	/* Rechteck19 */ { top: 480px; left: 255px; height: 44px; width: 57px; background-color: #ff0000; border-width: 1px; border-color: #000000; border-style: solid; z-index: 130; visibility: visible; }
+.s56	/* Bezeichnungsfeld20 */ { top: 405px; left: 9px; height: 36px; width: 176px; border-width: 1px; border-color: #000000; z-index: 140; visibility: visible; font-weight: 500; font-size: 17pt; font-family: "Arial Black"; text-align: left; color: #000000; }
+.s57	/* Bezeichnungsfeld21 */ { top: 4px; left: 9px; height: 36px; width: 176px; border-width: 1px; border-color: #000000; z-index: 150; visibility: visible; font-weight: 500; font-size: 17pt; font-family: "Arial Black"; text-align: left; color: #000000; }
+.s58	/* Bezeichnungsfeld22 */ { top: 282px; left: 9px; height: 36px; width: 176px; border-width: 1px; border-color: #000000; z-index: 160; visibility: visible; font-weight: 500; font-size: 17pt; font-family: "Arial Black"; text-align: left; color: #000000; }
+.s59	/* Bezeichnungsfeld23 */ { top: 110px; left: 330px; height: 28px; width: 277px; background-color: #ffcc00; border-width: 1pt; border-color: #00ff00; border-style: solid; z-index: 170; visibility: visible; font-weight: 500; font-size: 15pt; font-family: "Arial"; text-align: left; color: #333399; }
+.s60	/* Bezeichnungsfeld24 */ { top: 62px; left: 449px; height: 17px; width: 109px; border-width: 1px; border-color: #000000; border-style: dotted; z-index: 180; visibility: visible; font-weight: 500; font-size: 8pt; font-family: "Arial"; text-align: left; color: #000000; }
+.s61	/* Bezeichnungsfeld25 */ { top: 84px; left: 449px; height: 17px; width: 111px; border-width: 1px; border-color: #000000; border-style: dashed; z-index: 190; visibility: visible; font-weight: 500; font-size: 8pt; font-family: "Arial"; text-align: left; color: #000000; }
+.s62	/* Text28 */ { top: 330px; left: 9px; height: 17px; width: 123px; background-color: #ffffff; border-width: 1pt; border-color: #000000; border-style: solid; z-index: 200; visibility: visible; font-weight: 500; font-size: 8pt; font-family: "Arial"; text-align: left; color: #000000; }
+.s63	/* Text30 */ { top: 355px; left: 9px; height: 21px; width: 123px; background-color: #808080; border-width: 3pt; border-color: #cc99ff; border-style: solid; z-index: 210; visibility: visible; font-weight: 700; font-size: 8pt; font-family: "Arial"; text-align: left; color: #ffffff; }
+.s64	/* Text31 */ { top: 356px; left: 141px; height: 21px; width: 123px; background-color: #969696; border-width: 3pt; border-color: #cc99ff; border-style: solid; z-index: 220; visibility: visible; font-weight: 700; font-size: 8pt; font-family: "Arial"; text-align: center; color: #ffffff; }
+.s65	/* Text32 */ { top: 356px; left: 273px; height: 21px; width: 123px; background-color: #c0c0c0; border-width: 3pt; border-color: #cc99ff; border-style: solid; z-index: 230; visibility: visible; font-weight: 700; font-size: 8pt; font-family: "Arial"; text-align: right; color: #ffffff; }
+.s66	/* Text33 */ { top: 330px; left: 141px; height: 17px; width: 123px; background-color: #ffffff; border-width: 1pt; border-color: #000000; border-style: solid; z-index: 240; visibility: visible; font-weight: 700; font-size: 8pt; font-family: "Arial"; text-align: left; color: #000000; }
+.s67	/* Text34 */ { top: 330px; left: 273px; height: 17px; width: 123px; background-color: #ffffff; border-width: 1pt; border-color: #000000; border-style: solid; z-index: 250; visibility: visible; font-style: italic; font-weight: 500; font-size: 8pt; font-family: "Arial"; text-align: left; color: #000000; }
+.s68	/* Text35 */ { top: 330px; left: 405px; height: 17px; width: 123px; background-color: #ffffff; border-width: 1pt; border-color: #000000; border-style: solid; z-index: 260; visibility: visible; font-weight: 500; font-size: 8pt; font-family: "Arial"; text-decoration: underline; text-align: left; color: #000000; }
+.s69	/* Bericht1 */ { top: 600px; left: 17px; height: 245px; width: 417px; border-width: 1px; border-color: #000000; border-style: solid; z-index: 270; visibility: visible; }
+.s70	/* Bezeichnungsfeld36 */ { top: 582px; left: 17px; height: 17px; width: 51px; border-width: 1px; border-color: #000000; z-index: 269; visibility: visible; font-weight: 500; font-size: 8pt; font-family: "Arial"; text-align: left; color: #000000; }
+.s71	/* Bezeichnungsfeld37 */ { top: 606px; left: 452px; height: 86px; width: 168px; border-width: 1px; border-color: #000000; border-style: solid; z-index: 290; visibility: visible; font-weight: 500; font-size: 8pt; font-family: "Arial"; text-align: left; color: #000000; }
+.s72	/* Bezeichnungsfeld12 */ { top: 13px; left: 9px; height: 24px; width: 642px; background-color: #339966; border-width: 1pt; border-color: #000000; border-style: solid; z-index: 10; visibility: visible; font-weight: 700; font-size: 13pt; font-family: "Arial"; text-align: left; color: #ffffff; }
+.s73	/* Bezeichnungsfeld13 */ { top: 44px; left: 9px; height: 24px; width: 642px; background-color: #666699; border-width: 1pt; border-color: #000000; border-style: solid; z-index: 20; visibility: visible; font-weight: 700; font-size: 13pt; font-family: "Arial"; text-align: right; color: #ffcc00; }
+.s74	/* Bezeichnungsfeld14 */ { top: 75px; left: 9px; height: 24px; width: 644px; background-color: #ccffcc; border-width: 1pt; border-color: #000000; border-style: solid; z-index: 30; visibility: visible; font-weight: 700; font-size: 13pt; font-family: "Arial"; text-align: center; color: #993366; }
+
+-->
+</style>
+</head>
+<body style="background-color: #aaaaaa;">
+
+
+<!-- Start of AmberReport // -->
+
+<div class="AmberReport">
+	<div name="Seitenkopfbereich-Header" style="top: 0px; height: 12pt; left: 0; width: 100%; background-color: #999999; font: 8pt arial; border: #000000 solid 1px; border-top: #cccccc solid 1px; border-left: #cccccc solid 1px; margin-bottom: 1px; margin-top: 1px; ">Seitenkopfbereich</div>
+	<div name="Seitenkopfbereich" style="top: 21px; height: 76px; left: 0; width: 664px; background-color: #ccffff; ">
+		<div class="s42" style="visibility: visible;">Page Header</div>
+	</div>
+<br />
+<b>Warning</b>:  array_pop(): The argument should be an array in <b>/var/www/amber/Amber/Exporter/Exporter.php</b> on line <b>67</b><br />
+	<div name="Detailbereich-Header" style="top: 95px; height: 12pt; left: 0; width: 100%; background-color: #999999; font: 8pt arial; border: #000000 solid 1px; border-top: #cccccc solid 1px; border-left: #cccccc solid 1px; margin-bottom: 1px; margin-top: 1px; ">Detailbereich</div>
+	<div name="Detailbereich" style="top: 116px; height: 852px; left: 0; width: 664px; background-color: #ffffff; ">
+		<div class="s43" style="visibility: visible;">Arial 8pt</div>
+		<div class="s44" style="visibility: visible;">Times New Roman 12 pt</div>
+		<div class="s45" style="visibility: visible;">Times New Roman 12 pt bold</div>
+		<div class="s46" style="visibility: visible;">Times New Roman 12 pt italics</div>
+		<div class="s47" style="visibility: visible;">Times New Roman 12 pt underlined</div>
+		<div class="s48" style="visibility: visible;">Times New Roman 12 pt bold italics underlined</div>
+		<div class="s49" style="visibility: visible;">Border solid 1pt</div>
+		<div class="s50" style="visibility: visible;">Border solid 4pt</div>
+		<div class="s51" style="visibility: visible;">Border dotted 1pt</div>
+		<div class="s52" style="visibility: visible;">Border dashed 1pt</div>
+		<div class="s53" style="visibility: visible;"></div>
+		<div class="s54" style="visibility: visible;"></div>
+		<div class="s55" style="visibility: visible;"></div>
+		<div class="s56" style="border-color: #cccccc; border-style: solid; visibility: visible;">Rectangle</div>
+		<div class="s57" style="border-color: #cccccc; border-style: solid; visibility: visible;">Label</div>
+		<div class="s58" style="border-color: #cccccc; border-style: solid; visibility: visible;">TextBox</div>
+		<div class="s59" style="visibility: visible;">Border solid 1pt background</div>
+		<div class="s60" style="visibility: visible;">Border dotted hair</div>
+		<div class="s61" style="visibility: visible;">Border dashed hair</div>
+		<div class="s62" style="visibility: visible;">=&quot;StringExpression&quot;</div>
+		<div class="s63" style="visibility: visible;">=1</div>
+		<div class="s64" style="visibility: visible;">=1</div>
+		<div class="s65" style="visibility: visible;">=1</div>
+		<div class="s66" style="visibility: visible;">=&quot;StringExpression&quot;</div>
+		<div class="s67" style="visibility: visible;">=&quot;StringExpression&quot;</div>
+		<div class="s68" style="visibility: visible;">=&quot;StringExpression&quot;</div>
+		<div class="s69" style="visibility: visible;">Bericht1</div>
+		<div class="s70" style="border-color: #cccccc; border-style: solid; visibility: visible;">Bericht1:</div>
+		<div class="s71" style="visibility: visible;">Report header/footer should be visible, page header/footer should not be visible</div>
+	</div>
+<br />
+<b>Warning</b>:  array_pop(): The argument should be an array in <b>/var/www/amber/Amber/Exporter/Exporter.php</b> on line <b>67</b><br />
+	<div name="Seitenfuﬂbereich-Header" style="top: 967px; height: 12pt; left: 0; width: 100%; background-color: #999999; font: 8pt arial; border: #000000 solid 1px; border-top: #cccccc solid 1px; border-left: #cccccc solid 1px; margin-bottom: 1px; margin-top: 1px; ">Seitenfuﬂbereich</div>
+	<div name="Seitenfuﬂbereich" style="top: 988px; height: 111px; left: 0; width: 664px; background-color: #ccffff; ">
+		<div class="s72" style="visibility: visible;">Page Footer (align left)</div>
+		<div class="s73" style="visibility: visible;">Page Footer (align right)</div>
+		<div class="s74" style="visibility: visible;">Page Footer (centered)</div>
+	</div>
+<br />
+<b>Warning</b>:  array_pop(): The argument should be an array in <b>/var/www/amber/Amber/Exporter/Exporter.php</b> on line <b>67</b><br />
+
+</div>
+
+<!-- End of AmberReport // -->
+
+</body>
+</html>

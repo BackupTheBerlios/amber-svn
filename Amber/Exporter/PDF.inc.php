@@ -37,11 +37,11 @@ class PDF extends FPDF
    * PDF is singleton: one instance to handle report and subreports
    *
    */
-  function &getInstance($orient, $unit, $size)
+  function &getInstance($orient, $unit, $size, $reset)
   {
     static $instance = null;
 
-    if (is_null($instance)) {
+    if (is_null($instance) or $reset) {
       $instance = new PDF($orient, $unit, $size);
     }
 
@@ -102,12 +102,6 @@ class PDF extends FPDF
     $this->_sectionBuff[$this->_inSection] = "\n%Start Section:" . ($this->_inSection) . "\n\n";
     $this->SetXY(0, 0);
   }
-  
-  ////////////
-  // Experiment: endSection ohne secBuff (reentrand?)
-  ////////////
-  
-  
   
   function endSection($sectionHeight, $keepTogether)
   {

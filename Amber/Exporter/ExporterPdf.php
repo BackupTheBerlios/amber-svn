@@ -42,7 +42,8 @@ class ExporterFPdf extends Exporter
     $orient = $this->_pdf_orientation($report->Orientation);
     $size = array($report->PaperWidth, $report->PaperHeight);
     #Amber::dump($size);
-    $this->_pdf =& PDF::getInstance($orient, 1/20, $size);
+    $reset = (!$this->_asSubreport);
+    $this->_pdf =& PDF::getInstance($orient, 1/20, $size, $reset);
     if ($report->Controls) {
       foreach (array_keys($report->Controls) as $ctrlName) {
         if (!empty($report->Controls[$ctrlName]->FontName)) {

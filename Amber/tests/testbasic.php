@@ -21,7 +21,7 @@ class myTestCase extends PHPUnit_TestCase
 {
   function assertEEquals($expected, $given, $message='')
   {
-    parent::assertSame($expected, $given, $message . "  expected:" . $expected . "; given:" . $given . "; ");
+    parent::assertEquals($expected, $given, $message . "  expected:" . $expected . "; given:" . $given . "; ");
   }
 }
 
