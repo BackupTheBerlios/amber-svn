@@ -141,7 +141,8 @@ class XMLLoader
   {
     $ret = array();
 
-    $parser = xml_parser_create();
+    $parser = xml_parser_create('');
+    xml_parser_set_option($parser, XML_OPTION_TARGET_ENCODING, 'iso-8859-1');
     xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
     xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 1);
     xml_parse_into_struct($parser, $data, $values, $tags);
