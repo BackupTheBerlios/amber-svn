@@ -15,7 +15,7 @@ class AmberFormSection
 
     if (!empty($data['Controls'])) {
       foreach ($data['Controls'] as $c) {
-        $ctl =& ControlFactory::create($c['ControlType'], $c);
+        $ctl =& ControlFactory::create($c['ControlType'], $c, $parent->hReport);
         if ($ctl == false) {
           Amber::showError('Warning', 'Skipping unsupported control type: ' . htmlentities($c['ControlType']));
         } else {

@@ -11,6 +11,7 @@ require_once 'misc.php';
 require_once 'AmberConfig.php';
 require_once 'AmberObject.php';
 require_once 'AmberFormSection.php';
+require_once 'ObjectHandler.php';
 
 /**
  *
@@ -39,6 +40,7 @@ class Form extends AmberObject
   function initialize(&$data)
   {
     $this->Name = $data['name'];
+    $this->hReport = ObjectHandler::getHandle($this);
 
     $res =& XMLLoader::_makeXMLTree($data['design']);
     $xml = $res['form'];
