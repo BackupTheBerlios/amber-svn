@@ -1,5 +1,5 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 	<title>TestReport</title>
@@ -34,8 +34,8 @@
 .s24	/* Text33 */ { top: 330px; left: 141px; height: 17px; width: 123px; background-color: #ffffff; border-width: 1pt; border-color: #000000; border-style: solid; z-index: 240; visibility: visible; font-weight: 700; font-size: 8pt; font-family: 'Arial'; text-align: left; color: #000000; }
 .s25	/* Text34 */ { top: 330px; left: 273px; height: 17px; width: 123px; background-color: #ffffff; border-width: 1pt; border-color: #000000; border-style: solid; z-index: 250; visibility: visible; font-style: italic; font-weight: 500; font-size: 8pt; font-family: 'Arial'; text-align: left; color: #000000; }
 .s26	/* Text35 */ { top: 330px; left: 405px; height: 17px; width: 123px; background-color: #ffffff; border-width: 1pt; border-color: #000000; border-style: solid; z-index: 260; visibility: visible; font-weight: 500; font-size: 8pt; font-family: 'Arial'; text-decoration: underline; text-align: left; color: #000000; }
-.s27	/* Bericht1 */ { top: 600px; left: 17px; height: 245px; width: 417px; border-width: 1px; border-color: #000000; border-style: solid; z-index: 270; visibility: visible; }
-.s28	/* Bezeichnungsfeld36 */ { top: 582px; left: 17px; height: 17px; width: 51px; border-width: 1px; border-color: #000000; z-index: 269; visibility: visible; font-weight: 500; font-size: 8pt; font-family: 'Arial'; text-align: left; color: #000000; }
+.s27	/* Bericht1 */ { top: 600px; left: 45px; height: 245px; width: 356px; border-width: 1px; border-color: #000000; border-style: solid; z-index: 270; visibility: visible; }
+.s28	/* Bezeichnungsfeld36 */ { top: 582px; left: 45px; height: 17px; width: 51px; border-width: 1px; border-color: #000000; z-index: 269; visibility: visible; font-weight: 500; font-size: 8pt; font-family: 'Arial'; text-align: left; color: #000000; }
 .s29	/* Bezeichnungsfeld37 */ { top: 606px; left: 452px; height: 86px; width: 168px; border-width: 1px; border-color: #000000; border-style: solid; z-index: 290; visibility: visible; font-weight: 500; font-size: 8pt; font-family: 'Arial'; text-align: left; color: #000000; }
 .s30	/* Bezeichnungsfeld12 */ { top: 13px; left: 9px; height: 24px; width: 642px; background-color: #339966; border-width: 1pt; border-color: #000000; border-style: solid; z-index: 10; visibility: visible; font-weight: 700; font-size: 13pt; font-family: 'Arial'; text-align: left; color: #ffffff; }
 .s31	/* Bezeichnungsfeld13 */ { top: 44px; left: 9px; height: 24px; width: 642px; background-color: #666699; border-width: 1pt; border-color: #000000; border-style: solid; z-index: 20; visibility: visible; font-weight: 700; font-size: 13pt; font-family: 'Arial'; text-align: right; color: #ffcc00; }
@@ -50,7 +50,7 @@
 <!-- Start of AmberReport // -->
 
 <div class="AmberReport">
-	<div style="position: relative; background-color: #ffffff; height: 1132px; width: 1235px; ">
+<div style="position: relative; background-color: #ffffff; height: 1132px; width: 1235px; ">
 <!-- ###PAGE Start### -->
 <!-- ***deltaX: 0, x: 1440, y: 720 -->
 	<div  style="left: 106px; top: 53px; height: 75px; width: 660px; overflow: hidden; ">
@@ -98,22 +98,26 @@
 .sub_s37	/* rectangle */ { top: 25px; left: 249px; height: 62px; width: 62px; background-color: #ffffff; border-width: 1px; border-color: #000000; border-style: solid; z-index: 30; visibility: visible; }
 .sub_s38	/* line */ { top: 54px; left: 54px; height: 33px; width: 79px; border-width: 1px; border-color: #000000; border-style: solid; z-index: 40; visibility: visible; }
 .sub_s39	/* report1 */ { top: 116px; left: 158px; height: 59px; width: 167px; border-width: 1px; border-color: #000000; border-style: solid; z-index: 50; visibility: visible; }
-.sub_s40	/* Bezeichnungsfeld12 */ { top: 0px; left: 42px; height: 24px; width: 114px; border-width: 1px; border-color: #000000; z-index: 10; visibility: visible; font-weight: 500; font-size: 13pt; font-family: 'Arial'; text-align: left; color: #000000; }
-.sub_s41	/* Bezeichnungsfeld11 */ { top: 0px; left: 42px; height: 24px; width: 114px; border-width: 1px; border-color: #000000; z-index: 10; visibility: visible; font-weight: 500; font-size: 13pt; font-family: 'Arial'; text-align: left; color: #000000; }
+.sub_s40	/* Text13 */ { top: 137px; left: 46px; height: 18px; width: 32px; background-color: #ffffff; border-width: 1px; border-color: #000000; z-index: 60; visibility: visible; font-weight: 500; font-size: 8pt; font-family: 'Arial'; text-align: left; color: #000000; }
+.sub_s41	/* Bezeichnungsfeld14 */ { top: 137px; left: 0px; height: 17px; width: 43px; border-width: 1px; border-color: #000000; z-index: 59; visibility: visible; font-weight: 500; font-size: 8pt; font-family: 'Arial'; text-align: left; color: #000000; }
+.sub_s42	/* Bezeichnungsfeld12 */ { top: 0px; left: 42px; height: 24px; width: 114px; border-width: 1px; border-color: #000000; z-index: 10; visibility: visible; font-weight: 500; font-size: 13pt; font-family: 'Arial'; text-align: left; color: #000000; }
+.sub_s43	/* Bezeichnungsfeld11 */ { top: 0px; left: 42px; height: 24px; width: 114px; border-width: 1px; border-color: #000000; z-index: 10; visibility: visible; font-weight: 500; font-size: 13pt; font-family: 'Arial'; text-align: left; color: #000000; }
 
 //-->
 </style>
 		<div class="s27" style="visibility: visible;">	<div  name='sectionStart' style="left: 0; top: 0px; height: 29px; width: 416px; background-color: #ffffff; ">
 		<div class="sub_s33" style="visibility: visible;">Reportheader</div>
 	</div name='sectionEND'>
-	<div  name='sectionStart' style="left: 0; top: 29px; height: 187px; width: 416px; background-color: #ffffff; ">
+	<div  name='sectionStart' style="left: 0; top: 29px; height: 183px; width: 416px; background-color: #ffffff; ">
 		<div class="sub_s35" style="visibility: visible;">#exp</div>
 		<div class="sub_s36" style="visibility: visible;">asas</div>
 		<div class="sub_s37" style="visibility: visible;"></div>
 		<div class="sub_s39" style="visibility: visible;"></div>
+		<div class="sub_s40" style="visibility: visible;">#exp</div>
+		<div class="sub_s41" style="visibility: visible;">Text13:</div>
 	</div name='sectionEND'>
-	<div  name='sectionStart' style="left: 0; top: 216px; height: 29px; width: 416px; background-color: #ffffff; ">
-		<div class="sub_s40" style="visibility: visible;">Reportfooter</div>
+	<div  name='sectionStart' style="left: 0; top: 212px; height: 29px; width: 416px; background-color: #ffffff; ">
+		<div class="sub_s42" style="visibility: visible;">Reportfooter</div>
 	</div name='sectionEND'>
 </div>
 		<div class="s28" style="visibility: visible;">Bericht1:</div>
@@ -131,7 +135,7 @@
 	</div></div>
 <!-- ###PAGE End ### -->
 </div>
-	<div style="position: relative; height: 2px; width: 1px; "> &nbsp; </div>
+<div style="position: relative; height: 2px; width: 1px; "> &nbsp; </div>
 
 </div>
 

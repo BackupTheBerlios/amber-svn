@@ -25,7 +25,7 @@
         <DefaultSize>Wahr</DefaultSize>
         <ItemLayout>1953</ItemLayout>
         <ItemsAcross>1</ItemsAcross>
-        <ItemSizeHeight>2551</ItemSizeHeight>
+        <ItemSizeHeight>2494</ItemSizeHeight>
         <ItemSizeWidth>5669</ItemSizeWidth>
         <LeftMargin>1448</LeftMargin>
         <Orientation>1</Orientation>
@@ -94,7 +94,7 @@
         <NewRowOrCol>0</NewRowOrCol>
         <KeepTogether>-1</KeepTogether>
         <CanGrow>-1</CanGrow>
-        <Height>2551</Height>
+        <Height>2494</Height>
         <Controls>
             <item id="TextBox">
                 <EventProcPrefix>TextBox</EventProcPrefix>
@@ -174,6 +174,41 @@
                 <OldBorderStyle>1</OldBorderStyle>
                 <Section>0</Section>
                 <zIndex>50</zIndex>
+            </item>
+            <item id="Text13">
+                <EventProcPrefix>Text13</EventProcPrefix>
+                <Name>Text13</Name>
+                <ControlType>109</ControlType>
+                <ControlSource>=[page]</ControlSource>
+                <DecimalPlaces>255</DecimalPlaces>
+                <Left>623</Left>
+                <Top>1870</Top>
+                <Width>441</Width>
+                <Height>240</Height>
+                <BackStyle>1</BackStyle>
+                <FontName>Arial</FontName>
+                <FontSize>8</FontSize>
+                <TextFontCharSet>0</TextFontCharSet>
+                <TextAlign>0</TextAlign>
+                <Section>0</Section>
+                <zIndex>60</zIndex>
+            </item>
+            <item id="Bezeichnungsfeld14">
+                <EventProcPrefix>Bezeichnungsfeld14</EventProcPrefix>
+                <Name>Bezeichnungsfeld14</Name>
+                <ControlType>100</ControlType>
+                <Caption>Text13:</Caption>
+                <Left>0</Left>
+                <Top>1870</Top>
+                <Width>585</Width>
+                <Height>225</Height>
+                <FontName>Arial</FontName>
+                <FontSize>8</FontSize>
+                <TextFontCharSet>0</TextFontCharSet>
+                <TextAlign>0</TextAlign>
+                <Section>0</Section>
+                <Parent>Text13</Parent>
+                <zIndex>59</zIndex>
             </item>
         </Controls>
     </Detail>

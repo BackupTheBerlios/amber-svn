@@ -42,7 +42,7 @@ class ExporterHtml extends Exporter
 
     $tmp = '';
     if (!$this->_asSubreport) {
-      $tmp = "\n<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n<head>\n";
+      $tmp = "\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html>\n<head>\n";
       $tmp .= "\t<title>" . $this->_docTitle . "</title>\n";
       $this->_base->_out($tmp);
 
@@ -70,7 +70,7 @@ class ExporterHtml extends Exporter
 
   function comment($s)
   {
-    $this->_base->_out("<!-- $s -->\n");
+    $this->_base->_out('<!-- ' . htmlspecialchars($s) . " -->\n");
   }
 
   function outWindowRelative($deltaX, $x, $y, $w, $h, &$dataBuff)
@@ -560,6 +560,7 @@ class FontBoxExporterHtml extends ControlExporterHtml
     if ($value['ForeColor'] <> $std['ForeColor']) {
       $out .= 'color: ' . ExporterHTML::_html_color($ctrl->Properties['ForeColor']) . '; ';
     }
+    
     return $out;
   }
 }

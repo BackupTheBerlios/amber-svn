@@ -608,9 +608,9 @@
                 <LinkChildFields></LinkChildFields>
                 <LinkMasterFields></LinkMasterFields>
                 <CanGrow>-1</CanGrow>
-                <Left>236</Left>
+                <Left>614</Left>
                 <Top>8177</Top>
-                <Width>5684</Width>
+                <Width>4859</Width>
                 <Height>3342</Height>
                 <BorderStyle>1</BorderStyle>
                 <OldBorderStyle>1</OldBorderStyle>
@@ -622,7 +622,7 @@
                 <Name>Bezeichnungsfeld36</Name>
                 <ControlType>100</ControlType>
                 <Caption>Bericht1:</Caption>
-                <Left>236</Left>
+                <Left>614</Left>
                 <Top>7937</Top>
                 <Width>690</Width>
                 <Height>225</Height>

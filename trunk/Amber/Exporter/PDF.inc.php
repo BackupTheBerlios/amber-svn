@@ -118,7 +118,8 @@ class PDF extends FPDF
   {
     $this->SetXY($para->x, $para->y);
     $this->SetClipping($para->x, $para->y, $para->width, $para->height);
-    $this->SetCoordinate(-$para->x, -$para->y);
+    $this->SetCoordinate($para->x, -$para->y);
+#    $this->SetCoordinate(0, 0);
     
     $this->_out($para->content);
     

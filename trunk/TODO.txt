@@ -9,6 +9,10 @@ TODO for first public release
 
 - nice to have: modify sql statement to reflect grouping given in xml
 
+- work on w3c's html box model (html exporter)
+- multi-line boxes in pdf
+- support for CanGrow/CanShrink
+
 
 BUGS:
 -----
@@ -32,8 +36,15 @@ BUGS:
           
   means that a string is displayed if it's not empty/null, otherwise "Text" will be displayed
 
+- multiple blanks get squeezed by html - undo this?
+
+
+
+
 Important details for inclusion into documentation
 --------------------------------------------------
 - ctype extension required (--> lexer)
 - remember to set locale if your language has special characters
-- grouping: atm the sql statement must include corresponding order by clauses
+
+
+
