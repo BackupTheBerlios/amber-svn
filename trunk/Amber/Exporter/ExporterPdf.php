@@ -2,7 +2,7 @@
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  *
  */
@@ -19,7 +19,7 @@ ExporterFactory::register('testpdf', 'ExporterFPdf');
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  *
  */

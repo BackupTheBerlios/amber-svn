@@ -2,7 +2,7 @@
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Tests
 *
 */
@@ -12,7 +12,7 @@ require_once 'unit.php';
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Tests
 *
 */

@@ -27,7 +27,7 @@
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Tests
 *
 */
@@ -42,7 +42,7 @@ require_once '../Amber.php';
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Tests
 *
 * usage: 
@@ -68,7 +68,7 @@ class testReportConstant extends PHPUnit_TestCase
   function str2file($filename, $somecontent)
   {
     if (!$handle = fopen($filename, "w+")) {
-      print "Kann die Datei $filename nicht öffnen";
+      print "Kann die Datei $filename nicht ï¿½fnen";
     } elseif (!fwrite($handle, $somecontent)) {
       print "Kann in die Datei $filename nicht schreiben";
     } else {

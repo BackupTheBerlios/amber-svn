@@ -2,7 +2,7 @@
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Controls
  *
  */
@@ -11,7 +11,7 @@ include_once 'Controls.php';
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Controls
  * @static
  *

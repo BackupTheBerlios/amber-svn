@@ -2,7 +2,7 @@
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage ReportEngine
  *
  */
@@ -21,7 +21,7 @@ require_once 'misc.php';
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage ReportEngine
  *
  */

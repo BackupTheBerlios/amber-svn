@@ -8,6 +8,11 @@
    Made available under the Artistic License: http://www.opensource.org/licenses/artistic-license.php
 */
 
+/**
+ *
+ * @package IXR_Library
+ *
+ */
 
 class IXR_Value {
     var $data;

@@ -2,7 +2,7 @@
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage ReportEngine
  *
  */
@@ -11,7 +11,7 @@ require_once 'Lexer.php';
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage ReportEngine
  *
  */
@@ -56,7 +56,7 @@ class Parser
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage ReportEngine
  *
  */

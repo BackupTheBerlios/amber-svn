@@ -2,7 +2,7 @@
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Controls
 *
 */
@@ -19,7 +19,7 @@ ControlFactory::register('112', 'SubReport');
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Controls
 *
 */
@@ -191,7 +191,7 @@ class Control
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Controls
 *
 */
@@ -218,7 +218,7 @@ class Rectangle extends Control
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Controls
 *
 */
@@ -248,7 +248,7 @@ class Rectangle extends Control
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Controls
 *
 */
@@ -295,7 +295,7 @@ class FontBox extends Control
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Controls
 *
 */
@@ -373,7 +373,7 @@ class TextBox extends FontBox
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Controls
 *
 */
@@ -423,7 +423,7 @@ class Label extends FontBox
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Controls
 *
 **/
@@ -512,7 +512,7 @@ class SubReport extends Control
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Controls
 *
 **/
@@ -586,7 +586,7 @@ class ComboBox extends Control
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Controls
 *
 **/
@@ -623,7 +623,7 @@ class CheckBox extends Control
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Controls
 *
 **/

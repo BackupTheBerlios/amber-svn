@@ -2,7 +2,7 @@
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage ReportEngine
 *
 */
@@ -11,7 +11,7 @@ require_once 'XMLLoader.php';
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage ReportEngine
 *
 */
@@ -164,7 +164,7 @@ class AmberConfig
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage ReportEngine
 *
 */

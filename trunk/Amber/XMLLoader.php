@@ -2,14 +2,14 @@
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage ReportEngine
  *
  */
 
  /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage ReportEngine
  *
  */

@@ -1,7 +1,7 @@
 <?php
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Basic
 *
 */
@@ -220,16 +220,16 @@ class _format
    */
   function nextChar(&$ch)
   {
-  	if ($this->lexPos >= $this->len) {
-  		$this->lexPos = $this->len + 1;
+    if ($this->lexPos >= $this->len) {
+      $this->lexPos = $this->len + 1;
       $ch = "\0";
-  	}
-  	else
-  	{
-  		$ch = $this->fmt[$this->lexPos];
-  		$this->lexPos ++;
-  	}
-		return $ch;
+    }
+    else
+    {
+      $ch = $this->fmt[$this->lexPos];
+      $this->lexPos ++;
+    }
+    return $ch;
   }
 
   /**
@@ -237,38 +237,38 @@ class _format
    * @access private lexer: return format tokens
    *
    */
-	function NextToken()
+  function NextToken()
   {
-  	$this->Value = '';
-  	$this->nextChar($ch);
+    $this->Value = '';
+    $this->nextChar($ch);
 
-  	$this->Value .= $ch;
-  	if ($ch == "\0")
-  		$this->Token = $this->EOF;
+    $this->Value .= $ch;
+    if ($ch == "\0")
+      $this->Token = $this->EOF;
     elseif ($ch == ';') {
-  		$this->Token = $ch;
+      $this->Token = $ch;
     }
     elseif (($ch == '.') or ($ch == '#') or ($ch == '0') or ($ch == 'e') or ($ch == 'E') or ($ch == ',') or ($ch == '/') or ($ch == ':')) {
-  		$this->Token = $ch;
+      $this->Token = $ch;
     }
     elseif ($ch == "\\") {   // character
-  		$this->Token = $this->STRING;
+      $this->Token = $this->STRING;
       $this->Value = $this->nextChar($ch);
     }
     elseif ($ch == '"') {   // string
-  		$this->Token = $this->STRING;
+      $this->Token = $this->STRING;
       $this->Value = '';
-  		$EndStr = false;
-  		while (! $EndStr) {
-  			if ($this->nextChar($ch)!= '"')
-  				$this->Value .= $ch;
-  			elseif ($this->nextChar($ch) == '"')
-  				$this->Value .= $ch;
-  			else {
-					$this->pushback();
-					$EndStr = true;
-  			}
-  		}
+      $EndStr = false;
+      while (! $EndStr) {
+        if ($this->nextChar($ch)!= '"')
+          $this->Value .= $ch;
+        elseif ($this->nextChar($ch) == '"')
+          $this->Value .= $ch;
+        else {
+          $this->pushback();
+          $EndStr = true;
+        }
+      }
     }
     else {
       $ch1 = $ch;
@@ -625,18 +625,18 @@ class _format
     }
     if (is_numeric($value)) {
       $dateParts = adodb_getdate($value);               //speed: adodb_getdate is slow!!!
-    	$year = $dateParts['year'];
-    	$month = $dateParts['mon'];
-    	$day = $dateParts['mday'];
-    	$hour = $dateParts['hours'];
-    	$min = $dateParts['minutes'];
-    	$secs = $dateParts['seconds'];
+      $year = $dateParts['year'];
+      $month = $dateParts['mon'];
+      $day = $dateParts['mday'];
+      $hour = $dateParts['hours'];
+      $min = $dateParts['minutes'];
+      $secs = $dateParts['seconds'];
       $dow = $dateParts['wday'];
     }
 
-  	$_day_power = 86400;
-  	$_hour_power = 3600;
-  	$_min_power = 60;
+    $_day_power = 86400;
+    $_hour_power = 3600;
+    $_min_power = 60;
 
 
     //cannot replace Epoch by constant, because value of adodb_mktime depends on time zone
@@ -826,11 +826,11 @@ class _format
 function str2date($d)
 {
   if (!preg_match(
-  	"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ -]?(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|",
-  	($d), $rr)) {
+    "|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ -]?(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|",
+    ($d), $rr)) {
     if (!preg_match(
-  	"|^()()()(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|",
-  	($d), $rr)) {
+    "|^()()()(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|",
+    ($d), $rr)) {
       return NULL;
     }
   }
@@ -868,7 +868,7 @@ function getStdFormat($locale='', $prec=2)
       'short time'      =>  'hh:nn',
       'general number'  =>  '',
       'currency'        =>  '#,##0.00 DM',
-      'euro'            =>  '#,##0.00 €',
+      'euro'            =>  '#,##0.00 ',
       'fixed'           =>  '0.' . $zero,
       'standard'        =>  '#,##0.' . $zero,
       'percent'         =>  '0.' . $zero . '%',
@@ -888,7 +888,7 @@ function getStdFormat($locale='', $prec=2)
       'short time'      =>  'hh:nn',
       'general number'  =>  '#.#',
       'currency'        =>  '#,##0.00 $',
-      'euro'            =>  '#,##0.00 €',
+      'euro'            =>  '#,##0.00 ',
       'fixed'           =>  '0.' . $zero,
       'standard'        =>  '#,##0.' . $zero,
       'percent'         =>  '0.' . $zero . '%',

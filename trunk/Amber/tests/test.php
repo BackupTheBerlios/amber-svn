@@ -3,7 +3,7 @@
 *
 * Run all tests
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Tests
 *
 */

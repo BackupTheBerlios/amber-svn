@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @ignore
+ */
 require_once 'header.inc';
 require_once 'Amber/Amber.php';
 require_once 'Amber/AmberConfig.php';
@@ -7,11 +10,17 @@ require_once 'Amber/XMLLoader.php';
 
 $filename = __AMBER_BASE__ . '/conf/localconf.xml';
 
+/**
+ * @ignore
+ */
 function formatMessage($msg)
 {
   return '<div align="center"><div style="text-align: left; color: #000000; width: 450; font-size: 10pt; border: #ee0000 2pt solid; background-color: #ffffff; padding: 5px;"><strong>' . $msg . '</strong></div></div>';
 }
 
+/**
+ * @ignore
+ */
 function doImport(&$config)
 {
   $installerPath = __AMBER_BASE__ . '/install/';

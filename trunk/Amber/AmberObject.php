@@ -2,7 +2,7 @@
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage ReportEngine
 *
 */
@@ -11,7 +11,7 @@ require_once 'AmberConfig.php';
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage ReportEngine
 *
 */

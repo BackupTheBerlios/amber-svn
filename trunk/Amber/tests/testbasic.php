@@ -2,7 +2,7 @@
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Tests
 *
 */
@@ -13,7 +13,7 @@ require_once '../basic.php';
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Tests
 *
 */
@@ -27,7 +27,7 @@ class myTestCase extends PHPUnit_TestCase
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Tests
 *
 */
@@ -45,7 +45,7 @@ class Basic_Format_internals extends myTestCase
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Tests
 *
 */
@@ -261,7 +261,7 @@ class Basic_Format extends myTestCase
 
     $this->assertEquals('1234,5678',     Format(1234.5678, "General Number"),  "General Number");
     $this->assertEquals('1.234,57 DM',   Format(1234.5678, "Currency"),        "Currency");
-    $this->assertEquals('1.234,57 €',    Format(1234.5678, "Euro"),            "Euro");
+    $this->assertEquals('1.234,57 ',    Format(1234.5678, "Euro"),            "Euro");
     $this->assertEquals('1.234,57',      Format(1234.5678, "Standard"),         "Standard");
     $this->assertEquals('123456,78%',    Format(1234.5678, "Percent"),   "Percent");
     $this->assertEquals('1,23E+03',     Format(1234.5678, "Scientific"),   "Scientific");

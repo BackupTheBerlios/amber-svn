@@ -2,7 +2,7 @@
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  *
  */
@@ -11,7 +11,7 @@ ExporterFactory::register('typo3', 'ExporterTypo3');
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  *
  */

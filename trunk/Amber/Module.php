@@ -1,5 +1,12 @@
 <?php
 
+/**
+ *
+ * @package Amber
+ * @subpackage ReportEngine
+ *
+ */
+
 class Module
 {
   var $name;

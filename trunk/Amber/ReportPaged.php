@@ -3,10 +3,11 @@
 require_once 'Report.php';
 
 /**
+ * This class handles paged report types
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage ReportEngine
- *  this class handles paged report types 
+ * 
  */
 
 class ReportPaged extends Report
@@ -160,11 +161,12 @@ class ReportPaged extends Report
 }
 
 
-
-
-
-
-
+/**
+ *
+ * @package Amber
+ * @subpackage ReportEngine
+ *
+ */
 class pageLayout
 {
   var $unit;          //unit in pt

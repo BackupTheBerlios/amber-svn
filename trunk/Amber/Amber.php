@@ -2,7 +2,7 @@
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage ReportEngine
 *
 */
@@ -16,7 +16,7 @@ define('AC_NORMAL', 2);
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage ReportEngine
 *
 */

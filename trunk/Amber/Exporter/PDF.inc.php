@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  *
  */
@@ -376,107 +376,107 @@ class PDF extends FPDF
 
   function PDF($orientation='P',$unit='mm',$format='A4')
 {
-	//Some checks
-	$this->_dochecks();
-	//Initialization of properties
-	$this->page=0;
-	$this->n=2;
-	$this->buffer='';
-	$this->pages=array();
-	$this->OrientationChanges=array();
-	$this->state=0;
-	$this->fonts=array();
-	$this->FontFiles=array();
-	$this->diffs=array();
-	$this->images=array();
-	$this->links=array();
-	$this->InFooter=false;
-	$this->lasth=0;
-	$this->FontFamily='';
-	$this->FontStyle='';
-	$this->FontSizePt=12;
-	$this->underline=false;
-	$this->DrawColor='0 G';
-	$this->FillColor='0 g';
-	$this->TextColor='0 g';
-	$this->ColorFlag=false;
-	$this->ws=0;
-	//Standard fonts
-	$this->CoreFonts=array('courier'=>'Courier','courierB'=>'Courier-Bold','courierI'=>'Courier-Oblique','courierBI'=>'Courier-BoldOblique',
-		'helvetica'=>'Helvetica','helveticaB'=>'Helvetica-Bold','helveticaI'=>'Helvetica-Oblique','helveticaBI'=>'Helvetica-BoldOblique',
-		'times'=>'Times-Roman','timesB'=>'Times-Bold','timesI'=>'Times-Italic','timesBI'=>'Times-BoldItalic',
-		'symbol'=>'Symbol','zapfdingbats'=>'ZapfDingbats');
-	//Scale factor
-	if($unit=='pt')
-		$this->k=1;
-	elseif($unit=='mm')
-		$this->k=72/25.4;
-	elseif($unit=='cm')
-		$this->k=72/2.54;
-	elseif($unit=='in')
-		$this->k=72;
+  //Some checks
+  $this->_dochecks();
+  //Initialization of properties
+  $this->page=0;
+  $this->n=2;
+  $this->buffer='';
+  $this->pages=array();
+  $this->OrientationChanges=array();
+  $this->state=0;
+  $this->fonts=array();
+  $this->FontFiles=array();
+  $this->diffs=array();
+  $this->images=array();
+  $this->links=array();
+  $this->InFooter=false;
+  $this->lasth=0;
+  $this->FontFamily='';
+  $this->FontStyle='';
+  $this->FontSizePt=12;
+  $this->underline=false;
+  $this->DrawColor='0 G';
+  $this->FillColor='0 g';
+  $this->TextColor='0 g';
+  $this->ColorFlag=false;
+  $this->ws=0;
+  //Standard fonts
+  $this->CoreFonts=array('courier'=>'Courier','courierB'=>'Courier-Bold','courierI'=>'Courier-Oblique','courierBI'=>'Courier-BoldOblique',
+    'helvetica'=>'Helvetica','helveticaB'=>'Helvetica-Bold','helveticaI'=>'Helvetica-Oblique','helveticaBI'=>'Helvetica-BoldOblique',
+    'times'=>'Times-Roman','timesB'=>'Times-Bold','timesI'=>'Times-Italic','timesBI'=>'Times-BoldItalic',
+    'symbol'=>'Symbol','zapfdingbats'=>'ZapfDingbats');
+  //Scale factor
+  if($unit=='pt')
+    $this->k=1;
+  elseif($unit=='mm')
+    $this->k=72/25.4;
+  elseif($unit=='cm')
+    $this->k=72/2.54;
+  elseif($unit=='in')
+    $this->k=72;
   elseif(is_numeric($unit))
     $this->k=$unit;
-	else
-		$this->Error('Incorrect unit: '.$unit);
-	//Page format
-	if(is_string($format))
-	{
-		$format=strtolower($format);
-		if($format=='a3')
-			$format=array(841.89,1190.55);
-		elseif($format=='a4')
-			$format=array(595.28,841.89);
-		elseif($format=='a5')
-			$format=array(420.94,595.28);
-		elseif($format=='letter')
-			$format=array(612,792);
-		elseif($format=='legal')
-			$format=array(612,1008);
-		else
-			$this->Error('Unknown page format: '.$format);
-		$this->fwPt=$format[0];
-		$this->fhPt=$format[1];
-	}
-	else
-	{
-		$this->fwPt=$format[0]*$this->k;
-		$this->fhPt=$format[1]*$this->k;
-	}
-	$this->fw=$this->fwPt/$this->k;
-	$this->fh=$this->fhPt/$this->k;
-	//Page orientation
-	$orientation=strtolower($orientation);
-	if($orientation=='p' or $orientation=='portrait')
-	{
-		$this->DefOrientation='P';
-		$this->wPt=$this->fwPt;
-		$this->hPt=$this->fhPt;
-	}
-	elseif($orientation=='l' or $orientation=='landscape')
-	{
-		$this->DefOrientation='L';
-		$this->wPt=$this->fhPt;
-		$this->hPt=$this->fwPt;
-	}
-	else
-		$this->Error('Incorrect orientation: '.$orientation);
-	$this->CurOrientation=$this->DefOrientation;
-	$this->w=$this->wPt/$this->k;
-	$this->h=$this->hPt/$this->k;
-	//Page margins (1 cm)
-	$margin=28.35/$this->k;
-	$this->SetMargins($margin,$margin);
-	//Interior cell margin (1 mm)
-	$this->cMargin=$margin/10;
-	//Line width (0.2 mm)
-	$this->LineWidth=.567/$this->k;
-	//Automatic page break
-	$this->SetAutoPageBreak(true,2*$margin);
-	//Full width display mode
-	$this->SetDisplayMode('fullwidth');
-	//Compression
-	$this->SetCompression(true);
+  else
+    $this->Error('Incorrect unit: '.$unit);
+  //Page format
+  if(is_string($format))
+  {
+    $format=strtolower($format);
+    if($format=='a3')
+      $format=array(841.89,1190.55);
+    elseif($format=='a4')
+      $format=array(595.28,841.89);
+    elseif($format=='a5')
+      $format=array(420.94,595.28);
+    elseif($format=='letter')
+      $format=array(612,792);
+    elseif($format=='legal')
+      $format=array(612,1008);
+    else
+      $this->Error('Unknown page format: '.$format);
+    $this->fwPt=$format[0];
+    $this->fhPt=$format[1];
+  }
+  else
+  {
+    $this->fwPt=$format[0]*$this->k;
+    $this->fhPt=$format[1]*$this->k;
+  }
+  $this->fw=$this->fwPt/$this->k;
+  $this->fh=$this->fhPt/$this->k;
+  //Page orientation
+  $orientation=strtolower($orientation);
+  if($orientation=='p' or $orientation=='portrait')
+  {
+    $this->DefOrientation='P';
+    $this->wPt=$this->fwPt;
+    $this->hPt=$this->fhPt;
+  }
+  elseif($orientation=='l' or $orientation=='landscape')
+  {
+    $this->DefOrientation='L';
+    $this->wPt=$this->fhPt;
+    $this->hPt=$this->fwPt;
+  }
+  else
+    $this->Error('Incorrect orientation: '.$orientation);
+  $this->CurOrientation=$this->DefOrientation;
+  $this->w=$this->wPt/$this->k;
+  $this->h=$this->hPt/$this->k;
+  //Page margins (1 cm)
+  $margin=28.35/$this->k;
+  $this->SetMargins($margin,$margin);
+  //Interior cell margin (1 mm)
+  $this->cMargin=$margin/10;
+  //Line width (0.2 mm)
+  $this->LineWidth=.567/$this->k;
+  //Automatic page break
+  $this->SetAutoPageBreak(true,2*$margin);
+  //Full width display mode
+  $this->SetDisplayMode('fullwidth');
+  //Compression
+  $this->SetCompression(true);
 }
 
 
@@ -484,80 +484,81 @@ class PDF extends FPDF
  /*********
   *  SetFont (remove optimisation)
   *
-  *	- if($this->FontFamily==$family and $this->FontStyle==$style and $this->FontSizePt==$size)
-  *	-    return;
+  * - if($this->FontFamily==$family and $this->FontStyle==$style and $this->FontSizePt==$size)
+  * -    return;
   *
   */
 
  function SetFont($family,$style='',$size=0)
 {
-	//Select a font; size given in points
-	global $fpdf_charwidths;
+  //Select a font; size given in points
+  global $fpdf_charwidths;
 
-	$family=strtolower($family);
-	if($family=='')
-		$family=$this->FontFamily;
-	if($family=='arial')
-		$family='helvetica';
-	elseif($family=='symbol' or $family=='zapfdingbats')
-		$style='';
-	$style=strtoupper($style);
-	if(is_int(strpos($style,'U')))
-	{
-		$this->underline=true;
-		$style=str_replace('U','',$style);
-	}
-	else
-		$this->underline=false;
-	if($style=='IB')
-		$style='BI';
-	if($size==0)
-		$size=$this->FontSizePt;
-	//Test if font is already selected
-#	if($this->FontFamily==$family and $this->FontStyle==$style and $this->FontSizePt==$size)
-#		return;
-	//Test if used for the first time
-	$fontkey=$family.$style;
-	if(!isset($this->fonts[$fontkey]))
-	{
-		//Check if one of the standard fonts
-		if(isset($this->CoreFonts[$fontkey]))
-		{
-			if(!isset($fpdf_charwidths[$fontkey]))
-			{
-				//Load metric file
-				$file=$family;
-				if($family=='times' or $family=='helvetica')
-					$file.=strtolower($style);
-				$file.='.php';
-				if(defined('FPDF_FONTPATH'))
-					$file=FPDF_FONTPATH.$file;
-				include($file);
-				if(!isset($fpdf_charwidths[$fontkey]))
-					$this->Error('Could not include font metric file');
-			}
-			$i=count($this->fonts)+1;
-			$this->fonts[$fontkey]=array('i'=>$i,'type'=>'core','name'=>$this->CoreFonts[$fontkey],'up'=>-100,'ut'=>50,'cw'=>$fpdf_charwidths[$fontkey]);
-		}
-		else
-			$this->Error('Undefined font: '.$family.' '.$style);
-	}
-	//Select it
-	$this->FontFamily=$family;
-	$this->FontStyle=$style;
-	$this->FontSizePt=$size;
-	$this->FontSize=$size/$this->k;
-	$this->CurrentFont=&$this->fonts[$fontkey];
-	if($this->page>0)
-		$this->_out(sprintf('BT /F%d %.2f Tf ET',$this->CurrentFont['i'],$this->FontSizePt));
+  $family=strtolower($family);
+  if($family=='')
+    $family=$this->FontFamily;
+  if($family=='arial')
+    $family='helvetica';
+  elseif($family=='symbol' or $family=='zapfdingbats')
+    $style='';
+  $style=strtoupper($style);
+  if(is_int(strpos($style,'U')))
+  {
+    $this->underline=true;
+    $style=str_replace('U','',$style);
+  }
+  else
+    $this->underline=false;
+  if($style=='IB')
+    $style='BI';
+  if($size==0)
+    $size=$this->FontSizePt;
+  //Test if font is already selected
+# if($this->FontFamily==$family and $this->FontStyle==$style and $this->FontSizePt==$size)
+#   return;
+  //Test if used for the first time
+  $fontkey=$family.$style;
+  if(!isset($this->fonts[$fontkey]))
+  {
+    //Check if one of the standard fonts
+    if(isset($this->CoreFonts[$fontkey]))
+    {
+      if(!isset($fpdf_charwidths[$fontkey]))
+      {
+        //Load metric file
+        $file=$family;
+        if($family=='times' or $family=='helvetica')
+          $file.=strtolower($style);
+        $file.='.php';
+        if(defined('FPDF_FONTPATH'))
+          $file=FPDF_FONTPATH.$file;
+        include($file);
+        if(!isset($fpdf_charwidths[$fontkey]))
+          $this->Error('Could not include font metric file');
+      }
+      $i=count($this->fonts)+1;
+      $this->fonts[$fontkey]=array('i'=>$i,'type'=>'core','name'=>$this->CoreFonts[$fontkey],'up'=>-100,'ut'=>50,'cw'=>$fpdf_charwidths[$fontkey]);
+    }
+    else
+      $this->Error('Undefined font: '.$family.' '.$style);
+  }
+  //Select it
+  $this->FontFamily=$family;
+  $this->FontStyle=$style;
+  $this->FontSizePt=$size;
+  $this->FontSize=$size/$this->k;
+  $this->CurrentFont=&$this->fonts[$fontkey];
+  if($this->page>0)
+    $this->_out(sprintf('BT /F%d %.2f Tf ET',$this->CurrentFont['i'],$this->FontSizePt));
 }
 }
 
 /**
+ * Parameter class for exporterFPdf's printBox
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
- *  parameter class for exporterFPdf's printBox
+ *
  */
 
   class printBoxParameter

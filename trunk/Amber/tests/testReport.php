@@ -2,7 +2,7 @@
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Tests
 *
 */
@@ -15,7 +15,7 @@ require_once '../Amber.php';
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage Tests
 *
 */

@@ -2,7 +2,7 @@
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage ReportEngine
 *
 */
@@ -15,7 +15,7 @@ require_once 'Module.php';
 *
 * This will be an interface (PHP5)
 *
-* @package PHPReport
+* @package Amber
 * @subpackage ReportEngine
 *
 * @abstract
@@ -49,7 +49,7 @@ class ObjectLoader
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage ReportEngine
 *
 */
@@ -158,7 +158,7 @@ class ObjectLoaderDb extends ObjectLoader
 
 /**
 *
-* @package PHPReport
+* @package Amber
 * @subpackage ReportEngine
 *
 */

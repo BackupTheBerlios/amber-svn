@@ -2,7 +2,7 @@
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage ReportEngine
  *
  */
@@ -11,7 +11,7 @@
  * Singleton ObjectHandler: reference objects by handle instead direct ref
  * This avoids weird dumps of circular references
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage ReportEngine
  * 
  */

@@ -2,7 +2,7 @@
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  *
  */
@@ -14,7 +14,7 @@ include_once 'ExporterPdf.php';
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  * @static
  *

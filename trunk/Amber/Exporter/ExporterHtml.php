@@ -2,7 +2,7 @@
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  *
  */
@@ -19,7 +19,7 @@ ExporterFactory::register('phtml', 'ExporterHtml');
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  *
  */
@@ -356,7 +356,7 @@ class ExporterHtml extends Exporter
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  *
  */
@@ -503,7 +503,7 @@ Class ControlExporterHtml
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  *
  */
@@ -513,7 +513,7 @@ class RectangleExporterHtml extends ControlExporterHtml
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  *
  */
@@ -569,7 +569,7 @@ class FontBoxExporterHtml extends ControlExporterHtml
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  *
  */
@@ -593,7 +593,7 @@ class TextBoxExporterHtml extends FontBoxExporterHtml
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  *
  */
@@ -608,7 +608,7 @@ class LabelExporterHtml extends FontBoxExporterHtml
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  *
  */
@@ -637,7 +637,7 @@ class SubReportExporterHtml extends ControlExporterHtml
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  *
  */
@@ -683,7 +683,7 @@ class CheckBoxExporterHtml extends ControlExporterHtml
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  *
  */
@@ -704,7 +704,7 @@ class ComboBoxExporterHtml extends ControlExporterHtml
 
 /**
  *
- * @package PHPReport
+ * @package Amber
  * @subpackage Exporter
  *
  */
