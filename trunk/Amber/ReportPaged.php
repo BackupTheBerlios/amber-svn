@@ -205,15 +205,13 @@ class reportPaged extends Report
     $startPage = floor($this->posY / $this->layout->printHeight);
     $endPage   = floor(($this->posY + $sectionHeight) / $this->layout->printHeight);
     if ($keepTogether and ($startPage <> $endPage)) {                 // section doesn't fit on page and keepTogether
-      if ($this->posY > ($startPage * $this->layout->printHeight)) {  // page not blank
-        $endPageWithoutNewPage = floor(($this->posY + $sectionHeight) / $this->layout->printHeight);
-        $startNewPage =  (floor($this->posY / $this->layout->printHeight) + 1) * $this->layout->printHeight;
-        $endPageWithNewPage = floor(($startNewPage + $sectionHeight) / $this->layout->printHeight);
-        if ($endPageWithoutNewPage == $endPageWithNewPage) {          // end of section will be on same page, wether with or without pagebreak
-          $this->newPage();
-          $startPage = floor($this->posY / $this->layout->printHeight);
-          $endPage   = floor(($this->posY + $sectionHeight) / $this->layout->printHeight);
-        }
+      $endPageWithoutNewPage = floor(($this->posY + $sectionHeight) / $this->layout->printHeight);
+      $startNewPage =  (floor($this->posY / $this->layout->printHeight) + 1) * $this->layout->printHeight;
+      $endPageWithNewPage = floor(($startNewPage + $sectionHeight) / $this->layout->printHeight);
+      if ($endPageWithoutNewPage == $endPageWithNewPage) {          // end of section will be on same page, wether with or without pagebreak
+        $this->newPage();
+        $startPage = floor($this->posY / $this->layout->printHeight);
+        $endPage   = floor(($this->posY + $sectionHeight) / $this->layout->printHeight);
       }
     }
 
