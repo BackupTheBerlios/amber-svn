@@ -11,13 +11,7 @@
 
 ExporterFactory::register('null', 'Exporter');
 
-/*  
-    to allow nice boxing (like tables), borders need to overlap.
-    Thus borders must be drawn across the section, to avoid border clipping
-    strategy: make section a bit higher, start section background a bit lower
-    "a bit" is defined with BorderCheat 
-*/
-define ("BorderCheat", 20);
+define ("BorderCheat", 20);  // default value of Exporter->SectionSlip
 
 /**
  *
@@ -27,10 +21,13 @@ define ("BorderCheat", 20);
  */
 class Exporter
 {
+/// Public Properties
+  var $SectionSlip;    // width of area in twips by which controls may draw across section borders
+
+/// Private Properties
   var $type = 'null';
   var $_docTitle;
   var $_section;
-
   var $_base; // ref to pdf/html
   /**
    * @access public
@@ -49,6 +46,12 @@ class Exporter
     $this->_start = microtime();
     $this->_asSubreport = $asSubreport;
     $this->_base =& $this->getExporterBasicClass($report->layout, !$asSubreport);
+    if (!$report->ignoreSectionSlip) {
+      $this->SectionSlip = BorderCheat; 
+    } else {
+      $this->SectionSlip = 0;
+    }
+    $report->_Code->SectionSlip =& $this->SectionSlip;    
     $this->startReportSubExporter($report, $asSubreport);
   }
 

@@ -30,7 +30,7 @@ class ExporterHtml extends Exporter
   var $_CtrlStdValues;
 
   var $_html;
-
+  
   // Report - html
 
   function &getExporterBasicClass(&$layout, $reset)
@@ -80,8 +80,8 @@ class ExporterHtml extends Exporter
     $out = "\t<div ";
     $style1['left'] = $this->_html_twips($x);;
     $style1['top'] = $this->_html_twips($y);
-    $style1['height'] = $this->_html_twips($h + 2* BorderCheat);
-    $style1['width'] = $this->_html_twips($w + 2* BorderCheat);
+    $style1['height'] = $this->_html_twips($h + 2* $this->SectionSlip);
+    $style1['width'] = $this->_html_twips($w + 2* $this->SectionSlip);
     $style1['overflow'] = 'hidden';
 
     $out .=  'style="' . $this->arrayToStyle($style1) . "\">\n";
@@ -112,14 +112,14 @@ class ExporterHtml extends Exporter
   {
     $style['left'] = 0;
     $style['top'] = $this->_html_twips($y);
-    $style['height'] = $this->_html_twips($h + 2 * BorderCheat);
-    $style['width'] = $this->_html_twips($w + 2 * BorderCheat);
+    $style['height'] = $this->_html_twips($h + 2 * $this->SectionSlip);
+    $style['width'] = $this->_html_twips($w + 2 * $this->SectionSlip);
 
     echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">";
 
     //background Box
     if ($backColor <> 0xFFFFFF) { //not white
-      $style['top'] = $this->_html_twips(2 * BorderCheat);
+      $style['top'] = $this->_html_twips(2 * $this->SectionSlip);
       $style['height'] = $this->_html_twips($h);
       $style['background-color'] = $this->_html_color($backColor);
       echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">&nbsp;</div>";
@@ -226,6 +226,7 @@ class ExporterHtml extends Exporter
     }
     $objName = $classList[$type];
     $ctrl->_exporter =& new $objName;
+    $ctrl->_exporter->SectionSlip =& $this->SectionSlip;
   }
 
   // Helper functions - html
@@ -381,15 +382,14 @@ Class ControlExporterHtml
       $BorderWidthHtml = $value['BorderWidth'] * 20;
     }
     
-    $borderWidthHtmlChanged = (($value['BorderWidth'] <> $std['BorderWidth']) or ($value['BorderStyle'] <> $std['BorderStyle'])); 
-
+    $borderWidthHtmlChanged = (($value['BorderWidth'] <> $std['BorderWidth']) or ($value['BorderStyle'] <> $std['BorderStyle']) or ($this->SectionSlip <> BorderCheat)); 
     // Position
     if (($value['Top'] <> $std['Top']) or $borderWidthHtmlChanged) {
-      $topHtml = $value['Top'] - 1/2 * $BorderWidthHtml - $TopPaddingHtml + BorderCheat;
+      $topHtml = $value['Top'] - 1/2 * $BorderWidthHtml - $TopPaddingHtml + $this->SectionSlip;
       $out .= 'top: ' . ExporterHTML::_html_twips($topHtml) . '; ';
     }
     if (($value['Left'] <> $std['Left']) or $borderWidthHtmlChanged) {
-      $leftHtml = $value['Left'] - 1/2 * $BorderWidthHtml - $LeftPaddingHtml + BorderCheat;
+      $leftHtml = $value['Left'] - 1/2 * $BorderWidthHtml - $LeftPaddingHtml + $this->SectionSlip;
       $out .= 'left: ' . ExporterHTML::_html_twips($leftHtml) . '; ';
     }
 

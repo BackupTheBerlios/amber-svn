@@ -906,7 +906,7 @@ class Report extends AmberObject
   {
     $this->_designSection =& new section('');
     $this->_designSection->Name = '<designBorder>';
-    $this->_designSection->Height = 240 + BorderCheat;
+    $this->_designSection->Height = 240;
     $this->_designSection->Visible = true;
     $this->_designSection->BackColor = 0xFFFFFF;
     $this->_designSection->CanGrow = false;
@@ -919,7 +919,7 @@ class Report extends AmberObject
     $ctlProp = array(
       'Name' => '',
       'Left' => 0,
-      'Top' => BorderCheat,
+      'Top' => 0,
       'Width' => $this->Width,
       'Height' => 240, 
       'Visible' => true,
@@ -989,6 +989,7 @@ class Report extends AmberObject
     $this->ignoreOnPrint = $value;
     $this->ignoreKeepTogether = $value;
     $this->printHeadFootAsNormalSection = $value;
+    $this->ignoreSectionSlip = $value;
   }
 
   /**
