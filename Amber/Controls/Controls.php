@@ -9,8 +9,11 @@
 
 ControlFactory::register('100', 'Label');
 ControlFactory::register('101', 'Rectangle');
+//ControlFactory::register('104', 'CommandButton');
 ControlFactory::register('109', 'TextBox');
+ControlFactory::register('111', 'ComboBox');
 ControlFactory::register('112', 'SubReport');
+//ControlFactory::register('122', 'ToggleButton');
 
 /**
 *
@@ -403,7 +406,7 @@ class Label extends FontBox
     if (!$this->Visible) {
       return false;
 #    } elseif ($this->Parent) {                                FIX THIS!!!!!!
-#      return REPORT->controls[$this->Parent]->isVisible();    label gets invisible iff its control get invisible
+#      return REPORT->controls[$this->Parent]->isVisible();    label gets invisible if its control get invisible
     } else {
       return true;
     }    
@@ -464,6 +467,43 @@ class SubReport extends Control
   {
     $ctrl = $this->prepareDesign();
     $this->_exporter->printDesign($ctrl, $buffer, $ctrl->Name);
+  }
+}
+
+/**
+*
+* @package PHPReport
+* @subpackage Controls
+*
+**/
+class ComboBox extends Control
+{
+  /**
+  *
+  * @access public
+  *
+  */
+  function ComboBox()
+  {
+    parent::Control();
+
+    $newProperties =
+      array(
+        'RowSourceType'   => '',
+        'RowSource' => '',
+        'BoundColumn'     => 1
+      );
+    $this->_registerProperties($newProperties);
+  }
+
+  function printNormal()
+  {
+    echo "<select><option></option></select>";
+  }
+
+  function printDesign(&$buffer)
+  {
+    echo "<select><option></option></select>";
   }
 }
 

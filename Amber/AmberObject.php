@@ -31,9 +31,24 @@ class AmberObject
     Amber::showError('Error', 'Virtual method AmberObject::initialize() not overridden');
   }
   
-  function run()
+  function run($type)
   {
     Amber::showError('Error', 'Virtual method AmberObject::run() not overridden');
+  }
+  
+  /**
+   * @access private
+   * @param string
+   */
+  function _installExporter($type)
+  {
+    $this->_exporter =& ExporterFactory::create($type, $this);
+    if (is_array($this->Controls)) {
+      $ctlNames = array_keys($this->Controls);
+      foreach ($ctlNames as $ctlName) {
+        $this->_exporter->setControlExporter($this->Controls[$ctlName]);
+      }
+    }
   }
 }
 

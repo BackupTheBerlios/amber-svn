@@ -78,6 +78,10 @@ class ControlFactory
   function register($type, $className)
   {
     $instance =& ControlFactory::getInstance();
+    if (!class_exists($className)) {
+      Amber::showError('Warning', 'Missing declaration for class "' . $className . '", control type = ' . $type);
+      return false;
+    }
     $instance->_classList[$type] = $className;
   }
 }

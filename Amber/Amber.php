@@ -117,14 +117,14 @@ class Amber
     }
   }
 
-  function OpenForm($formName, $mode = AC_NORMAL, $filter = '')
+  function OpenForm($formName, $mode = AC_NORMAL, $filter = '', $type = 'html')
   {
     $form =& $this->loadObject('form', $formName);
     if ($form == false) {
       return false;
     }
     
-    $form->run();
+    $form->run($type);
   }
 
   function &loadObject($type, $name)
@@ -176,6 +176,7 @@ class Amber
 
     $level++;
     if ($level > 5) {
+      $level--;
       return '<font color="red" size="1">' . htmlspecialchars('<...>') . '</font>';
     }
 
