@@ -511,6 +511,7 @@ class ComboBoxExporterHtml extends ControlExporterHtml
       $out .= htmlspecialchars($row) . "</option>\n";
     }
     $out .= "</select>\n";
+
     echo $out;
   }
 }

@@ -10,7 +10,7 @@
 ControlFactory::register('100', 'Label');
 ControlFactory::register('101', 'Rectangle');
 //ControlFactory::register('104', 'CommandButton');
-ControlFactory::register('106', 'Dummy'); // Line
+ControlFactory::register('106', 'Dummy'); // Checkbox
 ControlFactory::register('109', 'TextBox');
 ControlFactory::register('111', 'ComboBox');
 ControlFactory::register('112', 'SubReport');
@@ -497,7 +497,7 @@ class ComboBox extends Control
     $this->_registerProperties($newProperties);
   }
 
-  function printNormal()
+  function printNormal(&$buffer)
   {
     $this->_doQuery();
     $this->_exporter->printNormal($this, $buffer, $this->_data);
@@ -520,7 +520,7 @@ class ComboBox extends Control
 
     if ($this->RowSourceType == 'Table/Query') {
       $db->SetFetchMode(ADODB_FETCH_BOTH);
-      $data = $db->GetAll($this->RowSource);
+      $data =& $db->GetAll($this->RowSource);
     }
 
     if (isset($this->BoundColumn)) {
@@ -533,8 +533,10 @@ class ComboBox extends Control
     // FIXME: Determine first visible row -> option value
 
     $this->_data = array();
-    foreach ($data as $idx => $row) {
-      $this->_data[$row[$bound]] = $row[1];
+    if (is_array($data)) {
+      foreach ($data as $idx => $row) {
+        $this->_data[$row[$bound]] = $row[1];
+      }
     }
   }
 }
@@ -557,7 +559,7 @@ class Dummy extends Control
     parent::Control();
   }
 
-  function printNormal()
+  function printNormal(&$buffer)
   {
     return 0;
   }
