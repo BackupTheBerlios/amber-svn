@@ -30,6 +30,12 @@ class ExporterTypo3 extends ExporterHtml
   {
     $uniqueId = 'AmberReport' . mt_rand();
 
+    // General styles
+    $generalCSS = ".AmberReport { position: absolute; }\n";
+    $generalCSS .= '.AmberReport div { position: absolute; overflow: hidden; }';
+    $GLOBALS['TSFE']->setCSS('AmberReport', $generalCSS);
+    
+    // Styles relevant for this special report
     $GLOBALS['TSFE']->setCSS($uniqueId, $css);
   }
 }

@@ -37,6 +37,7 @@ class ExporterHtml extends Exporter
     parent::startReport($report, $asSubreport);
     $this->_blankPage = true;
 
+    $tmp = '';
     if (!$this->_asSubreport) {
       $tmp = "<html>\n<head>\n";
       $tmp .= "\t<title>" . $this->_docTitle . "</title>\n";
@@ -51,16 +52,21 @@ class ExporterHtml extends Exporter
     }
     $this->setCSS($css);
 
+    $tmp = '';
     if (!$this->_asSubreport) {
       $tmp = "</head>\n";
       $tmp .= "<body style=\"background-color: #aaaaaa;\">\n";
-      echo $tmp;
     }
+    $tmp .= "\n\n<!-- Start of AmberReport -->\n\n<div class=\"AmberReport\">\n";
+
+    echo $tmp;
   }
 
   function endReport(&$report)
   {
     parent::endReport($report);
+    
+    echo "\n</div>\n\n<!-- End of AmberReport -->\n\n";
     if (!$this->_asSubreport) {
       echo "</body>\n</html>\n";
     }
@@ -86,8 +92,6 @@ class ExporterHtml extends Exporter
     $out .= "\t<div name=\"" . $sec->Name . '"';
 
     $style = array();
-    $style['position'] = 'absolute';
-    $style['overflow'] = 'hidden';
     $style['top'] = $this->_html_twips($this->_posY);
     $style['height'] = $height . 'pt';
     $style['left'] = '0';
@@ -116,8 +120,6 @@ class ExporterHtml extends Exporter
         $out = "\t<div name=\"TopMargin\"";
 
         $style = array();
-        $style['position'] = 'absolute';
-        $style['overflow'] = 'hidden';
         $style['top'] = $this->_html_twips($this->_posY);
         $style['height'] = $this->_html_twips($this->_report->TopMargin + 20);
         $style['left'] = '0';
@@ -148,8 +150,6 @@ class ExporterHtml extends Exporter
       $out = "\t<div name=\"" . $section->Name . '-border"';
 
       $style = array();
-      $style['position'] = 'absolute';
-      $style['overflow'] = 'hidden';
       $style['top'] = $this->_html_twips($this->_posY);
       $style['height'] = $this->_html_twips($height + $cheatHeight);
       $style['left'] = '0';
@@ -172,8 +172,8 @@ class ExporterHtml extends Exporter
       $out .= "\t<div name=\"" . $section->Name . '"';
 
       $style = array();
-      $style['position'] = 'absolute';
-      $style['overflow'] = 'hidden';
+      //$style['position'] = 'absolute';
+      //$style['overflow'] = 'hidden';
       $style['top'] = $this->_html_twips($this->_posY);
       $style['height'] = $this->_html_twips($height + $cheatHeight);
       $style['left'] = '0';
@@ -210,8 +210,6 @@ class ExporterHtml extends Exporter
       $out .= "\t<div name=\"BottomMargin\"";
 
       $style = array();
-      $style['position'] = 'absolute';
-      $style['overflow'] = 'hidden';
       $style['page-break-after'] = 'always';
       $style['top'] = $this->_html_twips($this->_posY);
       $style['height'] = $this->_html_twips($this->_report->BottomMargin + 20);
@@ -263,6 +261,7 @@ class ExporterHtml extends Exporter
   function setCSS($css)
   {
     $ret = "\t<style type=\"text/css\">\n<!--\n";
+    $ret .= ".AmberReport div { position: absolute; overflow: hidden; }\n";
     $ret .= $css;
     $ret .= "\n-->\n</style>\n";
 
@@ -314,7 +313,8 @@ class ExporterHtml extends Exporter
     $control->Properties['isVisible'] = $control->Properties['Visible'];
     $nil = array('ForeColor' => 16777216, 'BackColor' => 16777216, 'BorderColor' => 16777216, 'BorderWidth' => -9999); // illegal values
     $cssClassName = '.' . $prefix . $control->id;
-    return $cssClassName . "\t/* " . $control->Name . ' */ { position: absolute; overflow:hidden; ' . $control->_exporter->getStyle($control, $control->Properties, $nil) . '}';
+
+    return $cssClassName . "\t/* " . $control->Name . ' */ { ' . $control->_exporter->getStyle($control, $control->Properties, $nil) . '}';
   }
 }
 
