@@ -10,6 +10,8 @@ class PDF extends FPDF
 
   var $_inSection;      // int index to sectionBuff
   var $_inReport;       // bool 
+  var $_inSubReport;    // integer index to subReportBuff
+  var $_subReportBuff;  //
   var $_sectionBuff;    // array buffer for sections (to make sections re-entrand)
   var $_reportPages;    // buffer when inReport
   var $_actPageNo;      // pageNumber
@@ -50,11 +52,22 @@ class PDF extends FPDF
   //////////////////////////////////////////////////////////////////////////
   function _out($s)
   {
+  
+  
+    if (strpos($s, 'Reportheader')) {
+#      print "_inSection: $this->_inSection<br>";
+#      print "_inSubReport: $this->_inSubReport<br>";
+#      print "_inReport: $this->_inReport<br>";
+#      print $s;
+#      print "<br><br>";
+    }
     if($this->state <> 2) {
       parent::_out($s);
-    } elseif ($this->_inSection) {
+    } elseif ($this->_inSection > $this->_inSubReport) {
       $this->_sectionBuff[$this->_inSection] .= $s . "\n";
       #parent::_out($s);
+    } elseif ($this->_inSubReport) {
+      $this->_subReportBuff[$this->_inSubReport] .= $s . "\n";     
     } elseif ($this->_inReport) {
 #      print "\n************************************\n" . $s . "\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n";
       $this->_reportPages[$this->_actPageNo][$this->_sectionType] .= $s . "\n";
@@ -80,13 +93,23 @@ class PDF extends FPDF
   function startSection()
   {
     $this->_inSection++;
-    $this->_sectionBuff[$this->_inSection] = "";
+    $this->_sectionBuff[$this->_inSection] = "\n%Start Section:" . ($this->_inSection) . "\n\n";
     $this->SetXY(0, 0);
   }
   
+  ////////////
+  // Experiment: endSection ohne secBuff (reentrand?)
+  ////////////
+  
+  
+  
   function endSection($sectionHeight, $keepTogether)
   {
-    $this->_out("\n%end Section:" . ($this->_inSection + 1) . "\n\n");
+    if ($this->_inSubReport) {
+      $this->endSectionSubReport($sectionHeight, $keepTogether);
+      return;
+    }  
+    $this->_out("\n%end Body-Section:" . ($this->_inSection) . "\n\n");
     $secBuff = $this->_sectionBuff[$this->_inSection];
     $this->_inSection--;
     $startPage = floor($this->_posY / $this->_printHeight);
@@ -123,10 +146,30 @@ class PDF extends FPDF
         }
       } else {
         $this->_out($secBuff);
-      }  
+      } 
       $this->RemoveClipping();
       $this->RemoveCoordinate();
     }
+    $this->_posY += $sectionHeight;
+  }
+
+  function endSectionSubReport($sectionHeight, $keepTogether)
+  {
+    $this->_out("\n%end Subreport-Body-Section:" . ($this->_inSection) . "\n\n");
+    $this->_inSection--;
+
+    $this->_sectionType = '';
+    $this->SetCoordinate(0, -$this->_posY);
+    $this->SetClipping(0, 0, $this->_reportWidth, $sectionHeight);
+
+    $formatCount = 1;
+    $this->_exporter->onPrint($cancel, $formatCount);
+    if (!$cancel) {
+      $this->_out($this->_sectionBuff[$this->_inSection + 1]);
+    }
+
+    $this->RemoveClipping();
+    $this->RemoveCoordinate();
     $this->_posY += $sectionHeight;
   }
 
@@ -157,11 +200,38 @@ class PDF extends FPDF
     $this->_inSection--;
     $this->SetCoordinate(0, -$posY);
     $this->SetClipping(0, 0, $this->_reportWidth, $height);
-$this->_out("\n%end Section:" . ($this->_inSection + 1) . "\n\n");
+$this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
     $this->_out($this->_sectionBuff[$this->_inSection + 1]);
     $this->RemoveClipping();
     $this->RemoveCoordinate();
   }
+  
+  
+  //////////////////////////////////////////////////////////////////////////
+  //
+  //  startSubReport / endSubReport
+  //
+  //  inside a subreport FPFD's output gets cached in 
+  //  $this->_subReportBuff
+  //  a buffer 
+  //  
+  //
+  //
+  //////////////////////////////////////////////////////////////////////////
+  
+  function startSubReport()
+  {
+    $this->_inSubReport++;
+    $this->_subReportBuff[$this->_inSubReport] = "\n\n%StartSubreport\n";
+  }
+  
+  function endSubReport()
+  {
+    $this->_subReportBuff[$this->_inSubReport] .= "\n%EndSubreport\n\n";
+    $this->_inSubReport--;
+    return $this->_subReportBuff[$this->_inSubReport + 1];
+  }  
+
 
   //////////////////////////////////////////////////////////////////////////
   //
@@ -203,6 +273,11 @@ $this->_out("\n%end Section:" . ($this->_inSection + 1) . "\n\n");
 
   function endReport()
   {
+    if (!$this->_inReport) {
+      Amber::showError('Error', 'endReport: no report open');
+      die();
+    }  
+
     $this->_exporter->printPageFooter();
     $this->_inReport = false;
     $firstPage = true;  //first page is out

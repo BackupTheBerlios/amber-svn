@@ -62,7 +62,9 @@ class ExporterFPdf extends Exporter
         }
       }
     }
-    if (!$this->_asSubreport) {
+    if ($this->_asSubreport) {
+      $this->_pdf->startSubReport();
+    } else {  
       $this->_pdf->SetCompression(false);
       $this->_pdf->SetRightMargin($report->RightMargin);
       $this->_pdf->SetLeftMargin($report->LeftMargin);
@@ -79,14 +81,18 @@ class ExporterFPdf extends Exporter
   function _exporterExit()
   {
     #echo "pdf->Output();<br>";
-    $this->_pdf->endReport($this->_report->Width);
-    if ($this->createdAs == 'testpdf') {
-      print $this->_pdf->Output('out.txt', 'S');
-    } else {
-      if (isset($this->_docTitle)) {
-        $this->_pdf->Output('"' . $this->_docTitle . '.pdf"', 'I');
+    if ($this->_asSubreport) {
+      $this->_pdf->endSubReport();
+    } else {  
+      $this->_pdf->endReport($this->_report->Width);
+      if ($this->createdAs == 'testpdf') {
+        print $this->_pdf->Output('out.txt', 'S');
       } else {
-        $this->_pdf->Output('out.pdf', 'I');
+        if (isset($this->_docTitle)) {
+          $this->_pdf->Output('"' . $this->_docTitle . '.pdf"', 'I');
+        } else {
+          $this->_pdf->Output('out.pdf', 'I');
+        }
       }
     }
   }
@@ -138,8 +144,10 @@ class ExporterFPdf extends Exporter
 
   function endSection(&$section, $height, &$buffer)
   {
-    if (!$section->_PagePart or $this->DesignMode) {
+    if (!$section->_PagePart) {
       $this->_pdf->endSection($height, $section->KeepTogether);
+    } elseif ($this->DesignMode) {
+      $this->_pdf->endSection($height, false);
     } elseif ($section->_PagePart == 'Foot') {
       $this->_pdf->pageFooterEnd();
     } else {
@@ -236,6 +244,8 @@ class ExporterFPdf extends Exporter
     #echo $type;
     if ($type == 'checkbox') {
       return $this->printNormalCheckBox($control, $buffer, $content);
+    } elseif ($type == 'subreport') {
+      return $this->printNormalSubReport($control, $buffer, $content);
     }
     #$content = $type;
     if (!$control->isVisible()) {
@@ -266,8 +276,6 @@ class ExporterFPdf extends Exporter
 
     $this->printBox($para);
   }
-
-
 
   function printNormalCheckBox(&$control, &$buffer, $content)
   {
@@ -309,7 +317,59 @@ class ExporterFPdf extends Exporter
     $para->borderwidth = 20;
 
     $this->printBox($para);
- }
+  }
+  
+  function printNormalSubReport(&$control, &$buffer, $content)
+  {
+    if (!$control->isVisible()) {
+      return;
+    }
+    $para = new printBoxparameter;
+    
+    $para->x = ($control->Left +  $this->_secStartX);
+    $para->y = ($control->Top + $this->_secStartY);
+    $para->width = $control->Width;
+    $para->height = $control->Height;
+
+    $para->forecolor = 0;
+    $para->backcolor = 0xFFFFFF;
+    
+    $para->borderstyle = $control->BorderStyle;
+    $para->bordercolor = $control->Bordercolor;
+    $para->borderwidth = $control->BorderWidth;
+    
+    $rep =& $control->_subReport;
+    if (is_null($rep)) {
+      $para->content = '';
+    } else {
+      $rep->resetMargin(true);
+      $rep->run('pdf', true);
+      $pdf =& $rep->_exporter->_pdf; 
+      $para->content = "\n%Start SubReport\n" . $pdf->_subReportBuff[_inSubReport+1] . "\n%End SubReport\n"; 
+    }
+    #$para->content = "(TEST)";
+            
+    $this->_pdf->SetXY($para->x, $para->y);
+    $this->_pdf->SetClipping($para->x, $para->y, $para->width, $para->height);
+    $this->_pdf->SetCoordinate(-$para->x, -$para->y);
+    
+    $this->_pdf->_out($para->content);
+    
+    $this->_pdf->RemoveCoordinate();
+    $this->_pdf->RemoveClipping();
+    $this->_pdf->SetXY($para->x, $para->y);
+    if ($para->borderstyle <> 0) {
+      $this->_borderColor($para->bordercolor);
+      if ($para->borderwidth == 0) {
+        $this->_pdf->SetLineWidth(1);
+      } else {
+        $this->_pdf->SetLineWidth($para->borderwidth);
+      }
+      $this->_pdf->Cell($para->width, $para->height, '', 'RLTB', 0, $para->falign, 0);
+    }
+
+  }
+
 
   function printDesign(&$control, &$buffer, $content)
   {
