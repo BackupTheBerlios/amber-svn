@@ -316,7 +316,11 @@ Class ControlExporterHtml
       $out .= 'left: ' . ExporterHTML::_html_twips($ctrl->Properties['Left']) . '; ';
     }
     if ($value['Height'] <> $std['Height']) {
-      $out .= 'height: ' . ExporterHTML::_html_twips($ctrl->Properties['Height']) . '; ';
+      if ($ctrl->Properties['Height'] == 0) {
+        $out .= 'height: 1px;'; // fix IE display bug
+      } else {
+        $out .= 'height: ' . ExporterHTML::_html_twips($ctrl->Properties['Height']) . '; ';
+      }
     }
     if ($value['Width'] <> $std['Width']) {
       $out .= 'width: ' . ExporterHTML::_html_twips($ctrl->Properties['Width']) . '; ';
