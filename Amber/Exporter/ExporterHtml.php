@@ -99,7 +99,7 @@ class ExporterHtml extends Exporter
     $style['left'] = '0';
     $style['width'] = '100%';
     $style['background-color'] = '#999999';
-    $style['font'] = '8pt Arial';
+    $style['font'] = '8pt arial';
     $style['border'] = '#000000 solid 1px';
     $style['border-top'] = '#cccccc solid 1px';
     $style['border-left'] = '#cccccc solid 1px';
@@ -116,6 +116,8 @@ class ExporterHtml extends Exporter
 
   function startSection(&$section, $width, &$buffer)
   {
+    parent::startSection($section, $width, $buffer);
+
     if (!(($section->_PagePart) or ($this->DesignMode))) {
       if ($this->_blankPage) {
         $this->_blankPage = false;
@@ -141,7 +143,7 @@ class ExporterHtml extends Exporter
 
   function endSection(&$section, $height, &$buffer)
   {
-    parent::startSection($section, $width, $buffer);
+    parent::endSection($section, $width, $buffer);
     $cheatWidth  = 59; // cheat: add 1.5pt to height and 3pt to width so borders get printed in Mozilla ###FIX ME
     if ($height == 0) {
       $cheatHeight = 0;
@@ -444,14 +446,14 @@ Class ControlExporterHtml
       if ($value['BorderWidth'] == 0) {
         $out .= 'border-width: 1px; ';
       } else {
-        $out .= 'border-width:' . $value['BorderWidth'] . 'pt; ';
+        $out .= 'border-width: ' . $value['BorderWidth'] . 'pt; ';
       }
     }
     if ($value['BorderColor'] <> $std['BorderColor']) {
-        $out .= 'border-color:' . ExporterHTML::_html_color($ctrl->Properties['BorderColor']) . '; ';
+        $out .= 'border-color: ' . ExporterHTML::_html_color($ctrl->Properties['BorderColor']) . '; ';
     }
     if ($value['BorderStyle'] <> $std['BorderStyle']) {
-      $out .= 'border-style:' . $this->_html_borderstyle($ctrl->Properties['BorderStyle'], $ctrl->Properties['BorderLineStyle']) . '; ';
+      $out .= 'border-style: ' . $this->_html_borderstyle($ctrl->Properties['BorderStyle'], $ctrl->Properties['BorderLineStyle']) . '; ';
     }
 
     if ($value['zIndex'] <> $std['zIndex']) {
@@ -542,7 +544,7 @@ class FontBoxExporterHtml extends ControlExporterHtml
     }
 
     if ($value['FontName'] <> $std['FontName']) {
-      $out .= 'font-family: \'' . $ctrl->Properties['FontName'] . '\'; ';
+      $out .= 'font-family: "' . $ctrl->Properties['FontName'] . '"; ';
     }
 
     if ($value['FontUnderline'] <> $std['FontUnderline']) {
@@ -654,13 +656,13 @@ class CheckBoxExporterHtml extends ControlExporterHtml
     
     if (($value === '0') || ($value === 0)) {
       $value = '';
-      $tmpCtrl->BackColor = 0xFFFFFF;
+      $tmpCtrl->BackColor = 0xffffff;
     } elseif (is_numeric($value)) {
       $value = 'X';
-      $tmpCtrl->BackColor = 0xFFFFFF;
+      $tmpCtrl->BackColor = 0xffffff;
     } else {
       $value = '';
-      $tmpCtrl->BackColor = 0xCCCCCC;
+      $tmpCtrl->BackColor = 0xcccccc;
     }
 
     return parent::getTag($tmpCtrl, $value);

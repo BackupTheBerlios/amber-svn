@@ -299,7 +299,7 @@ class ExporterFPdf extends Exporter
 
 
     $para->backstyle = 1;
-    if ($content === 0) {
+    if (($content === '0') || ($content === 0)) {
       $para->content = '';
       $para->backcolor = 0xFFFFFF;
     } elseif (is_numeric($content)) {
