@@ -1,5 +1,12 @@
 <?php
 
+/**
+*
+* @package PHPReport
+* @subpackage Tests
+*
+*/
+
 ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/../../lib/');
 ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/../../Amber/');
 
@@ -7,6 +14,12 @@ require_once '../Report.php';
 require_once 'unit.php';
 require_once '../Amber.php';
 
+/**
+*
+* @package PHPReport
+* @subpackage Tests
+*
+*/
 class testReport extends PHPUnit_TestCase
 {
   function test_makeSqlFilter()

@@ -1,8 +1,21 @@
 <?php
 
+/**
+*
+* @package PHPReport
+* @subpackage Tests
+*
+*/
+
 require_once '../Lexer.php';
 require_once 'unit.php';
 
+/**
+*
+* @package PHPReport
+* @subpackage Tests
+*
+*/
 class testLexer extends PHPUnit_TestCase
 {
   var $lexer;

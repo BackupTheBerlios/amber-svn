@@ -1,5 +1,12 @@
 <?php
 
+/**
+*
+* @package PHPReport
+* @subpackage ReportEngine
+*
+*/
+
 define('__AMBER_BASE__', dirname(__FILE__));
 
 require_once __AMBER_BASE__ . '/Report.php';
@@ -9,6 +16,12 @@ require_once 'ObjectLoader.php';
 define('AC_DESIGN', 1);
 define('AC_NORMAL', 2);
 
+/**
+*
+* @package PHPReport
+* @subpackage ReportEngine
+*
+*/
 class Amber
 {
   var $_config;

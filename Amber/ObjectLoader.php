@@ -1,8 +1,22 @@
 <?php
 
+/**
+*
+* @package PHPReport
+* @subpackage ReportEngine
+*
+*/
+
 require_once 'adodb/adodb.inc.php';
 require_once 'Report.php';
 
+
+/**
+*
+* @package PHPReport
+* @subpackage ReportEngine
+*
+*/
 class ObjectLoader
 {
   var $_lastError = 'ObjectLoader: No error message set';
@@ -60,11 +74,12 @@ class ObjectLoader
   }
 }
 
-/*
- *
- * DATABASE
- *
- */
+/**
+*
+* @package PHPReport
+* @subpackage ReportEngine
+*
+*/
 class ObjectLoaderDb extends ObjectLoader
 {
   var $_db;
@@ -135,11 +150,12 @@ class ObjectLoaderDb extends ObjectLoader
   }
 }
 
-/*
- *
- * FILE
- *
- */
+/**
+*
+* @package PHPReport
+* @subpackage ReportEngine
+*
+*/
 class ObjectLoaderFile extends ObjectLoader
 {
   var $_basePath;

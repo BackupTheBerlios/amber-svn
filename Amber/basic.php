@@ -2,7 +2,7 @@
 /**
 *
 * @package PHPReport
-* @subpackage ReportEngine
+* @subpackage Basic
 *
 */
 require_once 'adodb/adodb-time.inc.php';
@@ -767,7 +767,7 @@ class _format
       }
       $this->_locale_Monetary = setlocale(LC_MONETARY, 0);
       $this->_locale_Numeric  = setlocale(LC_NUMERIC,  0);
-    }  
+    }
     return $this->_DecimalPoint;
   }
 

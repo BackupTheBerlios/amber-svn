@@ -12,6 +12,12 @@ ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/../
 require_once 'unit.php';
 require_once '../basic.php';
 
+/**
+*
+* @package PHPReport
+* @subpackage Tests
+*
+*/
 class myTestCase extends PHPUnit_TestCase
 {
   function assertEEquals($expected, $given, $message='')
@@ -20,6 +26,12 @@ class myTestCase extends PHPUnit_TestCase
   }
 }
 
+/**
+*
+* @package PHPReport
+* @subpackage Tests
+*
+*/
 class Basic_Format_internals extends myTestCase
 {
   // test the lexer
@@ -32,9 +44,12 @@ class Basic_Format_internals extends myTestCase
   }
 }
 
-
-
-
+/**
+*
+* @package PHPReport
+* @subpackage Tests
+*
+*/
 class Basic_Format extends myTestCase
 {
   function testFormat_Nullfmt()
@@ -78,9 +93,9 @@ class Basic_Format extends myTestCase
 
 
 
-/********************
- * Date and Time
- ********************/
+  //------------------
+  // Date and Time
+  //------------------
 
   function testFormat_Date_Basics()
   {
@@ -164,9 +179,9 @@ class Basic_Format extends myTestCase
 
 
 
-  /*************
-   * Numbers
-   *************/
+  //------------------
+  // Numbers
+  //------------------
   function testFormat_Numeric_Basics()
   {
     $this->assertEquals('asdf',             Format('asdf', "00000"));
@@ -271,9 +286,6 @@ class Basic_Format extends myTestCase
   }
 
 */
-
-
-
 
 
   function testFormat_Mix()

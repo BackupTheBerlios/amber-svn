@@ -3,7 +3,9 @@
 *
 * Run all tests
 *
-* @module test
+* @package PHPReport
+* @subpackage Tests
+*
 */
 
 foreach (glob('test?*.php') as $filename) {
