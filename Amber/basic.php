@@ -9,13 +9,13 @@ require_once 'adodb/adodb-time.inc.php';
 
 
 /**
-*
-* The function format tries to resemble Microsoft Basic's format function
-* @access public
-* @param mixed the value to format
-* @param string format string
-*
-*/
+ *
+ * The function format tries to resemble Microsoft Basic's format function
+ * @access public
+ * @param mixed the value to format
+ * @param string format string
+ *
+ */
 
 function Format($value, $fmt)
 {
@@ -32,14 +32,14 @@ function Format($value, $fmt)
 
 
 /**
-*
-* The function iif tries to resemble Microsoft Basic's iif function
-* @access public
-* @param mixed condition to evaluate
-* @param mixed if condition is true return this parameter
-* @param mixed if condition is false return this parameter
-*
-*/
+ *
+ * The function iif tries to resemble Microsoft Basic's iif function
+ * @access public
+ * @param mixed condition to evaluate
+ * @param mixed if condition is true return this parameter
+ * @param mixed if condition is false return this parameter
+ *
+ */
 function Iif($condition, $truePart, $falsePart)
 {
   if ($condition) {
@@ -50,14 +50,14 @@ function Iif($condition, $truePart, $falsePart)
 }
 
 /**
-*
-* The function mid tries to resemble Microsoft Basic's mid function
-* @access public
-* @param string
-* @param integer
-* @param integer
-*
-*/
+ *
+ * The function mid tries to resemble Microsoft Basic's mid function
+ * @access public
+ * @param string
+ * @param integer
+ * @param integer
+ *
+ */
 function Mid($string, $start, $length=null)
 {
   if (is_null($length)) {
@@ -68,26 +68,26 @@ function Mid($string, $start, $length=null)
 }
 
 /**
-*
-* The function left tries to resemble Microsoft Basic's left function
-* @access public
-* @param string
-* @param integer
-*
-*/
+ *
+ * The function left tries to resemble Microsoft Basic's left function
+ * @access public
+ * @param string
+ * @param integer
+ *
+ */
 function Left($string, $length)
 {
   return substr($string, 0, $length);
 }
 
 /**
-*
-* The function right tries to resemble Microsoft Basic's right function
-* @access public
-* @param string
-* @param integer
-*
-*/
+ *
+ * The function right tries to resemble Microsoft Basic's right function
+ * @access public
+ * @param string
+ * @param integer
+ *
+ */
 function Right($string, $length)
 {
   if ($length == 0) {
@@ -98,11 +98,11 @@ function Right($string, $length)
 }
 
 /**
-*
-* The function Now tries to resemble Microsoft Basic's Now function
-* @access public
-*
-*/
+ *
+ * The function Now tries to resemble Microsoft Basic's Now function
+ * @access public
+ *
+ */
 function Now()
 {
   $d = getdate();
@@ -110,12 +110,12 @@ function Now()
 }
 
 /**
-*
-* The function IsNull tries to resemble Microsoft Basic's IsNull function
-* @access public
-* @param string
-*
-*/
+ *
+ * The function IsNull tries to resemble Microsoft Basic's IsNull function
+ * @access public
+ * @param string
+ *
+ */
 function IsNull($value)
 {
   return is_null($value);
@@ -140,29 +140,37 @@ class _format
   var $EOF        =   0;    //const End of String
   var $STRING     =   1;    //const String
 
-  var $_DecimalPoint;        //cache for $this->getDecimalPoint()
+  var $DecimalPoint;        //cache for $this->getDecimalPoint()
 
   /**
-  *
-  * @access public
-  * @param string format
-  * @param number precision (number of digits after the decimal point) default=2
-  *
-  */
+   *
+   * @access public
+   * @param string format
+   * @param number precision (number of digits after the decimal point) default=2
+   *
+   */
   function _format($fmt, $prec=2)
   {
-    if (is_null($fmt)) {
+    if (!$fmt) {
       return;
     }
     $stdFormats = getStdFormat(null, $prec);
     $this->prec = $prec;
-    if (array_key_exists(strtolower($fmt), $stdFormats)) {
-      $this->fmt = $stdFormats[strtolower($fmt)];
+    if ($this->fmt = $stdFormats[strtolower($fmt)]) {
     } elseif ($this->fmt === '') { //General Number
       $this->fmt = null;
       return;
     } else {
       $this->fmt = $fmt;
+    }
+
+    $this->len = strlen($this->fmt);
+    $this->lexPos = 0;
+    $this->Token = $this->BOF;
+    $this->formatParts = $this->getTokenArray();
+    $this->type = '#null';
+    if (is_null($this->formatParts[0])) {
+      return;
     }
 
     $fmtChars = array(
@@ -185,12 +193,6 @@ class _format
       's' => 'd',
       'q' => 'd',
       'w' => 'd');
-    $this->reset();
-    $this->formatParts = $this->getTokenArray();
-    $this->type = '#null';
-    if (is_null($this->formatParts[0])) {
-      return;
-    }
     foreach($this->formatParts[0] as $token) {
       $ch = $token['token'][0];
       if (!is_null($fmtChars[$ch])) {
@@ -201,84 +203,72 @@ class _format
   }
 
   /**
-  *
-  * @access private can be called for testing reasons
-  *
-  */
-  function reset()
-  {
-    $this->len = strlen($this->fmt);
-    $this->lexPos = 0;
-    $this->Token = $this->BOF;
-  }
-
-  /**
-  *
-  * @access private for lexer: push back character
-  *
-  */
+   *
+   * @access private for lexer: push back character
+   *
+   */
   function pushback()
   {
     $this->lexPos--;
   }
 
   /**
-  *
-  * @access private for lexer: read next char
-  * @param char
-  *
-  */
+   *
+   * @access private for lexer: read next char
+   * @param char
+   *
+   */
   function nextChar(&$ch)
   {
-    if ($this->lexPos >= $this->len) {
-      $this->lexPos = $this->len + 1;
+  	if ($this->lexPos >= $this->len) {
+  		$this->lexPos = $this->len + 1;
       $ch = "\0";
-    }
-    else
-    {
-      $ch = $this->fmt[$this->lexPos];
-      $this->lexPos ++;
-    }
-    return $ch;
+  	}
+  	else
+  	{
+  		$ch = $this->fmt[$this->lexPos];
+  		$this->lexPos ++;
+  	}
+		return $ch;
   }
 
   /**
-  *
-  * @access private lexer: return format tokens
-  *
-  */
-  function NextToken()
+   *
+   * @access private lexer: return format tokens
+   *
+   */
+	function NextToken()
   {
-    $this->Value = '';
-    $this->nextChar($ch);
+  	$this->Value = '';
+  	$this->nextChar($ch);
 
-    $this->Value .= $ch;
-    if ($ch == "\0")
-      $this->Token = $this->EOF;
+  	$this->Value .= $ch;
+  	if ($ch == "\0")
+  		$this->Token = $this->EOF;
     elseif ($ch == ';') {
-      $this->Token = $ch;
+  		$this->Token = $ch;
     }
     elseif (($ch == '.') or ($ch == '#') or ($ch == '0') or ($ch == 'e') or ($ch == 'E') or ($ch == ',') or ($ch == '/') or ($ch == ':')) {
-      $this->Token = $ch;
+  		$this->Token = $ch;
     }
     elseif ($ch == "\\") {   // character
-      $this->Token = $this->STRING;
+  		$this->Token = $this->STRING;
       $this->Value = $this->nextChar($ch);
     }
     elseif ($ch == '"') {   // string
-      $this->Token = $this->STRING;
+  		$this->Token = $this->STRING;
       $this->Value = '';
-      $EndStr = false;
-      while (! $EndStr) {
-        if ($this->nextChar($ch)!= '"')
-          $this->Value .= $ch;
-        elseif ($this->nextChar($ch) == '"')
-          $this->Value .= $ch;
-        else {
-          $this->pushback();
-          $EndStr = true;
-        }
-      }
+  		$EndStr = false;
+  		while (! $EndStr) {
+  			if ($this->nextChar($ch)!= '"')
+  				$this->Value .= $ch;
+  			elseif ($this->nextChar($ch) == '"')
+  				$this->Value .= $ch;
+  			else {
+					$this->pushback();
+					$EndStr = true;
+  			}
+  		}
     }
     else {
       $ch1 = $ch;
@@ -292,10 +282,10 @@ class _format
   }
 
   /**
-  *
-  * @access private tokenize format string into array
-  *
-  */
+   *
+   * @access private tokenize format string into array
+   *
+   */
   function getTokenArray()
   {
     $i = 0;
@@ -317,17 +307,10 @@ class _format
       return $this->stdFormat($value);
       #return $value;
     }
-    if (($fmt != $this->fmt) or ($prec != $this->prec)) {
-      $this->_format($fmt, $prec);
-    }
-    if ($this->type == 'd')
-      return $this->formatDate($value);
-    elseif ($this->type == 's')
-      return $this->formatString($value);
-    elseif ($this->type == 'n')
-      return $this->formatNumber($value);
-    else
-      return $this->formatNumber($value);
+    if ($this->type == 'd') return $this->formatDate($value);
+    elseif ($this->type == 's') return $this->formatString($value);
+    elseif ($this->type == 'n') return $this->formatNumber($value);
+    else                        return $this->formatNumber($value);
   }
 
   function twoDigits($value)
@@ -350,7 +333,7 @@ class _format
       if (!is_null($v)) {
         $value = $v;
       } elseif (!is_null($value)) {
-        return $this->stdFormat($value);
+         return $this->stdFormat($value);
       }
     }
 
@@ -374,7 +357,7 @@ class _format
     }
 
 
-    if (!isset($fmt)) {
+    if (! isset($fmt)) {
       if (is_null($value)) {
         return '';
       } else {
@@ -391,13 +374,10 @@ class _format
     $haveExpo = false;  # have exponent
     $expoDigits = 0;
     $haveThousandDelim = false;
-    $havePercent = false;
-    $fmtLength = count($fmt);
-
     //leading #
-    for ($pos = 0; $pos < $fmtLength; $pos++) {
+    for ($pos = 0; $pos < count($fmt); $pos++) {
       if ($fmt[$pos]['token'] == '#') {
-        $digitPre9++;
+        $digitPre9 ++;
       } elseif (($fmt[$pos]['token'] == '0') or ($fmt[$pos]['token'] == '.') or ($fmt[$pos]['token'] == 'e') or ($fmt[$pos]['token'] == 'E')) {
         break;
       } elseif ($fmt[$pos]['token'] == ',') {
@@ -408,9 +388,9 @@ class _format
     }
 
     // leading 0
-    while ($pos < $fmtLength) {
+    for (; $pos < count($fmt); $pos++) {
       if (($fmt[$pos]['token'] == '0') or ($fmt[$pos]['token'] == '#')) {
-        $digitPre0++;
+        $digitPre0 ++;
       } elseif (($fmt[$pos]['token'] == '.') or ($fmt[$pos]['token'] == 'e') or ($fmt[$pos]['token'] == 'E')) {
         break;
       } elseif ($fmt[$pos]['token'] == '%') {
@@ -418,18 +398,15 @@ class _format
       } elseif ($fmt[$pos]['token'] == ',') {
         $thousandDelim = true;
       }
-      $pos++;
     }
 
     // decimalpoint
-    if ($pos < $fmtLength) {
-      if ($fmt[$pos]['token'] == '.') {
-        $pos++;
-      }
+    if ($fmt[$pos]['token'] == '.') {
+      $pos++;
     }
 
     // trailing # and 0
-    while ($pos < $fmtLength) {
+    for (;$pos < count($fmt); $pos++) {
       if ($fmt[$pos]['token'] == '#') {
         $digitPost9 ++;
       }
@@ -444,29 +421,26 @@ class _format
       } elseif ($fmt[$pos]['token'] == '%') {
         $havePercent = true;
       }
-      $pos++;
     }
 
     // exponent
-    if ($pos < $fmtLength) {
-      if (($fmt[$pos]['token'] == 'e') or ($fmt[$pos]['token'] == 'E')) {
+    if (($fmt[$pos]['token'] == 'e') or ($fmt[$pos]['token'] == 'E')) {
+      $pos++;
+      if (($fmt[$pos]['token'] == '+') or ($fmt[$pos]['token'] == '-')) {
+        $haveExpo = true;
         $pos++;
-        if (($fmt[$pos]['token'] == '+') or ($fmt[$pos]['token'] == '-')) {
-          $haveExpo = true;
-          $pos++;
-          for (;$pos < count($fmt); $pos++) {
-            if (($fmt[$pos]['token'] == '0') or ($fmt[$pos]['token'] == '#')) {
-              $expoDigits++;
-            } else {
-              break;
-            }
+        for (;$pos < count($fmt); $pos++) {
+          if (($fmt[$pos]['token'] == '0') or ($fmt[$pos]['token'] == '#')) {
+            $expoDigits++;
+          } else {
+            break;
           }
         }
       }
     }
 
     // even more trailing # and 0
-    while ($pos < $fmtLength) {
+    for (;$pos < count($fmt); $pos++) {
       if ($fmt[$pos]['token'] == '#') {
         $digitPost9 ++;
       }
@@ -476,7 +450,6 @@ class _format
       } elseif ($fmt[$pos]['token'] == '%') {
         $havePercent = true;
       }
-      $pos++;
     }
     // end first pass
 
@@ -502,7 +475,6 @@ class _format
       }
       // handle leading # and 0
       $digitPre = $digitPre0 + $digitPre9;
-      $pre = '';
       if (strlen($lead) > ($digitPre)) {
         $pre = substr($lead, 0, strlen($lead) - $digitPre);
         $lead = substr($lead, strlen($lead) - $digitPre);
@@ -552,9 +524,9 @@ class _format
     $res = '';
     $leadPos = 0;
     if ($haveThousandDelim) {
-      $ThousandDelim = $this->getThousandsSep();
+       $ThousandDelim = $this->getThousandsSep();
     }
-    for ($pos = 0; $pos < $fmtLength; $pos++) {
+    for ($pos = 0; $pos < count($fmt); $pos++) {
       if (($fmt[$pos]['token'] == '0') or ($fmt[$pos]['token'] == '#')) {
         if ($leadPos == 0) {
           if (!$haveThousandDelim) {
@@ -563,9 +535,8 @@ class _format
             for ($i=0; $i < strlen($pre); $i++) {
               $res .= $pre[$i];
               if (((strlen($pre) + strlen($lead) - $i - 1) % 3 == 0)
-                and ((strlen($pre) + strlen($lead) - $i - 1) > 0)
-                and ($pre[$i] != ' '))
-              {
+              and ((strlen($pre) + strlen($lead) - $i - 1) > 0)
+              and ($pre[$i] <> ' ')){
                 $res .= $ThousandDelim;
               }
             }
@@ -575,67 +546,61 @@ class _format
         if ($haveThousandDelim) {
           if (((strlen($lead) - $leadPos - 1) % 3 == 0)
           and ((strlen($lead) - $leadPos - 1) > 0)
-          and ($lead[$leadPos] != ' ')) {
+          and ($lead[$leadPos] <> ' ')) {
             $res .= $ThousandDelim;
           }
         }
         $leadPos++;
       } elseif (($fmt[$pos]['token'] == '.') or ($fmt[$pos]['token'] == 'e') or ($fmt[$pos]['token'] == 'E')) {
         break;
-      } elseif ($fmt[$pos]['token'] != ',') {
+      } elseif ($fmt[$pos]['token'] <> ',') {
         $res .= $fmt[$pos]['value'];
       }
     }
 
-    if ($pos < $fmtLength) {
-      if ($fmt[$pos]['token'] == '.') {
-        $res .= $this->getDecimalPoint();
-        $pos++;
-      }
+    if ($fmt[$pos]['token'] == '.') {
+      $res .= $this->getDecimalPoint();
+      $pos++;
     }
 
     $trailPos = 0;
-    while ($pos < $fmtLength) {
+    for (; $pos < count($fmt); $pos++) {
       if (($fmt[$pos]['token'] == '0') or ($fmt[$pos]['token'] == '#')) {
         $res .= $trail[$trailPos];
         $trailPos++;
       } elseif (($fmt[$pos]['token'] == 'e') or ($fmt[$pos]['token'] == 'E')) {
         break;
-      } elseif ($fmt[$pos]['token'] != ',') {
+      } elseif ($fmt[$pos]['token'] <> ',') {
         $res .= $fmt[$pos]['value'];
       }
-      $pos++;
     }
 
-    if ($pos < $fmtLength) {
-      if (($fmt[$pos]['token'] == 'e') or ($fmt[$pos]['token'] == 'E')) {
-        if (($fmt[$pos+1]['token'] == '+') or ($fmt[$pos+1]['token'] == '-')) {
-          $res .= $fmt[$pos]['token'];
-          if ($exponent < 0) {
-            $res .= '-';
-            $exponent = -$exponent;
-          } elseif ($fmt[$pos+1]['token'] == '+') {
-            $res .= '+';
-          }
-          $pos += 2;
-          if (($fmt[$pos]['token'] == '0') or ($fmt[$pos]['token'] == '#')) {
-            $res .= $expostr;
-            $pos += $expoDigits;
-          } else {
-            $res .= $exponent;
-          }
+    if (($fmt[$pos]['token'] == 'e') or ($fmt[$pos]['token'] == 'E')) {
+      if (($fmt[$pos+1]['token'] == '+') or ($fmt[$pos+1]['token'] == '-')) {
+        $res .= $fmt[$pos]['token'];
+        if ($exponent < 0) {
+          $res .= '-';
+          $exponent = -$exponent;
+        } elseif ($fmt[$pos+1]['token'] == '+') {
+          $res .= '+';
+        }
+        $pos += 2;
+        if (($fmt[$pos]['token'] == '0') or ($fmt[$pos]['token'] == '#')) {
+          $res .= $expostr;
+          $pos += $expoDigits;
+        } else {
+          $res .= $exponent;
         }
       }
     }
 
-    while ($pos < $fmtLength) {
+    for (; $pos < count($fmt); $pos++) {
       if (($fmt[$pos]['token'] == '0') or ($fmt[$pos]['token'] == '#')) {
         $res .= $trail[$trailPos];
         $trailPos++;
-      } elseif ($fmt[$pos]['token'] != ',') {
+      } elseif ($fmt[$pos]['token'] <> ',') {
         $res .= $fmt[$pos]['value'];
       }
-      $pos++;
     }
 
 
@@ -660,18 +625,18 @@ class _format
     }
     if (is_numeric($value)) {
       $dateParts = adodb_getdate($value);               //speed: adodb_getdate is slow!!!
-      $year = $dateParts['year'];
-      $month = $dateParts['mon'];
-      $day = $dateParts['mday'];
-      $hour = $dateParts['hours'];
-      $min = $dateParts['minutes'];
-      $secs = $dateParts['seconds'];
+    	$year = $dateParts['year'];
+    	$month = $dateParts['mon'];
+    	$day = $dateParts['mday'];
+    	$hour = $dateParts['hours'];
+    	$min = $dateParts['minutes'];
+    	$secs = $dateParts['seconds'];
       $dow = $dateParts['wday'];
     }
 
-    $_day_power = 86400;
-    $_hour_power = 3600;
-    $_min_power = 60;
+  	$_day_power = 86400;
+  	$_hour_power = 3600;
+  	$_min_power = 60;
 
 
     //cannot replace Epoch by constant, because value of adodb_mktime depends on time zone
@@ -786,6 +751,7 @@ class _format
     return $res;
   }
 
+  var $_DecimalPoint;
   function getDecimalPoint()
   {
     if (!$this->_DecimalPoint) {
@@ -814,7 +780,7 @@ class _format
   }
 
 
-  var $_dateSepType = 0; // 0: don't know, 1: dd.mm.yyyy, 2: mm/dd/yyyy
+  var $_dateSep = 0; // 0: don't know, 1: dd.mm.yyyy, 2: mm/dd/yyyy
 
   function OnDayFormat()
   {
@@ -856,11 +822,11 @@ class _format
 function str2date($d)
 {
   if (!preg_match(
-    "|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ -]?(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|",
-    ($d), $rr)) {
+  	"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ -]?(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|",
+  	($d), $rr)) {
     if (!preg_match(
-    "|^()()()(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|",
-    ($d), $rr)) {
+  	"|^()()()(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|",
+  	($d), $rr)) {
       return NULL;
     }
   }
@@ -874,7 +840,7 @@ function str2date($d)
   } elseif (!isset($rr[1])) {
     $d =  adodb_mktime($rr[5], $rr[6], $rr[7], 0, 0, 0);
   } else {
-  $d =  @adodb_mktime($rr[5], $rr[6], $rr[7], $rr[2], $rr[3], $rr[1]);
+   $d =  @adodb_mktime($rr[5], $rr[6], $rr[7], $rr[2], $rr[3], $rr[1]);
   }
 
   return $d;

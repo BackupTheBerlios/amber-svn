@@ -1,11 +1,11 @@
 <?php
 
 /**
- *
- * @package PHPReport
- * @subpackage Controls
- *
- */
+*
+* @package PHPReport
+* @subpackage Controls
+*
+*/
 
 ControlFactory::register('100', 'Label');
 ControlFactory::register('101', 'Rectangle');
@@ -13,11 +13,11 @@ ControlFactory::register('109', 'TextBox');
 ControlFactory::register('112', 'SubReport');
 
 /**
- *
- * @package PHPReport
- * @subpackage Controls
- *
- */
+*
+* @package PHPReport
+* @subpackage Controls
+*
+*/
 class Control
 {
   var $id; // unique numeric id
@@ -43,10 +43,10 @@ class Control
   var $_exporter;
 
   /**
-   *
-   * @access public
-   *
-   */
+  *
+  * @access public
+  *
+  */
   function Control()
   {
     static $id = 0;
@@ -60,12 +60,12 @@ class Control
   }
 
   /**
-   *
-   * @access public
-   * @param string name of property
-   * @param mixed value
-   *
-   */
+  *
+  * @access public
+  * @param string name of property
+  * @param mixed value
+  *
+  */
   function setProperty($name, $value)
   {
     $specialProperties = array('BackColor', 'BorderColor');
@@ -78,12 +78,12 @@ class Control
     }
   }
 
-   /**
-   *
-   * @access public
-   * @param array
-   *
-   */
+  /**
+  *
+  * @access public
+  * @param array
+  *
+  */
   function setProperties(&$prop)
   {
     foreach ($prop as $key => $value) {
@@ -91,34 +91,34 @@ class Control
     }
   }
 
-   /**
-   *
-   * @access public
-   * @abstract
-   * @param mixed buffer passed thru for exporter's usage
-   *
-   */
+  /**
+  *
+  * @access public
+  * @abstract
+  * @param mixed buffer passed thru for exporter's usage
+  *
+  */
   function printNormal(&$buffer) { }
 
   /**
-   *
-   * @access public
-   * @abstract
-   * @param int
-   *
-   */
+  *
+  * @access public
+  * @abstract
+  * @param int
+  *
+  */
   function printDesign() { }
 
 
   /**
-   * Used by printDesign: return modified copy of $this for printing in design mode
-   * 
-   *
-   * @access public
-   * @abstract
-   * @param int
-   *
-   */
+  * Used by printDesign: return modified copy of $this for printing in design mode
+  *
+  *
+  * @access public
+  * @abstract
+  * @param int
+  *
+  */
   function prepareDesign()
   {
     $ctrl = $this;
@@ -127,14 +127,14 @@ class Control
       $ctrl->BorderStyle = 1;
       $ctrl->BorderColor = 0xcccccc;
     }
-    return $ctrl;  
+    return $ctrl;
   }
-  
+
   /**
-   * Used by printNormal: return std-height of control
-   * @access public
-   *
-   **/
+  * Used by printNormal: return std-height of control
+  * @access public
+  *
+  **/
   function stdHeight()
   {
     if (!$this->Visible) {
@@ -147,21 +147,21 @@ class Control
       $ret = $this->Top + $this->Height +  2* $this->BorderWidth * 20;
     }
     return $ret;
-  }        
-         
-  
-  
+  }
+
+
+
   /**
-   *
-   * May be called by subclasses if they implement additional properties
-   *
-   * <b>Note:</b> The subclass should call this method <b>after</b> calling its
-   * parent's constructor!
-   *
-   * @access protected
-   * @param array
-   *
-   */
+  *
+  * May be called by subclasses if they implement additional properties
+  *
+  * <b>Note:</b> The subclass should call this method <b>after</b> calling its
+  * parent's constructor!
+  *
+  * @access protected
+  * @param array
+  *
+  */
   function _registerProperties(&$newProperties)
   {
     $this->Properties =& array_merge($this->Properties, $newProperties);
@@ -180,11 +180,11 @@ class Control
 }
 
 /**
- *
- * @package PHPReport
- * @subpackage Controls
- *
- */
+*
+* @package PHPReport
+* @subpackage Controls
+*
+*/
 class Rectangle extends Control
 {
   function printNormal(&$buffer)
@@ -201,11 +201,11 @@ class Rectangle extends Control
 }
 
 /**
- *
- * @package PHPReport
- * @subpackage Controls
- *
- */
+*
+* @package PHPReport
+* @subpackage Controls
+*
+*/
 /*class Line extends Control
 {
   function echoReport()
@@ -231,18 +231,18 @@ class Rectangle extends Control
 }*/
 
 /**
- *
- * @package PHPReport
- * @subpackage Controls
- *
- */
+*
+* @package PHPReport
+* @subpackage Controls
+*
+*/
 class FontBox extends Control
 {
   /**
-   *
-   * @access public
-   *
-   */
+  *
+  * @access public
+  *
+  */
   function FontBox()
   {
     parent::Control();
@@ -260,12 +260,12 @@ class FontBox extends Control
   }
 
   /**
-   *
-   * @access public
-   * @param string name of property
-   * @param mixed value
-   *
-   */
+  *
+  * @access public
+  * @param string name of property
+  * @param mixed value
+  *
+  */
   function setProperty($name, $value)
   {
     parent::setProperty($name, $value);
@@ -278,21 +278,20 @@ class FontBox extends Control
 }
 
 /**
- *
- * @package PHPReport
- * @subpackage Controls
- *
- */
+*
+* @package PHPReport
+* @subpackage Controls
+*
+*/
 class TextBox extends FontBox
 {
   var $_sum;
-  var $_fmt;   //cache for format-function
 
   /**
-   *
-   * @access public
-   *
-   */
+  *
+  * @access public
+  *
+  */
   function TextBox()
   {
     parent::FontBox();
@@ -312,12 +311,9 @@ class TextBox extends FontBox
   function printNormal(&$buffer)
   {
     if ($this->Format) {
-      if (!$this->_fmt) {
-        $this->_fmt = new _format($this->Format, $this->DecimalPlaces);
-      }
-      $this->_exporter->printNormal($this, $buffer, $this->_fmt->format($this->Value, strval($this->Format), $this->DecimalPlaces));
+      $this->_exporter->printNormal($this, $buffer, Format($this->Value, strval($this->Format), $this->DecimalPlaces));
     } else {
-      $this->_exporter->printNormal($this, $buffer, _format::stdFormat($this->Value));
+      $this->_exporter->printNormal($this, $buffer, $this->Value);
     }
     return $this->stdHeight(); ### FIX THIS: CanGrow.....
   }
@@ -345,18 +341,18 @@ class TextBox extends FontBox
 }
 
 /**
- *
- * @package PHPReport
- * @subpackage Controls
- *
- */
+*
+* @package PHPReport
+* @subpackage Controls
+*
+*/
 class Label extends FontBox
 {
   /**
-   *
-   * @access public
-   *
-   */
+  *
+  * @access public
+  *
+  */
   function Label()
   {
     parent::FontBox();
@@ -379,18 +375,18 @@ class Label extends FontBox
 }
 
 /**
- *
- * @package PHPReport
- * @subpackage Controls
- *
- **/
+*
+* @package PHPReport
+* @subpackage Controls
+*
+**/
 class SubReport extends Control
 {
   /**
-   *
-   * @access public
-   *
-   */
+  *
+  * @access public
+  *
+  */
   function SubReport()
   {
     parent::Control();
