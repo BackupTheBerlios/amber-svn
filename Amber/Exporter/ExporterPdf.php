@@ -215,8 +215,8 @@ class ExporterFPdf extends Exporter
 
     $para->font = $control->FontName;
     $para->falign = $this->_pdf_textalign($control->TextAlign);
-    $para->x = ($control->Left +  $this->_secStartX);
-    $para->y = ($control->Top + $this->_secStartY);
+    $para->x = $control->Left;
+    $para->y = $control->Top;
     $para->width = $control->Width;
     $para->height = $control->Height;
     $para->backstyle= $control->BackStyle;
@@ -246,8 +246,8 @@ class ExporterFPdf extends Exporter
 
     $para->font = 'helvetica';
     $para->falign = 'C';
-    $para->x = ($control->Left +  $this->_secStartX);
-    $para->y = ($control->Top + $this->_secStartY);
+    $para->x = $control->Left;
+    $para->y = $control->Top;
     $para->width = 11 * 15;
     $para->height = 11 * 15;
 
@@ -281,8 +281,8 @@ class ExporterFPdf extends Exporter
     }
     $para = new printBoxparameter;
     
-    $para->x = ($control->Left +  $this->_secStartX);
-    $para->y = ($control->Top + $this->_secStartY);
+    $para->x = $control->Left;
+    $para->y = $control->Top;
     $para->width = $control->Width;
     $para->height = $control->Height;
 
