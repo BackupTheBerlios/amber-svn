@@ -477,6 +477,11 @@ class	TextBoxExporterHtml extends FontBoxExporterHtml
  */
 class	LabelExporterHtml extends FontBoxExporterHtml
 {
+  function getTag(&$control, $value=Null)
+  {
+    $value = str_replace("&&", "&", $value);
+    return parent::getTag($control, $value);
+  }
 }
 
 /**
