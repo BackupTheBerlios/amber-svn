@@ -107,8 +107,10 @@ class ObjectLoaderDb extends ObjectLoader
     $sql = 'Select * from ' . $dict->TableName($this->sysTable) . ' where type=' . $this->objectTypes['module'];
 
     $rs = $this->_db->Execute($sql);
-    while ($row = $rs->FetchRow()) {
-      eval($row['code']);
+    if ($rs->numRows() > 0) {
+      while ($row = $rs->FetchRow()) {
+        eval($row['code']);
+      }
     }
 
     return true;
@@ -133,8 +135,8 @@ class ObjectLoaderDb extends ObjectLoader
       $this->_lastError = 'Query failed: "' . $sql . '"';
       return false;
     }
-    $data = $rs->FetchRow();
 
+    $data = $rs->FetchRow();
     if (!$data) {
       $this->_lastError = 'Report "' . $reportName . '" not found in database';
       return false;
