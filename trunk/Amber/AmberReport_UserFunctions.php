@@ -55,6 +55,16 @@ class AmberReport_UserFunctions
     return $this->report;
   }
   
+  function Page()
+  {
+    return $this->report->page();
+  }
+    
+  function Bookmark($txt, $level=0)
+  {
+    $this->report->Bookmark($txt, $level);
+  }  
+ 
 }
 
 ?>

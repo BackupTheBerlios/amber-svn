@@ -12,7 +12,20 @@ class reportTestBuilder
 {
 
   var $report;
-  var $zIndex;
+  var $zIndex;  //private
+  var $groupID = -1; //private  
+  
+  var $defaultControl = array (
+        'Width' => 1440,
+        'Height' => 240,
+        'BackStyle' => 1,
+        'BorderStyle' => 0,
+        'BorderColor' => 8421504,
+        'FontName' => 'Arial',
+        'FontSize' => 8,
+        'FontWeight' => 400,
+        'TextAlign' => 2
+      );
   
   function reportTestBuilder($name)
   {
@@ -33,56 +46,90 @@ class reportTestBuilder
         'EventProcPrefix' => 'Detail',
         'Name' => 'Detail',
         'ForceNewPage' => 0,
-        'Height' => 2440
+        'Height' => 1440
       )
     );
   }
   
   function createReportSections()
   {
+    $this->report['ReportHeader'] = array(
+      'EventProcPrefix' => 'ReportHeader',
+      'Height' => 1440
+    );
+    
+    $this->report['ReportFooter'] = array(
+      'EventProcPrefix' => 'ReportFooter',
+      'Height' => 1440
+    );
   }
   
   function createPageSections()
   {
+    $this->report['PageHeader'] = array(
+      'EventProcPrefix' => 'PageHeader',
+      'Height' => 1440
+    );
+    $this->report['PageFooter'] = array(
+      'EventProcPrefix' => 'PageFooter',
+      'Height' => 1440
+    );
   }              
   
   function createGroup($groupSource, $withHeader, $withFooter)
   {
+    $this->groupID++;
+    $this->report['GroupLevels'][$this->groupID] = array(
+      'ControlSource' => $groupSource,
+      'SortOrder' => 0,
+      'GroupHeader' => $withHeader,
+      'GroupFooter' => $withFooter
+    );
+    if ($withHeader) {
+      $this->report['GroupHeaders'][$this->groupID] = array(
+        'Name' => 'Gruppenkopf'.$this->groupID,
+        'EventProcPrefix' => 'Gruppenkopf'.$this->groupID,
+        'ForceNewPage' => 0,
+        'Height' => 1440
+      );
+    }
+    if ($withFooter) {
+      $this->report['GroupFooters'][$this->groupID] = array(
+        'Name' => 'Gruppenfuß'.$this->groupID,
+        'EventProcPrefix' => 'Gruppenfuß'.$this->groupID,
+        'ForceNewPage' => 0,
+        'Height' => 1440
+      );
+    }
+    return $this->groupID;
   }
   
-  function createControl($type, $name, $sectionType, $id, $left=0, $top=0)
+  function &getSection($sectionType, $id=0)
   {
     $sections = array('ReportHeader'=>1, 'PageHeader'=>1, 'Detail'=>1, 'ReportFooter'=>1, 'PageFooter'=>1, 'GroupHeaders'=>2, 'GroupFooters'=>2);
     if ($sections[$sectionType] == 1) {
-      $sec =& $this->report[$sectionType];
+      return $this->report[$sectionType];
     } elseif  ($sections[$sectionType] == 2) {
-      $sec =& $this->report[$sectionType][$id];
+      return $this->report[$sectionType][$id];
     } else {
       die("Illegal section '$sectionType'");
     }  
-    $ctl =& $sec['Controls'][$name];
+  }
+  
+  function &createControl($type, $name, &$section, $left=0, $top=0)
+  {
+    $ctl =& $section['Controls'][$name];
     
     $this->zIndex += 10;
     if ($type = 'textfield') {
-      $ctl = array(
-        'EventProcPrefix' => $name,
-        'Name' => $name,
-        'ControlType' => 109,
-        'ControlSource' => '',
-        'Left' => $left,
-        'Top' => $top,
-        'Width' => 1440,
-        'Height' => 240,
-        'BackStyle' => 1,
-        'BorderStyle' => 1,
-        'BorderColor' => 8421504,
-        'FontName' => 'Arial Narrow',
-        'FontSize' => 8,
-        'FontWeight' => 700,
-        'TextAlign' => 2,
-        'FontBold' => 0,
-        'zIndex' => $this->zIndex
-      );
+      $ctl = $this->defaultControl;
+      $ctl['EventProcPrefix'] = $name;
+      $ctl['Name'] = $name;
+      $ctl['ControlType'] = 109;
+      $ctl['ControlSource'] = '';
+      $ctl['Left'] = $left;
+      $ctl['Top'] = $top;
+      $ctl['zIndex'] = $this->zIndex;
     }
     return $ctl;  
   }  

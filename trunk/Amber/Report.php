@@ -325,7 +325,6 @@ class Report extends AmberObject
             $this->_printNormalGroupFooters($maxLevel, $level);
             $this->_resetAggregate($maxLevel, $level);
           }
-
           // Evaluate Expressions
           $this->_setControlValues($this->Cols);
           $this->_resetRunningSum($maxLevel, $level);
@@ -438,7 +437,9 @@ class Report extends AmberObject
     static $uniqueId = 0;
     if (empty($this->RecordSource)) {
       return;
-    }
+    } elseif(strtolower($this->RecordSource) == '[array]') {     // _data filled in direct (i.e. tests)
+      return;
+    }  
     $db =& Amber::currentDb();
     $createdTemporaryTable = false;
 
@@ -818,7 +819,7 @@ class Report extends AmberObject
    * @return int
    */
   function _getGroupLevel(&$row, &$oldRow)
-  {
+  { 
     foreach ($this->_groupFields as $idx => $fieldName) {
       if ($row[$fieldName] != $oldRow[$fieldName]) {
         #echo "new level: $idx - $row[$fieldName] - $oldRow[$fieldName] <br>";

@@ -386,13 +386,20 @@ class TextBox extends FontBox
     }
   }
   
-  function addValue($value)
+  function addValue($value, $type='')
   {
-    if ($this->_aggregate) {
-      $this->_aggregate->addValue($value);
+    if (!$this->_aggregate) {       
+      $this->createAggregate($type);
     }
+    $this->_aggregate->addValue($value);
   }     
 
+  function sum($value)
+  {
+    $this->addvalue($value, 'sum');
+  }
+  
+  //FIXME: add shortcuts for other aggregates  
 }
 
 /**
