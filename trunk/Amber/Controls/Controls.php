@@ -366,7 +366,7 @@ class TextBox extends FontBox
     } elseif (!is_string($this->Value)) {
       return 3; // right justify numbers
     } elseif (preg_match(
-       "|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ -]?(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
+        "|^([0-9]{4})-([0-9]{2})-([0-9]{2})[ -]?(([0-9]{1,2}):([0-9]{1,2}):([0-9\.]{1,4}))?|",
     	$this->Value)) {
       return 3; // right justify dates
     } else {
