@@ -25,20 +25,20 @@ ExporterFactory::register('testpdf', 'ExporterFPdf');
  */
 
 
- 
+
 
 class ExporterFPdf extends Exporter
 {
   var $type = 'fpdf';
   var $_pdf;
 
-  var $firstPage = true;  
+  var $firstPage = true;
 
 
   function &getExporterBasicClass(&$layout, $reset)
   {
     return PDF::getInstance($layout, $reset);
-  }  
+  }
 
 
 
@@ -64,7 +64,7 @@ class ExporterFPdf extends Exporter
       $this->_pdf->SetLeftMargin($layout->leftMargin);
       $this->_pdf->SetTopMargin($layout->topMargin);
       $this->_pdf->SetAutoPageBreak(false, $layout->bottomMargin);
-  
+
       $this->_pdf->SetFont('helvetica');    // need to set font, drawcolor, fillcolor before AddPage
       $this->_pdf->SetDrawColor(0, 0, 0);   // else we get strange errors. prb fpdf does some optimisations which we break
       $this->_pdf->SetFillColor(0, 0, 0);
@@ -91,8 +91,8 @@ class ExporterFPdf extends Exporter
   {
     $this->_pdf->_out("\n%$s\n");
   }
-  
-  
+
+
   ////////////////////////
   //
   // outWindowRelative -- place Section in $dataBuff on Page
@@ -103,13 +103,13 @@ class ExporterFPdf extends Exporter
   // w, h: width/height of page area (header, body footer)
   // deltaX coordinates of page body start (left corner) relative to report's left side
   //
-  // purpose: 
+  // purpose:
   //    1. clip area to get printed on page
   //    2. transform placement of section from report-relative to page-relative
   //
   ////////////////////////
-  
-  
+
+
   function outWindowRelative($deltaX, $x, $y, $w, $h, &$dataBuff)
   {
     $this->_pdf->SetClipping($x, $y, $w, $h);
@@ -118,23 +118,23 @@ class ExporterFPdf extends Exporter
     $this->_pdf->RemoveCoordinate();
     $this->_pdf->RemoveClipping();
   }
-  
+
   function out(&$secBuff)
   {
     $this->_pdf->_out($secBuff);
   }
-    
+
   function outSectionEnd()
   {
     $this->_pdf->RemoveClipping();
     $this->_pdf->RemoveCoordinate();
   }
-  
+
   function outSectionStart($y, $w, $h, $backColor, $sectionName='')
   {
     $this->_pdf->SetCoordinate(0, -$y);
     $this->_pdf->SetClipping(0, 0, $w, $h);
-    
+
     $this->_pdf->SetXY(0, 0);
     $this->_pdf->_backColor($backColor);
     $fill = true;
@@ -146,12 +146,12 @@ class ExporterFPdf extends Exporter
     $this->_pdf->Cell($w, $h, $text, $border, $ln, $align, $fill);
   }
 
-  
+
   function Bookmark($txt,$level=0,$y=0, $pageNo, $posYinPage)
   {
     $this->_pdf->Bookmark($txt,$level,$y, $pageNo, $posYinPage);
   }
-  
+
   function startPage()
   {
     if (!$this->firstPage) {
@@ -159,11 +159,11 @@ class ExporterFPdf extends Exporter
     }
     $this->firstPage = false;
   }
-  
+
   function endPage()
   {
   }
-      
+
 
   /*********************************
    *  Controls - pdf
@@ -181,6 +181,10 @@ class ExporterFPdf extends Exporter
 
   function printNormal(&$control, $content)
   {
+    if (!$control->isVisible()) {
+      return;
+    }
+
     $type = strtolower(get_class($control));
     #echo $type;
     if ($type == 'checkbox') {
@@ -189,9 +193,7 @@ class ExporterFPdf extends Exporter
       return $this->printNormalSubReport($control, $content);
     }
     #$content = $type;
-    if (!$control->isVisible()) {
-      return;
-    }
+
     $para = new printBoxparameter;
 
     $para->italic = $control->FontItalic;
@@ -220,9 +222,6 @@ class ExporterFPdf extends Exporter
 
   function printNormalCheckBox(&$control, $content)
   {
-    if (!$control->isVisible()) {
-      return;
-    }
     $para = new printBoxparameter;
 
     #$para->italic = false;
@@ -259,14 +258,14 @@ class ExporterFPdf extends Exporter
 
     $this->_pdf->printBox($para);
   }
-  
+
   function printNormalSubReport(&$control, $content)
   {
     if (!$control->isVisible()) {
       return;
     }
     $para = new printBoxparameter;
-    
+
     $para->x = $control->Left;
     $para->y = $control->Top;
     $para->width = $control->Width;
@@ -274,20 +273,20 @@ class ExporterFPdf extends Exporter
 
     $para->forecolor = 0;
     $para->backcolor = 0xFFFFFF;
-    
+
     $para->borderstyle = $control->BorderStyle;
     $para->bordercolor = $control->Bordercolor;
     $para->borderwidth = $control->BorderWidth;
-    
+
     $rep =& $control->_subReport;
     if (is_null($rep)) {
       $para->content = '';
     } else {
       $rep->run('pdf');
-      $para->content = "\n%Start SubReport\n" . $rep->subReportBuff . "\n%End SubReport\n"; 
+      $para->content = "\n%Start SubReport\n" . $rep->subReportBuff . "\n%End SubReport\n";
     }
     #$para->content = "(TEST)";
-    $this->_pdf->printBoxPdf($para);            
+    $this->_pdf->printBoxPdf($para);
 
   }
 

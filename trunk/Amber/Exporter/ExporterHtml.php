@@ -349,8 +349,6 @@ class ExporterHtml extends Exporter
 
   function getCssStyle(&$control, $prefix)
   {
-#    $control->Properties['isVisible'] = $control->isVisible();
-    $control->Properties['isVisible'] = $control->Properties['Visible'];
     $nil = array('ForeColor' => 16777216, 'BackColor' => 16777216, 'BorderColor' => 16777216, 'BorderWidth' => -9999); // illegal values
     $cssClassName = '.' . $prefix . $control->id;
 
@@ -380,6 +378,10 @@ Class ControlExporterHtml
 
   function printNormal(&$control, $content)
   {
+    if (!$control->isVisible()) {
+      return;
+    }
+
     echo $this->getTag($control, $content);
   }
 
@@ -394,7 +396,6 @@ Class ControlExporterHtml
     $out =  "\t\t<div class=\"" . $cssClassName . '"';
 
     $this->_stdValues['Value'] =  $control->Properties['Value'];
-    $control->Properties['isVisible'] = $control->isVisible();
     if ($control->Properties == $this->_stdValues) {
 
     } else {
@@ -412,7 +413,7 @@ Class ControlExporterHtml
   function getStyle(&$ctrl, &$value, &$std)
   {
     $out = '';
-    
+
     $LeftPaddingHtml = 0;  // 0
     $RightPaddingHtml = 0; // 0
     $TopPaddignHtml = 0;
@@ -422,8 +423,8 @@ Class ControlExporterHtml
     } else {
       $BorderWidthHtml = $value['BorderWidth'];
     }
-        
-    
+
+
     // Position
     if ($value['Top'] <> $std['Top']) {
       $out .= 'top: ' . ExporterHTML::_html_twips($ctrl->Properties['Top']) . '; ';
@@ -432,14 +433,8 @@ Class ControlExporterHtml
       $leftHtml = $value['Left'] + 1/2 * $BorderWidthHtml + $LeftPaddingHtml;
       $out .= 'left: ' . ExporterHTML::_html_twips($leftHtml) . '; ';
     }
-    /*if ($value['Height'] <> $std['Height']) {
-      // Fix IE display bug
-      if (($ctrl->Properties['Height'] == 0) && (ExporterHTML::getUserAgent() == 'msie')) {
-        $out .= 'height: 1px;';
-      } else {
-        $out .= 'height: ' . ExporterHTML::_html_twips($ctrl->Properties['Height']) . '; ';
-      }
-    }*/
+
+    // Height & width
     $out .= 'height: ' . ExporterHTML::_html_twips($ctrl->Properties['Height']) . '; ';
     if (($value['Width'] <> $std['Width']) or ($value['BorderWidth'] <> $std['BorderWidth'])) {
       $widthHtml = $value['Width'] - $BorderWidthHtml - $LeftPaddingHtml- $RightPaddingHtml;
@@ -472,14 +467,6 @@ Class ControlExporterHtml
       $out .= 'z-index: ' . $ctrl->Properties['zIndex'] . '; ';
     }
 
-    // Visible
-#    if ($value['isVisible'] <> $std['isVisible']) {
-      if ($ctrl->Properties['isVisible'] == false) {
-        $out .= 'visibility: hidden; ';
-      } else {
-        $out .= 'visibility: visible; ';
-      }
-#    }
     return $out;
   }
 
@@ -574,7 +561,7 @@ class FontBoxExporterHtml extends ControlExporterHtml
     if ($value['ForeColor'] <> $std['ForeColor']) {
       $out .= 'color: ' . ExporterHTML::_html_color($ctrl->Properties['ForeColor']) . '; ';
     }
-    
+
     return $out;
   }
 }
@@ -585,7 +572,7 @@ class FontBoxExporterHtml extends ControlExporterHtml
  * @subpackage Exporter
  *
  */
-class	TextBoxExporterHtml extends FontBoxExporterHtml
+class TextBoxExporterHtml extends FontBoxExporterHtml
 {
   function getStyle(&$ctrl, &$value, &$std)
   {
@@ -609,7 +596,7 @@ class	TextBoxExporterHtml extends FontBoxExporterHtml
  * @subpackage Exporter
  *
  */
-class	LabelExporterHtml extends FontBoxExporterHtml
+class LabelExporterHtml extends FontBoxExporterHtml
 {
   function getTag(&$control, $value=Null)
   {
