@@ -60,9 +60,11 @@ class ExporterFPdf extends Exporter
     #echo "pdf->Output();<br>";
     if ($this->_asSubreport) {
       $this->_pdf->endSubReport();
-    } else {  
-      $this->_report->_printNormalSection('PageFooter');
-  
+    } else {
+      if (!$this->DesignMode) {
+        $this->_report->_printNormalSection('PageFooter');
+      }  
+   
       $this->_pdf->endReportBuffering();
     
       $firstPage = true;  //first page is out
@@ -163,9 +165,11 @@ class ExporterFPdf extends Exporter
   */
   function printPageFooter()
   {
-    $this->_report->_printNormalSection('PageFooter');
+    if (!$this->DesignMode) {
+      $this->_report->_printNormalSection('PageFooter');
+    }  
   }
-
+ 
   /*
   * callback function for PDF: init printing of page header if necessary
   *
@@ -173,7 +177,9 @@ class ExporterFPdf extends Exporter
   */
   function printpageHeader()
   {
-    $this->_report->_printNormalSection('PageHeader');
+    if (!$this->DesignMode) {  
+      $this->_report->_printNormalSection('PageHeader');
+    }  
   }
 
 
