@@ -671,10 +671,10 @@ class CheckBoxExporterHtml extends ControlExporterHtml
     $out = parent::getStyle($ctrl, $value, $std);
 
     $out .= ' font-family: "small fonts", sans-serif; ';
-    $out .= ' font-size: 6pt; ';
+    $out .= ' font-size: ' . (6 * __SCALE__) . 'pt; ';
     $out .= ' font-weight: 700; ';
     $out .= ' text-align: center;';
-    $out .= ' border-width: 1px;';      //border properties do exist, but Access doesn't care about them
+    $out .= ' border-width: ' . (1 * __SCALE__) . 'px;';      //border properties do exist, but Access doesn't care about them
     $out .= ' border-color:#000000;';
     $out .= ' border-style:solid;';
     return $out;

@@ -163,6 +163,20 @@ class Amber
 
   /**
    * @static
+   * @access public
+   * @param string
+   * @return Report
+   */
+  function &loadReport($name)
+  {
+    $mgr =& Amber::getObjectManager();
+    $result =& $mgr->loadReport($name);
+
+    return $result;
+  }
+  
+  /**
+   * @static
    * @param string
    * @param
    * @param string
@@ -197,14 +211,6 @@ class Amber
         $rep->run($type);
         break;
     }
-  }
-
-  function &loadObject($type, $name)
-  {
-    $mgr =& Amber::getObjectManager();
-    $result =& $mgr->loadObject($type, $name);
-
-    return $result;
   }
 
   /**
