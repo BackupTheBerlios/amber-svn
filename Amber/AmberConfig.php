@@ -141,8 +141,7 @@ class AmberConfig
         $this->writeArray($filehandle, $key, $prop);
         fwrite($filehandle, $indent . "</$key>\n");
       } else {
-        htmlentities($this->$prop);
-        fwrite($filehandle, $indent . "<$key>" . $prop . "</$key>\n");
+        fwrite($filehandle, $indent . "<$key>" . htmlspecialchars($prop) . "</$key>\n");
       }
     }
     $indent = substr($indent, 0, count($indent) - 3);

@@ -128,6 +128,7 @@ class Amber
   function _dumpArray(&$var)
   {
     static $level = 0;
+    
     $level++;
     if ($level > 5) {
       return '<font color="red" size="1">' . htmlspecialchars('<...>') . '</font>';
@@ -148,7 +149,6 @@ class Amber
         $result .= '<tr><td><font size="1" color="blue">' . htmlspecialchars($key) . '</font></td><td>';
         if (is_array($v[$key]) || is_object($v[$key])) {
           $result .= Amber::_dumpArray($v[$key]);
-          $level--;
         } else {
           if (empty($val)) {
             $result .= '<font color="lightgrey" size="1">' . htmlspecialchars('<Empty>') . '</font><br />';
@@ -162,6 +162,7 @@ class Amber
     } else {
       $result = Amber::_dumpScalar($v);
     }
+    $level--;
 
     return $result;
   }
