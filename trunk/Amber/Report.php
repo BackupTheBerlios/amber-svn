@@ -288,9 +288,10 @@ class Report extends AmberObject
     $this->_installExporter($type);
     $this->_setDocumentTitle($this->Name);
 
-    $this->setDesignMode();
-    $this->_startReport();
+    $this->_setDesignMode();
+    $this->initDesignHeader();
 
+    $this->_startReport();
     $maxLevel = count($this->_groupFields);
 
     $this->_printDesignSection($this->ReportHeader);
@@ -702,41 +703,40 @@ class Report extends AmberObject
 //////////////////////////////////////////////////
 
 
-  function setContinous()
+  function setContinous($switch=true)
   {
-    $this->noAutoPage();
+    $this->noAutoPage($switch);
   }
 
-  function setDesignMode()
+  function _setDesignMode()
   {
-    $this->noHeadFoot();
+    $this->noHeadFoot(true);
     $this->ignoreOnPrint = true;
     $this->ignoreKeepTogether = true;
     $this->printHeadFootAsNormalSection = true;
-    $this->initDesignHeader();
   }
 
-  function setSubReport()
+  function setSubReport($switch=true)
   {
-    $this->asSubReport = true;
-    $this->noAutoPage();
-    $this->noMargins();
-    $this->noHeadFoot();
+    $this->asSubReport = $switch;
+    $this->noAutoPage($switch);
+    $this->noMargins($switch);
+    $this->noHeadFoot($switch);
   }
   
-  function noAutoPage()
+  function noAutoPage($switch=true)
   {
-    $this->noAutoPage = true;
+    $this->noAutoPage = $switch;
   }
   
-  function noMargins()
+  function noMargins($switch=true)
   {
-    $this->noMargins = true;
+    $this->noMargins = $switch;
   }
   
-  function noHeadFoot()
+  function noHeadFoot($switch=true)
   {
-    $this->noHeadFoot = true;
+    $this->noHeadFoot = $switch;
   }
   
   function _startReport()

@@ -268,11 +268,11 @@ class ExporterHtml extends Exporter
   {
     if (!$this->_asSubreport) {
       $ret = "\t<style type=\"text/css\">\n<!--\n";
-      if ($this->getUserAgent() == 'msie') {
+#      if ($this->getUserAgent() == 'msie') {
         $ret .= ".AmberReport { position: absolute; }\n";
-      } else {
-        $ret .= ".AmberReport { position: relative; }\n";
-      }
+#      } else {
+#        $ret .= ".AmberReport { position: relative; }\n";
+#      }
       $ret .= ".AmberReport div { position: absolute; overflow: hidden; }\n";
       $ret .= $css;
       $ret .= "\n-->\n</style>\n";

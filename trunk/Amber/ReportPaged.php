@@ -133,7 +133,7 @@ class reportPaged extends Report
   
   function Bookmark($txt,$level=0,$y=0)
   {
-    $this->_exporter->Bookmark($txt, $level, $y, $this->page(), $this->layout->getposYinPage());
+    $this->_exporter->Bookmark($txt, $level, $y, $this->page(), $this->layout->posYinPage());
   }
   
   function newPage()
@@ -216,6 +216,8 @@ class pageLayout
       $this->leftMargin = 0;
       $this->topMargin = 0;
       $this->bottomMargin = 0;
+      $this->paperWidth = $this->paperWidth - $report->LeftMargin - $report->RightMargin;
+      $this->paperHeight = $this->paperHeight - $report->TopMargin - $report->BottomMargin;
     } else {
       $this->rightMargin = $report->RightMargin;
       $this->leftMargin = $report->LeftMargin;
@@ -237,11 +239,8 @@ class pageLayout
     } else {
       $this->printWidth  = ($this->paperWidth - $this->leftMargin - $this->rightMargin); //width of printable area of page (w/o morgins)
       $this->pagesHorizontal = floor($this->reportWidth / $this->printWidth) + 1; // No of pages needed to print report
-    }
-
-    if (!$this->noAutoPage) {
       $this->printHeight = ($this->paperHeight - $this->topMargin - $this->bottomMargin - $this->pageHeaderHeight - $this->pageFooterHeight); //height of printable area of page (w/o margins)
-    }  
+    }
 
     $this->pageNo = -1;
   }

@@ -5,7 +5,7 @@
 	<title>TestReport</title>
 	<style type="text/css">
 <!--
-.AmberReport { position: relative; }
+.AmberReport { position: absolute; }
 .AmberReport div { position: absolute; overflow: hidden; }
 .s42	/* Bezeichnungsfeld11 */ { top: 9px; left: 9px; height: 45px; width: 642px; background-color: #33cccc; border-width: 1pt; border-color: #000000; border-style: solid; z-index: 10; visibility: visible; font-weight: 700; font-size: 26pt; font-family: 'Arial'; text-align: center; color: #ffffff; }
 .s43	/* Bezeichnungsfeld0 */ { top: 48px; left: 13px; height: 17px; width: 109px; border-width: 1px; border-color: #000000; border-style: solid; z-index: 10; visibility: visible; font-weight: 500; font-size: 8pt; font-family: 'Arial'; text-align: left; color: #000000; }
@@ -50,7 +50,7 @@
 <!-- Start of AmberReport // -->
 
 <div class="AmberReport">
-	<div style="position: relative; background-color: #FFFFFF; height: 1185px; width: 1235px; ">
+	<div style="position: relative; background-color: #ffffff; height: 1185px; width: 1235px; ">
 <!-- ###PAGE Start### -->
 <!-- ***deltaX: 0, x: 1440, y: 720 -->
 	<div  style="left: 106px; top: 53px; height: 0px; width: 660px; overflow: hidden; ">

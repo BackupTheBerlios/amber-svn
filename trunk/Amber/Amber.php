@@ -167,7 +167,7 @@ class Amber
         $this->_objectLoader->setDatabase(Amber::sysDb());
       } else {
         $this->_objectLoader =& new ObjectLoaderFile();
-        $this->_objectLoader->setBasePath($this->_config->getBasePath());
+        $this->_objectLoader->setBasePath($this->_config->get('sys/basepath'));
       }
       $this->_objectLoader->setConfig($this->_config);
     }
