@@ -291,32 +291,34 @@ class Report extends AmberObject
         $this->Cols =& $this->_data[$rowNumber];
 
         // Load Data
-        $this->onLoadData();
-        if ($isFirstRecord) {
-          $level = 0;
-        } else {
-          $level = $this->_getGroupLevel($this->Cols, $oldRow);
-          $this->_printNormalGroupFooters($maxLevel, $level);
+        $this->onLoadData($Cancel);
+        if (!$Cancel) {
+          if ($isFirstRecord) {
+            $level = 0;
+          } else {
+            $level = $this->_getGroupLevel($this->Cols, $oldRow);
+            $this->_printNormalGroupFooters($maxLevel, $level);
+          }
+
+          // Evaluate Expressions
+          $this->_setControlValues($maxLevel, $level);
+          $this->_resetRunningSum($maxLevel, $level);
+          $this->EvaluateExpressions();
+          $this->_runningSum($maxLevel, $level);
+
+          // Next Record
+          $this->OnNextRecord();
+          if ($isFirstRecord) {
+            $this->_printNormalSection($this->ReportHeader);
+          }
+          $this->_printNormalGroupHeaders($maxLevel, $level);
+
+          // Detail
+          $this->_printNormalSection($this->Detail);
+
+          $oldRow =& $this->Cols;
+          $isFirstRecord = false;
         }
-
-        // Evaluate Expressions
-        $this->_setControlValues($maxLevel, $level);
-        $this->_resetRunningSum($maxLevel, $level);
-        $this->EvaluateExpressions();
-        $this->_runningSum($maxLevel, $level);
-
-        // Next Record
-        $this->OnNextRecord();
-        if ($isFirstRecord) {
-          $this->_printNormalSection($this->ReportHeader);
-        }
-        $this->_printNormalGroupHeaders($maxLevel, $level);
-
-        // Detail
-        $this->_printNormalSection($this->Detail);
-        
-        $oldRow =& $this->Cols;
-        $isFirstRecord = false;
       }
     }
 
@@ -511,10 +513,11 @@ class Report extends AmberObject
   /**
    * @access protected
    */
-  function OnLoadData()
+  function OnLoadData(&$Cancel)
   {
     // Datarow has been fetched
-    $this->_Code->Report_OnLoadData();
+    $Cancel = false;
+    $this->_Code->Report_OnLoadData($Cancel);
   }
 
   /**
