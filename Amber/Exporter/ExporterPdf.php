@@ -62,7 +62,6 @@ class ExporterFPdf extends Exporter
       $this->comment("EndSubreport");
       return $this->_pdf->mayflower->subReportPop();
     } else {
-      parent::endReport($report);
       if (!$this->_report->layout->designMode) {
         $this->_report->_printNormalSection('PageFooter');
       }  
