@@ -40,15 +40,15 @@ setlocale (LC_MONETARY, 'de_DE', 'de_DE@euro'); // needed for numbers
 //setlocale (LC_ALL, 'de_DE', 'de_DE@euro');
 
 //$filter = 'BetreutePsy.NPNr > 2500';
-$filter = $_GET['filter'];
+if (isset($_GET['filter'])) {
+  $filter = $_GET['filter'];
+}
 $amber =& Amber::getInstance($cfg);
 
-ob_start();
 if ($mode == 'normal') {
   $amber->OpenReport($repName, AC_NORMAL, $filter, $type);
 } else {
   $amber->OpenReport($repName, AC_DESIGN, $filter, $type);
 }
-ob_end_flush();
 
 ?>

@@ -45,6 +45,7 @@ class Report
   var $ReportHeader;
   var $PageHeader;
   var $GroupHeaders;
+  var $GroupLevels;
   var $Detail;
   var $GroupFooters;
   var $PageFooter;
@@ -62,7 +63,6 @@ class Report
   //////////////////////////////////////////////////////////////////
 
   var $_data; // Holds result of the database query
-  var $_xml; // XML tree
   var $_groupFields; // contains field names by which to group
   var $_exporter;
 
@@ -100,70 +100,6 @@ class Report
   }
 
   /**
-   * Enables caching if $value is true, otherwise disables it if $value is false.
-   * Caching is disabled by default.
-   *
-   * @see getCacheEnabled(), setCacheDir(), getCacheDir()
-   *
-   * @access public
-   * @param bool
-   *
-   */
-  /*function setCacheEnabled($value)
-  {
-    if (is_bool($value)) {
-      $this->_xmlLoader->setCacheEnabled($value);
-    }
-  }*/
-
-  /**
-   *
-   * @see setCacheEnabled(), setCacheDir(), getCacheDir()
-   * @return bool True or false depending on whether caching is enabled or disabled.
-   *
-   */
-  /*function getCacheEnabled()
-  {
-    return $this->_xmlLoader->getCacheEnabled();
-  }*/
-
-  /**
-   * Sets the directory where files used for caching will be written to.
-   *
-   * Specifying an invalid (non-existant or not writable directory) will result in
-   * an error message to be shown AND caching being turned off.
-   *
-   * @see getCacheDir(), setCacheEnabled(), getCacheEnabled()
-   *
-   * @access public
-   * @param string name of the directory
-   *
-   */
-  /*function setCacheDir($dirName)
-  {
-    if (!is_dir($dirName)) {
-      Amber::showError('Error', 'setCacheDir(): Directory name given is not a directory or does not exist: ' . htmlentities($dirName));
-      $this->_xmlLoader->setCacheEnabled(false);
-    } elseif (!is_writable($dirName)) {
-      Amber::showError('Error', 'setCacheDir(): Cannot write to cache directory: ' . htmlentities($dirName));
-      $this->_xmlLoader->setCacheEnabled(false);
-    } else{
-      $this->_xmlLoader->setCacheDir($dirName);
-    }
-  }*/
-
-  /**
-   *
-   * @see setCacheDir(), setCacheEnabled(), getCacheEnabled()
-   * @return string Current directory in which files for caching purposes will be stored.
-   *
-   */
-  /*function getCacheDir()
-  {
-    return $this->_xmlLoader->getCacheDir();
-  }*/
-
-  /**
    * Sets the directory that contains the report files
    *
    * Specifying an invalid (non-existant or not readable directory) will result in
@@ -193,18 +129,6 @@ class Report
   /**
    *
    * @access public
-   * @see setReportDir()
-   * @return string
-   *
-   */
-  function getReportDir()
-  {
-    return $this->_reportDir;
-  }
-
-  /**
-   *
-   * @access public
    * @see setFilter()
    *
    */
@@ -215,58 +139,29 @@ class Report
     }
   }
 
-  /*
-   * @todo quick&dirty: needs to be rewritten
-   */
-  var $_loaderType = 'file';
-  /*
-   * @todo quick&dirty: needs to be rewritten
-   */
-  function setLoader($type)
-  {
-    $this->_loaderType = $type;
-  }
-
   /**
    *
    * @access public
    * @param string name of the report to load
    *
    */
-  function load($reportName)
+  function initialize(&$data)
   {
-    $db = Amber::currentDb();
-    $objLoader = new ReportLoader();
+    $this->Name = $data['name'];
 
-    if ($this->_loaderType == 'db') {
-      $loadResult = $objLoader->loadFromDb($db, $reportName);
-    } else {
-      $loadResult = $objLoader->loadFromFile($this->_reportDir, $reportName);
-    }
-
-    if ($loadResult == false) {
-      Amber::showError('Error ', $objLoader->getLastError());
-      die();
-    }
-
-    $this->Name = $objLoader->getName();
-
-    $res =& $objLoader->getDesign();
-    $this->_xml = $res['report'];
+    $res =& XMLLoader::_makeXMLTree($data['design']);
+    $xml = $res['report'];
 
     $classLoaded = false;
-    $className = $objLoader->getClassName();
+    $className = $data['class'];
     if ($className) {
-      if ($this->_loaderType == 'db') {
-        eval($objLoader->getCode()); // code in database is currently being stored without php tags! fix this!
-      } else {
-        eval(' ?' . '>' . $objLoader->getCode() . '<' . '?php ');
-      }
+      eval($data['code']); // code in database is currently being stored without php tags! fix this!
+      //eval(' ?' . '>' . $data['code'] . '<' . '?php ');
       if (class_exists($className)) {
         $this->_Code =& new $className;
         $classLoaded = true;
       } else {
-        Amber::showError('Error', 'Cannot instatiate undefined class "' . $className . '"');
+        Amber::showError('Error', 'Cannot instantiate undefined class "' . $className . '"');
       }
     }
     if (!$classLoaded) {
@@ -274,24 +169,21 @@ class Report
     }
     $this->_ClassName = get_class($this->_Code);
 
+    //
     // Continue with common initialization
-    $this->_afterLoad();
-  }
-
-  function _afterLoad()
-  {
-    $this->Width = $this->_xml['Width'];
-    if (isset($this->_xml['Printer'])) {
-      $this->LeftMargin = wennleer($this->_xml['Printer']['LeftMargin'], 720);
-      $this->RightMargin = wennleer($this->_xml['Printer']['RightMargin'], 720);
-      $this->TopMargin = wennleer($this->_xml['Printer']['TopMargin'], 720);
-      $this->BottomMargin = wennleer($this->_xml['Printer']['BottomMargin'], 720);
-      $this->Orientation = MSPageOrientation($this->_xml['Printer']['Orientation']);
-      MSPageSize($this->_xml['Printer']['PaperSize'], $this->PaperSize, $this->PaperWidth, $this->PaperHeight);
+    //
+    $this->Width = $xml['Width'];
+    if (isset($xml['Printer'])) {
+      $this->LeftMargin = wennleer($xml['Printer']['LeftMargin'], 720);
+      $this->RightMargin = wennleer($xml['Printer']['RightMargin'], 720);
+      $this->TopMargin = wennleer($xml['Printer']['TopMargin'], 720);
+      $this->BottomMargin = wennleer($xml['Printer']['BottomMargin'], 720);
+      $this->Orientation = MSPageOrientation($xml['Printer']['Orientation']);
+      MSPageSize($xml['Printer']['PaperSize'], $this->PaperSize, $this->PaperWidth, $this->PaperHeight);
     }
 
-    if (isset($this->_xml['RecordSource']) && ($this->_xml['RecordSource'] != '')) {
-      $this->RecordSource = $this->_xml['RecordSource'];
+    if (isset($xml['RecordSource']) && ($xml['RecordSource'] != '')) {
+      $this->RecordSource = $xml['RecordSource'];
     }
 
     /*
@@ -299,12 +191,12 @@ class Report
      */
     $sections = array('ReportHeader', 'PageHeader', 'Detail', 'ReportFooter', 'PageFooter');
     foreach ($sections as $secName) {
-      if (isset($this->_xml[$secName])) {
-        $this->$secName = new Section($secName);
+      if (isset($xml[$secName])) {
+        $this->$secName =& new Section($secName);
       } else {
-        $this->$secName = new SectionNull($secName);
+        $this->$secName =& new SectionNull($secName);
       }
-      $this->$secName->load($this, $this->_xml[$secName]);
+      $this->$secName->load($this, $xml[$secName]);
     }
 
     /*
@@ -312,10 +204,10 @@ class Report
      */
     $groupSections = array('GroupHeaders', 'GroupFooters');
     foreach ($groupSections as $groupSecName) {
-      if (is_array($this->_xml[$groupSecName])) {
-        foreach ($this->_xml[$groupSecName] as $i => $sectionXML) {
+      if (is_array($xml[$groupSecName])) {
+        foreach ($xml[$groupSecName] as $i => $sectionXML) {
           $t =& $this->$groupSecName; // reference to array
-          $t[$i] = new GroupSection($groupSecName);
+          $t[$i] =& new GroupSection($groupSecName);
           $t[$i]->load($this, $sectionXML);
         }
       }
@@ -324,9 +216,9 @@ class Report
     /*
      * Group Levels
      */
-    if (is_array($this->_xml['GroupLevels'])) {
-      foreach ($this->_xml['GroupLevels'] as $i => $levelXML) {
-        $this->GroupLevels[$i] = new GroupLevel();
+    if (is_array($xml['GroupLevels'])) {
+      foreach ($xml['GroupLevels'] as $i => $levelXML) {
+        $this->GroupLevels[$i] =& new GroupLevel();
         $this->GroupLevels[$i]->load($levelXML);
       }
     }
@@ -360,7 +252,6 @@ class Report
   function run($type)
   {
     $this->_installExporter($type);
-    //Amber::dump($this->_exporter->type);
     $this->_exporter->setDocumentTitle($this->Name);
 
     $this->OnOpen($cancel);
@@ -603,7 +494,9 @@ class Report
    * @access private
    * @param string
    */
-  function _printNormalSection($sectionName) {
+  function _printNormalSection($sectionName)
+  {
+    //Amber::dumpArray($this);
     $this->$sectionName->printNormal();
   }
 
@@ -611,7 +504,8 @@ class Report
    * @access private
    * @param string
    */
-  function _printDesignSection($sectionName) {
+  function _printDesignSection($sectionName)
+  {
     $this->$sectionName->printDesign();
   }
 
@@ -620,7 +514,8 @@ class Report
    * @param int
    * @param int
    */
-  function _printNormalGroupHeaders($maxLevel, $level) {
+  function _printNormalGroupHeaders($maxLevel, $level)
+  {
     for ($i = $level; $i < $maxLevel; $i++) {
       if (isset($this->GroupHeaders[$i])) {
         $this->GroupHeaders[$i]->printNormal();
@@ -721,9 +616,10 @@ class Report
    */
   function _installExporter($type)
   {
-    $this->_exporter = ExporterFactory::create($type, $this);
+    $this->_exporter =& ExporterFactory::create($type, $this);
     if (is_array($this->Controls)) {
-      foreach (array_keys($this->Controls) as $ctlName) {
+      $ctlNames = array_keys($this->Controls);
+      foreach ($ctlNames as $ctlName) {
         $this->_exporter->setControlExporter($this->Controls[$ctlName]);
       }
     }

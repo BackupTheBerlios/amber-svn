@@ -7,19 +7,19 @@
  */
 class PDF extends FPDF
 {
-  
+
   var $_inSection;
   var $_inReport;
   var $_buff;
   var $_reportPages;
   var $_actPageNo;
   var $_sectionType;    // 'Head', 'Foot' or ''
-  
-    
+
+
   function _out($s)
   {
     if($this->state <> 2) {
-      parent::_out($s);      
+      parent::_out($s);
     } elseif ($this->_inSection) {
       $this->_buff .= $s . "\n";
       #parent::_out($s);
@@ -29,14 +29,14 @@ class PDF extends FPDF
       parent::_out($s);
     }
   }
-  
+
   function startSection()
   {
     $this->_buff = '';
     $this->_inSection = true;
     $this->SetXY(0, 0);
   }
-  
+
   function endSection($sectionHeight, $keepTogether)
   {
     $this->_inSection = false;
@@ -48,73 +48,73 @@ class PDF extends FPDF
         $this->newPage();
         $startPage = floor($this->_posY / $this->_printHeight);
         $endPage   = floor(($this->_posY + $sectionHeight) / $this->_printHeight);
-      }  
-    }  
+      }
+    }
 
     for ($page = $startPage; $page <= $endPage; $page++) {
       if (($page <> $this->_actPageNo)) {
         if ($this->_actPageNo >= 0) {
           $this->_exporter->printPageFooter();
-          $this->_sectionType = 'Foot'; 
-        }  
+          $this->_sectionType = 'Foot';
+        }
         $this->_actPageNo = $page;
-        $this->_sectionType = 'Head'; 
+        $this->_sectionType = 'Head';
         $this->_exporter->printPageHeader();
-        $this->_sectionType = 'Head'; 
+        $this->_sectionType = 'Head';
       }
-                  
+
       $this->_sectionType = '';
       $this->SetCoordinate(0, -$this->_posY);
       $this->SetClipping(0, 0, $this->_reportWidth, $sectionHeight);
 
       if (!$this->_exporter->DesignMode) {
         $formatCount = $page - $startPage + 1;
-        $this->_exporter->onPrint(&$cancel, $formatCount);
+        $this->_exporter->onPrint($cancel, $formatCount);
         if (!$cancel) {
           $this->_out($secBuff);
-        }  
+        }
       }
-      
+
       $this->_out($secBuff);
-      $this->RemoveClipping();   
+      $this->RemoveClipping();
       $this->RemoveCoordinate();
     }
     $this->_posY += $sectionHeight;
-  }  
+  }
 
-  function page() 
+  function page()
   {
     return $this->_actPageNo + 1;
   }
-  
+
   function newPage()
   {
-    $this->_posY = ($this->_actPageNo + 1) * $this->_printHeight;    
+    $this->_posY = ($this->_actPageNo + 1) * $this->_printHeight;
   }
 
   function pageHeaderEnd()
   {
-   $this->_sectionType = 'Head'; 
+   $this->_sectionType = 'Head';
    $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->_printHeight, $this->_headerHeight);
-  }  
-  
+  }
+
   function pageFooterEnd()
   {
     $this->_sectionType = 'Foot';
     $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->_printHeight, $this->_footerHeight);
   }
-  
+
   function _pageHeaderOrFooterEnd($posY, $height)
   {
     $this->_inSection = false;
     $this->SetCoordinate(0, -$posY);
     $this->SetClipping(0, 0, $this->_reportWidth, $height);
     $this->_out($this->_buff);
-    $this->RemoveClipping();   
+    $this->RemoveClipping();
     $this->RemoveCoordinate();
   }
-  
-      
+
+
   function reportStart(&$exporter, $width, $headerHeight=0, $footerHeight=0)
   {
     $this->_exporter =& $exporter;
@@ -126,25 +126,25 @@ class PDF extends FPDF
     $this->_posY = 0;
     $this->_actPageNo = -1;
 
-    $this->SetFont('helvetica');    // need to set font, drawcolor, fillcolor before AddPage 
+    $this->SetFont('helvetica');    // need to set font, drawcolor, fillcolor before AddPage
     $this->SetDrawColor(0, 0, 0);   // else we get strange errors. prb fpdf does some optimisations which we break
     $this->SetFillColor(0, 0, 0);
     $this->AddPage();
     $this->_inReport = true;
   }
-  
+
   function reportEnd()
   {
     $this->_exporter->printPageFooter();
     $this->_inReport = false;
     $firstPage = true;  //first page is out
-    
+
     $endPageX = floor($this->_reportWidth / $this->_printWidth);
     foreach(array_keys($this->_reportPages) as $pageY) {
       for($pageX = 0; $pageX <= $endPageX; $pageX++) {
         if (!$firstPage) {
           $this->AddPage();
-        }  
+        }
         $firstPage = false;
 
         $y = $this->tMargin;
@@ -175,8 +175,8 @@ class PDF extends FPDF
         $this->RemoveCoordinate();
         $this->RemoveClipping();
       }
-    } 
-  }  
+    }
+  }
 
 
 
@@ -184,18 +184,18 @@ class PDF extends FPDF
 
 
 
-  
-  
-  
-  
+
+
+
+
 
 
   /**
   *
-  * Origin of coordinates is moved to (x,y) 
-  * 
+  * Origin of coordinates is moved to (x,y)
+  *
   * @access public
-  * @param  number x-coordinate of origin  
+  * @param  number x-coordinate of origin
   * @param  number y-coordinate of origin
   */
   function SetCoordinate($x, $y)
@@ -208,11 +208,11 @@ class PDF extends FPDF
     $this->_out('Q');
   }
 
- 
-  
-  
-  
-  
+
+
+
+
+
 
 
   /*****************************************
@@ -245,9 +245,9 @@ class PDF extends FPDF
       if($y == -1)
         $y = $this->_posY - ($this->_actPageNo * $this->_printHeight);
       $p = $this->_actPageNo + 1;
-      if ($p <= 0) 
+      if ($p <= 0)
         $p = 1;
-        
+
       $this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$p);
     }
   }
@@ -329,24 +329,24 @@ class PDF extends FPDF
   }
 
 
-  
+
   /********************************************
   *
   *  changed methods of fpdf
   *
   *********************************************/
-  
-  
-  
+
+
+
  /*********
   *  constructor (add new unit)
   *
   * + elseif($unit=='twips')
-  * + $this->k=1/20;  
+  * + $this->k=1/20;
   *
-  */ 
-  
-  
+  */
+
+
   function PDF($orientation='P',$unit='mm',$format='A4')
 {
 	//Some checks
@@ -389,7 +389,7 @@ class PDF extends FPDF
 	elseif($unit=='in')
 		$this->k=72;
   elseif(is_numeric($unit))
-    $this->k=$unit;  
+    $this->k=$unit;
 	else
 		$this->Error('Incorrect unit: '.$unit);
 	//Page format
@@ -460,8 +460,8 @@ class PDF extends FPDF
   *	- if($this->FontFamily==$family and $this->FontStyle==$style and $this->FontSizePt==$size)
   *	-    return;
   *
-  */ 
-  
+  */
+
  function SetFont($family,$style='',$size=0)
 {
 	//Select a font; size given in points
@@ -524,13 +524,13 @@ class PDF extends FPDF
 	if($this->page>0)
 		$this->_out(sprintf('BT /F%d %.2f Tf ET',$this->CurrentFont['i'],$this->FontSizePt));
 }
- 
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
 
 }
 ?>

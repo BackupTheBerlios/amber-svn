@@ -325,7 +325,7 @@ class SectionNull extends Section
    */
   function load(&$parent, $data)
   {
-    $this->_parent =& $parent;
+    $this->_parent = $parent;
     $this->Name = 'NULL';
     $this->Height = 0;
     $this->ForceNewPage = 0;
@@ -343,6 +343,10 @@ class SectionNull extends Section
    *
    */
   function printReport()
+  {
+  }
+
+  function printDesign($GroupLevel = null)
   {
   }
 

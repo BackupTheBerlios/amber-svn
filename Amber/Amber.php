@@ -4,6 +4,7 @@ define('__AMBER_BASE__', dirname(__FILE__));
 
 require_once __AMBER_BASE__ . '/Report.php';
 require_once 'adodb/adodb.inc.php';
+require_once 'ObjectLoader.php';
 
 define('AC_DESIGN', 1);
 define('AC_NORMAL', 2);
@@ -11,16 +12,11 @@ define('AC_NORMAL', 2);
 class Amber
 {
   var $_config;
+  var $_objectLoader;
 
   function init()
   {
-    $db = Amber::currentDb();
-    $m = new ModuleLoader();
-    if ($this->_config->getMedium() == 'db') {
-      $m->loadFromDb($db);
-    } else {
-      $m->loadFromFile('modules/');
-    }
+    $this->loadObject('module', '');
   }
 
   /**
@@ -61,7 +57,10 @@ class Amber
 
   function OpenReport($reportName, $mode = AC_NORMAL, $filter = '', $type = 'html', $noMargin = false)
   {
-    $rep =& $this->LoadReport($reportName);
+    $rep =& $this->loadObject('report', $reportName);
+    if ($rep == false) {
+      return;
+    }
 
     $rep->Filter = $filter;
     if ($noMargin == true) {
@@ -80,25 +79,81 @@ class Amber
     }
   }
 
-  function &LoadReport($reportName)
+  function &loadObject($type, $name)
   {
-    $rep =& new Report();
-    $rep->setConfig($this->_config);
-    if ($this->_config->getMedium() == 'db') {
-      $rep->setLoader('db');
-    } else {
-      $rep->setReportDir('reports');
-      //$rep->setCacheDir('cache');
-      //$rep->setCacheEnabled(true);
-      $rep->setLoader('file');
+    if (!isset($this->_objectLoader)) {
+      if ($this->_config->getMedium() == 'db') {
+        $this->_objectLoader =& new ObjectLoaderDb();
+        $this->_objectLoader->setDatabase(Amber::currentDb());
+      } else {
+        $this->_objectLoader =& new ObjectLoaderFile();
+        //$this->_objectLoader->setBasePath('modules/');
+        Amber::showError('Error', 'Loading from file not yet done');
+        die();
+      }
+      $this->_objectLoader->setConfig($this->_config);
     }
-    $rep->load($reportName);
-    return $rep;
+
+    $result =& $this->_objectLoader->load($type, $name);
+    if ($result == false) {
+      Amber::showError('Error', $this->_objectLoader->getLastError());
+    }
+
+    return $result;
   }
 
   function dump($var)
   {
     echo '<div align="center"><pre style="text-align: left; width: 80%; border: solid 1px #ff0000; font-size: 9pt; color: #000000; background-color: #ffffff; padding: 5px; z-index: 99999; position: relative;">' . htmlentities(print_r($var, 1)) . '</pre></div>';
+  }
+
+  function dumpArray($var)
+  {
+    $v = $var;
+
+    echo Amber::dumpArrayString($v);
+  }
+
+  function dumpArrayString(&$var)
+  {
+    static $level = 0;
+    $level++;
+    if ($level > 5) {
+      return '<font color="red" size="1">' . htmlspecialchars('<...>') . '</font>';
+    }
+
+    if (is_object($var)) {
+      $v = (array)$var;
+    } else {
+      $v = $var;
+    }
+
+    if (is_array($v)) {
+      $result = '<table border="1" cellpadding="1" cellspacing="0" bgcolor="white">';
+      if (!count($v)) {
+        $result .= '<tr><td><font color="green" size="1">Array()</font></td></tr>';
+      }
+      while (list($key, $val) = each($v)) {
+        $result .= '<tr><td><font size="1" color="blue">' . htmlspecialchars($key) . '</font></td><td>';
+        if (is_array($v[$key]) || is_object($v[$key])) {
+          $result .= Amber::dumpArrayString($v[$key]);
+          $level--;
+        } else {
+          if (empty($val)) {
+            $result .= '<font color="lightgrey" size="1">' .htmlspecialchars('<Empty>') . '</font><br />';
+          } else {
+            $result .= '<font color="green" size="1">' . nl2br(htmlspecialchars($val)) . '</font><br />';
+          }
+        }
+        $result .= "</td></tr>\n";
+      }
+      $result .= '</table>';
+    } else {
+      Amber::dump($v);
+    }
+
+
+    return $result;
   }
 
   function showError($title, $text)

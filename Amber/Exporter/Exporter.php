@@ -70,7 +70,7 @@ class Exporter
   {
     $top =& $this->_sections[count($this->_sections) - 1];
     if (!is_null($top)) {
-      $top->_OnPrint(&$cancel, $formatCount);
+      $top->_OnPrint($cancel, $formatCount);
     }
   }
 

@@ -36,12 +36,14 @@ class ExporterFactory
   /**
    * @return ExporterFactory reference to singleton
    */
-  function &getInstance() {
+  function &getInstance()
+  {
     static $instance = null;
 
     if (is_null($instance)) {
       $instance = new ExporterFactory();
     }
+
     return $instance;
   }
 
@@ -51,7 +53,7 @@ class ExporterFactory
    * @param Report
    * @return Exporter
    */
-  function create($type, &$report)
+  function &create($type, &$report)
   {
     $factory =& ExporterFactory::getInstance();
     $className = $factory->_classList[$type];
@@ -62,6 +64,7 @@ class ExporterFactory
     $ex =& new $className;
     $ex->_report =& $report;
     $ex->createdAs = $type;
+
     return $ex;
   }
 

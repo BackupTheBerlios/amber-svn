@@ -34,12 +34,14 @@ class ControlFactory
   /**
    * @return ControlFactory reference to singleton
    */
-  function &getInstance() {
+  function &getInstance()
+  {
     static $instance = null;
 
     if (is_null($instance)) {
       $instance = new ControlFactory();
     }
+
     return $instance;
   }
 

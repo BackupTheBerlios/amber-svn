@@ -7,8 +7,6 @@
  *
  */
 
-define('__SCALE__', 1.1); // used in html_twips(), FontBox::load()
-
 ExporterFactory::register('typo3', 'ExporterTypo3');
 
 /**
@@ -100,7 +98,7 @@ class ExporterTypo3 extends Exporter
         $this->_posY += $this->_report->TopMargin;
         $this->_report->_printNormalSection('PageHeader'); // FIXME: this has to be done by the Report class!!!
       }
-    }  
+    }
     $buffer = null;
   }
 
@@ -139,13 +137,13 @@ class ExporterTypo3 extends Exporter
 
     if ($this->DesignMode) {
         $out .= $buffer;
-    } else {        
-      $this->onPrint(&$cancel, 1);
+    } else {
+      $this->onPrint($cancel, 1);
       if (!$cancel) {
         $out .= $buffer;
-      }  
+      }
     }
-    
+
     if ($this->DesignMode) {
       $out .= "\t</div>\n";
     } else {
@@ -153,7 +151,7 @@ class ExporterTypo3 extends Exporter
     }
     echo $out;
     $this->_posY += $height;
-    parent::endSection($section, $height, $buffer);    
+    parent::endSection($section, $height, $buffer);
   }
 
   // Page handling - html

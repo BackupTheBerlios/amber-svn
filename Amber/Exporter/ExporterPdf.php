@@ -237,7 +237,7 @@ class ExporterFPdf extends Exporter
 
   function printDesign(&$control, &$buffer, $content)
   {
-    $this->printNormal(&$control, $buffer, $content);
+    $this->printNormal($control, $buffer, $content);
   }
 
   /*********************************

@@ -146,7 +146,7 @@ class ExporterHtml extends Exporter
     if ($this->DesignMode) {
         $out .= $buffer;
     } else {
-      $this->onPrint(&$cancel, 1);
+      $this->onPrint($cancel, 1);
       if (!$cancel) {
         $out .= $buffer;
       }
@@ -200,7 +200,7 @@ class ExporterHtml extends Exporter
       'subreport' => 'SubReportExporterHtml');
     $type = strtolower(get_class($ctrl));
     if (!array_key_exists($type, $classList)) {
-      $type = 'SubReport';  // FIXME: Null-Object for unknown Controltypes
+      $type = 'subreport';  // FIXME: Null-Object for unknown Controltypes
     }
     $objName = $classList[$type];
     $ctrl->_exporter =& new $objName;

@@ -39,6 +39,16 @@ class XMLLoader
     }
   }
 
+  /**
+   * Enables caching if $value is true, otherwise disables it if $value is false.
+   * Caching is disabled by default.
+   *
+   * @see getCacheEnabled(), setCacheDir(), getCacheDir()
+   *
+   * @access public
+   * @param bool
+   *
+   */
   function setCacheEnabled($value)
   {
     if (is_bool($value)) {
@@ -46,11 +56,26 @@ class XMLLoader
     }
   }
 
+  /**
+   *
+   * @see setCacheEnabled(), setCacheDir(), getCacheDir()
+   * @return bool True or false depending on whether caching is enabled or disabled.
+   *
+   */
   function getCacheEnabled()
   {
     return $this->_cacheEnabled;
   }
 
+    /**
+   * Sets the directory where files used for caching will be written to.
+   *
+   * @see getCacheDir(), setCacheEnabled(), getCacheEnabled()
+   *
+   * @access public
+   * @param string name of the directory
+   *
+   */
   function setCacheDir($dirName)
   {
     if (empty($dirName)) {
@@ -60,6 +85,12 @@ class XMLLoader
     }
   }
 
+  /**
+   *
+   * @see setCacheDir(), setCacheEnabled(), getCacheEnabled()
+   * @return string Current directory in which files for caching purposes will be stored.
+   *
+   */
   function getCacheDir()
   {
     return $this->_cacheDir;
