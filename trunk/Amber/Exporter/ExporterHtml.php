@@ -26,20 +26,20 @@ class ExporterHtml extends Exporter
   var $cssClassPrefix = 's';
 
   var $_CtrlStdValues;
-  
+
   var $_html;
-  
+
   // Report - html
 
   function &getExporterBasicClass(&$layout, $reset)
   {
     return HTML::getInstance($layout, $reset);
-  }  
+  }
 
   function startReportSubExporter(&$report, $asSubreport = false)
   {
     $this->layout =& $report->layout;
-    
+
     $tmp = '';
     if (!$this->_asSubreport) {
       $tmp = "\n<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n<head>\n";
@@ -59,7 +59,7 @@ class ExporterHtml extends Exporter
       $this->setCSS($css);
     }
   }
-  
+
   function endReportSubExporter(&$report)
   {
     if (!$this->_asSubreport) {
@@ -82,17 +82,17 @@ class ExporterHtml extends Exporter
     $style1['height'] = $this->_html_twips($h);
     $style1['width'] = $this->_html_twips($w);
     $style1['overflow'] = 'hidden';
-    
+
     $out .=  ' style="' . $this->arrayToStyle($style1) . "\">\n";
-    
+
     $out .= "\t<div ";
     $style2['left'] = $this->_html_twips(-$deltaX);
     $style2['overflow'] = 'visible';
-    
+
     $out .=  ' style="' . $this->arrayToStyle($style2) . "\">\n";
-    
+
     $out .= $dataBuff;
-    
+
     $out .= "\t</div></div>\n";
     echo $out;
   }
@@ -101,12 +101,12 @@ class ExporterHtml extends Exporter
   {
     echo $secBuff;
   }
-    
+
   function outSectionEnd()
   {
     echo "\t</div name='sectionEND'>\n";
   }
-  
+
   function outSectionStart($y, $w, $h, $backColor, $sectionName='')
   {
     $style['left'] = 0;
@@ -114,23 +114,23 @@ class ExporterHtml extends Exporter
     $style['height'] = $this->_html_twips($h);
     $style['width'] = $this->_html_twips($w);
     $style['background-color'] = $this->_html_color($backColor);
-    
+
     echo "\t<div  name='sectionStart' style=\"" . $this->arrayToStyle($style) . "\">\n";
   }
 
-  
+
   function startPage($paperHeight)
   {
     $style['position'] = 'relative';
     #$style['left'] = 0;
     #$style['top'] = 0;
-    $style['background-color'] = "#FFFFFF";
+    $style['background-color'] = "#ffffff";
     $style['height'] = $this->_html_twips($paperHeight);
     $style['width'] = $this->_html_twips($this->layout->paperWidth);
     echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">\n";
     $this->comment('###PAGE Start###');
   }
-  
+
   function endPage()
   {
     $this->comment('###PAGE End ###');
@@ -142,11 +142,11 @@ class ExporterHtml extends Exporter
     $style['height'] = '2px';
     $style['width'] = '1px';
     echo "\t<div style=\"" . $this->arrayToStyle($style) . "\"> &nbsp; </div>\n";
-    
-  }  
 
-  
-  
+  }
+
+
+
   function getReportCssStyles(&$report, $cssClassPrefix)
   {
     $this->cssClassPrefix = $cssClassPrefix;
@@ -197,13 +197,13 @@ class ExporterHtml extends Exporter
     $this->_base->_out($out);
 
   }
-  
+
   function outSectionEnd1()
   {
     $out .= "\t</div></div>\n";
     $this->_base->_out($out);
   }
- 
+
   // Page handling - html
 
   function printTopMargin($posY)
@@ -222,7 +222,7 @@ class ExporterHtml extends Exporter
 
     $this->_base->_out($out);
   }
-  
+
   function printBottomMargin($posY)
   {
     $out .= "\t<div name=\"BottomMargin\"";
@@ -239,7 +239,7 @@ class ExporterHtml extends Exporter
     $out .= "&nbsp;</div>\n";
     $this->_base->_out($out);
   }
-  
+
   // Controls - html
 
   function setControlExporter(&$ctrl)
@@ -624,10 +624,10 @@ class SubReportExporterHtml extends ControlExporterHtml
 
     // Get tags for subreport control
     $out = parent::getTag($control, '##CONTENT##');
-    
+
     // Insert result of subreport execution
     $out = str_replace('##CONTENT##', $repHtml, $out);
-    
+
     return $out;
   }
 }
@@ -648,7 +648,7 @@ class CheckBoxExporterHtml extends ControlExporterHtml
     $tmpCtrl->Height = 11 * 15;
     $tmpCtrl->FontWeight = 700;
     $tmpCtrl->BackStyle = true;
-    
+
     if (($value === '0') || ($value === 0)) {
       $value = '';
       $tmpCtrl->BackColor = 0xffffff;

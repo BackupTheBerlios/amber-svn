@@ -32,7 +32,7 @@ class Amber
 
   var $_db; // ADODB database containing data
   var $_sysdb; // ADODB database containig tx_amber_sys_objects
-  
+
   var $_stdExporter; //std-exporter: the exporter the report was opened with
 
   function init()
@@ -129,13 +129,13 @@ class Amber
 
     $rep->Filter = $filter;
     if ($noMargin == true) {
-      $rep->resetMargin();
+      $rep->noMargins();
     }
 
-    if ($type == 'html') {
+    if (($type == 'html') || ($type == 'typo3')) {
       $rep->setContinous();
-    }  
-    
+    }
+
     // Run it
     switch ($mode) {
       case AC_DESIGN:
