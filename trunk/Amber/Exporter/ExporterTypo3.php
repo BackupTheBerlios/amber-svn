@@ -42,11 +42,7 @@ class ExporterTypo3 extends ExporterHtml
     $uniqueId = 'AmberReport' . mt_rand();
 
     // General styles
-    if ($this->getUserAgent() == 'msie') {
-      $generalCSS = ".AmberReport { position: absolute; }\n";
-    } else {
-      $generalCSS = ".AmberReport { position: relative; }\n";
-    }
+    $generalCSS = '';
     $generalCSS .= '.AmberReport div { position: absolute; overflow: hidden; }';
 
     $GLOBALS['TSFE']->setCSS('AmberReport', $generalCSS);

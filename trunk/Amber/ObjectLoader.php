@@ -42,10 +42,10 @@ class ObjectLoader
         $obj =& $this->loadModule($objectName);
         break;
       case 'report':
-        $obj = $this->loadReport($objectName);
+        $obj =& $this->loadReport($objectName);
         break;
       case 'form':
-        $obj = $this->loadForm($objectName);
+        $obj =& $this->loadForm($objectName);
         break;
     }
 
