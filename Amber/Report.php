@@ -17,8 +17,6 @@ require_once 'Controls/ControlFactory.php';
 require_once 'phpReport_UserFunctions.php';
 require_once 'basic.php';
 
-require_once 'adodb/adodb.inc.php';
-
 /**
  *
  * @package PHPReport
@@ -217,23 +215,6 @@ class Report
     }
   }
 
-  function &currentDb()
-  {
-    if (!isset($this->_db)) {
-      $dbCfg =& $this->_globalConfig->database;
-      $db =& ADONewConnection($dbCfg['driver']);
-      $conResult = @$db->PConnect($dbCfg['host'], $dbCfg['username'], $dbCfg['pwd'], $dbCfg['dbname']);
-      $db->SetFetchMode(ADODB_FETCH_ASSOC);
-      if ($conResult == false) {
-        Amber::showError('Database Error '  . $db->ErrorNo(), $db->ErrorMsg());
-        die();
-      }
-      $this->_db =& $db;
-    }
-
-    return $this->_db;
-  }
-
   /*
    * @todo quick&dirty: needs to be rewritten
    */
@@ -254,12 +235,11 @@ class Report
    */
   function load($reportName)
   {
-    $db = $this->currentDb();
-
+    $db = Amber::currentDb();
     $objLoader = new ReportLoader();
 
     if ($this->_loaderType == 'db') {
-      $loadResult = $objLoader->loadFromDb($this->_db, $reportName);
+      $loadResult = $objLoader->loadFromDb($db, $reportName);
     } else {
       $loadResult = $objLoader->loadFromFile($this->_reportDir, $reportName);
     }
@@ -515,7 +495,7 @@ class Report
     $sql = $this->_makeSqlFilter($this->RecordSource, $this->Filter);
 
     // Execute query
-    $db = $this->currentDb();
+    $db = Amber::currentDb();
     $this->_data =& $db->GetAll($sql);
     if (empty($this->_data)) {
       if ($db->ErrorNo() != 0) {

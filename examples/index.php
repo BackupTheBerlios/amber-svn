@@ -39,8 +39,6 @@ setlocale (LC_TIME, 'de_DE', 'de_DE@euro'); // needed for date, time
 setlocale (LC_MONETARY, 'de_DE', 'de_DE@euro'); // needed for numbers
 //setlocale (LC_ALL, 'de_DE', 'de_DE@euro');
 
-include_modules();
-
 //$filter = 'BetreutePsy.NPNr > 2500';
 $filter = $_GET['filter'];
 $amber =& Amber::getInstance($cfg);
@@ -49,15 +47,6 @@ if ($mode == 'normal') {
   $amber->OpenReport($repName, AC_NORMAL, $filter, $type);
 } else {
   $amber->OpenReport($repName, AC_DESIGN, $filter, $type);
-}
-
-
-function include_modules()
-{
-  $modPath = 'modules/';
-  foreach (glob($modPath . '*.php') as $filename) {
-    include_once $filename;
-  }
 }
 
 ?>

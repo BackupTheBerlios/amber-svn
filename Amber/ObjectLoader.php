@@ -2,9 +2,47 @@
 
 class ObjectLoader
 {
+  var $sysTable = 'tx_amber_sys_objects';
+  var $objectTypes = array('report' => 1, 'module' => 2);
+
   function load($objectName) {}
   function getName() {}
-  function getType() {}
+  function getType()
+  {
+    $types = array_flip($this->objectTypes);
+    return $types[$this->_data['type']];
+  }
+}
+
+class ModuleLoader extends ObjectLoader
+{
+  function loadFromDb($db)
+  {
+    $dict = NewDataDictionary($db);
+    $sql = 'Select * from ' . $dict->TableName($this->sysTable) . ' where type=' . $this->objectTypes['module'];
+
+    $rs = $db->Execute($sql);
+    while ($row = $rs->FetchRow()) {
+      eval($row['code']);
+    }
+  }
+
+  function loadFromFile($dirName)
+  {
+    $files = glob($dirName . '/*.php');
+
+    if (is_array($files)) {
+      foreach ($files as $filename) {
+        include_once $filename;
+      }
+    }
+  }
+
+  function getType()
+  {
+    $types = array_flip($this->objectTypes);
+    return $types['module'];
+  }
 }
 
 class ReportLoader extends ObjectLoader
@@ -18,8 +56,8 @@ class ReportLoader extends ObjectLoader
   function loadFromDb($db, $reportName)
   {
     $dict = NewDataDictionary($db);
-    $sysTable = 'tx_amber_sys_objects';
-    $sql = 'Select * from ' . $dict->TableName($sysTable) . ' where name=' . $db->qstr($reportName);
+    $sql = 'Select * from ' . $dict->TableName($this->sysTable) . ' where name=' . $db->qstr($reportName);
+    $sql .= ' AND type=' . $this->objectTypes['report'];
 
     $rs = $db->SelectLimit($sql, 1);
     if (!$rs) {
@@ -61,6 +99,7 @@ class ReportLoader extends ObjectLoader
 
   function getType()
   {
+    return $this->_data['type'];
   }
 
   function getName()
