@@ -167,7 +167,7 @@ class Basic_Format extends myTestCase
     
     setlocale (LC_ALL, 'de_DE@euro', 'de_DE', 'de', 'ge');
     $this->assertEquals('Stichtag: 25.01.2005', Format('2005-01-25', "\"Stichtag: \"dd/mm/yyyy"));
-
+    $this->assertEquals('0162-1234567', Format('0162-1234567', ""), "handy number, not a date...");
   }
 
 

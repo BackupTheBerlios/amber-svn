@@ -336,7 +336,7 @@ class _format
       if (is_numeric($value)) {
         return $this->stdFormat($value);
       }  
-      elseif (preg_match("|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ -]?(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", $value)) {
+      elseif (preg_match("|^([0-9]{4})-([0-9]{2})-([0-9]{2})[ -]?(([0-9]{1,2}):([0-9]{1,2}):([0-9\.]{1,4}))?|", $value)) {
         return $this->formatDate($value);        
       } else {
         return $value;

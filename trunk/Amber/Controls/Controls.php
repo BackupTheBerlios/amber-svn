@@ -361,7 +361,7 @@ class TextBox extends FontBox
   
   function TextAlign()
   {
-    if ($this->TextAlign != 0) {
+    if ($this->TextAlign) {
       return $this->TextAlign;
     } elseif (!is_string($this->Value)) {
       return 3; // right justify numbers

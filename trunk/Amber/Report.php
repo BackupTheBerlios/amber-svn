@@ -71,7 +71,6 @@ class Report extends AmberObject
   //////////////////////////////////////////////////////////////////
 
   var $_data; // Holds result of the database query
-  var $_groupFields; // contains field names by which to group
   var $_exporter;
   var $layout;
 
@@ -199,7 +198,7 @@ class Report extends AmberObject
       MSPageSize($prt['PaperSize'], $this->PaperSize, $this->PaperWidth, $this->PaperHeight);
     }
 
-    if (isset($xml['RecordSource']) && ($xml['RecordSource'] != '')) {
+    if ($xml['RecordSource']) {
       $this->RecordSource = $xml['RecordSource'];
     }
     
@@ -471,13 +470,13 @@ class Report extends AmberObject
     }
     // Get records
     $recordSet =& $db->Execute($sql);
-    $this->_data =& $recordSet->GetArray();
-    if (empty($this->_data)) {
+    if (empty($recordset)) {
       if ($db->ErrorNo() != 0) {
         Amber::showError('Database Error ' . $db->ErrorNo(), $db->ErrorMsg());
         die();
       }
     }
+    $this->_data =& $recordSet->GetArray();
 
     $recNo = $recordSet->FieldCount();
     for ($i = 1; $i <= $recNo; $i++) {

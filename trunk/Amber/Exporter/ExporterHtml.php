@@ -77,7 +77,6 @@ class ExporterHtml extends Exporter
 
   function outWindowRelative($deltaX, $x, $y, $w, $h, &$dataBuff)
   {
-    $this->comment("***deltaX: $deltaX, x: $x, y: $y");
     $out = "\t<div ";
     $style1['left'] = $this->_html_twips($x);;
     $style1['top'] = $this->_html_twips($y);
@@ -117,12 +116,13 @@ class ExporterHtml extends Exporter
     $style['width'] = $this->_html_twips($w);
     $style['background-color'] = $this->_html_color($backColor);
 
-    echo "\t<div title=\"sectionStart\" style=\"" . $this->arrayToStyle($style) . "\">\n";
+    echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">\n";
   }
 
 
   function startPage($paperHeight)
   {
+    $this->comment('---PAGE---');
     $style['position'] = 'relative';
     #$style['left'] = 0;
     #$style['top'] = 0;
@@ -130,12 +130,10 @@ class ExporterHtml extends Exporter
     $style['height'] = $this->_html_twips($paperHeight);
     $style['width'] = $this->_html_twips($this->layout->paperWidth);
     echo "<div style=\"" . $this->arrayToStyle($style) . "\">\n";
-    $this->comment('###PAGE Start###');
   }
 
   function endPage()
   {
-    $this->comment('###PAGE End ###');
     echo "</div>\n";
     $style['position'] = 'relative';
     #$style['left'] = 0;
@@ -346,7 +344,7 @@ class ExporterHtml extends Exporter
 
   function getCssStyle(&$control, $prefix)
   {
-    $nil = array('ForeColor' => 16777216, 'BackColor' => 16777216, 'BorderColor' => 16777216, 'BorderWidth' => -9999, 'TextAlign' => 1); // illegal values
+    $nil = array('ForeColor' => 16777216, 'BackColor' => 16777216, 'BorderColor' => 16777216, 'BorderWidth' => -9999); // illegal values
     $cssClassName = '.' . $prefix . $control->id;
     return $cssClassName . "\t/* " . $control->Name . ' */ { ' . $control->_exporter->getStyle($control, $nil) . '}';
   }
