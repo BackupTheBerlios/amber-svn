@@ -54,13 +54,13 @@ class PDF extends FPDF
   function pageHeaderEnd()
   {
    $this->_sectionType = 'Head';
-   $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->_printHeight, $this->_headerHeight);
+   $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->_printHeight, $this->layout->pageHeaderHeight);
   }
 
   function pageFooterEnd()
   {
     $this->_sectionType = 'Foot';
-    $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->_printHeight, $this->_footerHeight);
+    $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->_printHeight, $this->layout->pageFooterHeight);
   }
 
         
@@ -267,9 +267,9 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
   {
     $this->_exporter =& $exporter;
     $this->layout = $layout;
-    $this->_headerHeight = $layout->pageHeaderHeight;
-    $this->_footerHeight = $layout->pageFooterHeight;
-    $this->_printWidth  = $layout->printWidth;
+#    $this->_headerHeight = $layout->pageHeaderHeight;
+#    $this->_footerHeight = $layout->pageFooterHeight;
+#    $this->_printWidth  = $layout->printWidth;
     $this->_printHeight = $layout->printHeight;
     $this->_reportWidth = $width;
     $this->_posY = 0;
@@ -289,8 +289,8 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
   function outPageHeader($pageY, $pageX, $dataBuff)
   {
     $y = $this->tMargin;
-    $this->SetClipping($this->lMargin, $y, $this->_printWidth, $this->_headerHeight);
-    $deltaX = $this->lMargin - $pageX * $this->_printWidth;
+    $this->SetClipping($this->lMargin, $y, $this->layout->printWidth, $this->layout->pageHeaderHeight);
+    $deltaX = $this->lMargin - $pageX * $this->layout->printWidth;
     $deltaY = $pageY * $this->_printHeight - $y;
     $this->SetCoordinate($deltaX, $deltaY);
     $this->_out($dataBuff);
@@ -299,9 +299,9 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
   }
   function outPage($pageY, $pageX, $dataBuff)
   {
-    $y = $this->tMargin + $this->_headerHeight;
-    $this->SetClipping($this->lMargin, $y, $this->_printWidth, $this->_printHeight);
-    $deltaX = $this->lMargin - $pageX * $this->_printWidth;
+    $y = $this->tMargin + $this->layout->pageHeaderHeight;
+    $this->SetClipping($this->lMargin, $y, $this->layout->printWidth, $this->_printHeight);
+    $deltaX = $this->lMargin - $pageX * $this->layout->printWidth;
     $deltaY = $pageY * $this->_printHeight - $y;
     $this->SetCoordinate($deltaX, $deltaY);
     $this->_out($dataBuff);
@@ -310,9 +310,9 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
   }
   function outPageFooter($pageY, $pageX, $dataBuff)
   {
-    $y = $this->tMargin + $this->_headerHeight + $this->_printHeight;
-    $this->SetClipping($this->lMargin, $y, $this->_printWidth, $this->_footerHeight);
-    $deltaX = $this->lMargin - $pageX * $this->_printWidth;
+    $y = $this->tMargin + $this->layout->pageHeaderHeight + $this->_printHeight;
+    $this->SetClipping($this->lMargin, $y, $this->layout->printWidth, $this->layout->pageFooterHeight);
+    $deltaX = $this->lMargin - $pageX * $this->layout->printWidth;
     $deltaY = $pageY * $this->_printHeight - $y;
     $this->SetCoordinate($deltaX, $deltaY);
     $this->_out($dataBuff);

@@ -81,12 +81,12 @@ class ExporterFPdf extends Exporter
   function _exporterInit()
   {
     $report =& $this->_report;
-    $layout =& new pageLayout();
-    $layout->unit = 1/20;
-    $layout->set_orientation($report->Orientation, $report->PaperWidth, $report->PaperHeight);
+    $this->layout =& new pageLayout();
+    $this->layout->unit = 1/20;
+    $this->layout->set_orientation($report->Orientation, $report->PaperWidth, $report->PaperHeight);
     #Amber::dump($size);
     $reset = (!$this->_asSubreport);
-    $this->_pdf =& PDF::getInstance($layout, $reset);
+    $this->_pdf =& PDF::getInstance($this->layout, $reset);
     if ($report->Controls) {
       foreach (array_keys($report->Controls) as $ctrlName) {
         if (!empty($report->Controls[$ctrlName]->FontName)) {
@@ -98,21 +98,21 @@ class ExporterFPdf extends Exporter
       $this->_pdf->startSubReport();
     } else {  
       $this->_pdf->SetCompression(false);
-      $layout->rightMargin = $report->RightMargin;
-      $layout->leftMargin = $report->LeftMargin;
-      $layout->topMargin = $report->TopMargin;
+      $this->layout->rightMargin = $report->RightMargin;
+      $this->layout->leftMargin = $report->LeftMargin;
+      $this->layout->topMargin = $report->TopMargin;
 
-      $layout->bottomMargin = $report->BottomMargin;
+      $this->layout->bottomMargin = $report->BottomMargin;
       $this->_pdf->_actPageNo = -1;
       if ($this->DesignMode) {
-        $layout->pageHeaderHeight = 0;
-        $layout->pageFooterHeight = 0;
+        $this->layout->pageHeaderHeight = 0;
+        $this->layout->pageFooterHeight = 0;
       } else {
-        $layout->pageHeaderHeight = $report->PageHeader->Height;
-        $layout->pageFooterHeight = $report->PageFooter->Height;
+        $this->layout->pageHeaderHeight = $report->PageHeader->Height;
+        $this->layout->pageFooterHeight = $report->PageFooter->Height;
       }
-      $layout->calcPrintableArea();
-      $this->_pdf->init($this, $report->Width, $layout);
+      $this->layout->calcPrintableArea();
+      $this->_pdf->init($this, $report->Width, $this->layout);
       $this->_pdf->StartReportBuffering();
     }
   }
@@ -144,7 +144,7 @@ class ExporterFPdf extends Exporter
     
     $firstPage = true;  //first page is out
 
-    $endPageX = floor($this->_pdf->_reportWidth / $this->_pdf->_printWidth);
+    $endPageX = floor($this->_pdf->_reportWidth / $this->layout->printWidth);
     foreach(array_keys($this->_pdf->_reportPages) as $pageY) {
       for($pageX = 0; $pageX <= $endPageX; $pageX++) {
         if (!$firstPage) {
