@@ -169,7 +169,17 @@ class Report extends AmberObject
       $this->_Code =& new AmberReport_UserFunctions();
     }
     $this->_ClassName = get_class($this->_Code);
-
+    $this->initialize_report($xml);
+  }                                
+  
+  /**
+   *
+   * @access public
+   * @param ReportObjectArray
+   *
+   */
+  function initialize_report($xml)
+  {
     //
     // Continue with common initialization
     //
@@ -178,7 +188,7 @@ class Report extends AmberObject
       $prt =& $xml['Printer'];
       $this->LeftMargin = empty($prt['LeftMargin']) ? 720 : $prt['LeftMargin'];
       $this->RightMargin = empty($prt['RightMargin']) ? 720 : $prt['RightMargin'];
-      $this->TopMargin = empty($prt['RigTopMargin']) ? 720 : $prt['TopMargin'];
+      $this->TopMargin = empty($prt['TopMargin']) ? 720 : $prt['TopMargin'];
       $this->BottomMargin = empty($prt['BottomMargin']) ? 720 : $prt['BottomMargin'];
       $this->Orientation = MSPageOrientation($prt['Orientation']);
       MSPageSize($prt['PaperSize'], $this->PaperSize, $this->PaperWidth, $this->PaperHeight);

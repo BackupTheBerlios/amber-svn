@@ -29,10 +29,12 @@ class AmberReport_UserFunctions
     $this->report =& $report;
   
     // Controls
-    $keys = array_keys($report->Controls);
-    foreach ($keys as $key) {
-      $key2 = $report->Controls[$key]->EventProcPrefix;
-      $this->$key2 =& $report->Controls[$key]; 
+    if ($report->Controls) {
+      $keys = array_keys($report->Controls);
+      foreach ($keys as $key) {
+        $key2 = $report->Controls[$key]->EventProcPrefix;
+        $this->$key2 =& $report->Controls[$key]; 
+      }
     }
     $this->ctl =& $report->Controls;
     $this->val =& $report->ControlValues;

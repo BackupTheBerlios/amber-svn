@@ -17,20 +17,6 @@ require_once '../basic.php';
 * @subpackage Tests
 *
 */
-class myTestCase extends PHPUnit_TestCase
-{
-  function assertEEquals($expected, $given, $message='')
-  {
-    parent::assertEquals($expected, $given, $message . "  expected:" . $expected . "; given:" . $given . "; ");
-  }
-}
-
-/**
-*
-* @package Amber
-* @subpackage Tests
-*
-*/
 class Basic_Format_internals extends myTestCase
 {
   // test the lexer

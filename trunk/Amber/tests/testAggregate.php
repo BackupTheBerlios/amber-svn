@@ -18,20 +18,6 @@ require_once '../Aggregate.php';
 * @subpackage Tests
 *
 */
-#class myTestCase extends PHPUnit_TestCase
-#{
-#  function assertEEquals($expected, $given, $message='')
-#  {
-#    parent::assertEquals($expected, $given, $message . "  expected:" . $expected . "; given:" . $given . "; ");
-#  }
-#}
-
-/**
-*
-* @package Amber
-* @subpackage Tests
-*
-*/
 class Aggregate_Basic extends PHPUnit_TestCase
 {
   function test()
