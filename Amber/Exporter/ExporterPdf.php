@@ -39,6 +39,7 @@ class ExporterFPdf extends Exporter
   {
     $reset = (!$asSubreport);
     $this->_pdf =& PDF::getInstance($report->reportBuff, $report->layout, $reset);
+    $this->mayflower =& $this->_pdf->mayflower;
     if ($report->Controls) {
       foreach (array_keys($report->Controls) as $ctrlName) {
         if (!empty($report->Controls[$ctrlName]->FontName)) {
@@ -51,7 +52,7 @@ class ExporterFPdf extends Exporter
       $this->startcomment("StartSubreport");
     } else {  
       $this->_pdf->init($this, $report->layout);
-      $this->_pdf->StartReportBuffering();
+      $this->mayflower->StartReportBuffering();
     }
   }
   
@@ -66,7 +67,7 @@ class ExporterFPdf extends Exporter
         $this->_report->_printNormalSection('PageFooter');
       }  
    
-      $this->_pdf->endReportBuffering();
+      $this->mayflower->endReportBuffering();
     
       $firstPage = true;  //first page is out
   
@@ -125,7 +126,8 @@ class ExporterFPdf extends Exporter
   */
   function sectionPrintDesignHeader($text)
   {
-    $this->_pdf->startSection();
+    $this->mayflower->sectionPush();
+    $this->comment('Start Section:' . ($this->mayflower->getSectionIndexForCommentOnly()));
     $height = 240; //12pt
 
     $this->_pdf->_backColor(0xDDDDDD);
@@ -144,17 +146,11 @@ class ExporterFPdf extends Exporter
   function startSection(&$section, $width, &$buffer)
   {
     parent::startSection($section, $width, $buffer);
-    $this->_pdf->startSection();
-    $this->_pdf->_backColor($section->BackColor);
-    $fill = true;
-    $text = '';
-    $border = 0;
-    $ln = 0; //pos after printing
-    $align = 'C';
-    $backstyle= 1;
-    $this->_pdf->Cell($section->_report->Width, $section->Height, $text, $border, $ln, $align, $fill);
+    $this->mayflower->sectionPush();
+    $this->comment('Start Section:' . ($this->mayflower->getSectionIndexForCommentOnly()));
+    $this->_pdf->fillBackColorInWindow($section->BackColor, $section->_report->Width, $section->Height);
   }
-
+  
   function endSection(&$section, $height, &$buffer)
   {
     if (!$section->_PagePart) {

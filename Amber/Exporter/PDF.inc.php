@@ -163,7 +163,27 @@ class mayflower
   function getSectionIndexForCommentOnly()
   {
     return $this->sectionIndex;
-  }  
+  } 
+  
+  
+  function startReportBuffering()
+  {
+    if ($this->inReport()) {
+      Amber::showError('Error', 'startReport: a report is already started!');
+      die();
+    }  
+    $this->enterReport();
+  }
+  
+  function endReportBuffering()
+  {
+    if (!$this->inReport()) {
+      Amber::showError('Error', 'endReport: no report open');
+      die();
+    }  
+    $this->exitReport();
+  }
+
     
 } 
  
@@ -246,23 +266,7 @@ class PDF extends FPDF
   }    
   
   
-  function startReportBuffering()
-  {
-    if ($this->mayflower->inReport()) {
-      Amber::showError('Error', 'startReport: a report is already started!');
-      die();
-    }  
-    $this->mayflower->enterReport();
-  }
 
-  function endReportBuffering()
-  {
-    if (!$this->mayflower->inReport()) {
-      Amber::showError('Error', 'endReport: no report open');
-      die();
-    }  
-    $this->mayflower->exitReport();
-  }
   
   
        
@@ -281,20 +285,13 @@ class PDF extends FPDF
   //////////////////////////////////////////////////////////////////////////
   
   
-  function startSection()
-  {
-    $this->mayflower->sectionPush();
-    $this->comment('Start Section:' . ($this->mayflower->getSectionIndexForCommentOnly()));
-    $this->SetXY(0, 0);
-  }
-  
   function endSection($sectionHeight, $keepTogether)
   {
     if ($this->mayflower->inSubReport()) {
       $this->endSectionSubReport($sectionHeight, $keepTogether);
       return;
     }  
-    $this->comment("end Body-Section:" . ($this->mayflower->getSectionIndexForCommentOnly()) . "\n");
+    $this->comment("end Body-Section:1\n");
     $secBuff = $this->mayflower->sectionPop();
     $startPage = floor($this->mayflower->reportBuff->posY / $this->layout->printHeight);
     $endPage   = floor(($this->mayflower->reportBuff->posY + $sectionHeight) / $this->layout->printHeight);
@@ -322,7 +319,7 @@ class PDF extends FPDF
 
   function endSectionSubReport($sectionHeight, $keepTogether)
   {
-    $this->comment("end Subreport-Body-Section:" . ($this->mayflower->getSectionIndexForCommentOnly()) . "\n");
+    $this->comment("end Subreport-Body-Section:2\n");
     $buff = $this->mayflower->sectionPop();
 
     $this->mayflower->reportStartPageBody();
@@ -345,7 +342,7 @@ class PDF extends FPDF
     $buff = $this->mayflower->sectionPop();
     $this->SetCoordinate(0, -$posY);
     $this->SetClipping(0, 0, $this->layout->reportWidth, $height);
-    $this->comment("end Head/Foot-Section:" . (getSectionIndexForCommentOnly + 1) . "\n");
+    $this->comment("end Head/Foot-Section:1\n");
     $this->_out($buff);
     $this->RemoveClipping();
     $this->RemoveCoordinate();
@@ -445,6 +442,19 @@ class PDF extends FPDF
     } 
     $this->RemoveClipping();
     $this->RemoveCoordinate();
+  }
+  
+  function fillBackColorInWindow($color, $maxWidth, $maxHeight)
+  {
+    $this->SetXY(0, 0);
+    $this->_backColor($color);
+    $fill = true;
+    $text = '';
+    $border = 0;
+    $ln = 0; //pos after printing
+    $align = 'C';
+    $backstyle= 1;
+    $this->Cell($maxWidth, $maxHeight, $text, $border, $ln, $align, $fill);
   }
 
   function printBox(&$para)
