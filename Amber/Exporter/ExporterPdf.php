@@ -304,7 +304,7 @@ class ExporterFPdf extends Exporter
       $rep->resetMargin(true);
       $rep->run('pdf', true);
       $pdf =& $rep->_exporter->_pdf; 
-      $para->content = "\n%Start SubReport\n" . $pdf->_subReportBuff[_inSubReport+1] . "\n%End SubReport\n"; 
+      $para->content = "\n%Start SubReport\n" . $pdf->subReportBuff->buffer[$pdf->subReportBuff->index+1] . "\n%End SubReport\n"; 
     }
     #$para->content = "(TEST)";
             

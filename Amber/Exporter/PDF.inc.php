@@ -5,6 +5,18 @@
  * @subpackage Exporter
  *
  */
+ 
+class subReportBuff
+{
+  var $index;
+  var $buffer;
+  
+  function out($s)
+  {
+    $this->buffer[$this->index] .= $s . "\n";
+  }
+} 
+ 
 class PDF extends FPDF
 {
 
@@ -16,8 +28,6 @@ class PDF extends FPDF
 
   var $_inSection;      // int index to sectionBuff
   var $_inReport;       // bool 
-  var $_inSubReport;    // integer index to subReportBuff
-  var $_subReportBuff;  //
   var $_sectionBuff;    // array buffer for sections (to make sections re-entrand)
 
 
@@ -69,10 +79,10 @@ class PDF extends FPDF
   {
     if($this->state <> 2) {
       parent::_out($s);
-    } elseif ($this->_inSection > $this->_inSubReport) {
+    } elseif ($this->_inSection > $this->subReportBuff->index) {
       $this->_sectionBuff[$this->_inSection] .= $s . "\n";
-    } elseif ($this->_inSubReport) {
-      $this->_subReportBuff[$this->_inSubReport] .= $s . "\n";     
+    } elseif ($this->subReportBuff->index) {
+      $this->subReportBuff->out($s);     
     } elseif ($this->_inReport) {
       $this->reportBuff->out($s);
     } else {
@@ -125,7 +135,7 @@ class PDF extends FPDF
   
   function endSection($sectionHeight, $keepTogether)
   {
-    if ($this->_inSubReport) {
+    if ($this->subReportBuff->index) {
       $this->endSectionSubReport($sectionHeight, $keepTogether);
       return;
     }  
@@ -193,7 +203,7 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
   //  startSubReport / endSubReport
   //
   //  inside a subreport FPFD's output gets cached in 
-  //  $this->_subReportBuff
+  //  $this->subReportBuff->buffer
   //  a buffer 
   //  
   //
@@ -202,15 +212,15 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
   
   function startSubReport()
   {
-    $this->_inSubReport++;
-    $this->_subReportBuff[$this->_inSubReport] = "\n\n%StartSubreport\n";
+    $this->subReportBuff->index++;
+    $this->subReportBuff->buffer[$this->subReportBuff->index] = "\n\n%StartSubreport\n";
   }
   
   function endSubReport()
   {
-    $this->_subReportBuff[$this->_inSubReport] .= "\n%EndSubreport\n\n";
-    $this->_inSubReport--;
-    return $this->_subReportBuff[$this->_inSubReport + 1];
+    $this->subReportBuff->buffer[$this->subReportBuff->index] .= "\n%EndSubreport\n\n";
+    $this->subReportBuff->index--;
+    return $this->subReportBuff->buffer[$this->subReportBuff->index + 1];
   }  
 
 ////////////////////////////////////////////////////////
@@ -246,6 +256,7 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
     if (is_null($instance) or $reset) {
       $size = array($layout->paperWidth, $layout->paperHeight);
       $instance = new PDF('p', $layout->unit, $size);
+      $instance->subReportBuff =& new subReportBuff();
     }
 
     return $instance;
