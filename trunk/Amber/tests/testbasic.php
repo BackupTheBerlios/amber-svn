@@ -235,6 +235,12 @@ class Basic_Format extends myTestCase
     $this->assertEquals('1234   56-789-000', Format(123456789000, "#   0#-###-##0"),   'Test3');
     $this->assertEquals('1   23-456-789e+3', Format(123456789000, "#   0#-###-##0e+"), 'Test4');
     $this->assertEquals('1   20-000-000E-7', Format(12,           "#   0#-###-##0E+"), 'Test5');
+
+    $this->assertEquals('1234',  Format(1234.12, '0'),  'Test6');
+    $this->assertEquals('1234,12',  Format(1234.12, ''),  'Test6a');
+    $this->assertEquals('1234,', Format(1234.12, '0.'), 'Test7');
+#    $this->assertEquals('1', Format(1234.12, '0,'), 'Test8'); #Test disabled because its stupid
+#    $this->assertEquals('1.234', Format(1234.12, '0,0'), 'Test9'); #Test disabled because its stupid
   }
 
   function testStdFormat()
@@ -253,9 +259,10 @@ class Basic_Format extends myTestCase
     $this->assertEquals('1.234,57 €',    Format(1234.5678, "Euro"),            "Euro");
     $this->assertEquals('1.234,57',      Format(1234.5678, "Standard"),         "Standard");
     $this->assertEquals('123456,78%',    Format(1234.5678, "Percent"),   "Percent");
-    $this->assertEquals('1,23E+03',     Format(1234.5678, "Scientific"),   "Scientific");
-    $this->assertEquals('1234,57',     Format(1234.5678, "fixed", 2),   "Fixed 2");
-    $this->assertEquals('1234',        Format(1234.5678, "fixed", 0),   "Fixed 0");
+    $this->assertEquals('1,23E+03',      Format(1234.5678, "Scientific"),   "Scientific");
+    $this->assertEquals('1234,57',     Format(1234.5678, "fixed", 2),   "Fixed-2");
+    $this->assertEquals('1234',        Format(1234.5678, "fixed", 0),   "Fixed-0");
+    $this->assertEquals('1234,5678',   Format(1234.5678, "fixed", 255),   "Fixed-255");
 
     $this->assertEquals('Wahr',     Format(true, "True/False"), "True/False: true");
     $this->assertEquals('Ja',       Format(true, "Yes/No"),     "Yes/No: true");
@@ -300,7 +307,7 @@ class Basic_Format extends myTestCase
 
     //###dispens### $this->assertEquals(' birt03a3: #&&-&& 03.01.2238',      Format("123456", " birthday: #&&-&& dd.mm.yyyy"), 'Test31');
   #  $this->assertEquals('birthday: #34-56 dd.mm.yyyy',       Format("123456", "!birthday: #&&-&& dd.mm.yyyy"), 'Test32');
-    $this->assertEquals('12345birthday: 6&&-&& ddmm.yyyy',  Format("123456", "#birthday: #&&-&& dd.mm.yyyy"), 'Test33');
+    $this->assertEquals('12345birthday: 6&&-&& dd,mm.yyyy',  Format("123456", "#birthday: #&&-&& dd.mm.yyyy"), 'Test33');
 
 
     // separation of Format parts (positive, negative, zero and NULL) is done inside the different Format functions

@@ -187,12 +187,11 @@ class _format
    */
   function _format($fmt, $prec=2)
   {
-    if (!$fmt) {
-      return;
-    }
     $stdFormats = getStdFormat(null, $prec);
     $this->prec = $prec;
-    if ($this->fmt = $stdFormats[strtolower($fmt)]) {
+    $f = $stdFormats[strtolower($fmt)];
+    if (!is_null($f)) {
+      $this->fmt = $f;
     } elseif ($this->fmt === '') { //General Number
       $this->fmt = null;
       return;
@@ -339,7 +338,7 @@ class _format
 
   function format($value, $fmt, $prec=2)
   {
-    if (!$this->fmt) {
+    if (($this->fmt === '') or is_null($this->fmt)) {
       return $this->stdFormat($value);
       #return $value;
     }
@@ -595,9 +594,7 @@ class _format
     }
 
     if ($fmt[$pos]['token'] == '.') {
-      if (($digitPost0 > 0) or ( $digitPost0 > 0)) {
-        $res .= $this->getDecimalPoint();
-      }  
+      $res .= $this->getDecimalPoint();
       $pos++;
     }
 
@@ -890,12 +887,12 @@ function str2date($d)
 
 function getStdFormat($locale='', $prec=2)
 {
-  if ($prec > 0) {
+  if (($prec > 0) and ($prec < 16)) {
     $zero = '0.' . str_repeat('0', $prec);
-  } elseif (($prec === 0) || ($prec == '0')) {
-    $zero = '0.';
+  } elseif (($prec === 0) || ($prec === '0')) {
+    $zero = '0';
   } else {
-    $zero = '0.#';
+    $zero = '';
   }
    
   if (!$locale) {
