@@ -89,7 +89,7 @@ class Report
   /**
    *
    * @access public
-   * @param Config
+   * @param AmberConfig
    *
    */
   function setConfig($cfgObj)
@@ -220,9 +220,9 @@ class Report
   function &currentDb()
   {
     if (!isset($this->_db)) {
-      $cfg =& $this->_globalConfig;
-      $db =& ADONewConnection($cfg->driver);
-      $conResult = @$db->PConnect($cfg->host, $cfg->username, $cfg->pwd, $cfg->database);
+      $dbCfg =& $this->_globalConfig->database;
+      $db =& ADONewConnection($dbCfg['driver']);
+      $conResult = @$db->PConnect($dbCfg['host'], $dbCfg['username'], $dbCfg['pwd'], $dbCfg['dbname']);
       $db->SetFetchMode(ADODB_FETCH_ASSOC);
       if ($conResult == false) {
         showError('Database Error '  . $db->ErrorNo(), $db->ErrorMsg());

@@ -17,12 +17,8 @@ require_once 'XMLLoader.php';
 */
 class AmberConfig
 {
-  var $driver;
-  var $host;
   var $database;
-  var $username;
-  var $password;
-  var $medium;
+  var $sys_objects;
 
   function fromXML($fileName)
   {
@@ -40,6 +36,40 @@ class AmberConfig
       }
     }
   }
+
+  function toXML($fileName)
+  {
+
+    $properties = array(
+      'database' => array('username', 'password', 'host', 'driver', 'dbname'),
+      'sys_objects' => array('medium')
+    );
+
+    $fp = fopen($fileName, 'w');
+    fwrite($fp, '<?xml version="1.0" encoding="iso-8859-1"?>' . "\n");
+    fwrite($fp, "<config>\n");
+    writeArray($fp, $properties);
+    fwrite($fp, "</config>\n");
+    fclose($fp);
+  }
+
+  function writeArray($filehandle, $confArray)
+  {
+    static $indent = '';
+
+    $indent .= '  ';
+    foreach ($confArray as $key => $prop) {
+      if (is_array($prop)) {
+        fwrite($filehandle, $indent . "<$key>\n");
+        writeArray($filehandle, $prop);
+        fwrite($filehandle, $indent . "</$key>\n");
+      } else {
+        $value = htmlentities($this->$prop);
+        fwrite($filehandle, $indent. "<$prop>" . $value . "</$prop>\n");
+      }
+    }
+    $indent = substr($indent, 0, count($indent) - 3);
+  }
 }
 
 /**
@@ -50,11 +80,8 @@ class AmberConfig
 */
 class AmberConfigNull extends AmberConfig
 {
-  var $driver ='';
-  var $host = '';
-  var $database = '';
-  var $username = '';
-  var $password = '';
+  var $database = array();
+  var $sys_objects = array();
 }
 
 ?>
