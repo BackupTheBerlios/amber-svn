@@ -73,23 +73,18 @@ class ExporterFPdf extends Exporter
   function endReportSubExporter(&$report)
   {
     if (!$this->_asSubreport) {
-      $this->_sendOutputFile();
-    }
-  }
-
-  function _sendOutputFile()
-  {
-    if ($this->createdAs == 'testpdf') {
-      print $this->_pdf->Output('out.txt', 'S');
-    } else {
-      if (isset($this->_docTitle)) {
-        $this->_pdf->Output('"' . $this->_docTitle . '.pdf"', 'I');
+      if ($this->createdAs == 'testpdf') {
+        print $this->_pdf->Output('out.txt', 'S');
       } else {
-        $this->_pdf->Output('out.pdf', 'I');
+        if (isset($this->_docTitle)) {
+          $this->_pdf->Output('"' . $this->_docTitle . '.pdf"', 'I');
+        } else {
+          $this->_pdf->Output('out.pdf', 'I');
+        }
       }
     }
   }
-  
+
   function comment($s)
   {
     $this->_pdf->_out("\n%$s\n");

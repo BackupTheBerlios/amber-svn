@@ -13,10 +13,7 @@ class ReportSubReport extends ReportPaged
   function _startReport($isSubreport, $isDesignMode)
   {
     parent::_startReport($isSubreport, $isDesignMode);
-    $this->_asSubReport = true;
 
-    $this->layout =& new pageLayout($this, $this->_asSubReport, $isDesignMode);
-    $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
     $this->subReportStartBuffer();
     $this->_exporter->comment("StartSubreport"); // remove this!!!
   }

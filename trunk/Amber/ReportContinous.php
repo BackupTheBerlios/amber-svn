@@ -13,7 +13,6 @@ class ReportContinous extends Report
   function _startReport($isSubreport, $isDesignMode)
   {
     parent::_startReport($isSubreport, $isDesignMode);
-    $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
   }
 
   function _endReport()

@@ -714,7 +714,9 @@ class Report extends AmberObject
   {
     if ($isDesignMode) {
       $this->initDesignHeader();
-    }  
+    }
+    $this->layout =& new pageLayout($this, $this->_asSubReport, $isDesignMode);
+    $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
   }
 
   /**

@@ -40,6 +40,8 @@ class ExporterHtml extends Exporter
 
   function startReportSubExporter(&$report, $asSubreport = false, $isDesignMode = false)
   {
+    $this->layout =& $report->layout;
+    
     $tmp = '';
     if (!$this->_asSubreport) {
       $tmp = "\n<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n<head>\n";
@@ -68,6 +70,16 @@ class ExporterHtml extends Exporter
     }
   }
 
+  function comment($s)
+  {
+    $this->_base->_out("<!-- $s -->");
+  }
+
+  
+  
+  
+  
+  
   function getReportCssStyles(&$report, $cssClassPrefix)
   {
     $this->cssClassPrefix = $cssClassPrefix;
@@ -131,7 +143,7 @@ class ExporterHtml extends Exporter
 
         $this->printTopMargin();  
         
-        $this->_posY += $this->_report->TopMargin;
+        $this->_posY += $this->layout->topMargin;
         $this->_report->_printNormalSection($this->_report->PageHeader); // FIXME: this has to be done by the Report class!!!
       }
     }
@@ -140,6 +152,24 @@ class ExporterHtml extends Exporter
 
   function endSection(&$section, $height, &$buffer)
   {
+    $this->outSectionStart($height, $section->BackColor, $section->Name);
+    
+    if ($this->DesignMode) {
+        $this->_base->_out($buffer);
+    } else {
+      $this->onPrint($cancel, 1);
+      if (!$cancel) {
+        $this->_base->_out($buffer);
+      }
+    }
+    
+    $this->outSectionEnd();
+    $this->_posY += $height;
+    parent::endSection($section, $height, $buffer);
+  }
+  
+  function outSectionStart($height, $backColor, $sectionName)
+  {
     $cheatWidth  = 59; // cheat: add 1.5pt to height and 3pt to width so borders get printed in Mozilla ###FIX ME
     if ($height == 0) {
       $cheatHeight = 0;
@@ -147,29 +177,29 @@ class ExporterHtml extends Exporter
       $cheatHeight = 15;
     }
     if (!$this->DesignMode) {
-      $out = "\t<div name=\"" . $section->Name . '-border"';
+      $out = "\t<div name=\"" . $sectionName . '-border"';
 
       $style = array();
       $style['top'] = $this->_html_twips($this->_posY);
       $style['height'] = $this->_html_twips($height + $cheatHeight);
       $style['left'] = '0';
-      $style['width'] = $this->_html_twips($this->_report->LeftMargin + $this->_report->Width + $this->_report->RightMargin);
+      $style['width'] = $this->_html_twips($this->layout->leftMargin + $this->layout->reportWidth + $this->layout->rightMargin);
       $style['background-color'] = '#ffffff';
 
       $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";
-      $out .= "\t<div name=\"" . $section->Name . '"';
+      $out .= "\t<div name=\"" . $sectionName . '"';
 
       $style = array();
       $style['position'] = 'absolute';
       $style['overflow'] = 'hidden';
       $style['height'] = $this->_html_twips($height);
-      $style['left'] = $this->_html_twips($this->_report->LeftMargin);
-      $style['width'] = $this->_html_twips($this->_report->Width + $cheatWidth);
-      $style['background-color'] = $this->_html_color($section->BackColor);
+      $style['left'] = $this->_html_twips($this->layout->leftMargin);
+      $style['width'] = $this->_html_twips($this->layout->reportWidth + $cheatWidth);
+      $style['background-color'] = $this->_html_color($backColor);
 
       $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";
     } else {
-      $out .= "\t<div name=\"" . $section->Name . '"';
+      $out .= "\t<div name=\"" . $sectionName . '"';
 
       $style = array();
       //$style['position'] = 'absolute';
@@ -177,31 +207,25 @@ class ExporterHtml extends Exporter
       $style['top'] = $this->_html_twips($this->_posY);
       $style['height'] = $this->_html_twips($height + $cheatHeight);
       $style['left'] = '0';
-      $style['width'] = $this->_html_twips($this->_report->Width + $cheatWidth);
-      $style['background-color'] = $this->_html_color($section->BackColor);
+      $style['width'] = $this->_html_twips($this->layout->reportWidth + $cheatWidth);
+      $style['background-color'] = $this->_html_color($backColor);
 
       $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";
     }
+    $this->_base->_out($out);
 
-    if ($this->DesignMode) {
-        $out .= $buffer;
-    } else {
-      $this->onPrint($cancel, 1);
-      if (!$cancel) {
-        $out .= $buffer;
-      }
-    }
-
+  }
+  
+  function outSectionEnd()
+  {
     if ($this->DesignMode) {
       $out .= "\t</div>\n";
     } else {
       $out .= "\t</div></div>\n";
     }
     $this->_base->_out($out);
-    $this->_posY += $height;
-    parent::endSection($section, $height, $buffer);
   }
-
+  
   // Page handling - html
 
   function newPage()
@@ -211,7 +235,7 @@ class ExporterHtml extends Exporter
       
       $this->printBottomMargin();
       
-      $this->_posY += $this->_report->BottomMargin;
+      $this->_posY += $this->layout->bottomMargin;
       $this->_report->OnPage();
       $this->_pageNo++;
     }
@@ -224,9 +248,9 @@ class ExporterHtml extends Exporter
 
     $style = array();
     $style['top'] = $this->_html_twips($this->_posY);
-    $style['height'] = $this->_html_twips($this->_report->TopMargin + 20);
+    $style['height'] = $this->_html_twips($this->layout->topMargin + 20);
     $style['left'] = '0';
-    $style['width'] = $this->_html_twips($this->_report->LeftMargin + $this->_report->Width + $this->_report->RightMargin);
+    $style['width'] = $this->_html_twips($this->layout->leftMargin + $this->layout->reportWidth + $this->layout->rightMargin);
     $style['background-color'] = '#ffffff';
 
     $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";
@@ -242,9 +266,9 @@ class ExporterHtml extends Exporter
     $style = array();
     $style['page-break-after'] = 'always';
     $style['top'] = $this->_html_twips($this->_posY);
-    $style['height'] = $this->_html_twips($this->_report->BottomMargin + 20);
+    $style['height'] = $this->_html_twips($this->layout->bottomMargin + 20);
     $style['left'] = '0';
-    $style['width'] = $this->_html_twips($this->_report->LeftMargin + $this->_report->Width + $this->_report->RightMargin);
+    $style['width'] = $this->_html_twips($this->layout->leftMargin + $this->layout->reportWidth + $this->layout->rightMargin);
     $style['background-color'] = '#ffffff';
 
     $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";

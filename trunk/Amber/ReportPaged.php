@@ -20,11 +20,7 @@ class reportPaged extends Report
   function _startReport($isSubreport, $isDesignMode)
   {
     parent::_startReport($isSubreport, $isDesignMode);
-    $this->_asSubReport = $isSubreport;
     
-    $this->layout =& new pageLayout($this, $this->_asSubReport, $isDesignMode);
-    $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
-
     $this->posY = 0;
   }
   
