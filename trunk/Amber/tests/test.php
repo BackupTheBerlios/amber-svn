@@ -13,5 +13,6 @@ foreach (glob('test?*.php') as $filename) {
   include_once $filename;
   echo '<hr>';
 }
+include_once("reportTests.php");
 
 ?>

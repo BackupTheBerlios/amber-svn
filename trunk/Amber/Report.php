@@ -147,7 +147,6 @@ class Report extends AmberObject
   function initialize(&$data)
   {
     $this->Name = $data->name;
-    $this->hReport = objectHandler::getHandle($this);
 
     $classLoaded = false;
     $className = $data->class;
@@ -178,11 +177,17 @@ class Report extends AmberObject
   function initialize_report($strXML)
   {
     //
-    // Continue with common initialization
-    //
+    // Common initialization
+    //                      
+
+
     $res =& XMLLoader::_makeXMLTree($strXML);
     $xml = $res['report'];
     $this->Width = $xml['Width'];
+
+    if (!$this->Name) {
+      $this->Name = $xml['Name'];
+    }
     if (isset($xml['Printer'])) {
       $prt =& $xml['Printer'];
       $this->LeftMargin = empty($prt['LeftMargin']) ? 720 : $prt['LeftMargin'];
@@ -196,6 +201,8 @@ class Report extends AmberObject
     if (isset($xml['RecordSource']) && ($xml['RecordSource'] != '')) {
       $this->RecordSource = $xml['RecordSource'];
     }
+    
+    $this->hReport = objectHandler::getHandle($this);
 
     /*
      * Sections
