@@ -241,7 +241,6 @@ class Section
     }
   }
 
-
   /**
    * @access public
    * @param string type of Aggregate-Object to create (sum, avg, ...)
@@ -275,7 +274,6 @@ class Section
       }
     }
   }
-
 
   /**
    * @access protected
@@ -384,8 +382,8 @@ class GroupLevel
   var $SortOrder; // 0 = Ascending, -1 = Descending
   var $GroupHeader;
   var $GroupFooter;
-  var $GroupOn; // abhï¿½gig vom Datentyp des Feldes; Bedeutung der Werte ist in Hilfedatei aufgelistet
-  var $GroupInterval; // abhï¿½gig vom Datentyp des Feldes; Bedeutung der Werte ist in Hilfedatei aufgelistet
+  var $GroupOn; // abhängig vom Datentyp des Feldes; Bedeutung der Werte ist in Hilfedatei aufgelistet
+  var $GroupInterval; // abhängig vom Datentyp des Feldes; Bedeutung der Werte ist in Hilfedatei aufgelistet
   var $KeepTogether; // 0 = Nein, 1 = Ganze Gruppe, 2 = Mit 1. Detaildatensatz
 
   //////////////////////////////////////////////////////////////////

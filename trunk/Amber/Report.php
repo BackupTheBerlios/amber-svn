@@ -76,7 +76,6 @@ class Report extends AmberObject
   var $layout;
 
   var $_Code;     // user defined call back methods
-  var $_ClassName;
 
   var $_globalConfig;
 
@@ -168,7 +167,7 @@ class Report extends AmberObject
     if (!$classLoaded) {
       $this->_Code =& new AmberReport_UserFunctions();
     }
-    $this->_ClassName = get_class($this->_Code);
+    
     $this->initialize_report($xml);
   }                                
   
@@ -307,13 +306,14 @@ class Report extends AmberObject
     }
     else  // Loop through all records
     {                              
-      $this->ComputeColumns();
+      $this->computeColumns();
       $keys = array_keys($this->_data);
       $this->sort($keys);
       foreach ($keys as $rowNumber) {
         $this->Cols =& $this->_data[$rowNumber];
         $this->Columns =& $this->Cols;
         $this->_Code->col =& $this->Cols;
+
         // Load Data
         $this->onLoadData($Cancel);
         if ($isFirstRecord) {
@@ -323,6 +323,7 @@ class Report extends AmberObject
           $this->_printNormalGroupFooters($maxLevel, $level);
           $this->_resetAggregate($maxLevel, $level);
         }
+        
         // Evaluate Expressions
         $this->_setControlValues($this->Cols);
         $this->_resetRunningSum($maxLevel, $level);
@@ -554,13 +555,16 @@ class Report extends AmberObject
     $sorter->sort();
   }
 
+  /**
+   * @access protected
+   */
   function computeColumns()
   { 
     $keys = array_keys($this->_data);
     foreach ($keys as $rowNumber) {
       $this->_Code->col =& $this->_data[$rowNumber];
       $Cancel = false;
-      $this->_Code->Report_ComputeColumn($Cancel, $this->_Code->col);
+      $this->_Code->Report_ComputeColumns($Cancel, $this->_Code->col);
       if ($Cancel) {
         unset($this->_data[$rowNumber]);
       }  

@@ -9,10 +9,12 @@
  */
 class AmberReport_UserFunctions
 {
+  var $report;
+
   function Report_Open(&$Cancel) { }
-  function Report_ComputeColumn(&$Cancel, &$col)  {$this->Report_OnLoadData($Cancel);}
-  function Report_OnLoadData(&$Cancel) { $Cancel = false;}
-  function Report_CompareRows(&$rowA, &$rowB) {return 'noSort!';}
+  function Report_ComputeColumns(&$Cancel, &$col)  { $this->Report_OnLoadData($Cancel); }
+  function Report_OnLoadData(&$Cancel) { $Cancel = false; }
+  function Report_CompareRows(&$rowA, &$rowB) {return 'noSort!'; }
   function Report_NoData(&$Cancel) { $Cancel = true; }
   function Report_EvaluateExpressions() { }
   function Report_OnNextRecord() { }
@@ -21,20 +23,16 @@ class AmberReport_UserFunctions
   function allSections_Format(&$Cancel, $FormatCount = 1) { } // see also Class SectionNull
   function allSections_Print (&$Cancel, $FormatCount = 1) { } // see also Class SectionNull
 
-  
-  var $report;
-
   function initialize(&$report)
   { 
-  
     $this->report =& $report;
   
     // Controls
     if ($report->Controls) {
       $keys = array_keys($report->Controls);
       foreach ($keys as $key) {
-        $key2 = $report->Controls[$key]->EventProcPrefix;
-        $this->$key2 =& $report->Controls[$key]; 
+        $prefix = $report->Controls[$key]->EventProcPrefix;
+        $this->$prefix =& $report->Controls[$key];
       }
     }
     $this->ctl =& $report->Controls;
@@ -46,8 +44,8 @@ class AmberReport_UserFunctions
     // Section
     $keys = array_keys($report->Sections);
     foreach ($keys as $key) {
-      $key2 = $report->Sections[$key]->EventProcPrefix;
-      $this->$key2 =& $report->Sections[$key];
+      $prefix = $report->Sections[$key]->EventProcPrefix;
+      $this->$prefix =& $report->Sections[$key];
     }
   }
   
@@ -64,8 +62,7 @@ class AmberReport_UserFunctions
   function Bookmark($txt, $level=0)
   {
     $this->report->Bookmark($txt, $level);
-  }  
- 
+  }
 }
 
 ?>
