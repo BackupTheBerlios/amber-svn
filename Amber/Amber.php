@@ -216,16 +216,16 @@ class Amber
   function showError($title, $text)
   {
     $id = 'AmberError' . mt_rand();
+    $btId = 'AmberBacktrace' . mt_rand();
 
     echo '<div id="' . $id . '" style="margin: 20px; border: solid 2px #ff0000; background-color: yellow; padding: 20px; z-index: 99999; position: relative; margin-top: 10px;">';
     echo '<p align="center"><b>' . $title . '</b></p>';
     echo '<p align="center">' . $text .'</p>';
-    echo '<p align="center"><input type="button" value="Ok" onclick="document.getElementById(\'' . $id . '\').style.display = \'none\';" style="width: 80px;" /></p>';
+    echo '<p align="center"><input type="button" value="Backtrace" onclick="document.getElementById(\'' . $btId . '\').style.display = \'\';" style="width: 80px;" />';
+    echo '&nbsp;<input type="button" value="Close" onclick="document.getElementById(\'' . $id . '\').style.display = \'none\';" style="width: 80px;" /></p>';
     echo '<p />';
     if (function_exists('debug_backtrace')) {
-      echo '<p align="center">';
-      Amber::dump(next(debug_backtrace()));
-      echo '</p>';
+      echo '<p id="' . $btId . '" align="center" style="display:none;">' . Amber::dump(next(debug_backtrace()), true) . '</p>';
     }
     echo '</div>';
   }
