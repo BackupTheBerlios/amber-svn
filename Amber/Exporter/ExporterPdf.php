@@ -82,7 +82,7 @@ class ExporterFPdf extends Exporter
       print $this->_pdf->Output('out.txt', 'S');
     } else {
       if (isset($this->_docTitle)) {
-        $this->_pdf->Output($this->_docTitle . '.pdf', 'I');
+        $this->_pdf->Output('"' . $this->_docTitle . '.pdf"', 'I');
       } else {
         $this->_pdf->Output('out.pdf', 'I');
       }

@@ -26,13 +26,13 @@ class ExporterTypo3 extends ExporterHtml
     $css = $this->getReportCssStyles($this->_report, $this->cssClassPrefix);
     $this->setCss($css);
     
-    $tmp = "\n\n<!-- Start of AmberReport //-->\n\n<div class=\"AmberReport\">\n";
+    $tmp = "\n\n<!-- Start of AmberReport // -->\n\n<div class=\"AmberReport\">\n";
     echo $tmp;
   }
   
   function _exporterExit()
   {
-    echo "\n</div>\n\n<!-- End of AmberReport //-->\n\n";
+    echo "\n</div>\n\n<!-- End of AmberReport // -->\n\n";
   }
 
   function setCSS($css)

@@ -43,7 +43,7 @@ class ExporterHtml extends Exporter
       $tmp = '';
       $tmp = "</head>\n";
       $tmp .= "<body style=\"background-color: #aaaaaa;\">\n";
-      $tmp .= "\n\n<!-- Start of AmberReport //-->\n\n<div class=\"AmberReport\">\n";
+      $tmp .= "\n\n<!-- Start of AmberReport // -->\n\n<div class=\"AmberReport\">\n";
       echo $tmp;
     } else {
       $css = $this->getReportCssStyles($this->_report, 'sub_' . $this->cssClassPrefix);
@@ -54,7 +54,7 @@ class ExporterHtml extends Exporter
   function _exporterExit()
   {
     if (!$this->_asSubreport) {
-      echo "\n</div>\n\n<!-- End of AmberReport //-->\n\n";
+      echo "\n</div>\n\n<!-- End of AmberReport // -->\n\n";
       echo "</body>\n</html>\n";
     }
   }
@@ -91,7 +91,7 @@ class ExporterHtml extends Exporter
 
     $height = 12; //12pt
 
-    $out .= "\t<div name=\"" . $sec->Name . '"';
+    $out .= "\t<div name=\"" . htmlspecialchars($text) . '-Header"';
 
     $style = array();
     $style['top'] = $this->_html_twips($this->_posY);
@@ -99,16 +99,16 @@ class ExporterHtml extends Exporter
     $style['left'] = '0';
     $style['width'] = '100%';
     $style['background-color'] = '#999999';
-    $style['font'] = '8pt arial';
+    $style['font'] = '8pt Arial';
     $style['border'] = '#000000 solid 1px';
     $style['border-top'] = '#cccccc solid 1px';
     $style['border-left'] = '#cccccc solid 1px';
     $style['margin-bottom'] = '1px';
     $style['margin-top'] = '1px';
 
-    $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";
+    $out .=  ' style="' . $this->arrayToStyle($style) . "\">";
     $out .= htmlspecialchars($text);
-    $out .= "\t</div>\n";
+    $out .= "</div>\n";
 
     echo $out;
     $this->_posY += ($height + 2) * 20;
