@@ -24,7 +24,6 @@ class ExporterTypo3 extends ExporterHtml
   function startReport(&$report)
   {
     parent::startReport($report, true);
-    $this->_blankPage = true;
 
     $ret = '';
     if (is_array($report->Controls)) {
@@ -33,13 +32,18 @@ class ExporterTypo3 extends ExporterHtml
         $ret .= $this->getCssStyle($ctrl, $this->cssClassPrefix) . "\n";
       }
     }
-
-    $GLOBALS['TSFE']->setCSS('AmberReport', $ret);
   }
 
   function endReport(&$report)
   {
     parent::endReport($report);
+  }
+
+  function setCSS($css)
+  {
+    $uniqueId = 'AmberReport' . mt_rand();
+
+    $GLOBALS['TSFE']->setCSS($uniqueId, $css);
   }
 }
 
