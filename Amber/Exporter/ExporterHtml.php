@@ -43,13 +43,7 @@ class ExporterHtml extends Exporter
       $tmp .= "\t<title>" . $this->_docTitle . "</title>\n";
       echo $tmp;
     }
-    if (is_array($report->Controls)) {
-      $css = '';
-      foreach ($report->Controls as $ctrl) {
-        $ctrl->_exporter->_saveStdValues($ctrl);
-        $css .= $this->getCssStyle($ctrl, $this->cssClassPrefix) . "\n";
-      }
-    }
+    $css = $this->getReportCssStyles($report, $this->cssClassPrefix);
     $this->setCSS($css);
 
     $tmp = '';
@@ -61,6 +55,25 @@ class ExporterHtml extends Exporter
 
     echo $tmp;
   }
+  
+  function getReportCssStyles(&$report, $cssClassPrefix)
+  {
+    $this->cssClassPrefix = $cssClassPrefix;
+    if (is_array($report->Controls)) {
+      $css = '';
+      foreach ($report->Controls as $ctrl) {
+        $ctrl->_exporter->_saveStdValues($ctrl);
+        $css .= $this->getCssStyle($ctrl, $cssClassPrefix) . "\n";
+        $ctrl->_exporter->cssClassPrefix = $cssClassPrefix;
+        if ($ctrl->ControlType == 112) {      //subreport XXX FIX THIS: direct reference to Controltype!!!!!
+
+          #ooops: $ctrl->report isn't set yet! (gets opened with ctrl->printNormal, when the control is actually printed)
+          $css .= $ctrl->report->_exporter->getReportCssStyles($ctrl->report, $ctrl->report->EventProcPrefix);
+        }
+      }
+    }
+    return $css;
+  }  
 
   function endReport(&$report)
   {
@@ -253,7 +266,6 @@ class ExporterHtml extends Exporter
     }
     $objName = $classList[$type];
     $ctrl->_exporter =& new $objName;
-    $ctrl->_exporter->cssClassPrefix = $this->cssClassPrefix;
   }
 
   // Helper functions - html
@@ -306,6 +318,12 @@ class ExporterHtml extends Exporter
   }
 
   // Local functions
+  /**
+   * @access private
+   * @param obj Control
+   * @param string prefix
+   * @return string  The control's default properies as CSS definition 
+   */
 
   function getCssStyle(&$control, $prefix)
   {
