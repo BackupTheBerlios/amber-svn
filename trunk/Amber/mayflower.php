@@ -79,33 +79,32 @@ class mayflower
 
   var $subReportIndex = 0;
   var $subReportbuff;
-  var $sectionIndex = 0;
-  var $sectionBuff;
+  var $bufferIndex = 0;
+  var $buffer;
   
   var $reportBuff;
   var $sectionType;    // 'Head', 'Foot' or ''
   var $layout;
   
-  function mayflower(&$layout, &$pdf)
+  function mayflower(&$pdf)
   {
     $this->actpageNo = -1;
-    $this->layout =& $layout;
     $this->pdf =& $pdf;
   }  
 
-  function &getInstance(&$layout, &$pdf, $reset)
+  function &getInstance(&$pdf, $reset)
   {
     static $instance;
     if (is_null($instance) || $reset) {
-      $instance = new mayflower($layout, $pdf);
+      $instance = new mayflower($pdf);
     }  
     return $instance;
   }
 
   function _setOutBuff()
   { 
-    if ($this->sectionIndex) {
-      $this->pdf->setOutBuffer($this->sectionBuff[$this->sectionIndex], 'section');
+    if ($this->bufferIndex) {
+      $this->pdf->setOutBuffer($this->buffer[$this->bufferIndex], 'section');
     } elseif ($this->inReport()) {
       $this->pdf->setOutBuffer($this->reportPages[$this->actpageNo][$this->sectionType], "report page".$this->sectionType.$this->actpageNo);
     } else {
@@ -147,28 +146,18 @@ class mayflower
     $this->_setOutBuff();
   }  
    
-  function subReportPush()
+  function bufferPush()
   {
-    $this->sectionPush();
-  }
-   
-  function subReportPop()
-  {
-    return $this->sectionPop();
-  }
-
-  function sectionPush()
-  {
-    $this->sectionIndex++;
-    $this->sectionBuff[$this->sectionIndex] = '';
+    $this->bufferIndex++;
+    $this->buffer[$this->bufferIndex] = '';
     $this->_setOutBuff();
   }
   
-  function sectionPop()
+  function bufferPop()
   {
-    $this->sectionIndex--;
+    $this->bufferIndex--;
     $this->_setOutBuff();
-    return $this->sectionBuff[$this->sectionIndex + 1];
+    return $this->buffer[$this->bufferIndex + 1];
   }
 
 

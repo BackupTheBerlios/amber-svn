@@ -23,12 +23,12 @@ class reportPaged extends Report
     if (!isset($this->_exporter)) {
       return;
     }
-    $this->layout =& new pageLayout($this, $isSubreport, $isDesignMode);
-    $this->_pdf =& $this->_exporter->getExporterBasicClass($this->layout, !$isSubreport);
-    $this->mayflower =& mayflower::getInstance($this->layout, $this->_pdf, !$isSubreport);
+    $this->layout =& new pageLayout($this, $this->_asSubReport, $isDesignMode);
+    $this->_pdf =& $this->_exporter->getExporterBasicClass($this->layout, !$this->_asSubReport);
+    $this->mayflower =& mayflower::getInstance($this->_pdf, !$this->_asSubReport);
     $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
     if ($isSubreport) {
-      $this->mayflower->subReportPush();
+      $this->mayflower->bufferPush();
       $this->_pdf->startcomment("StartSubreport"); // remove this!!!
     } else {  
       $this->mayflower->StartReportBuffering();
@@ -47,7 +47,7 @@ class reportPaged extends Report
     if ($this->_asSubReport) {
       $this->newPage();
       $this->_pdf->comment("EndSubreport");
-      $this->subReportBuff = $this->mayflower->subReportPop(); //a real copy
+      $this->subReportBuff = $this->mayflower->bufferPop(); //a real copy
       return;
     } else {
       if (!$this->layout->designMode) {
@@ -62,13 +62,13 @@ class reportPaged extends Report
       foreach(array_keys($this->mayflower->reportPages) as $pageY) {
         for($pageX = 0; $pageX <= $endPageX; $pageX++) {
           if (!$firstPage) {
-            $this->_exporter->_pdf->AddPage();
+            $this->_pdf->AddPage();
           }
           $firstPage = false;
   
-          $this->outPageHeader($pageY, $pageX, $this->_exporter->_pdf);  
-          $this->outPage($pageY, $pageX, $this->_exporter->_pdf);  
-          $this->outPageFooter($pageY, $pageX, $this->_exporter->_pdf);  
+          $this->outPageHeader($pageY, $pageX, $this->_pdf);  
+          $this->outPage($pageY, $pageX, $this->_pdf);  
+          $this->outPageFooter($pageY, $pageX, $this->_pdf);  
         }
       }
     }
@@ -114,7 +114,7 @@ class reportPaged extends Report
   function _startSection(&$section, $width, &$buffer)
   {
     $this->_exporter->startSection($section, $width, $buffer);
-    $this->mayflower->sectionPush();
+    $this->mayflower->bufferPush();
     $this->_pdf->comment('Start Section:');
     $this->_pdf->fillBackColorInWindow($section->BackColor, $section->_report->Width, $section->Height);
   }  
@@ -135,7 +135,7 @@ class reportPaged extends Report
   
   function sectionPrintDesignHeader($text)
   {
-    $this->mayflower->sectionPush();
+    $this->mayflower->bufferPush();
     $this->_pdf->comment('Start Section:');
     $height = 240; //12pt
 
@@ -159,7 +159,7 @@ class reportPaged extends Report
       return;
     }  
     $this->_pdf->comment("end Body-Section:1\n");
-    $secBuff = $this->mayflower->sectionPop();
+    $secBuff = $this->mayflower->bufferPop();
     $startPage = floor($this->posY / $this->layout->printHeight);
     $endPage   = floor(($this->posY + $sectionHeight) / $this->layout->printHeight);
     if ($keepTogether and ($startPage <> $endPage)) {
@@ -196,7 +196,7 @@ class reportPaged extends Report
   function endSectionInSubReport($sectionHeight, $keepTogether)
   {
     $this->_pdf->comment("end Subreport-Body-Section:2\n");
-    $buff = $this->mayflower->sectionPop();
+    $buff = $this->mayflower->bufferPop();
 
     $this->mayflower->reportStartPageBody();
 
@@ -212,14 +212,14 @@ class reportPaged extends Report
   function pageHeaderEnd()
   {
    $this->mayflower->reportStartPageHeader();
-   $buff = $this->mayflower->sectionPop();
+   $buff = $this->mayflower->bufferPop();
    $this->_pdf->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->layout->printHeight, $this->layout->reportWidth, $this->layout->pageHeaderHeight, $buff);
   }
 
   function pageFooterEnd()
   {
     $this->mayflower->reportStartPageFooter();
-    $buff = $this->mayflower->sectionPop();
+    $buff = $this->mayflower->bufferPop();
     $this->_pdf->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->layout->printHeight, $this->layout->reportWidth, $this->layout->pageFooterHeight, $buff);
   }
   
