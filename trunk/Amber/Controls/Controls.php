@@ -479,16 +479,21 @@ class SubReport extends Control
     if (($this->LinkChildFields != null) && ($this->LinkMasterFields != null)) {
       $linkChild = explode(';', $this->LinkChildFields);
       $linkMaster = explode(';', $this->LinkMasterFields);
-      foreach ($linkChild as $idx => $lc) {
-        $propName = $linkMaster[$idx];
+      foreach ($linkChild as $idx => $lchild) {
+        $lmaster = $linkMaster[$idx];
+        if (!array_key_exists($lmaster, $rep->Cols)) {
+          Amber::showError('Error', 'LinkMasterField "' . htmlspecialchars($lmaster) . '" does not exist.');
+          die();
+        }
+        $value = $rep->Cols[$lmaster];
         // FIXME:
         // - filter value has to be handled according to it's type
         //   We need to have the recordset instead of a plain array here
-        if (!isset($rep->Cols[$propName])) {
-          Amber::showError('Error', 'LinkMasterField "' . htmlspecialchars($propName) . '" does not exist.');
-          die();
+        if ($value === null) {
+          $reportFilterArray[] = $lchild . ' is null';
+        } else {
+          $reportFilterArray[] = $lchild . '=' . $rep->Cols[$lmaster];
         }
-        $reportFilterArray[] = $lc . '=' . $rep->Cols[$propName];
       }
       $this->_subReport->Filter = implode(' AND ', $reportFilterArray);
     }  
