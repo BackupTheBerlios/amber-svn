@@ -87,7 +87,7 @@ class AmberXMLServer extends IXR_Server
   {
     $db = $this->currentDb();
     $dict = NewDataDictionary($db);
-    $sysTable = 'amber_sys_objects';
+    $sysTable = 'tx_amber_sys_objects';
     $sql = 'Select name from ' . $dict->TableName($sysTable);
 
     return $db->GetAll($sql);
@@ -97,7 +97,7 @@ class AmberXMLServer extends IXR_Server
   {
     $db = $this->currentDb();
     $dict = NewDataDictionary($db);
-    $sysTable = 'amber_sys_objects';
+    $sysTable = 'tx_amber_sys_objects';
     $sql = 'Select code from ' . $dict->TableName($sysTable) . ' where name=' . $db->Quote($name);
 
     return $db->GetOne($sql);
