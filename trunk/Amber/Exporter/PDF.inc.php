@@ -199,6 +199,12 @@ class PDF extends FPDF
     $this->_out('Q');
   }
 
+  function SetXY($x,$y)
+  {
+  	//Set x and y positions, even if negative
+  		$this->x=$x;
+  		$this->y=$y;
+  }
 
 
   /*****************************************
