@@ -24,19 +24,6 @@ class ExporterTypo3 extends ExporterHtml
   function startReport(&$report)
   {
     parent::startReport($report, true);
-
-    $ret = '';
-    if (is_array($report->Controls)) {
-      foreach ($report->Controls as $ctrl) {
-        $ctrl->_exporter->_saveStdValues($ctrl);
-        $ret .= $this->getCssStyle($ctrl, $this->cssClassPrefix) . "\n";
-      }
-    }
-  }
-
-  function endReport(&$report)
-  {
-    parent::endReport($report);
   }
 
   function setCSS($css)

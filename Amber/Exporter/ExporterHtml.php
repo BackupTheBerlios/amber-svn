@@ -38,20 +38,23 @@ class ExporterHtml extends Exporter
     $this->_blankPage = true;
 
     if (!$this->_asSubreport) {
-      $ret = "<html>\n<head>\n";
-      $ret .= "\t<title>" . $this->_docTitle . "</title>\n";
+      $tmp = "<html>\n<head>\n";
+      $tmp .= "\t<title>" . $this->_docTitle . "</title>\n";
+      echo $tmp;
     }
     if (is_array($report->Controls)) {
+      $css = '';
       foreach ($report->Controls as $ctrl) {
         $ctrl->_exporter->_saveStdValues($ctrl);
-        $ret .= $this->getCssStyle($ctrl, $this->cssClassPrefix) . "\n";
+        $css .= $this->getCssStyle($ctrl, $this->cssClassPrefix) . "\n";
       }
     }
-    $this->setCSS($ret);
+    $this->setCSS($css);
 
     if (!$this->_asSubreport) {
-      $ret .= "</head>\n";
-      $ret .= "<body style=\"background-color: #aaaaaa;\">\n";
+      $tmp = "</head>\n";
+      $tmp .= "<body style=\"background-color: #aaaaaa;\">\n";
+      echo $tmp;
     }
   }
 
