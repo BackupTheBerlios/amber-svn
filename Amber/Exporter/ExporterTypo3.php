@@ -230,6 +230,7 @@ class ExporterTypo3 extends Exporter
 
   function getCssStyle(&$control)
   {
+    $control->Properties['isVisible'] = $control->Properties['Visible'];
     $nil = array('ForeColor' => 16777216, 'BackColor' => 16777216, 'BorderColor' => 16777216, 'BorderWidth' => -9999); // illegal values
     return '.s' . $control->id . "\t/* " . $control->Name . ' */ { position: absolute; overflow:hidden; ' . $control->_exporter->getStyle($control, $control->Properties, $nil) . '}';
   }

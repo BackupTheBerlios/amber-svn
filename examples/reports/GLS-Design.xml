@@ -777,7 +777,8 @@
                 <TextAlign>2</TextAlign>
                 <Section>0</Section>
                 <zIndex>150</zIndex>
-            </item>
+                <HideDuplicates>-1</HideDuplicates>
+                            </item>
             <item id="Feld21">
                 <EventProcPrefix>Feld21</EventProcPrefix>
                 <Name>Feld21</Name>

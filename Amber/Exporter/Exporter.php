@@ -7,7 +7,7 @@
  *
  */
 
-require_once 'ExporterFactory.php';
+//require_once 'ExporterFactory.php';
 
 ExporterFactory::register('null', 'Exporter');
 

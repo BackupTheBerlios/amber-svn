@@ -38,7 +38,8 @@ class Control
       'BorderWidth' => 0, // as small as possible ("Haarlinie")
       'BorderLineStyle' => 0,
       'zIndex' => 0,
-      'Value' => ''
+      'Value' => '',
+      '_OldValue' => ''
     );
   var $_exporter;
 
@@ -137,7 +138,7 @@ class Control
   **/
   function stdHeight()
   {
-    if (!$this->Visible) {
+    if (!$this->isVisible()) {
       $ret = 0;
     } elseif ($this->BorderStyle == 0) { //Borderstyle none
       $ret = $this->Top + $this->Height;
@@ -149,7 +150,10 @@ class Control
     return $ret;
   }
 
-
+  function isVisible()
+  {
+    return $this->Visible;
+  }      
 
   /**
   *
@@ -309,6 +313,7 @@ class TextBox extends FontBox
         'DecimalPlaces' => 0,
         'CanGrow' => false,
         'CanShrink' => false,
+        'HideDuplicates' => false,
         'RunningSum' => 0
       );
     $this->_registerProperties($newProperties);
@@ -329,6 +334,17 @@ class TextBox extends FontBox
     $ctrl = $this->prepareDesign();
     $this->_exporter->printDesign($ctrl, $buffer, $ctrl->ControlSource);
   }
+
+  function isVisible()
+  {
+    if (!$this->Visible) {
+      return false;
+    } elseif ($this->HideDuplicates and ($this->Value === $this->_OldValue)) {
+      return false;
+    } else {
+      return true;
+    }    
+  }      
 
   function _runningSum()
   {
@@ -363,7 +379,10 @@ class Label extends FontBox
   {
     parent::FontBox();
 
-    $extProperties = array('Caption' => '');
+    $extProperties = array(
+                      'Caption' => '',
+                      'Parent' => '');
+                      
     $this->_registerProperties($extProperties);
   }
 
@@ -378,6 +397,18 @@ class Label extends FontBox
     $ctrl = $this->prepareDesign();
     $this->_exporter->printDesign($ctrl, $buffer, $ctrl->Caption);
   }
+
+  function isVisible()
+  {
+    if (!$this->Visible) {
+      return false;
+#    } elseif ($this->Parent) {                                FIX THIS!!!!!!
+#      return REPORT->controls[$this->Parent]->isVisible();    label gets invisible iff its control get invisible
+    } else {
+      return true;
+    }    
+  }      
+
 }
 
 /**

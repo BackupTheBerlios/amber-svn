@@ -20,6 +20,9 @@ class Section
   var $ForceNewPage = 0;
   var $Controls;
 
+  
+  var $printed;               // set by printNormal: section got printed (or not...)
+  
   //////////////////////////////////////////////////////////////////
   // PRIVATE PROPERTIES
   //////////////////////////////////////////////////////////////////
@@ -119,6 +122,7 @@ class Section
     $this->_OnFormat($cancel);
     if (($cancel == true) || ($this->Visible == false)) {
       $height = 0;
+      $this->printed = false;
     } else {
       $this->_startSection($buffer);
       // print controls
@@ -140,6 +144,7 @@ class Section
         $height = $this->Height;
       }
       $this->_endSection($height, $buffer);
+      $this->printed = true;
     }
   }
 

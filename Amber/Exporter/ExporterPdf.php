@@ -190,7 +190,7 @@ class ExporterFPdf extends Exporter
 
   function printNormal(&$control, &$buffer, $content)
   {
-    if (!$control->Visible) {
+    if (!$control->isVisible()) {
       return;
     }
 

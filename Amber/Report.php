@@ -504,6 +504,7 @@ class Report
   {
     //Amber::dumpArray($this);
     $this->$sectionName->printNormal();
+    $this->_prepareDuplicates($this->$sectionName);
   }
 
    /**
@@ -525,6 +526,7 @@ class Report
     for ($i = $level; $i < $maxLevel; $i++) {
       if (isset($this->GroupHeaders[$i])) {
         $this->GroupHeaders[$i]->printNormal();
+        $this->_prepareDuplicates($this->GroupHeaders[$i]);
       }
     }
   }
@@ -551,6 +553,7 @@ class Report
     for ($i = $maxLevel-1; $i >= $level; $i--) {
       if (isset($this->GroupFooters[$i])) {
         $this->GroupFooters[$i]->printNormal();
+        $this->_prepareDuplicates($this->GroupFooters[$i]);
       }
     }
   }
@@ -568,6 +571,33 @@ class Report
     }
   }
 
+  /**
+   * @access private
+   * @param bool printed: section was printed
+   * @param obj  section printed
+   */
+  function _prepareDuplicates(&$section)
+  {
+    if ($section->printed) {
+      //nullify all _oldValue of report
+      if (is_array($this->Controls)) {
+        $keys = array_keys($this->Controls);
+        foreach ($keys as $index) {
+          $ctrl  =& $this->Controls[$index];
+          $ctrl->_OldValue = null;
+        }
+      }    
+      //set _oldValue of section
+      if (is_array($section->Controls)) {
+        $keys = array_keys($section->Controls);
+        foreach ($keys as $index) {
+          $ctrl  =& $section->Controls[$index];
+          $ctrl->_OldValue = $ctrl->Value;
+        }
+      }    
+    }
+  }
+  
   /**
    * @access private
    * @param int

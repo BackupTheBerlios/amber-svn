@@ -237,6 +237,8 @@ class ExporterHtml extends Exporter
 
   function getCssStyle(&$control)
   {
+#    $control->Properties['isVisible'] = $control->isVisible();
+    $control->Properties['isVisible'] = $control->Properties['Visible'];
     $nil = array('ForeColor' => 16777216, 'BackColor' => 16777216, 'BorderColor' => 16777216, 'BorderWidth' => -9999); // illegal values
     return '.s' . $control->id . "\t/* " . $control->Name . ' */ { position: absolute; overflow:hidden; ' . $control->_exporter->getStyle($control, $control->Properties, $nil) . '}';
   }
@@ -275,6 +277,7 @@ Class ControlExporterHtml
     $out =  "\t\t<div class=\"s" . $control->id . '"';
 
     $this->_stdValues['Value'] =  $control->Properties['Value'];
+    $control->Properties['isVisible'] = $control->isVisible();
     if ($control->Properties == $this->_stdValues) {
       //echo "###GLEICH###";
     } else {
@@ -334,14 +337,13 @@ Class ControlExporterHtml
     }
 
     // Visible
-    if ($value['Visible'] <> $std['Visible']) {
-      if ($ctrl->Properties['Visible'] == false) {
+#    if ($value['isVisible'] <> $std['isVisible']) {
+      if ($ctrl->Properties['isVisible'] == false) {
         $out .= 'visibility: hidden; ';
       } else {
         $out .= 'visibility: visible; ';
       }
-    }
-
+#    }
     return $out;
   }
 
