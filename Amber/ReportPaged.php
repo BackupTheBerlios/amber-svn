@@ -47,6 +47,36 @@ class reportPaged extends Report
     $this->reportBuff->newPage();
   }
 
+  function outPageHeader($pageY, $pageX, &$exporter)
+  {
+    $x = $this->layout->leftMargin;
+    $y = $this->layout->topMargin;
+    $w = $this->layout->printWidth;
+    $h = $this->layout->pageHeaderHeight;
+    $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
+    $deltaY = $pageY * $this->layout->printHeight - $y;
+    $exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->reportBuff->reportPages[$pageY]['Head']);
+  }
+  function outPage($pageY, $pageX, &$exporter)
+  {
+    $x = $this->layout->leftMargin;
+    $y = $this->layout->topMargin + $this->layout->pageHeaderHeight;
+    $w = $this->layout->printWidth;
+    $h = $this->layout->printHeight;
+    $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
+    $deltaY = $pageY * $this->layout->printHeight - $y;
+    $exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->reportBuff->reportPages[$pageY]['']);
+  }
+  function outPageFooter($pageY, $pageX, &$exporter)
+  {
+    $x = $this->layout->leftMargin;
+    $y = $this->layout->topMargin + $this->layout->pageHeaderHeight + $this->layout->printHeight;
+    $w = $this->layout->printWidth;
+    $h = $this->layout->pageFooterHeight;
+    $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
+    $deltaY = $pageY * $this->layout->printHeight - $y;
+    $exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->reportBuff->reportPages[$pageY]['Foot']);
+  }
 
 }
 

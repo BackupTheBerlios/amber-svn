@@ -88,48 +88,18 @@ class ExporterFPdf extends Exporter
     $firstPage = true;  //first page is out
 
     $endPageX = floor($this->_pdf->_reportWidth / $this->_report->layout->printWidth);
-    foreach(array_keys($this->_pdf->reportBuff->reportPages) as $pageY) {
+    foreach(array_keys($this->_report->reportBuff->reportPages) as $pageY) {
       for($pageX = 0; $pageX <= $endPageX; $pageX++) {
         if (!$firstPage) {
           $this->_pdf->AddPage();
         }
         $firstPage = false;
 
-        $this->outPageHeader($pageY, $pageX);  
-        $this->outPage($pageY, $pageX);  
-        $this->outPageFooter($pageY, $pageX);  
+        $this->_report->outPageHeader($pageY, $pageX, $this->_pdf);  
+        $this->_report->outPage($pageY, $pageX, $this->_pdf);  
+        $this->_report->outPageFooter($pageY, $pageX, $this->_pdf);  
       }
     }
-  }
-  function outPageHeader($pageY, $pageX)
-  {
-    $x = $this->_report->layout->leftMargin;
-    $y = $this->_report->layout->topMargin;
-    $w = $this->_report->layout->printWidth;
-    $h = $this->_report->layout->pageHeaderHeight;
-    $deltaX = $this->_report->layout->leftMargin - $pageX * $this->_report->layout->printWidth;
-    $deltaY = $pageY * $this->_report->layout->printHeight - $y;
-    $this->_pdf->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->_pdf->reportBuff->reportPages[$pageY]['Head']);
-  }
-  function outPage($pageY, $pageX)
-  {
-    $x = $this->_report->layout->leftMargin;
-    $y = $this->_report->layout->topMargin + $this->_report->layout->pageHeaderHeight;
-    $w = $this->_report->layout->printWidth;
-    $h = $this->_report->layout->printHeight;
-    $deltaX = $this->_report->layout->leftMargin - $pageX * $this->_report->layout->printWidth;
-    $deltaY = $pageY * $this->_report->layout->printHeight - $y;
-    $this->_pdf->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->_pdf->reportBuff->reportPages[$pageY]['']);
-  }
-  function outPageFooter($pageY, $pageX)
-  {
-    $x = $this->_report->layout->leftMargin;
-    $y = $this->_report->layout->topMargin + $this->_report->layout->pageHeaderHeight + $this->_report->layout->printHeight;
-    $w = $this->_report->layout->printWidth;
-    $h = $this->_report->layout->pageFooterHeight;
-    $deltaX = $this->_report->layout->leftMargin - $pageX * $this->_report->layout->printWidth;
-    $deltaY = $pageY * $this->_report->layout->printHeight - $y;
-    $this->_pdf->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->_pdf->reportBuff->reportPages[$pageY]['Foot']);
   }
 
   /*********************************
