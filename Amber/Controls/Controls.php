@@ -384,8 +384,8 @@ class Label extends FontBox
     parent::FontBox();
 
     $extProperties = array(
-                      'Caption' => '',
-                      'Parent' => '');
+      'Caption' => ''
+    );
 
     $this->_registerProperties($extProperties);
   }
@@ -408,6 +408,7 @@ class Label extends FontBox
       return false;
     } elseif ($this->Parent) {
       $parentCtrl =& $this->Parent;
+      amber::dump($this);
       return $parentCtrl->isVisible();   // label gets invisible if its parent control get invisible
     } else {
       return true;

@@ -259,8 +259,10 @@ Class ControlExporterHtml
   function _saveStdValues(&$ctrl)
   {
     // Attributwerte als Standard sichern
-    foreach ($ctrl->Properties as $key => $value) {
-      $this->_stdValues[$key] = $ctrl->Properties[$key];
+    if (is_array($ctrl->Properties)) {
+      foreach ($ctrl->Properties as $key => $value) {
+        $this->_stdValues[$key] = $ctrl->Properties[$key];
+      }
     }
   }
 
