@@ -133,10 +133,16 @@ class SimpleSelectParser extends Parser
     if (!empty($tokenTextList)) {
       do {
         $deleted = false;
-        $encoding = mb_detect_encoding($tokenTextList);
+
+        $mbSupport = extension_loaded('mbstring');
         $char = substr($tokenTextList, -1);
-        if (($char == ';') || ($char === ' ')) {          
-          $tokenTextList = mb_substr($tokenTextList, 0, mb_strlen($tokenTextList, $encoding) - 1, $encoding);
+        if (($char == ';') || ($char === ' ')) {
+          if ($mbSupport) {
+            $encoding = mb_detect_encoding($tokenTextList);
+            $tokenTextList = mb_substr($tokenTextList, 0, mb_strlen($tokenTextList, $encoding) - 1, $encoding);
+          } else {
+            $tokenTextList = substr($tokenTextList, 0, strlen($tokenTextList) - 1);
+          }
           $deleted = true;
         }
       } while ($deleted);
