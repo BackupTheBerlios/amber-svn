@@ -282,7 +282,16 @@ class PDF extends FPDF
         $this->_exporter->printPageHeader();
       }
       $this->mayflower->reportStartPageBody();
-      $this->outSection(0, $this->mayflower->reportBuff->posY, $this->layout->reportWidth, $sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
+      if (!$exporter->DesignMode) {
+        #$this->outSectionWithCallback(0, $this->mayflower->reportBuff->posY, $this->layout->reportWidth, $sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
+        $formatCount = $page - $startPage + 1;
+        $this->_exporter->onPrint($cancel, $formatCount);
+        if (!$cancel) {
+          $this->outSection(0, $this->mayflower->reportBuff->posY, $this->layout->reportWidth, $sectionHeight, $secBuff);
+        }
+      } else {
+        $this->outSection(0, $this->mayflower->reportBuff->posY, $this->layout->reportWidth, $sectionHeight, &$secBuff);
+      }      
     }
     $this->mayflower->reportBuff->posY += $sectionHeight;
   }
@@ -293,18 +302,22 @@ class PDF extends FPDF
     $buff = $this->mayflower->sectionPop();
 
     $this->mayflower->reportStartPageBody();
-    $this->SetCoordinate(0, -$this->mayflower->reportBuff->posY);
-    $this->SetClipping(0, 0, $this->layout->reportWidth, $sectionHeight);
 
     $formatCount = 1;
     $this->_exporter->onPrint($cancel, $formatCount);
     if (!$cancel) {
-      $this->_out($buff);
+      $this->outSection(0, $this->mayflower->reportBuff->posY, $this->layout->reportWidth, $sectionHeight, $buff);
     }
 
-    $this->RemoveClipping();
-    $this->RemoveCoordinate();
     $this->mayflower->reportBuff->posY += $sectionHeight;
+  }
+
+  function outSectionWithCallback($x, $y, $w, $h, $callCnt, &$exporter, &$secBuff)
+  {
+    $exporter->onPrint($cancel, $callCnt);
+    if (!$cancel) {
+      $this->outSection($x, $y, $w, $h, &$secBuff);
+    }
   }
 
   
@@ -396,23 +409,16 @@ class PDF extends FPDF
     $this->RemoveClipping();
     $this->RemoveCoordinate();
   }
-
-  function outSection($x, $y, $w, $h, $callCnt, &$exporter, &$secBuff)
+  
+  function outSection($x, $y, $w, $h, &$secBuff)
   {
     $this->SetCoordinate(-$x, -$y);
     $this->SetClipping(0, 0, $w, $h);
-
-    if (!$exporter->DesignMode) {
-      $exporter->onPrint($cancel, $callCnt);
-      if (!$cancel) {
-        $this->_out($secBuff);
-      }
-    } else {
-      $this->_out($secBuff);
-    } 
+    $this->_out($secBuff);
     $this->RemoveClipping();
     $this->RemoveCoordinate();
   }
+
   
   function fillBackColorInWindow($color, $maxWidth, $maxHeight)
   {
