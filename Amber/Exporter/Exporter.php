@@ -40,17 +40,20 @@ class Exporter
   }
 
   // Report
-  function startReport(&$report, $asSubreport)
+  function startReport(&$report, $asSubreport = false)
   {
     $this->_start = microtime();
     $this->_report =& $report;
     $this->_asSubreport = $asSubreport;
+    $this->_blankPage = true;
+    $this->_exporterInit();
   }
 
   function endReport(&$report)
   {
     $this->newPage();
     //$this->dump('Exec time: ' . microtime_diff($this->_start, microtime()));
+    $this->_exporterExit();
   }
 
   // Section
@@ -80,12 +83,34 @@ class Exporter
   }
 
   // Controls
-  function setControlExporter($ctrl)
+  function setControlExporter(&$ctrl)
   {
     // set the exporter of Control $ctrl
     // do something like $ctrl->_exporter =& new ControlExporter;
     Amber::showError('Error', 'Abstract function called: Exporter::setControlExporter, type: ' . $this->type);
     die();
+  }
+  
+  /*
+   * This method will be called by Exporter::startReport(). This is the place where
+   * exporters can do individual initialization
+   *
+   * @access protected
+   * @return void
+   */
+  function _exporterInit()
+  {
+  }
+
+  /*
+   * This method will be called by Exporter::endReport(). This is the place where
+   * exporters can do cleanup tasks after the report has been run and is about to exit
+   *
+   * @access protected
+   * @return void
+   */
+  function _exporterExit()
+  {
   }
 }
 

@@ -21,9 +21,18 @@ class ExporterTypo3 extends ExporterHtml
 
   // Report - Typo3
 
-  function startReport(&$report, $asSubreport = false)
+  function _exporterInit()
   {
-    parent::startReport($report, $asSubreport);
+    $css = $this->getReportCssStyles($this->_report, $this->cssClassPrefix);
+    $this->setCss($css);
+    
+    $tmp = "\n\n<!-- Start of AmberReport //-->\n\n<div class=\"AmberReport\">\n";
+    echo $tmp;
+  }
+  
+  function _exporterExit()
+  {
+    echo "\n</div>\n\n<!-- End of AmberReport //-->\n\n";
   }
 
   function setCSS($css)

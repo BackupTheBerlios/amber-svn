@@ -29,28 +29,33 @@ class ExporterHtml extends Exporter
   
   // Report - html
 
-  function startReport(&$report, $asSubreport)
+  function _exporterInit()
   {
-    parent::startReport($report, $asSubreport);
-    $this->_blankPage = true;
-
     $tmp = '';
     if (!$this->_asSubreport) {
-      $tmp = "<html>\n<head>\n";
+      $tmp = "\n<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n<head>\n";
       $tmp .= "\t<title>" . $this->_docTitle . "</title>\n";
       echo $tmp;
 
-      $css = $this->getReportCssStyles($report, $this->cssClassPrefix);
+      $css = $this->getReportCssStyles($this->_report, $this->cssClassPrefix);
       $this->setCSS($css);
 
       $tmp = '';
       $tmp = "</head>\n";
       $tmp .= "<body style=\"background-color: #aaaaaa;\">\n";
-      $tmp .= "\n\n<!-- Start of AmberReport -->\n\n<div class=\"AmberReport\">\n";
+      $tmp .= "\n\n<!-- Start of AmberReport //-->\n\n<div class=\"AmberReport\">\n";
       echo $tmp;
     } else {
-      $css = $this->getReportCssStyles($report, 'sub_' . $this->cssClassPrefix);
+      $css = $this->getReportCssStyles($this->_report, 'sub_' . $this->cssClassPrefix);
       $this->setCSS($css);
+    }
+  }
+  
+  function _exporterExit()
+  {
+    if (!$this->_asSubreport) {
+      echo "\n</div>\n\n<!-- End of AmberReport //-->\n\n";
+      echo "</body>\n</html>\n";
     }
   }
 
@@ -67,15 +72,6 @@ class ExporterHtml extends Exporter
       }
     }
     return $css;
-  }
-
-  function endReport(&$report)
-  {
-    parent::endReport($report);
-    if (!$this->_asSubreport) {
-      echo "\n</div>\n\n<!-- End of AmberReport -->\n\n";
-      echo "</body>\n</html>\n";
-    }
   }
 
   // Section - html
@@ -111,7 +107,7 @@ class ExporterHtml extends Exporter
     $style['margin-top'] = '1px';
 
     $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";
-    $out .= $text;
+    $out .= htmlspecialchars($text);
     $out .= "\t</div>\n";
 
     echo $out;
@@ -278,7 +274,7 @@ class ExporterHtml extends Exporter
     } else {
       $ret = "\t<style type=\"text/css\">\n<!--\n";
       $ret .= $css;
-      $ret .= "\n-->\n</style>\n";
+      $ret .= "\n//-->\n</style>\n";
     }
 
     echo $ret;

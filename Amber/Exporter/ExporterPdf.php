@@ -36,10 +36,10 @@ class ExporterFPdf extends Exporter
   /*********************************
    *  Report-pdf
    *********************************/
-  function startReport(&$report)
+  function _exporterInit()
   {
-    parent::startReport($report);
-    $this->_blankPage = true;
+    $report =& $this->_report;
+
     $orient = $this->_pdf_orientation($report->Orientation);
     $size = array($report->PaperWidth, $report->PaperHeight);
     #Amber::dump($size);
@@ -74,15 +74,18 @@ class ExporterFPdf extends Exporter
     }
   }
 
-  function endReport(&$report)
+  function _exporterExit()
   {
-    parent::endReport($report);
     #echo "pdf->Output();<br>";
-    $this->_pdf->ReportEnd($report->Width);
+    $this->_pdf->ReportEnd($this->_report->Width);
     if ($this->createdAs == 'testpdf') {
       print $this->_pdf->Output('out.txt', 'S');
     } else {
-      $this->_pdf->Output('out.pdf', 'I');
+      if (isset($this->_docTitle)) {
+        $this->_pdf->Output($this->_docTitle . '.pdf', 'I');
+      } else {
+        $this->_pdf->Output('out.pdf', 'I');
+      }
     }
   }
 
