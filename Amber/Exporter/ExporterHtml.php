@@ -251,7 +251,7 @@ class ExporterHtml extends Exporter
     );
     $type = strtolower(get_class($ctrl));
     if (!array_key_exists($type, $classList)) {
-      $type = 'subreport';  // FIXME: Null-Object for unknown Controltypes
+      $type = 'dummy';  // Null-Object for unknown Controltypes
     }
     $objName = $classList[$type];
     $ctrl->_exporter =& new $objName;

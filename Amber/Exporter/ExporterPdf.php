@@ -43,12 +43,7 @@ class ExporterFPdf extends Exporter
     $orient = $this->_pdf_orientation($report->Orientation);
     $size = array($report->PaperWidth, $report->PaperHeight);
     #Amber::dump($size);
-    $this->_pdf =& new PDF($orient, 1/20, $size);
-    $this->_pdf->SetCompression(false);
-    $this->_pdf->SetRightMargin($report->RightMargin);
-    $this->_pdf->SetLeftMargin($report->LeftMargin);
-    $this->_pdf->SetTopMargin($report->TopMargin);
-    $this->_pdf->SetAutoPageBreak(false, $report->BottomMargin);
+    $this->_pdf =& PDF::getInstance($orient, 1/20, $size);
     if ($report->Controls) {
       foreach (array_keys($report->Controls) as $ctrlName) {
         if (!empty($report->Controls[$ctrlName]->FontName)) {
@@ -67,10 +62,17 @@ class ExporterFPdf extends Exporter
         }
       }
     }
-    if ($this->DesignMode) {
-      $this->_pdf->ReportStart($this, $report->Width);
-    } else {
-      $this->_pdf->ReportStart($this, $report->Width, $report->PageHeader->Height, $report->PageFooter->Height);
+    if (!$this->_asSubreport) {
+      $this->_pdf->SetCompression(false);
+      $this->_pdf->SetRightMargin($report->RightMargin);
+      $this->_pdf->SetLeftMargin($report->LeftMargin);
+      $this->_pdf->SetTopMargin($report->TopMargin);
+      $this->_pdf->SetAutoPageBreak(false, $report->BottomMargin);
+      if ($this->DesignMode) {
+        $this->_pdf->ReportStart($this, $report->Width);
+      } else {
+        $this->_pdf->ReportStart($this, $report->Width, $report->PageHeader->Height, $report->PageFooter->Height);
+      }
     }
   }
 
@@ -125,6 +127,7 @@ class ExporterFPdf extends Exporter
     parent::startSection($section, $width, $buffer);
     $this->_pdf->startSection();
     $this->_backColor($section->BackColor);
+    $fill = true;
     $text = '';
     $border = 0;
     $ln = 0; //pos after printing
@@ -185,9 +188,14 @@ class ExporterFPdf extends Exporter
    *********************************/
   function setControlExporter(&$ctrl)
   {
-    $ctrl->_exporter =& $this;
+#    $type = strtolower(get_class($ctrl));
+    if ($type != 'subreport') {
+      $ctrl->_exporter =& $this;
+    } else {
+      $ctrl->_exporter =& new ExporterFPdf();
+    }
     // instead of creating a new Exporter for every Controltype
-    // we let $this do the work, after all we only need printNormal and printPreview
+    // we let $this one do the work, after all we only need printNormal and printPreview
   }
 
 

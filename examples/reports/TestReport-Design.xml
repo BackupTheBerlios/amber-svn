@@ -2,7 +2,7 @@
 <report>
     <RecordSource></RecordSource>
     <BorderStyle>2</BorderStyle>
-    <Width>9000</Width>
+    <Width>9307</Width>
     <Picture>(keines)</Picture>
     <PictureType>0</PictureType>
     <PictureSizeMode>0</PictureSizeMode>
@@ -25,8 +25,8 @@
         <DefaultSize>Wahr</DefaultSize>
         <ItemLayout>1953</ItemLayout>
         <ItemsAcross>1</ItemsAcross>
-        <ItemSizeHeight>10653</ItemSizeHeight>
-        <ItemSizeWidth>9000</ItemSizeWidth>
+        <ItemSizeHeight>11511</ItemSizeHeight>
+        <ItemSizeWidth>9307</ItemSizeWidth>
         <LeftMargin>1440</LeftMargin>
         <Orientation>2</Orientation>
         <PaperSize>9</PaperSize>
@@ -77,7 +77,8 @@
         <NewRowOrCol>0</NewRowOrCol>
         <KeepTogether>-1</KeepTogether>
         <CanGrow>-1</CanGrow>
-        <Height>10653</Height>
+        <Height>11511</Height>
+        <BackColor>12632256</BackColor>
         <Controls>
             <item id="Bezeichnungsfeld0">
                 <EventProcPrefix>Bezeichnungsfeld0</EventProcPrefix>
@@ -628,6 +629,8 @@
                 <Height>240</Height>
                 <BorderStyle>1</BorderStyle>
                 <OldBorderStyle>1</OldBorderStyle>
+                <BorderWidth>4</BorderWidth>
+                <BorderColor>65280</BorderColor>
                 <Section>0</Section>
                 <zIndex>280</zIndex>
             </item>
@@ -807,6 +810,40 @@
                 <Section>0</Section>
                 <Parent>Kontrollkästchen49</Parent>
                 <zIndex>379</zIndex>
+            </item>
+            <item id="Bericht1">
+                <EventProcPrefix>Bericht1</EventProcPrefix>
+                <Name>Bericht1</Name>
+                <ControlType>112</ControlType>
+                <SourceObject>Bericht.Bericht1</SourceObject>
+                <LinkChildFields></LinkChildFields>
+                <LinkMasterFields></LinkMasterFields>
+                <CanGrow>-1</CanGrow>
+                <Left>4228</Left>
+                <Top>8318</Top>
+                <Width>2894</Width>
+                <Height>2957</Height>
+                <BorderStyle>1</BorderStyle>
+                <OldBorderStyle>1</OldBorderStyle>
+                <Section>0</Section>
+                <zIndex>400</zIndex>
+            </item>
+            <item id="Bezeichnungsfeld51">
+                <EventProcPrefix>Bezeichnungsfeld51</EventProcPrefix>
+                <Name>Bezeichnungsfeld51</Name>
+                <ControlType>100</ControlType>
+                <Caption>Bericht1:</Caption>
+                <Left>4228</Left>
+                <Top>8078</Top>
+                <Width>690</Width>
+                <Height>225</Height>
+                <FontName>Arial</FontName>
+                <FontSize>8</FontSize>
+                <TextFontCharSet>0</TextFontCharSet>
+                <TextAlign>0</TextAlign>
+                <Section>0</Section>
+                <Parent>Bericht1</Parent>
+                <zIndex>399</zIndex>
             </item>
         </Controls>
     </Detail>

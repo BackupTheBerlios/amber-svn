@@ -471,21 +471,23 @@ class SubReport extends Control
     }
     
     // Construct filter
-    $linkChild = explode(';', $this->LinkChildFields);
-    $linkMaster = explode(';', $this->LinkMasterFields);
-    foreach ($linkChild as $idx => $lc) {
-      $propName = $linkMaster[$idx];
-      $rep =& ObjectHandler::getObject($this->_hReport);
-      // FIXME:
-      // - filter value has to be handled according to it's type
-      //   We need to have the recordset instead of a plain array here
-      if (!isset($rep->Cols[$propName])) {
-        Amber::showError('Error', 'LinkMasterField "' . htmlspecialchars($propName) . '" does not exist.');
-        die();
+    if (($this->LinkChildFields != null) && ($this->LinkMasterFields != null)) {
+      $linkChild = explode(';', $this->LinkChildFields);
+      $linkMaster = explode(';', $this->LinkMasterFields);
+      foreach ($linkChild as $idx => $lc) {
+        $propName = $linkMaster[$idx];
+        $rep =& ObjectHandler::getObject($this->_hReport);
+        // FIXME:
+        // - filter value has to be handled according to it's type
+        //   We need to have the recordset instead of a plain array here
+        if (!isset($rep->Cols[$propName])) {
+          Amber::showError('Error', 'LinkMasterField "' . htmlspecialchars($propName) . '" does not exist.');
+          die();
+        }
+        $reportFilterArray[] = $lc . '=' . $rep->Cols[$propName];
       }
-      $reportFilterArray[] = $lc . '=' . $rep->Cols[$propName];
-    }
-    $this->_subReport->Filter = implode(' AND ', $reportFilterArray);
+      $this->_subReport->Filter = implode(' AND ', $reportFilterArray);
+    }  
     
     $this->_exporter->printNormal($this, $buffer, $this->Value);
     

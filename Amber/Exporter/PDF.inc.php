@@ -16,6 +16,38 @@ class PDF extends FPDF
   var $_sectionType;    // 'Head', 'Foot' or ''
 
 
+
+  /**
+   *
+   * @access public
+   * @param string orientation: 'P' - portrait, 'L' - Landscape
+   * @param string or number 'pt' point, 'mm' millimeter, cm centimeter, in inch, 
+            or number/fraction of points to use in usercoordinates
+   * @param string format 
+   * @return &object the PDF-instance
+   *
+   * PDF is singleton: one instance to handle report and subreports
+   *
+   */
+  function &getInstance($orient, $unit, $size)
+  {
+    static $instance = null;
+
+    if (is_null($instance)) {
+      $instance = new PDF($orient, $unit, $size);
+    }
+
+    return $instance;
+  }
+
+  
+  //////////////////////////////////////////////////////////////////////////
+  //
+  //  _out - overwriting FPDF's private _out method used for "printing"
+  //
+  //  see startSection/endSection and startReport/endReport below
+  //
+  //////////////////////////////////////////////////////////////////////////
   function _out($s)
   {
     if($this->state <> 2) {
@@ -30,6 +62,20 @@ class PDF extends FPDF
     }
   }
 
+  //////////////////////////////////////////////////////////////////////////
+  //
+  // startSection / endSection 
+  //
+  // inside a section the FPDF's output gets cached in $this->_buff
+  // any positioning inside a section is relative to the section, not the page
+  //
+  // when the section ends, the output is processed and possible divided vertical
+  // among several pages (page header and footer are output when needed)
+  // the section's KeepTogether property is taken into account
+  //
+  //////////////////////////////////////////////////////////////////////////
+  
+  
   function startSection()
   {
     $this->_buff = '';
@@ -114,6 +160,21 @@ class PDF extends FPDF
     $this->RemoveCoordinate();
   }
 
+  //////////////////////////////////////////////////////////////////////////
+  //
+  // startReport / endReport 
+  //
+  // inside a report the FPDF's output gets cached in 
+  //      $this->_reportPages[$this->_actPageNo][$this->_sectionType]
+  // where 
+  //      $this->_actPageNo     is the current page number and
+  //      $this->_sectionType   is 'Head' for page header, 'Foot' for page footer or '' for page body
+  //
+  // when the report ends, the output is processed and possible divided horizontal
+  // among several pages, if the report is wider than one page
+  //
+  //////////////////////////////////////////////////////////////////////////
+
 
   function reportStart(&$exporter, $width, $headerHeight=0, $footerHeight=0)
   {
@@ -148,9 +209,8 @@ class PDF extends FPDF
         $firstPage = false;
 
         $y = $this->tMargin;
-        $this->SetClipping($this->lMargin, $this->tMargin, $this->_printWidth, $this->_headerHeight);
+        $this->SetClipping($this->lMargin, $y, $this->_printWidth, $this->_headerHeight);
         $deltaX = $this->lMargin - $pageX * $this->_printWidth;
-       # $deltaY = $pageY * $this->_printHeight - $this->tMargin;
         $deltaY = $pageY * $this->_printHeight - $y;
         $this->SetCoordinate($deltaX, $deltaY);
         $this->_out($this->_reportPages[$pageY]['Head']);
@@ -178,18 +238,6 @@ class PDF extends FPDF
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
   /**
   *
   * Origin of coordinates is moved to (x,y)
@@ -207,11 +255,6 @@ class PDF extends FPDF
   {
     $this->_out('Q');
   }
-
-
-
-
-
 
 
 
@@ -328,7 +371,48 @@ class PDF extends FPDF
       }
   }
 
+  /*****************************************
+  * special Bookmark function from Ron Korving (see http://www.fpdf.org/en/script/script49.php)
+  *****************************************/
 
+  function WordWrap(&$text, $maxwidth)
+  {
+      $text = trim($text);
+      if ($text==='')
+          return 0;
+      $space = $this->GetStringWidth(' ');
+      $lines = explode("\n", $text);
+      $text = '';
+      $count = 0;
+  
+      foreach ($lines as $line)
+      {
+          $words = preg_split('/ +/', $line);
+          $width = 0;
+  
+          foreach ($words as $word)
+          {
+              $wordwidth = $this->GetStringWidth($word);
+              if ($width + $wordwidth <= $maxwidth)
+              {
+                  $width += $wordwidth + $space;
+                  $text .= $word.' ';
+              }
+              else
+              {
+                  $width = $wordwidth + $space;
+                  $text = rtrim($text)."\n".$word.' ';
+                  $count++;
+              }
+          }
+          $text = rtrim($text)."\n";
+          $count++;
+      }
+      $text = rtrim($text);
+      return $count;
+  }
+  
+  
 
   /********************************************
   *
