@@ -352,17 +352,8 @@ class Basic_Format extends myTestCase
   }
 }
 
-$suite  = new PHPUnit_TestSuite("Basic_Format_internals");
-$result = PHPUnit::run($suite);
-$s = $result->toHTML();
-if (strpos($s, 'failed')) {
-   print $s;
-}   
 
-$suite  = new PHPUnit_TestSuite("Basic_Format");
-$result = PHPUnit::run($suite);
-$s = $result->toHTML();
-if (strpos($s, 'failed')) {
-   print $s;
-}   
+$suites[] =& new PHPUnit_TestSuite("Basic_Format_internals");
+$suites[] =& new PHPUnit_TestSuite("Basic_Format");
+
 ?>

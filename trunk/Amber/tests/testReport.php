@@ -102,11 +102,6 @@ class testReport extends PHPUnit_TestCase
   }
 }
 
-$suite  = new PHPUnit_TestSuite("testReport");
-$result = PHPUnit::run($suite);
-$s = $result->toHTML();
-if (strpos($s, 'failed')) {
-   print $s;
-}   
+$suites[] =& new PHPUnit_TestSuite("testReport");
 
 ?>

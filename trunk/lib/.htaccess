@@ -1,0 +1,4 @@
+<Files *.xml>
+  Order deny,allow
+  Deny from all
+</Files>

@@ -57,6 +57,10 @@ class testReports extends myTestCase
 
     $report->initialize_report($reportArray);
 
+    if (method_exists($testClass, 'getdata')) {
+      $report->RecordSource = '[Array]';
+      $report->_data = $testClass->getData();
+    }
     if (method_exists($testClass, 'assertPdf')) {
       ob_start();
       $report->run('testpdf');
@@ -74,12 +78,13 @@ class testReports extends myTestCase
     $this->runTestReport($className);
   }
   
-  function test1()
+/*  function test1()
   {
      $this->tstOneReport('reportTests/exampleInvoiceList.php');
   }   
+*/
   
-/*  function test_TestReports()
+  function test_TestReports()
   {
     setlocale (LC_ALL, 'de_DE@euro', 'de_DE', 'de', 'ge');
     foreach (glob('reportTests/test?*.php') as $filename) {
@@ -89,11 +94,9 @@ class testReports extends myTestCase
       $this->tstOneReport($filename);
     }
   }
-*/  
+  
 }
 
-$suite  = new PHPUnit_TestSuite("testreports");
-$result =& PHPUnit::run($suite);
-echo $result->toHTML();
+$suites[] =& new PHPUnit_TestSuite("testreports");
 
 ?>

@@ -42,7 +42,7 @@ class testReportSum extends AmberReport_UserFunctions
     $test->assertContains('-1.073.552,00', $html, $id  . ' sumSaldo9-2');
   }
   
-  function assertPdf($pdf)
+  function assertPdf($html)
   {
     $test =& $this->test;
     $id = get_class($this) . '->assertPdf'; 

@@ -217,10 +217,5 @@ class Aggregate_Basic extends PHPUnit_TestCase
 *
 */
 
-$suite  = new PHPUnit_TestSuite("Aggregate_Basic");
-$result = PHPUnit::run($suite);
-$s = $result->toHTML();
-if (strpos($s, 'failed')) {
-   print $s;
-}   
+$suites[] =& new PHPUnit_TestSuite("Aggregate_Basic");
 ?>

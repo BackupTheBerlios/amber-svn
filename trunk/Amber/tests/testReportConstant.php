@@ -137,15 +137,11 @@ class testReportConstant extends PHPUnit_TestCase
   
 }
 
-print "This is not a normal test. If You get any errors, check comments inside testReportConstant.php first!<br>\n";
+#print "This is not a normal test. If You get any errors, check comments inside testReportConstant.php first!<br>\n";
+#print "Test switched off for now"; 
 
-print "Test switched off for now"; return;
+return;
 
-$suite  = new PHPUnit_TestSuite("testReportConstant");
-$result = PHPUnit::run($suite);
-$s = $result->toHTML();
-if (strpos($s, 'failed')) {
-   print $s;
-}   
+$suites[] =& new PHPUnit_TestSuite("testReportConstant");
 
 ?>
