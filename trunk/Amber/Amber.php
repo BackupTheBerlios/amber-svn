@@ -8,7 +8,7 @@
 */
 
 require_once 'ReportPaged.php';
-require_once 'ObjectLoader.php';
+require_once 'ObjectManager.php';
 require_once 'adodb/adodb.inc.php';
 
 define('AC_DESIGN', 1);
@@ -23,7 +23,7 @@ define('AC_NORMAL', 2);
 class Amber
 {
   var $_config;
-  var $_objectLoader;
+  var $_objectManager;
 
   var $_db; // ADODB database containing data
   var $_sysdb; // ADODB database containig tx_amber_sys_objects
@@ -32,9 +32,16 @@ class Amber
 
   function init()
   {
-    if (!$this->loadObject('module', '')) {
-      Amber::showError('Amber::init():', 'Error loading modules');
-      die();
+    $this->_objectManager =& new ObjectManager($this);
+    $mgr =& $this->getObjectManager();
+
+    /* Process all modules available */
+    $moduleList = $mgr->getList('module');
+    if (is_array($moduleList)) {
+      foreach ($moduleList as $moduleName) {
+        $moduleObj = $mgr->loadModule($moduleName);
+        $moduleObj->run();
+      }
     }
   }
 
@@ -61,23 +68,15 @@ class Amber
     return $instance;
   }
 
-  function &getObjectLoader()
+  function &getObjectManager()
   {
-    if (!isset($this->_objectLoader)) {
-      $medium = $this->_config->get('sys/medium');
-      if ($medium == 'db') {
-        $this->_objectLoader =& new ObjectLoaderDb();
-        $this->_objectLoader->setDatabase(Amber::sysDb());
-      } else {
-        $this->_objectLoader =& new ObjectLoaderFile();
-        $this->_objectLoader->setBasePath($this->_config->get('sys/basepath'));
-      }
-      $this->_objectLoader->setConfig($this->_config);
+    if (!isset($this->_objectManager)) {
+      $this->_objectManager = new ObjectManager($this);
     }
 
-    return $this->_objectLoader;
+    return $this->_objectManager;
   }
-  
+    
   function &currentDb()
   {
     $amber =& Amber::getInstance();
@@ -112,8 +111,8 @@ class Amber
     if (!isset($amber->_sysdb)) {
       $sysdbCfg =& $amber->_config->get('sys/database');
       $sysdb =& ADONewConnection($sysdbCfg['driver']);
-      $conResult = @$sysdb->NConnect($sysdbCfg['host'], $sysdbCfg['username'], $sysdbCfg['password'], $sysdbCfg['dbname']);
       $sysdb->SetFetchMode(ADODB_FETCH_ASSOC);
+      $conResult = @$sysdb->NConnect($sysdbCfg['host'], $sysdbCfg['username'], $sysdbCfg['password'], $sysdbCfg['dbname']);
       if ($conResult == false) {
         Amber::showError('Database Error '  . $sysdb->ErrorNo(), $sysdb->ErrorMsg());
         die();
@@ -134,7 +133,9 @@ class Amber
 
   function OpenReport($reportName, $mode = AC_NORMAL, $where = '', $type = 'html', $noMargin = false)
   {
-    $rep =& $this->loadObject('report', $reportName);
+    $mgr =& $this->getObjectManager();
+    
+    $rep =& $mgr->loadReport($reportName);
     if (!$rep) {
       return false;
     }
@@ -170,13 +171,8 @@ class Amber
 
   function &loadObject($type, $name)
   {
-    $loader =& Amber::getObjectLoader();
-
-    $result =& $loader->load($type, $name);
-    if ($result == false) {
-      Amber::showError('Error', $loader->getLastError());
-      die();
-    }
+    $mgr =& Amber::getObjectManager();
+    $result =& $mgr->loadObject($type, $name);
 
     return $result;
   }

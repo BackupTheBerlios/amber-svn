@@ -38,3 +38,5 @@ class AmberReport_UserFunctions
   {
   }
 }
+
+?>

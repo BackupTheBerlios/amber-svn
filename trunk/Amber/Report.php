@@ -123,22 +123,22 @@ class Report extends AmberObject
   /**
    *
    * @access public
-   * @param string name of the report to load
+   * @param AmberObjectRaw
    *
    */
   function initialize(&$data)
   {
-    $this->Name = $data['name'];
+    $this->Name = $data->name;
     $this->hReport = objectHandler::getHandle($this);
-    $res =& XMLLoader::_makeXMLTree($data['design']);
+    $res =& XMLLoader::_makeXMLTree($data->design);
     $xml = $res['report'];
 
     $classLoaded = false;
-    $className = $data['class'];
+    $className = $data->class;
 
     if ((isset($className)) && (!empty($className)) && (!class_exists($className))) {
-      //eval($data['code']); // code in database is currently being stored without php tags! fix this!
-      eval(' ?' . '>' . $data['code'] . '<' . '?php ');
+      //eval($data->code); // code in database is currently being stored without php tags! fix this!
+      eval(' ?' . '>' . $data->code . '<' . '?php ');
     }
     if (class_exists($className)) {
       $this->_Code =& new $className;

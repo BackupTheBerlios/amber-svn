@@ -9,8 +9,11 @@
 
 require_once 'adodb/adodb.inc.php';
 require_once 'ReportPaged.php';
+require_once 'Module.php';
 
 /**
+*
+* This will be an interface (PHP5)
 *
 * @package PHPReport
 * @subpackage ReportEngine
@@ -20,89 +23,27 @@ require_once 'ReportPaged.php';
 */
 class ObjectLoader
 {
-  var $_lastError = 'ObjectLoader: No error message set';
-  var $objectTypes = array('report' => 1, 'module' => 2, 'form' => 3);
+  var $objectTypes = array('report' => 1, 'module' => 2);
 
   /**
-   * @access public
-   * @param string
-   * @param string
-   * @return Report | Form
-   */
-  function &load($type, $objectName)
-  {
-    $types = array_keys($this->objectTypes);
-
-    if (!in_array($type, $types)) {
-      $this->_lastError = 'Requested loading of unsupported object type: "' . $type . '"';
-      return false;
-    }
-
-    $obj = null;
-    switch ($type) {
-      case 'module':
-        $obj =& $this->loadModule($objectName);
-        break;
-      case 'report':
-        $obj =& $this->loadReport($objectName);
-        break;
-      case 'form':
-        $obj =& $this->loadForm($objectName);
-        break;
-    }
-
-    if (is_null($obj)) {
-      $this->_lastError = 'ObjectLoader::load(): An unknown error occured';
-    }
-    return $obj;
-  }
-
-
-  /**
-   *
    * @access public
    * @abstract
-   * @param string
-   * @return array
+   * @param string type of objects (values: "report", "module")
    *
    */
   function getList($type)
   {
-    $types = array_keys($this->objectTypes);
-
-    if (!in_array($type, $types)) {
-      $this->_lastError = 'Requested listing of unsupported object type: "' . $type . '"';
-      return false;
-    }
-
-  
-    return array();
   }
 
   /**
    * @access public
-   * @return string
-   */
-  function getLastError()
-  {
-    $tmp = $this->_lastError;
-    $this->_lastError = 'ObjectLoader: No error message set';
-    return $tmp;
-  }
-
-  /**
-   *
-   * @access public
-   * @param AmberConfig
+   * @abstract
+   * @param string type of object to be loaded (values: "report", "module")
+   * @param string name of object
    *
    */
-  function setConfig($cfgObj)
+  function &load($type, $objectName)
   {
-    if (is_object($cfgObj) && is_a($cfgObj, 'AmberConfig')) {
-      $this->_globalConfig = $cfgObj;
-    } else {
-      Amber::showError('Warning - Report::setConfig()', 'Invalid paramater');
-    }
   }
 }
 
@@ -127,8 +68,8 @@ class ObjectLoaderDb extends ObjectLoader
   function setDatabase(&$db)
   {
     if (!is_object($db)) {
-      $this->_lastError = 'Parameter given is not an ADODB database object';
-      return;
+      Amber::showError('ObjectLoaderDb', 'Parameter given is not an ADODB database object');
+      die();
     }
 
     $this->_db =& $db;
@@ -146,13 +87,13 @@ class ObjectLoaderDb extends ObjectLoader
     $types = array_keys($this->objectTypes);
 
     if (!in_array($type, $types)) {
-      $this->_lastError = 'Requested listing of unsupported object type: "' . $type . '"';
-      return false;
+      Amber::showError('ObjectLoaderDb', 'Requested listing of unsupported object type: "' . $type . '"');
+      die();
     }
 
     if (!isset($this->_db)) {
-      $this->_lastError = 'ObjectLoader: Database needs to be set before attempting to load an object';
-      return false;
+      Amber::showError('ObjectLoaderDb', 'Database needs to be set before attempting to load an object');
+      die();
     }
 
     $dict = NewDataDictionary($this->_db);
@@ -166,77 +107,23 @@ class ObjectLoaderDb extends ObjectLoader
     return $list;
   }
 
-  /**
-   * @access private
-   * @return bool
-   */
-  function loadModule()
+  function &load($type, $objectName)
   {
-    $rs =& $this->fetchRecord('module');
-    if(!$rs) {
-      return true; // Try to continue even if it has failed
-    }
-
-    if ($rs->numRows() > 0) {
-      while ($row = $rs->FetchRow()) {
-        eval($row['code']);
-      }
-    }
-
-    return true;
-  }
-
-  /**
-   * @access private
-   * @param string name of the form
-   * @return Form
-   */
-  function &loadForm($formName)
-  {
-    $rs =& $this->fetchRecord('form', $formName);
-    if(!$rs) {
-      return false;
-    }
+    $rs =& $this->fetchRecord($type, $objectName);
 
     $data = $rs->FetchRow();
     if (!$data) {
-      $this->_lastError = 'Form "' . $formName . '" not found in database';
-      return false;
+      Amber::showError('ObjectLoaderDb', 'Object (' . $type . ') "' . $objectName . '" not found in database');
+      die();
     }
 
-    $data['code'] = '<?php ' . $data['code'] . ' ?>';
-
-    $form =& new Form();
-    $form->setConfig($this->_globalConfig);
-    $form->initialize($data);
-
-    return $form;
-  }
-
-  /**
-   * @access private
-   * @param string name of the report
-   * @return Report
-   */
-  function &loadReport($reportName)
-  {
-    $rs =& $this->fetchRecord('report', $reportName);
-    if(!$rs) {
-      return false;
-    }
-
-    $data = $rs->FetchRow();
-    if (!$data) {
-      $this->_lastError = 'Report "' . $reportName . '" not found in database';
-      return false;
-    }
-
-    $data['code'] = '<?php ' . $data['code'] . ' ?>';
-
-    $report =& new ReportPaged();
-    $report->setConfig($this->_globalConfig);
-    $report->initialize($data);
-    return $report;
+    $obj = new AmberObjectRaw;
+    $obj->name = $data['name'];
+    $obj->class = $data['class'];
+    $obj->code = '<?php ' . $data['code'] . ' ?>';
+    $obj->design = $data['design'];
+    
+    return $obj;
   }
 
   /**
@@ -247,24 +134,22 @@ class ObjectLoaderDb extends ObjectLoader
    * @return ADORecordSet
    *
    */
-  function &fetchRecord($type, $name = '')
+  function &fetchRecord($type, $name)
   {
      if (!isset($this->_db)) {
-      $this->_lastError = 'ObjectLoader: Database needs to be set before attempting to load an object';
-      return false;
+      Amber::showError('ObjectLoaderDb', 'Database needs to be set before attempting to load an object');
+      die();
     }
 
     $dict = NewDataDictionary($this->_db);
-    $sql = 'SELECT * FROM ' . $dict->TableName($this->sysTable) . ' WHERE';
-    if ($type != 'module') {
-      $sql .= ' name=' . $this->_db->qstr($name) . ' AND';
-    }
-    $sql .= ' type=' . $this->objectTypes[$type];
+    $sql = 'SELECT * FROM ' . $dict->TableName($this->sysTable) . ' WHERE ';
+    $sql .= 'name=' . $this->_db->qstr($name) . ' AND ';
+    $sql .= 'type=' . $this->objectTypes[$type];
 
     $rs =& $this->_db->Execute($sql);
     if (!$rs) {
-      $this->_lastError = 'Query failed: "' . $sql . '", ErrorMsg: ' . $this->_db->ErrorMsg();
-      return false;
+      Amber::showError('ObjectLoaderDb', 'Query failed: "' . $sql . '", ErrorMsg: ' . $this->_db->ErrorMsg());
+      die();
     }
 
     return $rs;
@@ -301,26 +186,94 @@ class ObjectLoaderFile extends ObjectLoader
   }
 
   /**
+   *
+   * @access public
+   * @param string
+   * @return array
+   *
+   */
+  function getList($type)
+  {
+    switch ($type) {
+      case 'module':
+        return $this->getModuleList($type);
+        break;
+      case 'report':
+        return $this->getReportList($type);
+        break;
+    }
+
+    return null;
+  }
+
+  function getModuleList($type)
+  {
+    $path = $this->_basePath . '/modules/';
+
+    $allFiles = glob($path . '/' . '*.php');
+    if (is_array($allFiles)) {
+      foreach ($allFiles as $file) {
+        $files[] = basename($file, '.php');
+      }
+    }
+    
+    return $files;
+  }
+
+  function getReportList()
+  {
+    $path = $this->_basePath . '/reports/';
+
+    $allFiles = glob($path . '/' . '*.xml');
+    if (is_array($allFiles)) {
+      foreach ($allFiles as $file) {
+        if (!strstr($file, '-Design.xml')) {
+          $files[] = basename($file, '.xml');
+        }
+      }
+    }
+    
+    return $files;
+  }
+  
+  function &load($type, $objectName)
+  {
+    switch ($type) {
+      case 'module':
+        $obj =& $this->loadModule($objectName);
+        break;
+      case 'report':
+        $obj =& $this->loadReport($objectName);
+        break;
+    }
+
+    return $obj;
+  }
+  
+  /**
    * @access private
    * @return bool
    */
-  function loadModule()
+  function &loadModule($name)
   {
     $modPath = $this->_basePath . '/modules/';
 
     // There's no modules directory...
     if (!is_dir($modPath)) {
-      return true;
+      return null;
     }
 
-    $modFiles = glob($modPath . '*.php');
-    if (is_array($modFiles)) {
-      foreach ($modFiles as $filename) {
-        include_once $modpath . $filename;
-      }
+    $fileName = $modPath . '/' . $name . '.php';
+    if (!is_file($fileName)) {
+      Amber::showError('Error', 'Unable to open module "' . $name . '" from ' . $modPath);
+      die();
     }
+    
+    $obj = new AmberObjectRaw;
+    $obj->name = basename($name, '.php');
+    $obj->code = file_get_contents($modPath . '/' . $name . '.php');
 
-    return true;
+    return $obj;
   }
 
   /**
@@ -328,61 +281,27 @@ class ObjectLoaderFile extends ObjectLoader
    * @param string name of the report
    * @return Report
    */
-  function &loadReport($reportName)
+  function &loadReport($name)
   {
     $repPath = $this->_basePath . '/reports/';
     $xmlLoader = new XMLLoader();
 
-    $res =& $xmlLoader->getArray($repPath . '/' . $reportName . '.xml');
+    $res =& $xmlLoader->getArray($repPath . '/' . $name . '.xml');
     $param = $res['report'];
+
+    $obj = new AmberObjectRaw;
     if (isset($param['Name'])) {
-      $data['name'] = $param['Name'];
+      $obj->name = $param['Name'];
     }
 
-    $data['design'] = file_get_contents($repPath . '/' . $param['FileNameDesign']);
+    $obj->design = file_get_contents($repPath . '/' . $param['FileNameDesign']);
 
     if (isset($param['FileNameCode']) && isset($param['ClassName'])) {
-      $data['class'] = $param['ClassName'];
-      $data['code'] = file_get_contents($repPath . '/' . $param['FileNameCode']);
+      $obj->class = $param['ClassName'];
+      $obj->code = trim(file_get_contents($repPath . '/' . $param['FileNameCode']));
     }
 
-    $report =& new ReportPaged();
-    $report->setConfig($this->_globalConfig);
-    $report->initialize($data);
-
-    return $report;
-  }
-
-  /**
-   * @access private
-   * @param string name of the form
-   * @return Form
-   */
-  function &loadForm($formName)
-  {
-    $formPath = $this->_basePath . '/forms/';
-    $xmlLoader = new XMLLoader();
-
-    $res =& $xmlLoader->getArray($formPath . '/' . $formName . '.xml');
-    $param = $res['form'];
-    if (isset($param['Name'])) {
-      $data['name'] = $param['Name'];
-    }
-
-    $data['design'] = file_get_contents($formPath . '/' . $param['FileNameDesign']);
-
-    if (isset($param['FileNameCode']) && isset($param['ClassName'])) {
-      $data['class'] = $param['ClassName'];
-      $data['code'] = file_get_contents($formPath . '/' . $param['FileNameCode']);
-    } else {
-      $data['class'] = '';
-    }
-
-    $form =& new Form();
-    $form->setConfig($this->_globalConfig);
-    $form->initialize($data);
-
-    return $form;
+    return $obj;
   }
 }
 
