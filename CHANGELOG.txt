@@ -1,4 +1,4 @@
-2004071toll1:
+asdn20040711:
 - Display error message if phpDocumentor cannot be found
 
 20040708:
