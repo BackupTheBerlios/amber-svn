@@ -58,7 +58,13 @@ class pageLayout
   function pageLayout(&$report, $asSubReport, $designMode)
   {    
     $this->unit = 1/20;
-    $this->set_orientation($report->Orientation, $report->PaperWidth, $report->PaperHeight);
+    if ($report->Orientation == 'portrait') {
+      $this->paperWidth = $report->PaperWidth;
+      $this->paperHeight = $report->PaperHeight;
+    } else {
+      $this->paperWidth = $report->PaperHeight;
+      $this->paperHeight = $report->PaperWidth;
+    }  
     #Amber::dump($size);
     if ($asSubReport) {
       $this->rightMargin = 0;
@@ -80,21 +86,6 @@ class pageLayout
         $this->pageFooterHeight = $report->PageFooter->Height;
       }
     }
-    $this->calcPrintableArea();
-  }
-  
-  function set_orientation($orientation, $width, $height)
-  {
-    if ($orientation == 'portrait') {
-      $this->paperWidth = $width;
-      $this->paperHeight = $height;
-    } else {
-      $this->paperWidth = $height;
-      $this->paperHeight = $width;
-    } 
-  }
-  function calcPrintableArea()
-  {
     $this->printWidth  = ($this->paperWidth - $this->leftMargin - $this->rightMargin); //width of printable area of page (w/o morgins)
     $this->printHeight = ($this->paperHeight - $this->topMargin - $this->bottomMargin - $this->pageHeaderHeight - $this->pageFooterHeight); //height of printable area of page (w/o morgins)
   }
