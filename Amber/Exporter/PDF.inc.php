@@ -8,29 +8,61 @@
  
 class subReportBuff
 {
-  var $index;
-  var $buffer;
+  var $subReportsubReportIndex;
+  var $subReportbuff;
+  var $sectionIndex;
+  var $sectionBuff;
   
   function out($s)
+  { 
+    if ($this->sectionIndex > $this->subReportIndex) {
+      $this->sectionBuff[$this->sectionIndex] .= $s . "\n";
+    } elseif ($this->subReportIndex) {
+      $this->subReportbuff[$this->subReportIndex] .= $s . "\n";
+    }  
+  }
+
+  function inSectionOrSubReport()
   {
-    $this->buffer[$this->index] .= $s . "\n";
+    return (($this->sectionIndex > $this->subReportIndex) or ($this->subReportIndex > 0));
   }
   
-  function push()
+
+
+  function subReportPush()
   {
-   $this->index++;
+   $this->subReportIndex++;
+   $this->subReportBuff[$this->subReportIndex] = '';
   }
    
-  function pop()
+  function subReportPop()
   {
-    $this->index--;
-    return $this->buffer[$this->index + 1];
+    $this->subReportIndex--;
+    return $this->subReportbuff[$this->subReportIndex + 1];
   }
   
-  function getPopped()
+  function subReportGetPopped()
   {
-    return $this->buffer[$this->index + 1];  
+    return $this->subReportbuff[$this->subReportIndex + 1];  
+  }
+  
+  function sectionPush()
+  {
+    $this->sectionIndex++;
+    $this->sectionBuff[$this->sectionIndex] = '';
+  }
+  
+  function sectionPop()
+  {
+    $this->sectionIndex--;
+    return $this->sectionBuff[$this->sectionIndex + 1];
+  }
+  
+  function getSectionIndexForCommentOnly()
+  {
+    return $this->sectionIndex;
   }  
+    
 } 
  
 class PDF extends FPDF
@@ -42,9 +74,7 @@ class PDF extends FPDF
 //
 //////////////////////////////////////////////////////// 
 
-  var $_inSection;      // int index to sectionBuff
   var $_inReport;       // bool 
-  var $_sectionBuff;    // array buffer for sections (to make sections re-entrand)
 
 
   //////////////////////////////////////////////////////////////////////////
@@ -95,10 +125,8 @@ class PDF extends FPDF
   {
     if($this->state <> 2) {
       parent::_out($s);
-    } elseif ($this->_inSection > $this->subReportBuff->index) {
-      $this->_sectionBuff[$this->_inSection] .= $s . "\n";
-    } elseif ($this->subReportBuff->index) {
-      $this->subReportBuff->out($s);     
+    } elseif ($this->subReportBuff->inSectionOrSubReport()) {
+      $this->subReportBuff->out($s);
     } elseif ($this->_inReport) {
       $this->reportBuff->out($s);
     } else {
@@ -144,21 +172,19 @@ class PDF extends FPDF
   
   function startSection()
   {
-    $this->_inSection++;
-    $this->_sectionBuff[$this->_inSection] = '';
-    $this->comment('Start Section:' . ($this->_inSection));
+    $this->subReportBuff->sectionPush();
+    $this->comment('Start Section:' . ($this->subReportBuff->getSectionIndexForCommentOnly()));
     $this->SetXY(0, 0);
   }
   
   function endSection($sectionHeight, $keepTogether)
   {
-    if ($this->subReportBuff->index) {
+    if ($this->subReportBuff->subReportIndex) {
       $this->endSectionSubReport($sectionHeight, $keepTogether);
       return;
     }  
-    $this->comment("end Body-Section:" . ($this->_inSection) . "\n");
-    $secBuff = $this->_sectionBuff[$this->_inSection];
-    $this->_inSection--;
+    $this->comment("end Body-Section:" . ($this->subReportBuff->getSectionIndexForCommentOnly()) . "\n");
+    $secBuff = $this->subReportBuff->sectionPop();
     $startPage = floor($this->reportBuff->posY / $this->layout->printHeight);
     $endPage   = floor(($this->reportBuff->posY + $sectionHeight) / $this->layout->printHeight);
     if ($keepTogether and ($startPage <> $endPage)) {
@@ -185,8 +211,8 @@ class PDF extends FPDF
 
   function endSectionSubReport($sectionHeight, $keepTogether)
   {
-    $this->comment("end Subreport-Body-Section:" . ($this->_inSection) . "\n");
-    $this->_inSection--;
+    $this->comment("end Subreport-Body-Section:" . ($this->subReportBuff->getSectionIndexForCommentOnly()) . "\n");
+    $buff = $this->subReportBuff->sectionPop();
 
     $this->reportBuff->sectionType = '';
     $this->SetCoordinate(0, -$this->reportBuff->posY);
@@ -195,7 +221,7 @@ class PDF extends FPDF
     $formatCount = 1;
     $this->_exporter->onPrint($cancel, $formatCount);
     if (!$cancel) {
-      $this->_out($this->_sectionBuff[$this->_inSection + 1]);
+      $this->_out($buff);
     }
 
     $this->RemoveClipping();
@@ -205,11 +231,11 @@ class PDF extends FPDF
 
   function _pageHeaderOrFooterEnd($posY, $height)
   {
-    $this->_inSection--;
+    $buff = $this->subReportBuff->sectionPop();
     $this->SetCoordinate(0, -$posY);
     $this->SetClipping(0, 0, $this->layout->reportWidth, $height);
-    $this->comment("end Head/Foot-Section:" . ($this->_inSection + 1) . "\n");
-    $this->_out($this->_sectionBuff[$this->_inSection + 1]);
+    $this->comment("end Head/Foot-Section:" . (getSectionIndexForCommentOnly + 1) . "\n");
+    $this->_out($buff);
     $this->RemoveClipping();
     $this->RemoveCoordinate();
   }
