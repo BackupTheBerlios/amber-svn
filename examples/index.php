@@ -42,7 +42,7 @@ setlocale (LC_MONETARY, 'de_DE', 'de_DE@euro'); // needed for numbers
 include_modules();
 
 //$filter = 'BetreutePsy.NPNr > 2500';
-$amber = new Amber($cfg);
+$amber =& Amber::getInstance($cfg);
 
 if ($mode == 'normal') {
   $amber->OpenReport($repName, AC_NORMAL, null, $type);

@@ -10,24 +10,22 @@ class Amber
 {
   var $_config;
 
-  function Amber($config)
-  {
-    $this->_config = $config;
+  /**
+   * @return Amber reference to singleton
+   */
+  function &getInstance($config=null) {
+    static $instance = null;
+
+    if (is_null($instance)) {
+      $instance = new Amber();
+      $instance->_config = $config;
+    }
+    return $instance;
   }
 
   function OpenReport($reportName, $mode = AC_NORMAL, $filter = '', $type = 'html')
   {
-    $rep =& new Report();
-    $rep->setConfig($this->_config);
-    if ($this->_config->medium == 'db') {
-      $rep->setLoader('db');
-    } else {
-      $rep->setReportDir('reports');
-      //$rep->setCacheDir('cache');
-      //$rep->setCacheEnabled(true);
-      $rep->setLoader('file');
-    }
-    $rep->load($reportName);
+    $rep =& $this->Loadreport($reportName);
     $rep->Filter = $filter;
 
     // Run it
@@ -40,6 +38,22 @@ class Amber
         $rep->run($type);
         break;
     }
+  }
+  
+  function &LoadReport($reportName)
+  {
+    $rep =& new Report();
+    $rep->setConfig($this->_config);
+    if ($this->_config->medium == 'db') {
+      $rep->setLoader('db');
+    } else {
+      $rep->setReportDir('reports');
+      //$rep->setCacheDir('cache');
+      //$rep->setCacheEnabled(true);
+      $rep->setLoader('file');
+    }
+    $rep->load($reportName);
+    return $rep;
   }
 }
 

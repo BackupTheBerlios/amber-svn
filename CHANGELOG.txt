@@ -1,3 +1,6 @@
+20040727:
+- amber: Amber is now singleton (it resembles Access's doCmd-object). control subreport needs this.
+
 20040725:
 - test: added test.php to run all tests in tests-subdirectory, included this into install-html-frame [which seems now broken:-(]
 

@@ -399,13 +399,32 @@ class SubReport extends Control
 
     $newProperties =
       array(
-        'CanGrow' => false,
+        'CanGrow'   => false,
         'CanShrink' => false,
+        'SourceObject'     => '',
+        'LinkChildFields'  => '',
+        'LinkMasterFields' => ''
       );
     $this->_registerProperties($newProperties);
   }
+  
+  var $report;
   function printNormal()
   {
+    if (!$this->SourceObject) {
+      $this->_exporter->printNormal($this, $buffer, '');
+      return $this->stdHeight(); ##FIX ME: actual height        
+    }
+    
+    if (!$this->report) {
+      $amber =& Amber::getInstance();
+      #$this->report = $this->_parent->....  // make a copy of the report
+      $this->report =& $amber->LoadReport($this->SourceObject);
+    }
+
+    # $this->report->setFilter(....)
+    # $this->_exporter->printSubReport().....
+
     $this->_exporter->printNormal($this, $buffer, $this->Name);
     return $this->stdHeight(); ##FIX ME: actual height
   }
