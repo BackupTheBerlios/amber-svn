@@ -44,8 +44,6 @@ class mayflower
   var $sectionIndex = 0;
   var $sectionBuff;
   
-  var $inReport = false;
-  
   var $reportBuff;
   var $sectionType;    // 'Head', 'Foot' or ''
   var $layout;
@@ -74,7 +72,7 @@ class mayflower
       $this->pdf->setOutBuffer($this->sectionBuff[$this->sectionIndex]);
     } elseif ($this->subReportIndex) {
       $this->pdf->setOutBuffer($this->subReportbuff[$this->subReportIndex]);
-    } elseif ($this->inReport) {
+    } elseif ($this->inReport()) {
       $this->pdf->setOutBuffer($this->reportBuff->reportPages[$this->reportBuff->actpageNo][$this->sectionType]);
     }  
   }
@@ -89,9 +87,19 @@ class mayflower
     return ($this->reportBuff->posY - ($this->reportBuff->actpageNo * $this->layout->printHeight));
   }
   
+  function _presetPage()
+  {
+    if ($this->reportBuff->actpageNo > 0) {
+      if (!isset($this->reportBuff->reportPages[$this->reportBuff->actpageNo])) {
+        $this->reportBuff->reportPages[$this->reportBuff->actpageNo] = array('Head'=>'', ''=>'', 'Foot'=>'');
+      }
+    } 
+  }
+  
   function setPageIndex($index)
   {
-     $this->reportBuff->actpageNo = $index;
+    $this->reportBuff->actpageNo = $index;
+    $this->_presetPage();
   }        
   
   function getPageIndex()
@@ -101,35 +109,41 @@ class mayflower
   
   function enterReport()
   {
-    $this->inReport = true;
+#    $this->reportBuff->actpageNo = -1;
+#    $this->_presetPage();
+#    $this->_setOutBuff();
   }
   
   function exitReport()
   {
-    $this->inReport = false;
+    $this->reportBuff->actpageNo = -1;
+    $this->_setOutBuff();
   }
   
   function inReport()
   {
-    return ($this->inReport == true);
+    return ($this->reportBuff->actpageNo >= 0);
   }      
   
   function reportStartPageHeader()
   {
     $this->sectionType = 'Head';
+    $this->_setOutBuff();
   }  
   function reportStartPageBody()
   {
     $this->sectionType = '';
+    $this->_setOutBuff();
   }  
   function reportStartPageFooter()
   {
     $this->sectionType = 'Foot';
+    $this->_setOutBuff();
   }  
    
   function cached()
   {
-    return (($this->sectionIndex > $this->subReportIndex) or ($this->subReportIndex > 0) or $this->inReport);
+    return (($this->sectionIndex > $this->subReportIndex) or ($this->subReportIndex > 0) or $this->inReport());
   }
   
   function inSubReport()
