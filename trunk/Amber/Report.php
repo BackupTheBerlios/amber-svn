@@ -302,7 +302,7 @@ class Report extends AmberObject
         // Evaluate Expressions
         $this->_setControlValues($maxLevel, $level);
         $this->_resetRunningSum($maxLevel, $level);
-        $this->OnEvaluateExpressions();
+        $this->EvaluateExpressions();
         $this->_runningSum($maxLevel, $level);
 
         // Next Record

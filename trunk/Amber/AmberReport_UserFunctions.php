@@ -24,7 +24,7 @@ class AmberReport_UserFunctions
   function Report_Open(&$Cancel) { }
   function Report_NoData(&$Cancel) { $Cancel = true; }
   function Report_OnLoadData() { }
-  function Report_OnEvaluateExpressions() { }
+  function Report_EvaluateExpressions() { }
   function Report_OnNextRecord() { }
   function Report_Page() { }
   function Report_Close() { }
