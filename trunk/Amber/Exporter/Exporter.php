@@ -59,12 +59,10 @@ class Exporter
   // Section
   function startSection(&$section, $width, &$buffer)
   {
-    $this->_sections[] =& $section;
   }
   
   function endSection(&$section, $height, &$buffer)
   {
-    array_pop($this->_sections);
   }
 
   function sectionPrintDesignHeader($text='') {}
@@ -73,14 +71,6 @@ class Exporter
   function newPage() {} // Close page, prepare a new one
   function page() {} // return page number
 
-  // Call back functions
-  function onPrint(&$cancel, $formatCount)
-  {
-    $top =& $this->_sections[count($this->_sections) - 1];
-    if (!is_null($top)) {
-      $top->_OnPrint($cancel, $formatCount);
-    }
-  }
 
   // Controls
   function setControlExporter(&$ctrl)

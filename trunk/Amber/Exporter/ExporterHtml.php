@@ -157,7 +157,7 @@ class ExporterHtml extends Exporter
     if ($this->DesignMode) {
         $this->_base->_out($buffer);
     } else {
-      $this->onPrint($cancel, 1);
+      $section->_onPrint($cancel, 1);
       if (!$cancel) {
         $this->_base->_out($buffer);
       }
