@@ -193,10 +193,15 @@ class ExporterFPdf extends Exporter
 
   function printNormal(&$control, &$buffer, $content)
   {
+    $type = strtolower(get_class($control));
+    #echo $type;
+    if ($type == 'checkbox') {
+      return $this->printNormalCheckBox(&$control, &$buffer, $content);
+    } 
+    #$content = $type; 
     if (!$control->isVisible()) {
       return;
     }
-
     $fstyle = '';
     if ($control->FontItalic) {
       $fstyle .= 'I';
@@ -238,6 +243,48 @@ class ExporterFPdf extends Exporter
     }
   }
 
+  function printNormalCheckBox(&$control, &$buffer, $content)
+  {
+    if (!$control->isVisible()) {
+      return;
+    }
+
+    $fstyle = 'B';
+    $fsize = 6;
+
+    //echo "'".$control->FontName."' => '".$this->_fontList[$control->FontName]."'<br>";
+    $font = 'helvetica';
+    $this->_pdf->SetFont($this->_fontList[$font], $fstyle, $fsize);
+    // todo FontName     $control->FontName
+    $falign = 'C';
+    $x = ($control->Left +  $this->_secStartX);
+    $y = ($control->Top + $this->_secStartY);
+    $width  = 11 * 15;
+    $height = 11 * 15;
+    $fill = $control->BackStyle;
+    
+    if ($content == 0) {
+      $X = '';
+    } else {
+      $X = 'X';
+    }    
+    $this->_backColor($control->BackColor);
+    $this->_textColor($control->ForeColor);
+    $this->_pdf->SetXY($x, $y);
+    $this->_pdf->SetClipping($x, $y, $width, $height);
+    $this->_pdf->Cell($width, $height, $X, '0', 0, $falign, $fill);
+    $this->_pdf->RemoveClipping();
+    $this->_pdf->SetXY($x, $y);
+    if ($control->BorderStyle <> 0) {
+      $this->_borderColor($control->BorderColor);
+      if ($control->BorderWidth == 0) {
+        $this->_pdf->SetLineWidth(1);
+      } else {
+        $this->_pdf->SetLineWidth($control->BorderWidth * 20);
+      }
+      $this->_pdf->Cell($width, $height, '', 'RLTB', 0, $falign, 0);
+    }
+  }
   function printDesign(&$control, &$buffer, $content)
   {
     $this->printNormal($control, $buffer, $content);

@@ -21,6 +21,12 @@ Class TestReport extends AmberReport_UserFunctions
     $Me['Text34'] ="StringExpression";
     $Me['Text35'] ="StringExpression";
 
+    $Me['Kontrollkästchen39'] = 0;
+    $Me['Kontrollkästchen41'] = -1;
+    $Me['Kontrollkästchen43'] = 1;
+    $Me['Kontrollkästchen45'] = null;
+    
+  
   }
 
   /***********************************

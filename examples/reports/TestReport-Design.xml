@@ -9,7 +9,7 @@
     <PictureAlignment>2</PictureAlignment>
     <PictureTiling>0</PictureTiling>
     <PicturePages>0</PicturePages>
-    <LogicalPageWidth>9024</LogicalPageWidth>
+    <LogicalPageWidth>13954</LogicalPageWidth>
     <Painting>-1</Painting>
     <Name>TestReport</Name>
     <PictureData></PictureData>
@@ -18,18 +18,18 @@
     <Orientation>0</Orientation>
     <Printer>
         <BottomMargin>587</BottomMargin>
-        <ColorMode>2</ColorMode>
+        <ColorMode>1</ColorMode>
         <ColumnSpacing>360</ColumnSpacing>
         <Copies>1</Copies>
         <DataOnly>Falsch</DataOnly>
         <DefaultSize>Wahr</DefaultSize>
         <ItemLayout>1953</ItemLayout>
         <ItemsAcross>1</ItemsAcross>
-        <ItemSizeHeight>8100</ItemSizeHeight>
+        <ItemSizeHeight>10653</ItemSizeHeight>
         <ItemSizeWidth>9000</ItemSizeWidth>
         <LeftMargin>1440</LeftMargin>
         <Orientation>2</Orientation>
-        <PaperSize>11</PaperSize>
+        <PaperSize>9</PaperSize>
         <RightMargin>1440</RightMargin>
         <RowSpacing>0</RowSpacing>
         <TopMargin>590</TopMargin>
@@ -76,7 +76,8 @@
         <ForceNewPage>0</ForceNewPage>
         <NewRowOrCol>0</NewRowOrCol>
         <KeepTogether>-1</KeepTogether>
-        <Height>8100</Height>
+        <CanGrow>-1</CanGrow>
+        <Height>10653</Height>
         <Controls>
             <item id="Bezeichnungsfeld0">
                 <EventProcPrefix>Bezeichnungsfeld0</EventProcPrefix>
@@ -598,6 +599,150 @@
                 <TextAlign>0</TextAlign>
                 <Section>0</Section>
                 <zIndex>260</zIndex>
+            </item>
+            <item id="Bezeichnungsfeld38">
+                <EventProcPrefix>Bezeichnungsfeld38</EventProcPrefix>
+                <Name>Bezeichnungsfeld38</Name>
+                <ControlType>100</ControlType>
+                <Caption>Checkboxes</Caption>
+                <Left>141</Left>
+                <Top>8125</Top>
+                <Width>2400</Width>
+                <Height>495</Height>
+                <FontName>Arial Black</FontName>
+                <FontSize>16</FontSize>
+                <TextFontCharSet>0</TextFontCharSet>
+                <TextAlign>0</TextAlign>
+                <Section>0</Section>
+                <zIndex>270</zIndex>
+            </item>
+            <item id="Kontrollkästchen39">
+                <EventProcPrefix>Kontrollkästchen39</EventProcPrefix>
+                <Name>Kontrollkästchen39</Name>
+                <ControlType>106</ControlType>
+                <ControlSource>=0</ControlSource>
+                <TripleState>0</TripleState>
+                <Left>543</Left>
+                <Top>8951</Top>
+                <Width>260</Width>
+                <Height>240</Height>
+                <BorderStyle>1</BorderStyle>
+                <OldBorderStyle>1</OldBorderStyle>
+                <Section>0</Section>
+                <zIndex>280</zIndex>
+            </item>
+            <item id="Bezeichnungsfeld40">
+                <EventProcPrefix>Bezeichnungsfeld40</EventProcPrefix>
+                <Name>Bezeichnungsfeld40</Name>
+                <ControlType>100</ControlType>
+                <Caption>Value=0</Caption>
+                <Left>773</Left>
+                <Top>8921</Top>
+                <Width>1380</Width>
+                <Height>225</Height>
+                <FontName>Arial</FontName>
+                <FontSize>8</FontSize>
+                <TextFontCharSet>0</TextFontCharSet>
+                <TextAlign>0</TextAlign>
+                <Section>0</Section>
+                <Parent>Kontrollkästchen39</Parent>
+                <zIndex>279</zIndex>
+            </item>
+            <item id="Kontrollkästchen41">
+                <EventProcPrefix>Kontrollkästchen41</EventProcPrefix>
+                <Name>Kontrollkästchen41</Name>
+                <ControlType>106</ControlType>
+                <ControlSource>=-1</ControlSource>
+                <TripleState>0</TripleState>
+                <Left>543</Left>
+                <Top>9341</Top>
+                <Width>260</Width>
+                <Height>240</Height>
+                <BorderStyle>1</BorderStyle>
+                <OldBorderStyle>1</OldBorderStyle>
+                <Section>0</Section>
+                <zIndex>300</zIndex>
+            </item>
+            <item id="Bezeichnungsfeld42">
+                <EventProcPrefix>Bezeichnungsfeld42</EventProcPrefix>
+                <Name>Bezeichnungsfeld42</Name>
+                <ControlType>100</ControlType>
+                <Caption>Value=-1</Caption>
+                <Left>773</Left>
+                <Top>9311</Top>
+                <Width>1380</Width>
+                <Height>225</Height>
+                <FontName>Arial</FontName>
+                <FontSize>8</FontSize>
+                <TextFontCharSet>0</TextFontCharSet>
+                <TextAlign>0</TextAlign>
+                <Section>0</Section>
+                <Parent>Kontrollkästchen41</Parent>
+                <zIndex>299</zIndex>
+            </item>
+            <item id="Kontrollkästchen43">
+                <EventProcPrefix>Kontrollkästchen43</EventProcPrefix>
+                <Name>Kontrollkästchen43</Name>
+                <ControlType>106</ControlType>
+                <ControlSource>=1</ControlSource>
+                <TripleState>0</TripleState>
+                <Left>543</Left>
+                <Top>9731</Top>
+                <Width>260</Width>
+                <Height>240</Height>
+                <BorderStyle>1</BorderStyle>
+                <OldBorderStyle>1</OldBorderStyle>
+                <Section>0</Section>
+                <zIndex>320</zIndex>
+            </item>
+            <item id="Bezeichnungsfeld44">
+                <EventProcPrefix>Bezeichnungsfeld44</EventProcPrefix>
+                <Name>Bezeichnungsfeld44</Name>
+                <ControlType>100</ControlType>
+                <Caption>Value=1</Caption>
+                <Left>773</Left>
+                <Top>9701</Top>
+                <Width>1380</Width>
+                <Height>225</Height>
+                <FontName>Arial</FontName>
+                <FontSize>8</FontSize>
+                <TextFontCharSet>0</TextFontCharSet>
+                <TextAlign>0</TextAlign>
+                <Section>0</Section>
+                <Parent>Kontrollkästchen43</Parent>
+                <zIndex>319</zIndex>
+            </item>
+            <item id="Kontrollkästchen45">
+                <EventProcPrefix>Kontrollkästchen45</EventProcPrefix>
+                <Name>Kontrollkästchen45</Name>
+                <ControlType>106</ControlType>
+                <ControlSource>=Null</ControlSource>
+                <TripleState>0</TripleState>
+                <Left>543</Left>
+                <Top>10121</Top>
+                <Width>260</Width>
+                <Height>240</Height>
+                <BorderStyle>1</BorderStyle>
+                <OldBorderStyle>1</OldBorderStyle>
+                <Section>0</Section>
+                <zIndex>340</zIndex>
+            </item>
+            <item id="Bezeichnungsfeld46">
+                <EventProcPrefix>Bezeichnungsfeld46</EventProcPrefix>
+                <Name>Bezeichnungsfeld46</Name>
+                <ControlType>100</ControlType>
+                <Caption>Value=Null</Caption>
+                <Left>773</Left>
+                <Top>10091</Top>
+                <Width>1380</Width>
+                <Height>225</Height>
+                <FontName>Arial</FontName>
+                <FontSize>8</FontSize>
+                <TextFontCharSet>0</TextFontCharSet>
+                <TextAlign>0</TextAlign>
+                <Section>0</Section>
+                <Parent>Kontrollkästchen45</Parent>
+                <zIndex>339</zIndex>
             </item>
         </Controls>
     </Detail>
