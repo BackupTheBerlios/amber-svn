@@ -28,6 +28,7 @@ class AmberReport_UserFunctions
   function Report_OnNextRecord() { }
   function Report_Page() { }
   function Report_Close() { }
+  function Report_Sort(&$a, &$b) { return 'noSort!'; }
   function allSections_Format(&$Cancel, $FormatCount = 1) { } // see also Class SectionNull
   function allSections_Print(&$Cancel, $FormatCount = 1) { } // see also Class SectionNull
 }

@@ -16,8 +16,10 @@ require_once 'Section.php';
 require_once 'Exporter/ExporterFactory.php';
 require_once 'Controls/ControlFactory.php';
 require_once 'AmberReport_UserFunctions.php';
+require_once 'quicksort.php';
 require_once 'basic.php';
 require_once 'misc.php';
+
 
 /**
  *
@@ -287,7 +289,9 @@ class Report extends AmberObject
     else  // Loop through all records
     {                              
       $keys = array_keys($this->_data);
-
+      
+      $this->sort($keys);
+      
       foreach ($keys as $rowNumber) {
         $this->Cols =& $this->_data[$rowNumber];
 
@@ -517,6 +521,19 @@ class Report extends AmberObject
     //Data expected but none given
     $cancel = false;
     $this->_Code->Report_NoData($cancel);
+  }
+
+  /**
+   * @access protected
+   * @param array
+   */
+  function sort(&$keys)
+  {
+    $sorter = new quicksort();
+    $sorter->array =& $this->_data;
+    $sorter->keys =& $keys;
+    $sorter->cmpClass =& $this->_Code;
+    $sorter->sort();
   }
 
   /**
