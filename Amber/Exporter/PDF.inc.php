@@ -48,23 +48,12 @@ class mayflower
   var $sectionType;    // 'Head', 'Foot' or ''
   var $layout;
   
-  function mayflower(&$reportBuff, &$layoutm, &$pdf)
+  function mayflower(&$reportBuff, &$layout, &$pdf)
   {
     $this->reportBuff =& $reportBuff;
     $this->layout =& $layout;
     $this->pdf =& $pdf;
   }  
-  
-  function out($s)
-  { 
-    if ($this->sectionIndex > $this->subReportIndex) {
-      $this->sectionBuff[$this->sectionIndex] .= $s . "\n";
-    } elseif ($this->subReportIndex > 0) {
-      $this->subReportbuff[$this->subReportIndex] .= $s . "\n";
-    } elseif ($this->inReport()) {
-      $this->reportBuff->reportPages[$this->reportBuff->actpageNo][$this->sectionType] .= $s . "\n";
-    }  
-  }
   
   function _setOutBuff()
   { 
@@ -231,16 +220,6 @@ class PDF extends FPDF
   //  see startSection/endSection and startReport/endReport below
   //
   //////////////////////////////////////////////////////////////////////////
-  function _out2($s)
-  {
-    if($this->state <> 2) {
-      parent::_out($s);
-    } elseif ($this->mayflower->cached()) {
-      $this->mayflower->out($s);
-    } else {
-      parent::_out($s);
-    }
-  }
   
   function _out($s)
   {
