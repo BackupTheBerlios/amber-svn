@@ -120,9 +120,9 @@ class ExporterFPdf extends Exporter
     $this->_pdf->RemoveCoordinate();
   }
   
-  function outSectionStart($x, $y, $w, $h, $backColor)
+  function outSectionStart($y, $w, $h, $backColor, $sectionName='')
   {
-    $this->_pdf->SetCoordinate(-$x, -$y);
+    $this->_pdf->SetCoordinate(0, -$y);
     $this->_pdf->SetClipping(0, 0, $w, $h);
     
     $this->_pdf->SetXY(0, 0);

@@ -754,6 +754,22 @@ class Report extends AmberObject
   {
     //Bookmarks only for paged reports -- nothing for subReports
   }
+  
+  function outSection($formatCount, $posY, $sectionHeight, &$secBuff, &$section)
+  {
+    $this->_exporter->outSectionStart($posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $section->Name);
+    if ($this->designMode) {
+      $this->_exporter->out($secBuff);
+    } else {
+      $section->_onPrint($cancel, $formatCount);
+      if (!$cancel) {
+        $this->_exporter->out($secBuff);
+      }
+    }      
+    $this->_exporter->outSectionEnd();
+  }
+
+
 }
 
 

@@ -25,7 +25,6 @@ class ExporterHtml extends Exporter
   var $cssClassPrefix = 's';
 
   var $_CtrlStdValues;
-  var $_posY;
   
   var $_html;
   
@@ -101,7 +100,7 @@ class ExporterHtml extends Exporter
   }
     
   
-  function outSectionStart($y, $height, $backColor, $sectionName)
+  function outSectionStart($y, $width, $height, $backColor, $sectionName='')
   {
     $cheatWidth  = 59; // cheat: add 1.5pt to height and 3pt to width so borders get printed in Mozilla ###FIX ME
     if ($height == 0) {
@@ -115,7 +114,7 @@ class ExporterHtml extends Exporter
     $style['top'] = $this->_html_twips($y);
     $style['height'] = $this->_html_twips($height + $cheatHeight);
     $style['left'] = '0';
-    $style['width'] = $this->_html_twips($this->layout->leftMargin + $this->layout->reportWidth + $this->layout->rightMargin);
+    $style['width'] = $this->_html_twips($this->layout->leftMargin + $width + $this->layout->rightMargin);
     $style['background-color'] = '#ffffff';
 
     $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";
@@ -126,7 +125,7 @@ class ExporterHtml extends Exporter
     $style['overflow'] = 'hidden';
     $style['height'] = $this->_html_twips($height);
     $style['left'] = $this->_html_twips($this->layout->leftMargin);
-    $style['width'] = $this->_html_twips($this->layout->reportWidth + $cheatWidth);
+    $style['width'] = $this->_html_twips($width + $cheatWidth);
     $style['background-color'] = $this->_html_color($backColor);
 
     $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";

@@ -39,13 +39,7 @@ class ReportSubReport extends ReportPaged
     $this->_exporter->comment("end Subreport-Body-Section:2\n");
     $buff = $section->sectionEndBuffer($this->_exporter);
 
-    $this->_exporter->outSectionStart(0, $this->posY, $this->layout->reportWidth, $height, $section->BackColor);
-    $formatCount = 1;
-    $section->_onPrint($cancel, $formatCount);
-    if (!$cancel) {
-      $this->_exporter->out($buff);
-    }
-    $this->_exporter->outSectionEnd();
+    $this->outSection(1, $this->posY, $height, &$buff, &$section);
 
     $this->posY += $height;
   }

@@ -14,16 +14,6 @@ class reportPaged extends Report
   var $actpageNo = -1;
 
 
-  /**
-   * @access private
-   */
-  function _startReport($isSubreport)
-  {
-    parent::_startReport($isSubreport);
-    
-    $this->posY = 0;
-  }
-  
   /** 
    * @access private
    */
@@ -34,7 +24,6 @@ class reportPaged extends Report
     }  
  
     $this->endReportBuffering();
-    $this->posY = 0;
     
     $this->outPages();
     
@@ -140,25 +129,11 @@ class reportPaged extends Report
         $this->printPageHeader();
       }
       $this->reportStartPageBody();
-      $this->_exporter->outSectionStart(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor);
-      if ($this->designMode) {
-        $this->_exporter->out($secBuff);
-      } else {
-        $formatCount = $page - $startPage + 1;
-        $section->_onPrint($cancel, $formatCount);
-        if (!$cancel) {
-          $this->_exporter->out($secBuff);
-        }
-      }      
-      $this->_exporter->outSectionEnd();
+      $this->outSection($page - $startPage + 1, $this->posY, $sectionHeight, $secBuff, $section);
     }
     $this->posY += $sectionHeight;
   }
   
-  function outSection($x, $y, $w, $h, $backColor, &$secBuff)
-  {
-  }
-
   function pageHeaderEnd(&$section)
   {
    $buff = $section->sectionEndBuffer($this->_exporter);
