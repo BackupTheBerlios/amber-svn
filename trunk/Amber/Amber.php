@@ -12,6 +12,7 @@ define('__AMBER_BASE__', dirname(__FILE__));
 require_once __AMBER_BASE__ . '/Report.php';
 require_once __AMBER_BASE__ . '/ReportPaged.php';
 require_once __AMBER_BASE__ . '/ReportSubReport.php';
+require_once __AMBER_BASE__ . '/ReportContinous.php';
 require_once 'adodb/adodb.inc.php';
 require_once 'ObjectLoader.php';
 
@@ -137,13 +138,13 @@ class Amber
       if (stristr($exporter, 'pdf') != false) {
         return  new ReportSubReport();
       } else {
-        return  new report();
+        return  new reportContinous();
       }  
     } elseif ($type == 'report') {
       if (stristr($exporter, 'pdf') != false) {
         return  new reportPaged();
       } else {
-        return  new report();
+        return  new reportContinous();
       }  
      } elseif ($type == 'form') {
       return  new form();

@@ -19,21 +19,13 @@ class reportPaged extends Report
    */
   function _startReport($isSubreport, $isDesignMode)
   {
+    parent::_startReport($isSubreport, $isDesignMode);
     $this->_asSubReport = $isSubreport;
-    if (!isset($this->_exporter)) {
-      return;
-    }
+    
     $this->layout =& new pageLayout($this, $this->_asSubReport, $isDesignMode);
     $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
-    if ($isDesignMode) {
-      $this->initDesignHeader();
-    }  
-    if ($isSubreport) {
-      $this->subReportStartBuffer();
-      $this->_exporter->comment("StartSubreport"); // remove this!!!
-    } else {  
-      $this->posY = 0;
-    }
+
+    $this->posY = 0;
   }
   
   /** 
@@ -41,35 +33,25 @@ class reportPaged extends Report
    */
   function _endReport()
   {
-    if (!isset($this->_exporter)) {
-      return;
-    }
-    if ($this->_asSubReport) {
-      $this->newPage();
-      $this->_exporter->comment("EndSubreport");
-      $this->subReportBuff = $this->subReportEndBuffer(); //a real copy
-      return;
-    } else {
-      if (!$this->layout->designMode) {
-        $this->_printNormalSection($this->PageFooter);
-      }  
-   
-      $this->endReportBuffering();
-      $this->posY = 0;
+    if (!$this->layout->designMode) {
+      $this->_printNormalSection($this->PageFooter);
+    }  
+ 
+    $this->endReportBuffering();
+    $this->posY = 0;
 
-      $firstPage = true;  //first page is out
-      $endPageX = floor($this->layout->_reportWidth / $this->layout->printWidth);
-      foreach(array_keys($this->reportPages) as $pageY) {
-        for($pageX = 0; $pageX <= $endPageX; $pageX++) {
-          if (!$firstPage) {
-            $this->_exporter->AddPage();
-          }
-          $firstPage = false;
-  
-          $this->outPageHeader($pageY, $pageX);  
-          $this->outPage($pageY, $pageX);  
-          $this->outPageFooter($pageY, $pageX);  
+    $firstPage = true;  //first page is out
+    $endPageX = floor($this->layout->_reportWidth / $this->layout->printWidth);
+    foreach(array_keys($this->reportPages) as $pageY) {
+      for($pageX = 0; $pageX <= $endPageX; $pageX++) {
+        if (!$firstPage) {
+          $this->_exporter->AddPage();
         }
+        $firstPage = false;
+
+        $this->outPageHeader($pageY, $pageX);  
+        $this->outPage($pageY, $pageX);  
+        $this->outPageFooter($pageY, $pageX);  
       }
     }
     $this->_exporter->endReport($this);
@@ -127,62 +109,6 @@ class reportPaged extends Report
     $this->_exporter->endSection($section, $height, $buffer);
   }
   
-  function initDesignHeader()
-  {
-    $this->_designSection =& new section('');
-    $this->_designSection->Name = '';
-    $this->_designSection->Height = 240;
-    $this->_designSection->Visible = true;
-    $this->_designSection->BackColor = 0xFFFFFF;
-    $this->_designSection->CanGrow = false;
-    $this->_designSection->CanShrink = false;
-    $this->_designSection->KeepTogether = false;
-    $this->_designSection->EventProcPrefix = '';
-    $this->_designSection->_parent =& $this;
-    $this->_designSection->_OnFormatFunc = 'allSections_Format';
-    
-    $ctlProp = array(
-      'Name' => '',
-      'Left' => 2,
-      'Top' => 2,
-      'Width' => $this->Width-4,
-      'Height' => 236,
-      'Visible' => true,
-      'BackStyle' => 1,
-      'BackColor' => 0xDDDDDD, //gray
-      'BorderStyle' => 1,
-      'BorderColor' => 0, // black
-      'BorderWidth' => 0, // as small as possible ("Haarlinie")
-      'BorderLineStyle' => 0,
-      'zIndex' => 0,
-      'Value' => '',
-      '_OldValue' => '',
-
-      'ForeColor' => 0x000000,
-      'FontName' => 'Arial',
-      'FontSize' => 8,
-      'FontWeight' => 500,
-      'TextAlign' => 0,
-      'FontItalic' => false,
-      'FontUnderline' => false,
-      
-      'Caption' => 'Test'
-    );
-
-    $ctl =& ControlFactory::create(100, $ctlProp, $this->hReport);
-    $this->_exporter->setControlExporter($ctl);
-    $this->_designSection->Controls['Label'] =& $ctl;
-  }
-  
-  function sectionPrintDesignHeader($text)
-  {
-    $this->_designSection->Controls['Label']->Caption = $text;
-    $buffer = '';
-    
-    $this->_startSection($this->_designSection, $this->Width, $buffer);
-    $height = $this->_designSection->printNormal($buffer);
-    $this->_endSection($this->_designSection, $height, $buffer);
-  }
   
   function _newPageAvoidsSectionSplit($sectionHeight)           // end of section will be on same page, wether with or without pagebreak
   {
@@ -195,10 +121,6 @@ class reportPaged extends Report
   
   function endNormalSection(&$section, $sectionHeight, $keepTogether)
   {
-    if ($this->_asSubReport) {
-      $this->endSectionInSubReport($section, $sectionHeight, $keepTogether);
-      return;
-    }  
     $this->_exporter->comment("end Body-Section:1\n");
     $secBuff = $section->sectionEndBuffer($this->_exporter);
     if ($keepTogether) {                 // section doesn't fit on page and keepTogether
@@ -219,30 +141,24 @@ class reportPaged extends Report
       }
       $this->reportStartPageBody();
       if ($this->_exporter->DesignMode) {
-        $this->_exporter->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $secBuff);
+        $this->_exporter->outSectionStart(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor);
+        $this->_exporter->out($secBuff);
+        $this->_exporter->outSectionEnd();
       } else {
+        $this->_exporter->outSectionStart(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor);
         $formatCount = $page - $startPage + 1;
-        $this->_exporter->onPrint($cancel, $formatCount);
+        $section->_onPrint($cancel, $formatCount);
         if (!$cancel) {
-          $this->_exporter->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $secBuff);
+          $this->_exporter->out($secBuff);
         }
+        $this->_exporter->outSectionEnd();
       }      
     }
     $this->posY += $sectionHeight;
   }
   
-  function endSectionInSubReport(&$section, $sectionHeight, $keepTogether)
+  function outSection($x, $y, $w, $h, $backColor, &$secBuff)
   {
-    $this->_exporter->comment("end Subreport-Body-Section:2\n");
-    $buff = $section->sectionEndBuffer($this->_exporter);
-
-    $formatCount = 1;
-    $this->_exporter->onPrint($cancel, $formatCount);
-    if (!$cancel) {
-      $this->_exporter->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $buff);
-    }
-
-    $this->posY += $sectionHeight;
   }
 
   function pageHeaderEnd(&$section)
@@ -266,7 +182,7 @@ class reportPaged extends Report
     }  
   }
   
-  function printpageHeader()
+  function printPageHeader()
   {
     if (!$this->layout->designMode) {  
       $this->_printNormalSection($this->PageHeader);
@@ -275,7 +191,8 @@ class reportPaged extends Report
   
   function Bookmark($txt,$level=0,$y=0)
   {
-    $this->_exporter->Bookmark($txt, $level, $y, $this->page(), $this->posYinPage(), $this->inReport());
+    $posYinPage = ($this->posY - ($this->actpageNo * $this->layout->printHeight));
+    $this->_exporter->Bookmark($txt, $level, $y, $this->page(), $posYinPage, $this->inReport());
   }
   
   function newPage()
@@ -283,33 +200,7 @@ class reportPaged extends Report
     $this->posY = ($this->actpageNo + 1) * $this->layout->printHeight;
   }
 
-  function posYinPage()
-  {
-    return ($this->posY - ($this->actpageNo * $this->layout->printHeight));
-  }
   
-///////////////////////////
-//
-// ex mayflower: subReport part
-//
-///////////////////////////
-  
-  
-  
-  function subReportStartBuffer()
-  {
-    $this->NewBuffer = '';
-    $this->OldBuffer =& $this->_exporter->getOutBuffer();
-    $this->_exporter->setOutBuffer($this->NewBuffer);
-  }
- 
-  function subReportEndBuffer()
-  {
-    $this->_exporter->setOutBuffer($this->OldBuffer);
-    return $this->NewBuffer;
-  }
-
-
 ///////////////////////////
 //
 // ex mayflower: report part

@@ -637,6 +637,69 @@ class Report extends AmberObject
 
     return count($this->_groupFields);
   }
+  
+  function initDesignHeader()
+  {
+    $this->_designSection =& new section('');
+    $this->_designSection->Name = '<designBorder>';
+    $this->_designSection->Height = 240;
+    $this->_designSection->Visible = true;
+    $this->_designSection->BackColor = 0xFFFFFF;
+    $this->_designSection->CanGrow = false;
+    $this->_designSection->CanShrink = false;
+    $this->_designSection->KeepTogether = false;
+    $this->_designSection->EventProcPrefix = '';
+    $this->_designSection->_parent =& $this;
+    $this->_designSection->_OnFormatFunc = 'allSections_Format';
+    
+    $ctlProp = array(
+      'Name' => '',
+      'Left' => 2,
+      'Top' => 2,
+      'Width' => $this->Width-4,
+      'Height' => 236,
+      'Visible' => true,
+      'BackStyle' => 1,
+      'BackColor' => 0xDDDDDD, //gray
+      'BorderStyle' => 1,
+      'BorderColor' => 0, // black
+      'BorderWidth' => 0, // as small as possible ("Haarlinie")
+      'BorderLineStyle' => 0,
+      'zIndex' => 0,
+      'Value' => '',
+      '_OldValue' => '',
+
+      'ForeColor' => 0x000000,
+      'FontName' => 'Arial',
+      'FontSize' => 8,
+      'FontWeight' => 500,
+      'TextAlign' => 0,
+      'FontItalic' => false,
+      'FontUnderline' => false,
+      
+      'Caption' => 'Test'
+    );
+
+    $ctl =& ControlFactory::create(100, $ctlProp, $this->hReport);
+    $this->_exporter->setControlExporter($ctl);
+    $this->_designSection->Controls['Label'] =& $ctl;
+  }
+  
+  function sectionPrintDesignHeader($text)
+  {
+    $this->_designSection->Controls['Label']->Caption = $text;
+    $buffer = '';
+    
+    $this->_startSection($this->_designSection, $this->Width, $buffer);
+    $height = $this->_designSection->printNormal($buffer);
+    $this->_endSection($this->_designSection, $height, $buffer);
+  }
+
+  function _setDocumentTitle($name)
+  {
+    $this->_exporter->setDocumentTitle($name);
+  } 
+
 
 //////////////////////////////////////////////////
 // 
@@ -649,9 +712,9 @@ class Report extends AmberObject
    */
   function _startReport($isSubreport, $isDesignMode)
   {
-    if (isset($this->_exporter)) {
-      $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
-    }
+    if ($isDesignMode) {
+      $this->initDesignHeader();
+    }  
   }
 
   /**
@@ -659,32 +722,16 @@ class Report extends AmberObject
    */
   function _endReport()
   {
-    if (isset($this->_exporter)) {
-      $this->_exporter->endReport($this);
-    }
   }
   
-  function _setDocumentTitle($name)
-  {
-    $this->_exporter->setDocumentTitle($name);
-  } 
-
   function _startSection(&$section, $width, &$buffer)
   {
-    $this->_exporter->startSection($section, $width, $buffer);
   }  
 
   function _endSection(&$section, $height, &$buffer)
   {
-    $this->_exporter->endSection($section, $height, $buffer);
   }  
-
-  function sectionPrintDesignHeader($title)
-  {
-    $this->_exporter->sectionPrintDesignHeader($title);
-  }   
-
-
+  
   /**
    *
    * @access public
@@ -693,13 +740,16 @@ class Report extends AmberObject
    */
   function page()
   {
-    return $this->_exporter->page();
   }
   
   function newPage()
   {
-    $this->_exporter->newPage();
   }  
+  
+  function Bookmark($txt,$level=0,$y=0)
+  {
+    //Bookmarks only for paged reports -- nothing for subReports
+  }
 }
 
 

@@ -112,7 +112,7 @@ class Exporter
   function endReportSubExporter(&$report)
   {
   }
-  
+ 
   function setOutBuffer(&$buff)
   {
     $this->_base->cache =& $buff;

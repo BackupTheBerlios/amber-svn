@@ -29,7 +29,7 @@ class ExporterHtml extends Exporter
   var $_CtrlStdValues;
   var $_posY;
   
-  var $_pdf;
+  var $_html;
   
   // Report - html
 
@@ -40,13 +40,14 @@ class ExporterHtml extends Exporter
 
   function startReportSubExporter(&$report, $asSubreport = false, $isDesignMode = false)
   {
+    $reset = (!$asSubreport);
+    $this->_html =& $this->getExporterBasicClass($report->layout, $reset);
 
-    $this->_pdf =& $this->getExporterBasicClass($report->layout, $reset);
     $tmp = '';
     if (!$this->_asSubreport) {
       $tmp = "\n<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n<head>\n";
       $tmp .= "\t<title>" . $this->_docTitle . "</title>\n";
-      echo $tmp;
+      $this->_html->_out($tmp);
 
       $css = $this->getReportCssStyles($this->_report, $this->cssClassPrefix);
       $this->setCSS($css);
@@ -55,7 +56,7 @@ class ExporterHtml extends Exporter
       $tmp = "</head>\n";
       $tmp .= "<body style=\"background-color: #aaaaaa;\">\n";
       $tmp .= "\n\n<!-- Start of AmberReport // -->\n\n<div class=\"AmberReport\">\n";
-      echo $tmp;
+      $this->_html->_out($tmp);
     } else {
       $css = $this->getReportCssStyles($this->_report, 'sub_' . $this->cssClassPrefix);
       $this->setCSS($css);
@@ -65,8 +66,8 @@ class ExporterHtml extends Exporter
   function endReportSubExporter(&$report)
   {
     if (!$this->_asSubreport) {
-      echo "\n</div>\n\n<!-- End of AmberReport // -->\n\n";
-      echo "</body>\n</html>\n";
+      $this->_html->_out("\n</div>\n\n<!-- End of AmberReport // -->\n\n");
+      $this->_html->_out("</body>\n</html>\n");
     }
   }
 
@@ -121,7 +122,7 @@ class ExporterHtml extends Exporter
     $out .= htmlspecialchars($text);
     $out .= "</div>\n";
 
-    echo $out;
+    $this->_html->_out($out);
     $this->_posY += ($height + 2) * 20;
   }
 
@@ -130,19 +131,9 @@ class ExporterHtml extends Exporter
     if (!(($section->_PagePart) or ($this->DesignMode))) {
       if ($this->_blankPage) {
         $this->_blankPage = false;
-        $out = "\t<div name=\"TopMargin\"";
 
-        $style = array();
-        $style['top'] = $this->_html_twips($this->_posY);
-        $style['height'] = $this->_html_twips($this->_report->TopMargin + 20);
-        $style['left'] = '0';
-        $style['width'] = $this->_html_twips($this->_report->LeftMargin + $this->_report->Width + $this->_report->RightMargin);
-        $style['background-color'] = '#ffffff';
-
-        $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";
-        $out .= "&nbsp;</div>\n";
-
-        echo $out;
+        $this->printTopMargin();  
+        
         $this->_posY += $this->_report->TopMargin;
         $this->_report->_printNormalSection($this->_report->PageHeader); // FIXME: this has to be done by the Report class!!!
       }
@@ -209,7 +200,7 @@ class ExporterHtml extends Exporter
     } else {
       $out .= "\t</div></div>\n";
     }
-    echo $out;
+    $this->_html->_out($out);
     $this->_posY += $height;
     parent::endSection($section, $height, $buffer);
   }
@@ -221,20 +212,8 @@ class ExporterHtml extends Exporter
     if ((!$this->_blankPage) and (!$this->DesignMode)) {
       $this->_report->_printNormalSection($this->_report->PageFooter);
       
-      $out .= "\t<div name=\"BottomMargin\"";
-
-      $style = array();
-      $style['page-break-after'] = 'always';
-      $style['top'] = $this->_html_twips($this->_posY);
-      $style['height'] = $this->_html_twips($this->_report->BottomMargin + 20);
-      $style['left'] = '0';
-      $style['width'] = $this->_html_twips($this->_report->LeftMargin + $this->_report->Width + $this->_report->RightMargin);
-      $style['background-color'] = '#ffffff';
-
-      $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";
-      $out .= "&nbsp;</div>\n";
-      echo $out;
-
+      $this->printBottomMargin();
+      
       $this->_posY += $this->_report->BottomMargin;
       $this->_report->OnPage();
       $this->_pageNo++;
@@ -242,6 +221,40 @@ class ExporterHtml extends Exporter
     $this->_blankPage = true;
   }
 
+  function printTopMargin()
+  {
+    $out = "\t<div name=\"TopMargin\"";
+
+    $style = array();
+    $style['top'] = $this->_html_twips($this->_posY);
+    $style['height'] = $this->_html_twips($this->_report->TopMargin + 20);
+    $style['left'] = '0';
+    $style['width'] = $this->_html_twips($this->_report->LeftMargin + $this->_report->Width + $this->_report->RightMargin);
+    $style['background-color'] = '#ffffff';
+
+    $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";
+    $out .= "&nbsp;</div>\n";
+
+    $this->_html->_out($out);
+  }
+  
+  function printBottomMargin()
+  {
+    $out .= "\t<div name=\"BottomMargin\"";
+
+    $style = array();
+    $style['page-break-after'] = 'always';
+    $style['top'] = $this->_html_twips($this->_posY);
+    $style['height'] = $this->_html_twips($this->_report->BottomMargin + 20);
+    $style['left'] = '0';
+    $style['width'] = $this->_html_twips($this->_report->LeftMargin + $this->_report->Width + $this->_report->RightMargin);
+    $style['background-color'] = '#ffffff';
+
+    $out .=  ' style="' . $this->arrayToStyle($style) . "\">\n";
+    $out .= "&nbsp;</div>\n";
+    $this->_html->_out($out);
+  }
+  
   function page()
   {
     return $this->_pageNo;
@@ -289,12 +302,12 @@ class ExporterHtml extends Exporter
       $ret .= "\n//-->\n</style>\n";
     }
 
-    echo $ret;
+    $this->_html->_out($ret);
   }
 
   function dump($var)
   {
-    echo '<div style=" position: absolute; overflow: hidden; align: center; width: 90%; top: ' . $this->_html_twips($this->_posY) . '"><pre style="text-align: left; width: 80%; border: solid 1px #ff0000; font-size: 9pt; background-color: #ffffff; padding: 5px;">' . htmlentities(print_r($var, 1)) . '</pre></div>';
+    $this->_html->_out('<div style=" position: absolute; overflow: hidden; align: center; width: 90%; top: ' . $this->_html_twips($this->_posY) . '"><pre style="text-align: left; width: 80%; border: solid 1px #ff0000; font-size: 9pt; background-color: #ffffff; padding: 5px;">' . htmlentities(print_r($var, 1)) . '</pre></div>');
   }
 
   function arrayToStyle(&$arr)
@@ -408,7 +421,7 @@ Class ControlExporterHtml
     $this->_stdValues['Value'] =  $control->Properties['Value'];
     $control->Properties['isVisible'] = $control->isVisible();
     if ($control->Properties == $this->_stdValues) {
-      //echo "###GLEICH###";
+
     } else {
       $style = $this->getStyle($control, $control->Properties, $this->_stdValues);
       $out .= ' style="' . trim($style) . '"';

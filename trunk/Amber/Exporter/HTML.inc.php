@@ -19,19 +19,6 @@ class HTML
     }
   }
   
-  function setOutBuffer(&$buff, $info)
-  {
-    //info parameter for testing only -- remove if no longer needed
-    $this->cache =& $buff;
-    $this->incache = true;
-  }
-  
-  function unsetBuffer()
-  {
-    unset($this->cache);
-    $this->incache = false;
-  }    
-  
   function &getInstance(&$layout, $reset)
   {
     static $instance = null;
@@ -46,12 +33,5 @@ class HTML
   }
   
 }
-
-
-
-
-
-
-
 
 ?>

@@ -114,7 +114,18 @@ class ExporterFPdf extends Exporter
     $this->_pdf->RemoveClipping();
   }
   
-  function outSection($x, $y, $w, $h, $backColor, &$secBuff)
+  function out(&$secBuff)
+  {
+    $this->_pdf->_out($secBuff);
+  }
+    
+  function outSectionEnd()
+  {
+    $this->_pdf->RemoveClipping();
+    $this->_pdf->RemoveCoordinate();
+  }
+  
+  function outSectionStart($x, $y, $w, $h, $backColor)
   {
     $this->_pdf->SetCoordinate(-$x, -$y);
     $this->_pdf->SetClipping(0, 0, $w, $h);
@@ -128,10 +139,6 @@ class ExporterFPdf extends Exporter
     $align = 'C';
     $backstyle= 1;
     $this->_pdf->Cell($w, $h, $text, $border, $ln, $align, $fill);
-
-    $this->_pdf->_out($secBuff);
-    $this->_pdf->RemoveClipping();
-    $this->_pdf->RemoveCoordinate();
   }
 
   
