@@ -50,7 +50,6 @@ class ExporterFPdf extends Exporter
     if ($this->_asSubreport) {
       $this->_pdf->startSubReport();
     } else {  
-      $this->_report->reportBuff =& new reportBuff($report->layout);
       $this->_pdf->init($this, $report->Width, $this->_report->layout);
       $this->_pdf->StartReportBuffering($this->_report->reportBuff);
     }
