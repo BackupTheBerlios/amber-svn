@@ -270,7 +270,7 @@ class ExporterFPdf extends Exporter
     $this->_pdf->SetXY(0, 0);
     $this->_pdf->Cell($this->_report->Width, $height, $text, $border, 1, 'L', 1);
 
-    $this->endSection1($height+1, true);
+    $this->endNormalSection($height+1, true);
   }
 
   function startSection(&$section, $width, &$buffer)
@@ -284,9 +284,9 @@ class ExporterFPdf extends Exporter
   function endSection(&$section, $height, &$buffer)
   {
     if (!$section->_PagePart) {
-      $this->endSection1($height, $section->KeepTogether);
+      $this->endNormalSection($height, $section->KeepTogether);
     } elseif ($this->_report->layout->designMode) {
-      $this->endSection1($height, false);
+      $this->endNormalSection($height, false);
     } elseif ($section->_PagePart == 'Foot') {
       $this->pageFooterEnd();
     } else {
@@ -295,7 +295,7 @@ class ExporterFPdf extends Exporter
     parent::endSection($section, $height, $buffer);
   }
   
-  function endSection1($sectionHeight, $keepTogether)
+  function endNormalSection($sectionHeight, $keepTogether)
   {
     if ($this->mayflower->inSubReport()) {
       $this->endSectionInSubReport($sectionHeight, $keepTogether);
