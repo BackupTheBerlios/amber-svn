@@ -25,7 +25,6 @@ class exampleInvoiceList extends AmberReport_UserFunctions
 
     $val['name'] = $col['firstname'] . " " . $col['lastname'];
     $this->Text18->sum($val['amount']);
-print "###" . $val['amount'] . "->" . $val['Text18'] ."###\n";    
     $val['Text26'] = "Page  " . $this->Page();
 
   }

@@ -8,7 +8,6 @@
 */
 
 #ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '../../Amber/');
-ini_set('max_execution_time', 5);
 
 require_once 'unit.php';
 require_once 'reportTestBuilder.php';

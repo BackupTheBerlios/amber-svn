@@ -9,6 +9,7 @@
 */
 
 ini_set('include_path', dirname(__FILE__). '/../../lib/' . ':' . ini_get('include_path'));
+ini_set('max_execution_time', '60');
 
 
 require_once 'PHPUnit/GUI/HTML.php';

@@ -22,6 +22,7 @@ class ReportPaged extends Report
   {
     $this->closePage();
     $this->_exporter->endReport($this);
+    $this->OnClose();
   }
 
   function closePage()

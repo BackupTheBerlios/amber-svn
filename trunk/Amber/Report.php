@@ -351,7 +351,6 @@ class Report extends AmberObject
     $this->_printNormalGroupFooters($maxLevel, 0);
     $this->_printNormalSection($this->ReportFooter);
     $this->newPage();
-    $this->OnClose();
     $this->_endReport();
     unset($this->Cols);
   }
