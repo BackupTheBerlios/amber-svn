@@ -240,7 +240,8 @@ class pageLayout
     } else {
       $this->printWidth  = ($this->paperWidth - $this->leftMargin - $this->rightMargin); //width of printable area of page (w/o morgins)
       if ($this->printWidth <= 0) { 
-        Amber::showError('Error: width of printable area too small', 'paper width: ' . $this->paperWidth . '; left margin:' . $this->leftMargin . '; right margin: ' . $this->rightMargin . ';');
+        $msg = 'paper width: ' . (int)$this->paperWidth . '; left margin:' . (int)$this->leftMargin . '; right margin: ' . (int)$this->rightMargin . ';';
+        die(Amber::showError('Error: Width of printable area too small', $msg, true));
       }  
       $this->pagesHorizontal = floor($this->reportWidth / $this->printWidth) + 1; // No of pages needed to print report
       $this->printHeight = ($this->paperHeight - $this->topMargin - $this->bottomMargin - $this->pageHeaderHeight - $this->pageFooterHeight); //height of printable area of page (w/o margins)
