@@ -18,6 +18,7 @@ require_once 'Controls/ControlFactory.php';
 require_once 'phpReport_UserFunctions.php';
 require_once 'basic.php';
 require_once 'ObjectHandler.php';
+require_once 'mayflower.php';
 
 /**
  *

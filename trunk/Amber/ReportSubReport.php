@@ -8,7 +8,7 @@
  *  this class handles paged report types 
  */
 
-class reportPaged extends Report
+class ReportSubReport extends Report
 {
   var $layout;
   var $mayflower;

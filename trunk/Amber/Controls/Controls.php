@@ -467,7 +467,8 @@ class SubReport extends Control
 
     // Try to load report
     $amber =& Amber::getInstance();
-    $this->_subReport =& Amber::createAmberObject('report');
+    $rep =& ObjectHandler::getObject($this->_hReport);
+    $this->_subReport =& Amber::createAmberObject('reportSubReport', $rep->exporterType);
     if ($amber->loadObject('report', $name, $this->_subReport) == false) {
       Amber::showError('Error', 'Could not load subreport "' . htmlspecialchars($name) . '"');
       return 0;
@@ -479,7 +480,6 @@ class SubReport extends Control
       $linkMaster = explode(';', $this->LinkMasterFields);
       foreach ($linkChild as $idx => $lc) {
         $propName = $linkMaster[$idx];
-        $rep =& ObjectHandler::getObject($this->_hReport);
         // FIXME:
         // - filter value has to be handled according to it's type
         //   We need to have the recordset instead of a plain array here

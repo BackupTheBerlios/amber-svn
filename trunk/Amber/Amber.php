@@ -11,6 +11,7 @@ define('__AMBER_BASE__', dirname(__FILE__));
 
 require_once __AMBER_BASE__ . '/Report.php';
 require_once __AMBER_BASE__ . '/ReportPaged.php';
+require_once __AMBER_BASE__ . '/ReportSubReport.php';
 require_once 'adodb/adodb.inc.php';
 require_once 'ObjectLoader.php';
 
@@ -119,7 +120,7 @@ class Amber
     return $amber->_sysdb;
   }
 
-  function &createAmberObject($type, $exporter=null)
+  function &createAmberObject($type='html', $exporter=null)
   {
     $amber =& Amber::getInstance();
 
@@ -132,7 +133,13 @@ class Amber
 
     $amber->_stdExporter = $exporter;
         
-    if ($type == 'report') {
+    if ($type == 'reportSubReport') {
+      if (stristr($exporter, 'pdf') != false) {
+        return  new ReportSubReport();
+      } else {
+        return  new report();
+      }  
+    } elseif ($type == 'report') {
       if (stristr($exporter, 'pdf') != false) {
         return  new reportPaged();
       } else {
