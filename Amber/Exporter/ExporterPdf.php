@@ -109,7 +109,7 @@ class ExporterFPdf extends Exporter
     $this->_pdf->SetXY(0, 0);
     $this->_pdf->Cell($this->_report->Width, $height, $text, $border, 1, 'L', 1);
 
-    $this->_pdf->endSection($height+1);
+    $this->_pdf->endSection($height+1, true);
   }  
 
   function startSection(&$section, $width, &$buffer)

@@ -47,9 +47,11 @@ class GLS extends phpReport_UserFunctions
   {
     $Me   =& $report->ControlValues;
     //kleine Schweinerei die aber sein muss...
-    if ($report->_exporter->type == 'fpdf') {
-      $report->_exporter->_pdf->BookMark($Me['PBetreuer'],0,-1);
-    }
+    if ($FormatCount == 1) {
+      if ($report->_exporter->type == 'fpdf') {
+        $report->_exporter->_pdf->BookMark($Me['PBetreuer'],0,-1);
+      }
+    }  
   }
 
   function Detail1_Print(&$report, &$Cancel, $FormatCount)

@@ -68,7 +68,7 @@ class PDF extends FPDF
       $this->SetClipping(0, 0, $this->_reportWidth, $sectionHeight);
 
       if (!$this->_exporter->DesignMode) {
-        $formatCount = $page - $startpage + 1;
+        $formatCount = $page - $startPage + 1;
         $this->_exporter->onPrint(&$cancel, $formatCount);
         if (!$cancel) {
           $this->_out($secBuff);

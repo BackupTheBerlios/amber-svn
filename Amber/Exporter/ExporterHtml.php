@@ -143,7 +143,9 @@ class ExporterHtml extends Exporter
       $out .= "\">\n";
     }
 
-    if (!$this->DesignMode) {
+    if ($this->DesignMode) {
+        $out .= $buffer;
+    } else {        
       $this->onPrint(&$cancel, 1);
       if (!$cancel) {
         $out .= $buffer;
