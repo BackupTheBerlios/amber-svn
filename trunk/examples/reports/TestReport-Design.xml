@@ -640,8 +640,8 @@
                 <ControlType>100</ControlType>
                 <Caption>Report header/footer should be visible, 
 page header/footer should not be visible</Caption>
-                <Left>6165</Left>
-                <Top>8265</Top>
+                <Left>4440</Left>
+                <Top>8031</Top>
                 <Width>2295</Width>
                 <Height>1170</Height>
                 <BorderStyle>1</BorderStyle>

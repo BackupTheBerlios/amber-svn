@@ -2,7 +2,7 @@
 <report>
     <RecordSource></RecordSource>
     <BorderStyle>2</BorderStyle>
-    <Width>5669</Width>
+    <Width>8503</Width>
     <Picture>(keines)</Picture>
     <PictureType>0</PictureType>
     <PictureSizeMode>0</PictureSizeMode>
@@ -26,7 +26,7 @@
         <ItemLayout>1953</ItemLayout>
         <ItemsAcross>1</ItemsAcross>
         <ItemSizeHeight>2494</ItemSizeHeight>
-        <ItemSizeWidth>5669</ItemSizeWidth>
+        <ItemSizeWidth>8503</ItemSizeWidth>
         <LeftMargin>1448</LeftMargin>
         <Orientation>1</Orientation>
         <PaperSize>9</PaperSize>
@@ -95,6 +95,7 @@
         <KeepTogether>-1</KeepTogether>
         <CanGrow>-1</CanGrow>
         <Height>2494</Height>
+        <BackColor>8421631</BackColor>
         <Controls>
             <item id="TextBox">
                 <EventProcPrefix>TextBox</EventProcPrefix>
@@ -209,6 +210,24 @@
                 <Section>0</Section>
                 <Parent>Text13</Parent>
                 <zIndex>59</zIndex>
+            </item>
+            <item id="Bezeichnungsfeld15">
+                <EventProcPrefix>Bezeichnungsfeld15</EventProcPrefix>
+                <Name>Bezeichnungsfeld15</Name>
+                <ControlType>100</ControlType>
+                <Caption>This box should be invisible in the Main report (TestReport)</Caption>
+                <Left>5102</Left>
+                <Top>623</Top>
+                <Width>2778</Width>
+                <Height>1644</Height>
+                <BackStyle>1</BackStyle>
+                <BackColor>255</BackColor>
+                <FontName>Arial</FontName>
+                <FontSize>8</FontSize>
+                <TextFontCharSet>0</TextFontCharSet>
+                <TextAlign>0</TextAlign>
+                <Section>0</Section>
+                <zIndex>80</zIndex>
             </item>
         </Controls>
     </Detail>

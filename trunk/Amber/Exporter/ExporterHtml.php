@@ -302,8 +302,8 @@ class ExporterHtml extends Exporter
       return '0px';
     }
 
-    return number_format(__SCALE__ * $twips / 15, 0, '.', '') . 'px';
-    //return number_format(__SCALE__ * $twips / 20, 0, '.', '') . 'pt';
+    //return number_format(__SCALE__ * $twips / 15, 0, '.', '') . 'px';
+    return number_format(__SCALE__ * $twips / 20, 2, '.', '') . 'pt';
     //return number_format(__SCALE__ * $twips / 1440, 5, '.', '') . 'in';
     //return number_format(__SCALE__ * $twips / 1440 * 2.54, 4, '.', '') . 'cm';
   }
@@ -412,13 +412,25 @@ Class ControlExporterHtml
   function getStyle(&$ctrl, &$value, &$std)
   {
     $out = '';
-
+    
+    $LeftPaddingHtml = 0;  // 0
+    $RightPaddingHtml = 0; // 0
+    $TopPaddignHtml = 0;
+    $Bottompaddinghtml = 0;
+    if ($value['BorderWidth'] == 0) {
+      $BorderWidthHtml = 15; // 1 px
+    } else {
+      $BorderWidthHtml = $value['BorderWidth'];
+    }
+        
+    
     // Position
     if ($value['Top'] <> $std['Top']) {
       $out .= 'top: ' . ExporterHTML::_html_twips($ctrl->Properties['Top']) . '; ';
     }
-    if ($value['Left'] <> $std['Left']) {
-      $out .= 'left: ' . ExporterHTML::_html_twips($ctrl->Properties['Left']) . '; ';
+    if (($value['Left'] <> $std['Left']) or ($value['BorderWidth'] <> $std['BorderWidth'])) {
+      $leftHtml = $value['Left'] + 1/2 * $BorderWidthHtml + $LeftPaddingHtml;
+      $out .= 'left: ' . ExporterHTML::_html_twips($leftHtml) . '; ';
     }
     if ($value['Height'] <> $std['Height']) {
       // Fix IE display bug
@@ -428,8 +440,9 @@ Class ControlExporterHtml
         $out .= 'height: ' . ExporterHTML::_html_twips($ctrl->Properties['Height']) . '; ';
       }
     }
-    if ($value['Width'] <> $std['Width']) {
-      $out .= 'width: ' . ExporterHTML::_html_twips($ctrl->Properties['Width']) . '; ';
+    if (($value['Width'] <> $std['Width']) or ($value['BorderWidth'] <> $std['BorderWidth'])) {
+      $widthHtml = $value['Width'] - $BorderWidthHtml - $LeftPaddingHtml- $RightPaddingHtml;
+      $out .= 'width: ' . ExporterHTML::_html_twips($widthHtml) . '; ';
     }
 
     // Backstyle
