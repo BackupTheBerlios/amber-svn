@@ -152,11 +152,41 @@ class ExporterFPdf extends Exporter
         }
         $firstPage = false;
 
-        $this->_pdf->outPageHeader($pageY, $pageX, $this->_pdf->_reportPages[$pageY]['Head']);  
-        $this->_pdf->outPage($pageY, $pageX, $this->_pdf->_reportPages[$pageY]['']);  
-        $this->_pdf->outPageFooter($pageY, $pageX, $this->_pdf->_reportPages[$pageY]['Foot']);  
+        $this->outPageHeader($pageY, $pageX, $this->_pdf->_reportPages[$pageY]['Head']);  
+        $this->outPage($pageY, $pageX, $this->_pdf->_reportPages[$pageY]['']);  
+        $this->outPageFooter($pageY, $pageX, $this->_pdf->_reportPages[$pageY]['Foot']);  
       }
     }
+  }
+  function outPageHeader($pageY, $pageX, $dataBuff)
+  {
+    $x = $this->layout->leftMargin;
+    $y = $this->layout->topMargin;
+    $w = $this->layout->printWidth;
+    $h = $this->layout->pageHeaderHeight;
+    $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
+    $deltaY = $pageY * $this->layout->printHeight - $y;
+    $this->_pdf->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff);
+  }
+  function outPage($pageY, $pageX, $dataBuff)
+  {
+    $x = $this->layout->leftMargin;
+    $y = $this->layout->topMargin + $this->layout->pageHeaderHeight;
+    $w = $this->layout->printWidth;
+    $h = $this->layout->printHeight;
+    $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
+    $deltaY = $pageY * $this->layout->printHeight - $y;
+    $this->_pdf->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff);
+  }
+  function outPageFooter($pageY, $pageX, $dataBuff)
+  {
+    $x = $this->layout->leftMargin;
+    $y = $this->layout->topMargin + $this->layout->pageHeaderHeight + $this->layout->printHeight;
+    $w = $this->layout->printWidth;
+    $h = $this->layout->pageFooterHeight;
+    $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
+    $deltaY = $pageY * $this->layout->printHeight - $y;
+    $this->_pdf->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff);
   }
 
   /*********************************

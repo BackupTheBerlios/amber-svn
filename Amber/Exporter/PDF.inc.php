@@ -288,32 +288,38 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
   
   function outPageHeader($pageY, $pageX, $dataBuff)
   {
+    $x = $this->layout->leftMargin;
     $y = $this->layout->topMargin;
-    $this->SetClipping($this->layout->leftMargin, $y, $this->layout->printWidth, $this->layout->pageHeaderHeight);
+    $w = $this->layout->printWidth;
+    $h = $this->layout->pageHeaderHeight;
     $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
     $deltaY = $pageY * $this->layout->printHeight - $y;
-    $this->SetCoordinate($deltaX, $deltaY);
-    $this->_out($dataBuff);
-    $this->RemoveCoordinate();
-    $this->RemoveClipping();
+    $this->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff);
   }
   function outPage($pageY, $pageX, $dataBuff)
   {
+    $x = $this->layout->leftMargin;
     $y = $this->layout->topMargin + $this->layout->pageHeaderHeight;
-    $this->SetClipping($this->layout->leftMargin, $y, $this->layout->printWidth, $this->layout->printHeight);
+    $w = $this->layout->printWidth;
+    $h = $this->layout->printHeight;
     $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
     $deltaY = $pageY * $this->layout->printHeight - $y;
-    $this->SetCoordinate($deltaX, $deltaY);
-    $this->_out($dataBuff);
-    $this->RemoveCoordinate();
-    $this->RemoveClipping();
+    $this->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff);
   }
   function outPageFooter($pageY, $pageX, $dataBuff)
   {
+    $x = $this->layout->leftMargin;
     $y = $this->layout->topMargin + $this->layout->pageHeaderHeight + $this->layout->printHeight;
-    $this->SetClipping($this->layout->leftMargin, $y, $this->layout->printWidth, $this->layout->pageFooterHeight);
+    $w = $this->layout->printWidth;
+    $h = $this->layout->pageFooterHeight;
     $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
     $deltaY = $pageY * $this->layout->printHeight - $y;
+    $this->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff);
+  }
+  
+  function outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff)
+  {
+    $this->SetClipping($x, $y, $w, $h);
     $this->SetCoordinate($deltaX, $deltaY);
     $this->_out($dataBuff);
     $this->RemoveCoordinate();
