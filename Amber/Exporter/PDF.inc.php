@@ -270,16 +270,13 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
     $this->AddPage();
     $this->_inReport = true;
   }
-
+  
   function endReport()
   {
-    if (!$this->_inReport) {
-      Amber::showError('Error', 'endReport: no report open');
-      die();
-    }  
-
     $this->_exporter->printPageFooter();
-    $this->_inReport = false;
+
+    $this->endReportBuffering();
+    
     $firstPage = true;  //first page is out
 
     $endPageX = floor($this->_reportWidth / $this->_printWidth);
@@ -290,34 +287,54 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
         }
         $firstPage = false;
 
-        $y = $this->tMargin;
-        $this->SetClipping($this->lMargin, $y, $this->_printWidth, $this->_headerHeight);
-        $deltaX = $this->lMargin - $pageX * $this->_printWidth;
-        $deltaY = $pageY * $this->_printHeight - $y;
-        $this->SetCoordinate($deltaX, $deltaY);
-        $this->_out($this->_reportPages[$pageY]['Head']);
-        $this->RemoveCoordinate();
-        $this->RemoveClipping();
-
-        $y = $this->tMargin + $this->_headerHeight;
-        $this->SetClipping($this->lMargin, $y, $this->_printWidth, $this->_printHeight);
-        $deltaX = $this->lMargin - $pageX * $this->_printWidth;
-        $deltaY = $pageY * $this->_printHeight - $y;
-        $this->SetCoordinate($deltaX, $deltaY);
-        $this->_out($this->_reportPages[$pageY]['']);
-        $this->RemoveCoordinate();
-        $this->RemoveClipping();
-
-        $y = $this->tMargin + $this->_headerHeight + $this->_printHeight;
-        $this->SetClipping($this->lMargin, $y, $this->_printWidth, $this->_footerHeight);
-        $deltaX = $this->lMargin - $pageX * $this->_printWidth;
-        $deltaY = $pageY * $this->_printHeight - $y;
-        $this->SetCoordinate($deltaX, $deltaY);
-        $this->_out($this->_reportPages[$pageY]['Foot']);
-        $this->RemoveCoordinate();
-        $this->RemoveClipping();
+        $this->outPageHeader($pageY, $pageX, $this->_reportPages[$pageY]['Head']);  
+        $this->outPage($pageY, $pageX, $this->_reportPages[$pageY]['']);  
+        $this->outPageFooter($pageY, $pageX, $this->_reportPages[$pageY]['Foot']);  
       }
     }
+  }
+  
+  function endReportBuffering()
+  {
+    if (!$this->_inReport) {
+      Amber::showError('Error', 'endReport: no report open');
+      die();
+    }  
+    $this->_inReport = false;
+  }
+  
+  function outPageHeader($pageY, $pageX, $dataBuff)
+  {
+    $y = $this->tMargin;
+    $this->SetClipping($this->lMargin, $y, $this->_printWidth, $this->_headerHeight);
+    $deltaX = $this->lMargin - $pageX * $this->_printWidth;
+    $deltaY = $pageY * $this->_printHeight - $y;
+    $this->SetCoordinate($deltaX, $deltaY);
+    $this->_out($dataBuff);
+    $this->RemoveCoordinate();
+    $this->RemoveClipping();
+  }
+  function outPage($pageY, $pageX, $dataBuff)
+  {
+    $y = $this->tMargin + $this->_headerHeight;
+    $this->SetClipping($this->lMargin, $y, $this->_printWidth, $this->_printHeight);
+    $deltaX = $this->lMargin - $pageX * $this->_printWidth;
+    $deltaY = $pageY * $this->_printHeight - $y;
+    $this->SetCoordinate($deltaX, $deltaY);
+    $this->_out($dataBuff);
+    $this->RemoveCoordinate();
+    $this->RemoveClipping();
+  }
+  function outPageFooter($pageY, $pageX, $dataBuff)
+  {
+    $y = $this->tMargin + $this->_headerHeight + $this->_printHeight;
+    $this->SetClipping($this->lMargin, $y, $this->_printWidth, $this->_footerHeight);
+    $deltaX = $this->lMargin - $pageX * $this->_printWidth;
+    $deltaY = $pageY * $this->_printHeight - $y;
+    $this->SetCoordinate($deltaX, $deltaY);
+    $this->_out($dataBuff);
+    $this->RemoveCoordinate();
+    $this->RemoveClipping();
   }
 
   function printBox(&$para)
