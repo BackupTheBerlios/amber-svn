@@ -153,7 +153,8 @@ class Amber
   }
 
   /**
-   *
+   * @static
+   * @access public
    * @param mixed
    * @param bool return If set to true the output will be returned as string, otherwise it will be echoed
    */
@@ -228,10 +229,10 @@ class Amber
     $out .= '&nbsp;<input type="button" value="Close" onclick="document.getElementById(\'' . $id . '\').style.display = \'none\';" style="width: 80px;" /></p>';
     $out .= '<p />';
     if (function_exists('debug_backtrace')) {
-      $out .= '<p id="' . $btId . '" align="center" style="display:none;">' . Amber::dump(next(debug_backtrace()), true) . '</p>';
+      $out .= '<div id="' . $btId . '" align="center" style="display:none;">' . Amber::dump(next(debug_backtrace()), true) . '</div>';
     }
     $out .= '</div>';
-    
+
     if ($ret == true) {
       return $out;
     } else {

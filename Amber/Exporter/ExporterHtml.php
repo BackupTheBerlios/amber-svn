@@ -78,7 +78,7 @@ class ExporterHtml extends Exporter
   function endReport(&$report)
   {
     parent::endReport($report);
-    
+
     echo "\n</div>\n\n<!-- End of AmberReport -->\n\n";
     if (!$this->_asSubreport) {
       echo "</body>\n</html>\n";
@@ -273,6 +273,11 @@ class ExporterHtml extends Exporter
   function setCSS($css)
   {
     $ret = "\t<style type=\"text/css\">\n<!--\n";
+    if ($this->getUserAgent() == 'msie') {
+      $ret .= ".AmberReport { position: absolute; }\n";
+    } else {
+      $ret .= ".AmberReport { position: relative; }\n";
+    }
     $ret .= ".AmberReport div { position: absolute; overflow: hidden; }\n";
     $ret .= $css;
     $ret .= "\n-->\n</style>\n";
@@ -315,6 +320,28 @@ class ExporterHtml extends Exporter
     }
 
     return '#' . substr(('000000' . dechex($color)), -6);
+  }
+
+  /**
+   * @static
+   * @access public
+   * @return string User agent
+   */
+  function getUserAgent()
+  {
+    $agent = strtolower($_SERVER['HTTP_USER_AGENT']);
+
+    if (strstr($agent, 'konqueror')) {
+      return 'konqu';
+    } elseif (strstr($agent, 'opera')) {
+      return 'opera';
+    } elseif (strstr($agent, 'msie'))  {
+      return 'msie';
+    } elseif (strstr($agent, 'mozilla')) {
+      return 'moz';
+    }
+
+    return '';
   }
 
   // Local functions
@@ -399,8 +426,9 @@ Class ControlExporterHtml
       $out .= 'left: ' . ExporterHTML::_html_twips($ctrl->Properties['Left']) . '; ';
     }
     if ($value['Height'] <> $std['Height']) {
-      if ($ctrl->Properties['Height'] == 0) {
-        $out .= 'height: 1px;'; // fix IE display bug
+      // Fix IE display bug
+      if (($ctrl->Properties['Height'] == 0) && (ExporterHTML::getUserAgent() == 'msie')) {
+        $out .= 'height: 1px;';
       } else {
         $out .= 'height: ' . ExporterHTML::_html_twips($ctrl->Properties['Height']) . '; ';
       }
