@@ -46,12 +46,7 @@ class Exporter
     $this->_start = microtime();
     $this->_asSubreport = $asSubreport;
     $this->_base =& $this->getExporterBasicClass($report->layout, !$asSubreport);
-    if (!$report->ignoreSectionSlip) {
-      $this->SectionSlip = BorderCheat; 
-    } else {
-      $this->SectionSlip = 0;
-    }
-    $report->_Code->SectionSlip =& $this->SectionSlip;    
+    $this->SectionSlip =& $report->SectionSlip;
     $this->startReportSubExporter($report, $asSubreport);
   }
 

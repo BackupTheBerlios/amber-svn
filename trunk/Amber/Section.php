@@ -104,6 +104,7 @@ class Section
           $this->Controls[] =& $ctl;
           $parent->Controls[$ctl->Name] =& $ctl;
           $parent->ControlValues[$ctl->Name] =& $ctl->Value;
+          $ctl->_SectionSlip =& $parent->SectionSlip;
         }
       }
     }

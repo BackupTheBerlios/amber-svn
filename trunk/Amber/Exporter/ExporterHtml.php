@@ -226,7 +226,6 @@ class ExporterHtml extends Exporter
     }
     $objName = $classList[$type];
     $ctrl->_exporter =& new $objName;
-    $ctrl->_exporter->SectionSlip =& $this->SectionSlip;
   }
 
   // Helper functions - html
@@ -382,14 +381,14 @@ Class ControlExporterHtml
       $BorderWidthHtml = $value['BorderWidth'] * 20;
     }
     
-    $borderWidthHtmlChanged = (($value['BorderWidth'] <> $std['BorderWidth']) or ($value['BorderStyle'] <> $std['BorderStyle']) or ($this->SectionSlip <> BorderCheat)); 
+    $borderWidthHtmlChanged = (($value['BorderWidth'] <> $std['BorderWidth']) or ($value['BorderStyle'] <> $std['BorderStyle']));
     // Position
     if (($value['Top'] <> $std['Top']) or $borderWidthHtmlChanged) {
-      $topHtml = $value['Top'] - 1/2 * $BorderWidthHtml - $TopPaddingHtml + $this->SectionSlip;
+      $topHtml = $value['Top'] - 1/2 * $BorderWidthHtml - $TopPaddingHtml + $ctrl->_SectionSlip;
       $out .= 'top: ' . ExporterHTML::_html_twips($topHtml) . '; ';
     }
     if (($value['Left'] <> $std['Left']) or $borderWidthHtmlChanged) {
-      $leftHtml = $value['Left'] - 1/2 * $BorderWidthHtml - $LeftPaddingHtml + $this->SectionSlip;
+      $leftHtml = $value['Left'] - 1/2 * $BorderWidthHtml - $LeftPaddingHtml + $ctrl->_SectionSlip;
       $out .= 'left: ' . ExporterHTML::_html_twips($leftHtml) . '; ';
     }
 

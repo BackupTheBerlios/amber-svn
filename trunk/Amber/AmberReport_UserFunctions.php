@@ -51,6 +51,7 @@ class AmberReport_UserFunctions
     $this->GroupLevels =& $report->GroupLevels;
     $this->GroupLevel =& $report->GroupLevels;  // Access Compatability
     $this->RecordSource =& $report->RecordSource;
+    $this->SectionSlip =& $report->SectionSlip;
   }
   
   function &getReport()

@@ -47,7 +47,8 @@ class Report extends AmberObject
   var $PaperSize;
   var $PaperHeight;
   var $PaperWidth;
-
+  var $SectionSlip;
+  
   var $ReportHeader;
   var $PageHeader;
   var $GroupHeaders;
@@ -279,13 +280,16 @@ class Report extends AmberObject
     $this->_installExporter($type);
     $this->_setDocumentTitle($this->Name);
 
-    $this->_startReport();
+    $this->SectionSlip = BorderCheat; 
 
     $this->OnOpen($cancel);
     if ($cancel) {
       $this->_endReport();
       return;
     }
+
+    $this->_startReport();
+    
     $this->_fetchDataFromDatabase();
     if ($this->_HasData() == 0) {
       $this->OnNoData($cancel);
@@ -366,6 +370,7 @@ class Report extends AmberObject
     $this->_setDocumentTitle($this->Name);
 
     $this->_setDesignMode(true);
+    $this->SectionSlip = 0;
     $this->initDesignHeader();
 
     $this->_startReport();
@@ -989,7 +994,6 @@ class Report extends AmberObject
     $this->ignoreOnPrint = $value;
     $this->ignoreKeepTogether = $value;
     $this->printHeadFootAsNormalSection = $value;
-    $this->ignoreSectionSlip = $value;
   }
 
   /**
