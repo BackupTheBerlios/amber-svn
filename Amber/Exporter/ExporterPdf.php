@@ -25,43 +25,6 @@ ExporterFactory::register('testpdf', 'ExporterFPdf');
  */
 
 
-class pageLayout
-{
-  var $unit;          //unit in pt 
-  
-  var $paperwidth;
-  var $paperheight;
-  
-  var $rightMargin;
-  var $leftMargin;
-  var $topMargin;
-  var $bottomMargin;
-  
-  var $pageHeaderHeight;
-  var $pageFooterHeight;
-  
-  //////////////////////
-  // 'calculated' fields
-  /////////////////////
-  var $printWidth;
-  var $printHeight;
-
-  function set_orientation($orientation, $width, $height)
-  {
-    if ($orientation == 'portrait') {
-      $this->paperWidth = $width;
-      $this->paperHeight = $height;
-    } else {
-      $this->paperWidth = $height;
-      $this->paperHeight = $width;
-    } 
-  }
-  function calcPrintableArea()
-  {
-    $this->printWidth  = ($this->paperWidth - $this->leftMargin - $this->rightMargin); //width of printable area of page (w/o morgins)
-    $this->printHeight = ($this->paperHeight - $this->topMargin - $this->bottomMargin - $this->pageHeaderHeight - $this->pageFooterHeight); //height of printable area of page (w/o morgins)
-  }
-}
 
 class reportBuff
 {
@@ -76,7 +39,7 @@ class reportBuff
   function reportBuff($layout)
   {
     $this->actpageNo = -1;
-    $this->layout = $layout; 
+    $this->_report->layout = $layout; 
   }
   
   function out(&$s)
@@ -86,7 +49,7 @@ class reportBuff
   
   function newPage()
   {
-    $this->posY = ($this->actpageNo + 1) * $this->layout->printHeight;
+    $this->posY = ($this->actpageNo + 1) * $this->_report->layout->printHeight;
   }
   
   function page()
@@ -105,15 +68,12 @@ class ExporterFPdf extends Exporter
   /*********************************
    *  Report-pdf
    *********************************/
+
   function _exporterInit()
   {
     $report =& $this->_report;
-    $this->layout =& new pageLayout();
-    $this->layout->unit = 1/20;
-    $this->layout->set_orientation($report->Orientation, $report->PaperWidth, $report->PaperHeight);
-    #Amber::dump($size);
     $reset = (!$this->_asSubreport);
-    $this->_pdf =& PDF::getInstance($this->layout, $reset);
+    $this->_pdf =& PDF::getInstance($this->_report->layout, $reset);
     if ($report->Controls) {
       foreach (array_keys($report->Controls) as $ctrlName) {
         if (!empty($report->Controls[$ctrlName]->FontName)) {
@@ -124,21 +84,8 @@ class ExporterFPdf extends Exporter
     if ($this->_asSubreport) {
       $this->_pdf->startSubReport();
     } else {  
-      $this->layout->rightMargin = $report->RightMargin;
-      $this->layout->leftMargin = $report->LeftMargin;
-      $this->layout->topMargin = $report->TopMargin;
-
-      $this->layout->bottomMargin = $report->BottomMargin;
-      if ($this->DesignMode) {
-        $this->layout->pageHeaderHeight = 0;
-        $this->layout->pageFooterHeight = 0;
-      } else {
-        $this->layout->pageHeaderHeight = $report->PageHeader->Height;
-        $this->layout->pageFooterHeight = $report->PageFooter->Height;
-      }
-      $this->layout->calcPrintableArea();
-      $this->reportBuff =& new reportBuff($this->layout);
-      $this->_pdf->init($this, $report->Width, $this->layout);
+      $this->reportBuff =& new reportBuff($this->_report->layout);
+      $this->_pdf->init($this, $report->Width, $this->_report->layout);
       $this->_pdf->StartReportBuffering($this->reportBuff);
     }
   }
@@ -175,7 +122,7 @@ class ExporterFPdf extends Exporter
   
     $firstPage = true;  //first page is out
 
-    $endPageX = floor($this->_pdf->_reportWidth / $this->layout->printWidth);
+    $endPageX = floor($this->_pdf->_reportWidth / $this->_report->layout->printWidth);
     foreach(array_keys($this->_pdf->reportBuff->reportPages) as $pageY) {
       for($pageX = 0; $pageX <= $endPageX; $pageX++) {
         if (!$firstPage) {
@@ -191,32 +138,32 @@ class ExporterFPdf extends Exporter
   }
   function outPageHeader($pageY, $pageX)
   {
-    $x = $this->layout->leftMargin;
-    $y = $this->layout->topMargin;
-    $w = $this->layout->printWidth;
-    $h = $this->layout->pageHeaderHeight;
-    $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
-    $deltaY = $pageY * $this->layout->printHeight - $y;
+    $x = $this->_report->layout->leftMargin;
+    $y = $this->_report->layout->topMargin;
+    $w = $this->_report->layout->printWidth;
+    $h = $this->_report->layout->pageHeaderHeight;
+    $deltaX = $this->_report->layout->leftMargin - $pageX * $this->_report->layout->printWidth;
+    $deltaY = $pageY * $this->_report->layout->printHeight - $y;
     $this->_pdf->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->_pdf->reportBuff->reportPages[$pageY]['Head']);
   }
   function outPage($pageY, $pageX)
   {
-    $x = $this->layout->leftMargin;
-    $y = $this->layout->topMargin + $this->layout->pageHeaderHeight;
-    $w = $this->layout->printWidth;
-    $h = $this->layout->printHeight;
-    $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
-    $deltaY = $pageY * $this->layout->printHeight - $y;
+    $x = $this->_report->layout->leftMargin;
+    $y = $this->_report->layout->topMargin + $this->_report->layout->pageHeaderHeight;
+    $w = $this->_report->layout->printWidth;
+    $h = $this->_report->layout->printHeight;
+    $deltaX = $this->_report->layout->leftMargin - $pageX * $this->_report->layout->printWidth;
+    $deltaY = $pageY * $this->_report->layout->printHeight - $y;
     $this->_pdf->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->_pdf->reportBuff->reportPages[$pageY]['']);
   }
   function outPageFooter($pageY, $pageX)
   {
-    $x = $this->layout->leftMargin;
-    $y = $this->layout->topMargin + $this->layout->pageHeaderHeight + $this->layout->printHeight;
-    $w = $this->layout->printWidth;
-    $h = $this->layout->pageFooterHeight;
-    $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
-    $deltaY = $pageY * $this->layout->printHeight - $y;
+    $x = $this->_report->layout->leftMargin;
+    $y = $this->_report->layout->topMargin + $this->_report->layout->pageHeaderHeight + $this->_report->layout->printHeight;
+    $w = $this->_report->layout->printWidth;
+    $h = $this->_report->layout->pageFooterHeight;
+    $deltaX = $this->_report->layout->leftMargin - $pageX * $this->_report->layout->printWidth;
+    $deltaY = $pageY * $this->_report->layout->printHeight - $y;
     $this->_pdf->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->_pdf->reportBuff->reportPages[$pageY]['Foot']);
   }
 

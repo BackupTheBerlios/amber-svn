@@ -234,7 +234,7 @@ class Report extends AmberObject
   {
     $this->_installExporter($type);
     $this->_exporter->setDocumentTitle($this->Name);
-    $this->_startReport($isSubreport);
+    $this->_startReport($isSubreport, false);
 
     $this->OnOpen($cancel);
     if ($cancel) {
@@ -307,7 +307,7 @@ class Report extends AmberObject
     $this->_exporter->setDocumentTitle($this->Name);
     $this->_exporter->setDesignMode(true);
 
-    $this->_startReport($isSubreport);
+    $this->_startReport($isSubreport, true);
 
     $maxLevel = count($this->_groupFields);
 
@@ -389,7 +389,7 @@ class Report extends AmberObject
   /**
    * @access private
    */
-  function _startReport($isSubreport)
+  function _startReport($isSubreport, $isDesignMode)
   {
     if (isset($this->_exporter)) {
       $this->_exporter->startReport($this, $isSubreport);
