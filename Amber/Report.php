@@ -8,6 +8,7 @@
  */
 
 require_once 'misc.php';
+require_once 'AmberConfig.php';
 require_once 'Section.php';
 require_once 'ObjectLoader.php';
 require_once 'SimpleSQLParser.php';
@@ -93,8 +94,10 @@ class Report
    */
   function setConfig($cfgObj)
   {
-    if (is_object($cfgObj) && is_a($cfgObj, 'Config')) {
+    if (is_object($cfgObj) && is_a($cfgObj, 'AmberConfig')) {
       $this->_globalConfig = $cfgObj;
+    } else {
+      showError('Warning - Report::setConfig()', 'Invalid paramater');
     }
   }
 

@@ -23,10 +23,6 @@ class AmberConfig
   var $username;
   var $password;
 
-  function AmberConfig()
-  {
-  }
-
   function fromXML($fileName)
   {
     if (!file_exists($fileName)) {

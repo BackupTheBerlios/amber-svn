@@ -5,7 +5,7 @@ ini_set('max_execution_time', '600');
 ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/../lib/');
 
 require_once '../Amber/Amber.php';
-require_once '../Amber/Config.php';
+require_once '../Amber/AmberConfig.php';
 
 if (isset($_GET['rep'])) {
   $repName = $_GET['rep'];
@@ -17,11 +17,10 @@ if (isset($_GET['export'])) {
 } else {
   $type = 'html';            //aktuelle Werte vgl. Exporter.php und die dazugehörigen includes.
 }
+
+$mode = 'normal';
 if (isset($_GET['mode'])) {
   $mode = $_GET['mode'];     // 'design' or 'normal'
-}
-if ($mode != 'design') {
-  $mode = 'normal';
 }
 
 $cfgFileName = '../Amber/conf/localconf.xml';
@@ -32,7 +31,6 @@ if (!file_exists($cfgFileName)) {
 
 
 $cfg = new AmberConfig;
-$rc=new ReflectionClass('AmberConfig');
 $cfg->fromXML($cfgFileName);
 
 setlocale (LC_CTYPE, 'de_DE', 'de_DE@euro');
@@ -46,7 +44,7 @@ include_modules();
 $amber = new Amber($cfg);
 
 if ($mode == 'normal') {
-  $amber->OpenReport($repName, AC_NORMAL, $filter, $type);
+  $amber->OpenReport($repName, AC_NORMAL, null, $type);
 } else {
   $amber->OpenReport($repName, AC_DESIGN, null, $type);
 }
@@ -56,7 +54,7 @@ function include_modules()
 {
   $modPath = 'modules/';
   foreach (glob($modPath . '*.php') as $filename) {
-    include_once $modpath . $filename;
+    include_once $filename;
   }
 }
 
