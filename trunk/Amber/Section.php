@@ -196,7 +196,7 @@ class Section
     $funct = $this->_OnFormatFunc;
     $obj =& $this->_parent->_Code;
     $cancel = false;
-    $obj->$funct($this->_parent, $cancel, 1);
+    $obj->$funct($cancel, 1);
   }
 
   /**
@@ -207,7 +207,7 @@ class Section
     $funct =$this->_OnPrintFunc;
     $obj =& $this->_parent->_Code;
     $cancel = false;
-    $obj->$funct($this->_parent, $cancel, $formatCount);
+    $obj->$funct($cancel, $formatCount);
   }
 
   /**

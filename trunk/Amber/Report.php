@@ -153,13 +153,21 @@ class Report extends AmberObject
 
     if ((isset($className)) && (!empty($className)) && (!class_exists($className))) {
       //eval($data->code); // code in database is currently being stored without php tags! fix this!
-      eval(' ?' . '>' . $data->code . '<' . '?php ');
+      ob_start();
+      $result = eval(' ?' . '>' . $data->code . '<' . '?php ');
+      $message = ob_get_contents();
+      ob_end_clean();
+      if ($result === false) {
+        Amber::showError('Unable to evaluate class "' . $className . '"', $message);
+        die();
+      }
     }
     if (class_exists($className)) {
       $this->_Code =& new $className;
       $classLoaded = true;
     } else {
       Amber::showError('Error', 'Cannot instantiate undefined class "' . $className . '"');
+      die();
     }
     if (!$classLoaded) {
       $this->_Code =& new AmberReport_UserFunctions();
