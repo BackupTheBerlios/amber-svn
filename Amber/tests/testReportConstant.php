@@ -127,6 +127,7 @@ class testReportConstant extends PHPUnit_TestCase
     $f = file_get_contents ($path . $reportname."-PdfNormal.old");
     $this->assertEquals($f, $s,  'Test4 pdf, Normal ' . $reportname);
     
+    print date('h.i.s');
   }
   
   function test_TestReport()
