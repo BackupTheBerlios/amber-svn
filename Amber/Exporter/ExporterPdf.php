@@ -114,11 +114,11 @@ class ExporterFPdf extends Exporter
     $this->_pdf->startSection();
     $height = 240; //12pt
 
-    $this->_backColor(0xDDDDDD);
-    $this->_textColor(0x000000);
+    $this->_pdf->_backColor(0xDDDDDD);
+    $this->_pdf->_textColor(0x000000);
     $this->_pdf->SetFont('helvetica', '', 8);
     $this->_pdf->SetLineWidth(10); // 0.5pt
-    $this->_borderColor(0x000000);
+    $this->_pdf->_borderColor(0x000000);
 
     $border = 1;
     $this->_pdf->SetXY(0, 0);
@@ -131,7 +131,7 @@ class ExporterFPdf extends Exporter
   {
     parent::startSection($section, $width, $buffer);
     $this->_pdf->startSection();
-    $this->_backColor($section->BackColor);
+    $this->_pdf->_backColor($section->BackColor);
     $fill = true;
     $text = '';
     $border = 0;
@@ -202,39 +202,6 @@ class ExporterFPdf extends Exporter
 
 
 
-  function printBox(&$para)
-  {
-    if ($para->italic) {
-      $fstyle .= 'I';
-    }
-    if ($para->bold) {
-      $fstyle .= 'B';
-    }
-    if ($para->underline) {
-      $fstyle .= 'U';
-    }
-    $para->font = strtolower($para->font);
-
-    //echo "'".$para->font."' => '".$this->_fontList[$control->FontName]."'<br>";
-    $this->_pdf->SetFont($this->_pdf->_fontList[$para->font], $fstyle, $para->fsize);
-
-    $this->_backColor($para->backcolor);
-    $this->_textColor($para->forecolor);
-    $this->_pdf->SetXY($para->x, $para->y);
-    $this->_pdf->SetClipping($para->x, $para->y, $para->width, $para->height);
-    $this->_pdf->Cell($para->width, $para->height, $para->content, '0', 0, $para->falign, $para->backstyle);
-    $this->_pdf->RemoveClipping();
-    $this->_pdf->SetXY($para->x, $para->y);
-    if ($para->borderstyle <> 0) {
-      $this->_borderColor($para->bordercolor);
-      if ($para->borderwidth == 0) {
-        $this->_pdf->SetLineWidth(1);
-      } else {
-        $this->_pdf->SetLineWidth($para->borderwidth);
-      }
-      $this->_pdf->Cell($para->width, $para->height, '', 'RLTB', 0, $para->falign, 0);
-    }
-  }
 
 
   function printNormal(&$control, &$buffer, $content)
@@ -273,7 +240,7 @@ class ExporterFPdf extends Exporter
     $para->bordercolor = $control->BorderColor;
     $para->borderwidth = $control->BorderWidth * 20;
 
-    $this->printBox($para);
+    $this->_pdf->printBox($para);
   }
 
   function printNormalCheckBox(&$control, &$buffer, $content)
@@ -315,7 +282,7 @@ class ExporterFPdf extends Exporter
     $para->bordercolor = 0;
     $para->borderwidth = 20;
 
-    $this->printBox($para);
+    $this->_pdf->printBox($para);
   }
   
   function printNormalSubReport(&$control, &$buffer, $content)
@@ -358,7 +325,7 @@ class ExporterFPdf extends Exporter
     $this->_pdf->RemoveClipping();
     $this->_pdf->SetXY($para->x, $para->y);
     if ($para->borderstyle <> 0) {
-      $this->_borderColor($para->bordercolor);
+      $this->_pdf->_borderColor($para->bordercolor);
       if ($para->borderwidth == 0) {
         $this->_pdf->SetLineWidth(1);
       } else {
@@ -390,31 +357,6 @@ class ExporterFPdf extends Exporter
     $this->_pdf->endSection($height, false);
   }
 
-  function _backColor($color)
-  {
-    $r = ($color >> 16) & 255;
-    $g = ($color >>  8) & 255;
-    $b = ($color) & 255;
-    $this->_pdf->SetFillColor($r, $g, $b);
-    //echo "pdf->SetFillColor($r, $g, $b);<br>";
-  }
-  function _textColor($color)
-  {
-    $r = ($color >> 16) & 255;
-    $g = ($color >>  8) & 255;
-    $b = ($color) & 255;
-    $this->_pdf->SetTextColor($r, $g, $b);
-    //echo "pdf->SetFillColor($r, $g, $b);<br>";
-  }
-  function _borderColor($color)
-  {
-    $r = ($color >> 16) & 255;
-    $g = ($color >>  8) & 255;
-    $b = ($color) & 255;
-    $this->_pdf->SetDrawColor($r, $g, $b);
-    //echo "pdf->SetFillColor($r, $g, $b);<br>";
-  }
-
   function _pdf_textalign($textalign)
   {
     $alignments = array(1 => 'L', 'C', 'R', 'J');
@@ -438,34 +380,3 @@ class ExporterFPdf extends Exporter
 }
 
 
-/**
- *
- * @package PHPReport
- * @subpackage Exporter
- *  parameter class for exporterFPdf's printBox
- */
-
-  class printBoxParameter
-  {
-    var $content;               // the content to display
-
-    var $x;                     // x-position in userspace units
-    var $y;                     // y-position in userspace units
-    var $width;                 // width in userspace units
-    var $height;                // height in userspace units
-
-    var $forecolor = 0xFFFFFF;  // text color in rgb
-    var $fsize = 10;            // fontsize in pt
-    var $falign = 'L';          // alignment
-    var $font = 'helvetica';    // font
-    var $italic = false;        // bool: italics
-    var $bold = false;          // bool: bold
-    var $underline = false;     // bool: underline
-
-    var $backstyle = 1;         // 0 - background transparent, 1 - use backgroundcolor
-    var $backcolor = 0;         // background color in rgb
-
-    var $borderstyle = 1;       // 0 - border transparent, 1 - use bordercolor
-    var $bordercolor = 0;       // border color in rgb
-    var $borderwidth = 0;       // border width in pt ***** *20
-  }

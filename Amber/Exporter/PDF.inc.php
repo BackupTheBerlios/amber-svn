@@ -326,6 +326,68 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
     }
   }
 
+  function printBox(&$para)
+  {
+    if ($para->italic) {
+      $fstyle .= 'I';
+    }
+    if ($para->bold) {
+      $fstyle .= 'B';
+    }
+    if ($para->underline) {
+      $fstyle .= 'U';
+    }
+    $para->font = strtolower($para->font);
+
+    //echo "'".$para->font."' => '".$this->_fontList[$control->FontName]."'<br>";
+    $this->SetFont($this->_fontList[$para->font], $fstyle, $para->fsize);
+
+    $this->_backColor($para->backcolor);
+    $this->_textColor($para->forecolor);
+    $this->SetXY($para->x, $para->y);
+    $this->SetClipping($para->x, $para->y, $para->width, $para->height);
+    $this->Cell($para->width, $para->height, $para->content, '0', 0, $para->falign, $para->backstyle);
+    $this->RemoveClipping();
+    $this->SetXY($para->x, $para->y);
+    if ($para->borderstyle <> 0) {
+      $this->_borderColor($para->bordercolor);
+      if ($para->borderwidth == 0) {
+        $this->SetLineWidth(1);
+      } else {
+        $this->SetLineWidth($para->borderwidth);
+      }
+      $this->Cell($para->width, $para->height, '', 'RLTB', 0, $para->falign, 0);
+    }
+  }
+  
+  function _backColor($color)
+  {
+    $r = ($color >> 16) & 255;
+    $g = ($color >>  8) & 255;
+    $b = ($color) & 255;
+    $this->SetFillColor($r, $g, $b);
+    //echo "pdf->SetFillColor($r, $g, $b);<br>";
+  }
+  function _textColor($color)
+  {
+    $r = ($color >> 16) & 255;
+    $g = ($color >>  8) & 255;
+    $b = ($color) & 255;
+    $this->SetTextColor($r, $g, $b);
+    //echo "pdf->SetFillColor($r, $g, $b);<br>";
+  }
+  function _borderColor($color)
+  {
+    $r = ($color >> 16) & 255;
+    $g = ($color >>  8) & 255;
+    $b = ($color) & 255;
+    $this->SetDrawColor($r, $g, $b);
+    //echo "pdf->SetFillColor($r, $g, $b);<br>";
+  }
+
+
+  
+  
   /**
   *
   * Origin of coordinates is moved to (x,y)
@@ -696,13 +758,39 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
 	if($this->page>0)
 		$this->_out(sprintf('BT /F%d %.2f Tf ET',$this->CurrentFont['i'],$this->FontSizePt));
 }
-
-
-
-
-
-
-
-
 }
+
+/**
+ *
+ * @package PHPReport
+ * @subpackage Exporter
+ *  parameter class for exporterFPdf's printBox
+ */
+
+  class printBoxParameter
+  {
+    var $content;               // the content to display
+
+    var $x;                     // x-position in userspace units
+    var $y;                     // y-position in userspace units
+    var $width;                 // width in userspace units
+    var $height;                // height in userspace units
+
+    var $forecolor = 0xFFFFFF;  // text color in rgb
+    var $fsize = 10;            // fontsize in pt
+    var $falign = 'L';          // alignment
+    var $font = 'helvetica';    // font
+    var $italic = false;        // bool: italics
+    var $bold = false;          // bool: bold
+    var $underline = false;     // bool: underline
+
+    var $backstyle = 1;         // 0 - background transparent, 1 - use backgroundcolor
+    var $backcolor = 0;         // background color in rgb
+
+    var $borderstyle = 1;       // 0 - border transparent, 1 - use bordercolor
+    var $bordercolor = 0;       // border color in rgb
+    var $borderwidth = 0;       // border width in pt ***** *20
+  }
+
+
 ?>
