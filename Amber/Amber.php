@@ -57,7 +57,7 @@ class Amber
     return $instance;
   }
 
-  function &currentDb()
+  function currentDb()
   {
     $amber =& Amber::getInstance();
 
@@ -72,11 +72,19 @@ class Amber
       }
       $amber->_db =& $db;
     }
+    if (empty($amber->_db->_connectionID)) {
+      Amber::showError('Internal Error', ' Lost connection to current database');
+      die();
+    }
+    if (isset($amber->_sysdb) && empty($amber->_sysdb->_connectionID)) {
+      Amber::showError('Internal Error', ' Lost connection to system database');
+      die();
+    }
 
     return $amber->_db;
   }
 
-  function &sysDb()
+  function sysDb()
   {
     $amber =& Amber::getInstance();
 
@@ -91,10 +99,17 @@ class Amber
       }
       $amber->_sysdb =& $sysdb;
     }
+    if (empty($amber->_sysdb->_connectionID)) {
+      Amber::showError('Internal Error', ' Lost connection to system database');
+      die();
+    }
+    if (isset($amber->_db) && empty($amber->_db->_connectionID)) {
+      Amber::showError('Internal Error', ' Lost connection to current database');
+      die();
+    }
 
     return $amber->_sysdb;
   }
-
 
   function OpenReport($reportName, $mode = AC_NORMAL, $filter = '', $type = 'html', $noMargin = false)
   {

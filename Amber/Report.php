@@ -174,12 +174,12 @@ class Report extends AmberObject
         }
       }
     }
-    
+
     /*
      * in labels: change property Parent from name (string) to reference (&obj)
      */
-    
-    //FIXME: this should be moved to Control-Class (with a few parameter-changes.....) 
+
+    //FIXME: this should be moved to Control-Class (with a few parameter-changes.....)
 
     if (is_array($this->Controls)) {
       foreach ($this->Controls as $i => $ctrl) {
@@ -191,9 +191,9 @@ class Report extends AmberObject
           $this->Controls[$i]->Parent =& $this->Controls[$ctrl->Parent];
           $this->Controls[$i]->Properties['Parent'] =& $this->Controls[$ctrl->Parent];
         }
-      }     
+      }
     }
-    
+
 
     /*
      * Group Levels
@@ -236,7 +236,7 @@ class Report extends AmberObject
     $this->_installExporter($type);
     $this->_exporter->setDocumentTitle($this->Name);
     $this->_startReport($isSubreport);
-    
+
     $this->OnOpen($cancel);
     if ($cancel) {
       $this->_endReport($isSubreport);
@@ -382,7 +382,6 @@ class Report extends AmberObject
         die();
       }
     }
-    $db->Close();
   }
 
   /**
