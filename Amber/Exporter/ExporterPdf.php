@@ -140,7 +140,7 @@ class ExporterFPdf extends Exporter
     $this->_pdf->SetXY(0, 0);
     $this->_pdf->Cell($this->_report->Width, $height, $text, $border, 1, 'L', 1);
 
-    $this->_pdf->endSection($height+1, true);
+    $this->endSection1($height+1, true);
   }
 
   function startSection(&$section, $width, &$buffer)
@@ -154,9 +154,9 @@ class ExporterFPdf extends Exporter
   function endSection(&$section, $height, &$buffer)
   {
     if (!$section->_PagePart) {
-      $this->_pdf->endSection($height, $section->KeepTogether);
+      $this->endSection1($height, $section->KeepTogether);
     } elseif ($this->_report->layout->designMode) {
-      $this->_pdf->endSection($height, false);
+      $this->endSection1($height, false);
     } elseif ($section->_PagePart == 'Foot') {
       $this->pageFooterEnd();
     } else {
@@ -164,6 +164,64 @@ class ExporterFPdf extends Exporter
     }
     parent::endSection($section, $height, $buffer);
   }
+  
+  function endSection1($sectionHeight, $keepTogether)
+  {
+    if ($this->mayflower->inSubReport()) {
+      $this->endSectionInSubReport($sectionHeight, $keepTogether);
+      return;
+    }  
+    $this->comment("end Body-Section:1\n");
+    $secBuff = $this->mayflower->sectionPop();
+    $startPage = floor($this->mayflower->reportBuff->posY / $this->mayflower->layout->printHeight);
+    $endPage   = floor(($this->mayflower->reportBuff->posY + $sectionHeight) / $this->mayflower->layout->printHeight);
+    if ($keepTogether and ($startPage <> $endPage)) {
+      if ($this->mayflower->reportBuff->posY > ($startPage * $this->mayflower->layout->printHeight)) { // page not blank
+        $this->mayflower->reportBuff->newPage();
+        $startPage = floor($this->mayflower->reportBuff->posY / $this->mayflower->layout->printHeight);
+        $endPage   = floor(($this->mayflower->reportBuff->posY + $sectionHeight) / $this->mayflower->layout->printHeight);
+      }
+    }
+
+    for ($page = $startPage; $page <= $endPage; $page++) {
+      if (($page <> $this->mayflower->getPageIndex())) {
+        if ($this->mayflower->getPageIndex() >= 0) {
+          $this->printPageFooter();
+        }
+        $this->mayflower->setPageIndex($page);
+        $this->printPageHeader();
+      }
+      $this->mayflower->reportStartPageBody();
+      if (!$this->DesignMode) {
+        #$this->outSectionWithCallback(0, $this->mayflower->reportBuff->posY, $this->layout->reportWidth, $sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
+        $formatCount = $page - $startPage + 1;
+        $this->onPrint($cancel, $formatCount);
+        if (!$cancel) {
+          $this->_pdf->outSection(0, $this->mayflower->reportBuff->posY, $this->mayflower->layout->reportWidth, $sectionHeight, $secBuff);
+        }
+      } else {
+        $this->_pdf->outSection(0, $this->mayflower->reportBuff->posY, $this->mayflower->layout->reportWidth, $sectionHeight, &$secBuff);
+      }      
+    }
+    $this->mayflower->reportBuff->posY += $sectionHeight;
+  }
+  
+  function endSectionInSubReport($sectionHeight, $keepTogether)
+  {
+    $this->comment("end Subreport-Body-Section:2\n");
+    $buff = $this->mayflower->sectionPop();
+
+    $this->mayflower->reportStartPageBody();
+
+    $formatCount = 1;
+    $this->onPrint($cancel, $formatCount);
+    if (!$cancel) {
+      $this->_pdf->outSection(0, $this->mayflower->reportBuff->posY, $this->mayflower->layout->reportWidth, $sectionHeight, $buff);
+    }
+
+    $this->mayflower->reportBuff->posY += $sectionHeight;
+  }
+
 
   function pageHeaderEnd()
   {
@@ -348,7 +406,7 @@ class ExporterFPdf extends Exporter
     $backstyle= 0;
     $this->_pdf->startSection();
     $this->_pdf->Cell($width, $height, print_r($var, 1), '0', 0, $falign, $fill);
-    $this->_pdf->endSection($height, false);
+    $this->_pdf->endSection1($height, false);
   }
 
   function _pdf_textalign($textalign)

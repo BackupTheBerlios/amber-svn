@@ -255,62 +255,6 @@ class PDF extends FPDF
   //////////////////////////////////////////////////////////////////////////
   
   
-  function endSection($sectionHeight, $keepTogether)
-  {
-    if ($this->mayflower->inSubReport()) {
-      $this->endSectionSubReport($sectionHeight, $keepTogether);
-      return;
-    }  
-    $this->comment("end Body-Section:1\n");
-    $secBuff = $this->mayflower->sectionPop();
-    $startPage = floor($this->mayflower->reportBuff->posY / $this->layout->printHeight);
-    $endPage   = floor(($this->mayflower->reportBuff->posY + $sectionHeight) / $this->layout->printHeight);
-    if ($keepTogether and ($startPage <> $endPage)) {
-      if ($this->mayflower->reportBuff->posY > ($startPage * $this->layout->printHeight)) { // page not blank
-        $this->mayflower->reportBuff->newPage();
-        $startPage = floor($this->mayflower->reportBuff->posY / $this->layout->printHeight);
-        $endPage   = floor(($this->mayflower->reportBuff->posY + $sectionHeight) / $this->layout->printHeight);
-      }
-    }
-
-    for ($page = $startPage; $page <= $endPage; $page++) {
-      if (($page <> $this->mayflower->getPageIndex())) {
-        if ($this->mayflower->getPageIndex() >= 0) {
-          $this->_exporter->printPageFooter();
-        }
-        $this->mayflower->setPageIndex($page);
-        $this->_exporter->printPageHeader();
-      }
-      $this->mayflower->reportStartPageBody();
-      if (!$exporter->DesignMode) {
-        #$this->outSectionWithCallback(0, $this->mayflower->reportBuff->posY, $this->layout->reportWidth, $sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
-        $formatCount = $page - $startPage + 1;
-        $this->_exporter->onPrint($cancel, $formatCount);
-        if (!$cancel) {
-          $this->outSection(0, $this->mayflower->reportBuff->posY, $this->layout->reportWidth, $sectionHeight, $secBuff);
-        }
-      } else {
-        $this->outSection(0, $this->mayflower->reportBuff->posY, $this->layout->reportWidth, $sectionHeight, &$secBuff);
-      }      
-    }
-    $this->mayflower->reportBuff->posY += $sectionHeight;
-  }
-
-  function endSectionSubReport($sectionHeight, $keepTogether)
-  {
-    $this->comment("end Subreport-Body-Section:2\n");
-    $buff = $this->mayflower->sectionPop();
-
-    $this->mayflower->reportStartPageBody();
-
-    $formatCount = 1;
-    $this->_exporter->onPrint($cancel, $formatCount);
-    if (!$cancel) {
-      $this->outSection(0, $this->mayflower->reportBuff->posY, $this->layout->reportWidth, $sectionHeight, $buff);
-    }
-
-    $this->mayflower->reportBuff->posY += $sectionHeight;
-  }
 
   function outSectionWithCallback($x, $y, $w, $h, $callCnt, &$exporter, &$secBuff)
   {
