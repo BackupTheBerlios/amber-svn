@@ -103,15 +103,17 @@ class Amber
 
   function showError($title, $text)
   {
-    echo '<table width="100%"><tr><td align="center">';
-    echo '<div style="width: 50%; border: solid 3px #ff0000; background-color: #eeeeff; padding: 5px; z-index: 99999; position: relative;">';
+    $id = 'Error' . mt_rand();
+
+    echo '<div id="' . $id . '" style="border: solid 3px #ff0000; background-color: #eeeeee; padding: 5px; z-index: 99999; position: relative; margin-top: 10px;">';
     echo '<p align="center"><b>' . $title . '</b></p>';
     echo '<p align="center">' . $text .'</p>';
-    echo '</div>';
-    echo '</td></tr></table><p>';
+    echo '<p align="center"><input type="button" value="Ok" onclick="' . $id . '.style.display = \'none\';" style="width: 80px;" /></p>';
+    echo '<p />';
     if (function_exists('debug_backtrace')) {
       Amber::dump(next(debug_backtrace()));
     }
+    echo '</div>';
   }
 }
 

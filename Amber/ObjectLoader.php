@@ -49,6 +49,7 @@ class ReportLoader extends ObjectLoader
 {
   var $_db;
   var $_data;
+  var $_lastError;
 
   /*
    * @returns true on success, false on error
@@ -62,11 +63,13 @@ class ReportLoader extends ObjectLoader
     $rs = $db->SelectLimit($sql, 1);
     if (!$rs) {
       //Amber::showError('Database Error ' . $this->_db->ErrorNo(), $this->_db->ErrorMsg());
+      $this->_lastError = 'Query failed: "' . $sql . '"';
       return false;
     }
     $this->_data = $rs->FetchRow();
 
     if (!$this->_data) {
+      $this->_lastError = 'Report "' . $reportName . '" not found in databse';
       return false;
     }
 
@@ -95,6 +98,11 @@ class ReportLoader extends ObjectLoader
     }
 
     return true;
+  }
+
+  function getLastError()
+  {
+    return $this->_lastError;
   }
 
   function getType()

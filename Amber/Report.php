@@ -245,7 +245,7 @@ class Report
     }
 
     if ($loadResult == false) {
-      Amber::showError('Error ', 'An error occured when trying to open the report');
+      Amber::showError('Error ', $objLoader->getLastError());
       die();
     }
 
