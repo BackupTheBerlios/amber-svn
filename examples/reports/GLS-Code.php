@@ -1,6 +1,6 @@
 <?php
 
-class GLS extends phpReport_UserFunctions
+class GLS extends AmberReport_UserFunctions
 {
 
   var $interfaceVersion = 2; //Do not change this
@@ -51,7 +51,7 @@ class GLS extends phpReport_UserFunctions
       if ($report->_exporter->type == 'fpdf') {
         $report->_exporter->_pdf->BookMark($Me['PBetreuer'],0,-1);
       }
-    }  
+    }
   }
 
   function Detail1_Print(&$report, &$Cancel, $FormatCount)
@@ -70,7 +70,7 @@ class GLS extends phpReport_UserFunctions
     } Else {
       $vis = ($Me['SchMax'] >= 5);
     }
-    
+
     $vis = true;
     $ctrl['Wiedervorlegender']->Visible = $vis;
     $ctrl['MetaBewWVDat']->Visible = $vis;

@@ -1,12 +1,12 @@
 <?php
 
-Class TestReport extends phpReport_UserFunctions
+Class TestReport extends AmberReport_UserFunctions
 {
 
   var $interfaceVersion = 2; //Do not change this
 
   /***********************************
-   * Formulae from calculated fields 
+   * Formulae from calculated fields
    ***********************************/
   function Report_FirstFormat(&$report)
   {
@@ -23,8 +23,8 @@ Class TestReport extends phpReport_UserFunctions
 
   }
 
-  /*********************************** 
-   * Here comes the report's module    
+  /***********************************
+   * Here comes the report's module
    ***********************************/
   //Option Compare Database
   //Option Explicit

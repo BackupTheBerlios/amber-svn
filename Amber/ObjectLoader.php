@@ -230,11 +230,6 @@ class ObjectLoaderFile extends ObjectLoader
     return true;
   }
 
-  function &loadForm($formName)
-  {
-    return 'dummy';
-  }
-
   function &loadReport($reportName)
   {
     $repPath = $this->_basePath . '/reports/';
@@ -258,6 +253,33 @@ class ObjectLoaderFile extends ObjectLoader
     $report->initialize($data);
 
     return $report;
+  }
+
+  function &loadForm($formName)
+  {
+    $formPath = $this->_basePath . '/forms/';
+    $xmlLoader = new XMLLoader();
+
+    $res =& $xmlLoader->getArray($formPath . '/' . $formName . '.xml');
+    $param = $res['form'];
+    if (isset($param['Name'])) {
+      $data['name'] = $param['Name'];
+    }
+
+    $data['design'] = file_get_contents($formPath . '/' . $param['FileNameDesign']);
+
+    if (isset($param['FileNameCode']) && isset($param['ClassName'])) {
+      $data['class'] = $param['ClassName'];
+      $data['code'] = file_get_contents($formPath . '/' . $param['FileNameCode']);
+    } else {
+      $data['class'] = '';
+    }
+
+    $form =& new Form();
+    $form->setConfig($this->_globalConfig);
+    $form->initialize($data);
+amber::dump($form);
+    return $form;
   }
 }
 

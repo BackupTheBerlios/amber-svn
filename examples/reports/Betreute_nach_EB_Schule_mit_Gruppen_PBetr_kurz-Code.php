@@ -1,6 +1,6 @@
 <?php
 
-Class Betreute_nach_EB_Schule_mit_Gruppen_PBetr_kurz extends phpReport_UserFunctions
+Class Betreute_nach_EB_Schule_mit_Gruppen_PBetr_kurz extends AmberReport_UserFunctions
 {
 
   var $interfaceVersion = 2; //Do not change this

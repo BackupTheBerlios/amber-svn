@@ -189,7 +189,9 @@ class ExporterTypo3 extends Exporter
       'label'     => 'LabelExporterHtml',
       'rectangle' => 'RectangleExporterHtml',
       'textbox'   => 'TextBoxExporterHtml',
-      'subreport' => 'SubReportExporterHtml');
+      'subreport' => 'SubReportExporterHtml',
+      'combobox' => 'ComboBoxExporterHtml'
+    );
     $type = strtolower(get_class($ctrl));
     if (!array_key_exists($type, $classList)) {
       $type = 'SubReport';  // FIXME: Null-Object for unknown Controltypes
