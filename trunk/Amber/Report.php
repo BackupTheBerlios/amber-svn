@@ -161,7 +161,6 @@ class Report extends AmberObject
     }
     if (class_exists($className)) {
       $this->_Code =& new $className;
-      $this->_Code->setReport($this);   // this breaks in PHP4; switch to PHP5!
       $classLoaded = true;
     } else {
       Amber::showError('Error', 'Cannot instantiate undefined class "' . $className . '"');
@@ -257,6 +256,9 @@ class Report extends AmberObject
         array_push($this->_groupFields, $group->ControlSource);
       }
     }
+    
+    // mirror controls and sections into user space
+      $this->_Code->initialize($this);   // this breaks in PHP4; switch to PHP5!
   }
 
   /**
@@ -302,6 +304,7 @@ class Report extends AmberObject
       foreach ($keys as $rowNumber) {
         $this->Cols =& $this->_data[$rowNumber];
         $this->Columns =& $this->Cols;
+        $this->_Code->col =& $this->Cols;
         // Load Data
         $this->onLoadData($Cancel);
         if (!$Cancel) {

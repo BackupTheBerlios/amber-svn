@@ -30,6 +30,7 @@ class Control
   var $Properties =
     array(
       'Name' => '',
+      'EventProcPrefix' => '',
       'ControlType' => 0,
       'Left' => 0,
       'Top' => 0,
