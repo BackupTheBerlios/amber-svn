@@ -46,12 +46,14 @@ class Exporter
     $this->_asSubreport = $asSubreport;
     $this->DesignMode = $isDesignMode;
     $this->_blankPage = true;
+    $this->startReportSubExporter($report, $asSubreport, $isDesignMode);
   }
 
   function endReport(&$report)
   {
     $this->newPage();
     //$this->dump('Exec time: ' . microtime_diff($this->_start, microtime()));
+    $this->endReportSubExporter($report);
   }
 
   // Section
@@ -59,9 +61,7 @@ class Exporter
   {
     $this->_sections[] =& $section;
   }
-
   
-
   function endSection(&$section, $height, &$buffer)
   {
     array_pop($this->_sections);
@@ -98,7 +98,7 @@ class Exporter
    * @access protected
    * @return void
    */
-  function _exporterInit()
+  function startReportSubExporter(&$report, $asSubreport = false, $isDesignMode = false)
   {
   }
 
@@ -109,7 +109,7 @@ class Exporter
    * @access protected
    * @return void
    */
-  function _exporterExit()
+  function endReportSubExporter(&$report)
   {
   }
 }

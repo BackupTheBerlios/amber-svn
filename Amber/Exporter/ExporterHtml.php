@@ -29,9 +29,8 @@ class ExporterHtml extends Exporter
   
   // Report - html
 
-  function startReport(&$report, $asSubreport = false, $isDesignMode = false)
+  function startReportSubExporter(&$report, $asSubreport = false, $isDesignMode = false)
   {
-    parent::startReport($report, $asSubreport, $isDesignMode);
     $tmp = '';
     if (!$this->_asSubreport) {
       $tmp = "\n<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n<head>\n";
@@ -52,9 +51,8 @@ class ExporterHtml extends Exporter
     }
   }
   
-  function endReport(&$report)
+  function endReportSubExporter(&$report)
   {
-    parent::endReport($report);
     if (!$this->_asSubreport) {
       echo "\n</div>\n\n<!-- End of AmberReport // -->\n\n";
       echo "</body>\n</html>\n";

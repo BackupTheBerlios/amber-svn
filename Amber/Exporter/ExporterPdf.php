@@ -35,9 +35,8 @@ class ExporterFPdf extends Exporter
    *  Report-pdf
    *********************************/
 
-  function startReport(&$report, $asSubreport = false, $isDesignMode = false)
+  function startReportSubExporter(&$report, $asSubreport = false, $isDesignMode = false)
   {
-    parent::startReport($report, $asSubreport, $isDesignMode);
     $reset = (!$asSubreport);
     $this->_pdf =& PDF::getInstance($report->reportBuff, $report->layout, $reset);
     if ($report->Controls) {
@@ -56,7 +55,7 @@ class ExporterFPdf extends Exporter
     }
   }
   
-  function endReport(&$report)
+  function endReportSubExporter(&$report)
   {
     if ($this->_asSubreport) {
       $this->newPage();
