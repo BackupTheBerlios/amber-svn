@@ -10,7 +10,7 @@ ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/../
 ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/../../Amber/');
 
 require_once 'unit.php';
-include '../basic.php';
+require_once '../basic.php';
 
 class myTestCase extends PHPUnit_TestCase
 {

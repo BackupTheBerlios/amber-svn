@@ -1,3 +1,6 @@
+20040725:
+- test: added test.php to run all tests in tests-subdirectory, included this into install-html-frame [which seems now broken:-(]
+
 20040724:
 - testReport: tests added that report variants run at all and no leading blanks are output
 
