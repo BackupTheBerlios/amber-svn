@@ -6,7 +6,7 @@
  *
  */
  
-class subReportBuff
+class mayflower
 {
   var $subReportIndex = 0;
   var $subReportbuff;
@@ -145,9 +145,9 @@ class PDF extends FPDF
   {
     if($this->state <> 2) {
       parent::_out($s);
-    } elseif ($this->subReportBuff->inSectionOrSubReport()) {
-      $this->subReportBuff->out($s);
-    } elseif ($this->subReportBuff->inReport()) {
+    } elseif ($this->mayflower->inSectionOrSubReport()) {
+      $this->mayflower->out($s);
+    } elseif ($this->mayflower->inReport()) {
       $this->reportBuff->out($s);
     } else {
       parent::_out($s);
@@ -156,21 +156,21 @@ class PDF extends FPDF
   
   function startReportBuffering(&$reportBuff)
   {
-    if ($this->subReportBuff->inReport()) {
+    if ($this->mayflower->inReport()) {
       Amber::showError('Error', 'startReport: a report is already started!');
       die();
     }  
-    $this->subReportBuff->enterReport();
+    $this->mayflower->enterReport();
     $this->reportBuff =& $reportBuff;
   }
 
   function endReportBuffering()
   {
-    if (!$this->subReportBuff->inReport()) {
+    if (!$this->mayflower->inReport()) {
       Amber::showError('Error', 'endReport: no report open');
       die();
     }  
-    $this->subReportBuff->exitReport();
+    $this->mayflower->exitReport();
   }
   
   
@@ -192,19 +192,19 @@ class PDF extends FPDF
   
   function startSection()
   {
-    $this->subReportBuff->sectionPush();
-    $this->comment('Start Section:' . ($this->subReportBuff->getSectionIndexForCommentOnly()));
+    $this->mayflower->sectionPush();
+    $this->comment('Start Section:' . ($this->mayflower->getSectionIndexForCommentOnly()));
     $this->SetXY(0, 0);
   }
   
   function endSection($sectionHeight, $keepTogether)
   {
-    if ($this->subReportBuff->inSubReport()) {
+    if ($this->mayflower->inSubReport()) {
       $this->endSectionSubReport($sectionHeight, $keepTogether);
       return;
     }  
-    $this->comment("end Body-Section:" . ($this->subReportBuff->getSectionIndexForCommentOnly()) . "\n");
-    $secBuff = $this->subReportBuff->sectionPop();
+    $this->comment("end Body-Section:" . ($this->mayflower->getSectionIndexForCommentOnly()) . "\n");
+    $secBuff = $this->mayflower->sectionPop();
     $startPage = floor($this->reportBuff->posY / $this->layout->printHeight);
     $endPage   = floor(($this->reportBuff->posY + $sectionHeight) / $this->layout->printHeight);
     if ($keepTogether and ($startPage <> $endPage)) {
@@ -231,8 +231,8 @@ class PDF extends FPDF
 
   function endSectionSubReport($sectionHeight, $keepTogether)
   {
-    $this->comment("end Subreport-Body-Section:" . ($this->subReportBuff->getSectionIndexForCommentOnly()) . "\n");
-    $buff = $this->subReportBuff->sectionPop();
+    $this->comment("end Subreport-Body-Section:" . ($this->mayflower->getSectionIndexForCommentOnly()) . "\n");
+    $buff = $this->mayflower->sectionPop();
 
     $this->reportBuff->sectionType = '';
     $this->SetCoordinate(0, -$this->reportBuff->posY);
@@ -251,7 +251,7 @@ class PDF extends FPDF
 
   function _pageHeaderOrFooterEnd($posY, $height)
   {
-    $buff = $this->subReportBuff->sectionPop();
+    $buff = $this->mayflower->sectionPop();
     $this->SetCoordinate(0, -$posY);
     $this->SetClipping(0, 0, $this->layout->reportWidth, $height);
     $this->comment("end Head/Foot-Section:" . (getSectionIndexForCommentOnly + 1) . "\n");
@@ -295,7 +295,7 @@ class PDF extends FPDF
     if (is_null($instance) or $reset) {
       $size = array($layout->paperWidth, $layout->paperHeight);
       $instance = new PDF('p', $layout->unit, $size);
-      $instance->subReportBuff =& new subReportBuff();
+      $instance->mayflower =& new mayflower();
     }
 
     return $instance;
@@ -499,7 +499,7 @@ class PDF extends FPDF
 
   function Bookmark($txt,$level=0,$y=0)
   {
-    if (!$this->subReportBuff->inReport()) {
+    if (!$this->mayflower->inReport()) {
       if($y==-1)
         $y=$this->GetY();
       $this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$this->PageNo());

@@ -48,7 +48,7 @@ class ExporterFPdf extends Exporter
       }
     }
     if ($asSubreport) {
-      $this->_pdf->subReportBuff->subReportPush();
+      $this->_pdf->mayflower->subReportPush();
       $this->startcomment("StartSubreport");
     } else {  
       $this->_pdf->init($this, $this->_report->layout);
@@ -61,7 +61,7 @@ class ExporterFPdf extends Exporter
     if ($this->_asSubreport) {
       $this->newPage();
       $this->comment("EndSubreport");
-      return $this->_pdf->subReportBuff->subReportPop();
+      return $this->_pdf->mayflower->subReportPop();
     } else {
       parent::endReport($report);
       if (!$this->_report->layout->designMode) {
@@ -316,7 +316,7 @@ class ExporterFPdf extends Exporter
     } else {
       $rep->resetMargin(true);
       $rep->run('pdf', true);
-      $para->content = "\n%Start SubReport\n" . $this->_pdf->subReportBuff->subReportGetPopped() . "\n%End SubReport\n"; 
+      $para->content = "\n%Start SubReport\n" . $this->_pdf->mayflower->subReportGetPopped() . "\n%End SubReport\n"; 
     }
     #$para->content = "(TEST)";
     $this->_pdf->printBoxPdf($para);            
