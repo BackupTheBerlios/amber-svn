@@ -9,7 +9,10 @@
 
 require_once 'HTML.inc.php';
 
-define('__SCALE__', 1.0); // used in html_twips(), FontBox::load()
+define('__SCALE__', 1);           // scaling factor. Don't use fractions or errors will occur:
+                                  // fractions in border-width are not shown with current browsers
+define('__HAIRLINEWIDTH__', 15);  // width of hairline in twips; here 1px
+
 
 ExporterFactory::register('html', 'ExporterHtml');
 ExporterFactory::register('phtml', 'ExporterHtml');
@@ -154,7 +157,6 @@ class ExporterHtml extends Exporter
     if (is_array($report->Controls)) {
       $css = '';
       foreach ($report->Controls as $cname => $ctrl) {
-        $ctrl =& $report->Controls[$cname];
         $ctrl->_exporter->_saveStdValues($ctrl);
         $css .= $this->getCssStyle($ctrl, $cssClassPrefix) . "\n";
         $ctrl->_exporter->cssClassPrefix = $cssClassPrefix;
@@ -415,9 +417,9 @@ Class ControlExporterHtml
     $TopPaddignHtml = 0;
     $Bottompaddinghtml = 0;
     if ($value['BorderWidth'] == 0) {
-      $BorderWidthHtml = 15; // 1 px
+      $BorderWidthHtml = __HAIRLINEWIDTH__; // 1/pt
     } else {
-      $BorderWidthHtml = $value['BorderWidth'];
+      $BorderWidthHtml = $value['BorderWidth'] * 20;
     }
 
 
@@ -426,7 +428,7 @@ Class ControlExporterHtml
       $out .= 'top: ' . ExporterHTML::_html_twips($ctrl->Properties['Top']) . '; ';
     }
     if (($value['Left'] <> $std['Left']) or ($value['BorderWidth'] <> $std['BorderWidth'])) {
-      $leftHtml = $value['Left'] + 1/2 * $BorderWidthHtml + $LeftPaddingHtml;
+      $leftHtml = $value['Left'] - 1/2 * $BorderWidthHtml - $LeftPaddingHtml + 15;
       $out .= 'left: ' . ExporterHTML::_html_twips($leftHtml) . '; ';
     }
 
@@ -450,9 +452,9 @@ Class ControlExporterHtml
     // Border
     if ($value['BorderWidth'] <> $std['BorderWidth']) {
       if ($value['BorderWidth'] == 0) {
-        $out .= 'border-width: 1px; ';
+        $out .= 'border-width:  ' . __HAIRLINEWIDTH__ / 15 * __SCALE__ . 'px; ';
       } else {
-        $out .= 'border-width: ' . $value['BorderWidth'] . 'pt; ';
+        $out .= 'border-width: ' . $value['BorderWidth'] * __SCALE__ . 'pt; ';
       }
     }
     if ($value['BorderColor'] <> $std['BorderColor']) {
