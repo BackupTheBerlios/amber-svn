@@ -72,7 +72,7 @@ class ExporterFPdf extends Exporter
       $firstPage = true;  //first page is out
   
       $endPageX = floor($this->_report->layout->_reportWidth / $this->_report->layout->printWidth);
-      foreach(array_keys($this->_report->reportBuff->reportPages) as $pageY) {
+      foreach(array_keys($this->mayflower->reportPages) as $pageY) {
         for($pageX = 0; $pageX <= $endPageX; $pageX++) {
           if (!$firstPage) {
             $this->_pdf->AddPage();
@@ -173,13 +173,13 @@ class ExporterFPdf extends Exporter
     }  
     $this->comment("end Body-Section:1\n");
     $secBuff = $this->mayflower->sectionPop();
-    $startPage = floor($this->mayflower->reportBuff->posY / $this->mayflower->layout->printHeight);
-    $endPage   = floor(($this->mayflower->reportBuff->posY + $sectionHeight) / $this->mayflower->layout->printHeight);
+    $startPage = floor($this->mayflower->posY / $this->mayflower->layout->printHeight);
+    $endPage   = floor(($this->mayflower->posY + $sectionHeight) / $this->mayflower->layout->printHeight);
     if ($keepTogether and ($startPage <> $endPage)) {
-      if ($this->mayflower->reportBuff->posY > ($startPage * $this->mayflower->layout->printHeight)) { // page not blank
-        $this->mayflower->reportBuff->newPage();
-        $startPage = floor($this->mayflower->reportBuff->posY / $this->mayflower->layout->printHeight);
-        $endPage   = floor(($this->mayflower->reportBuff->posY + $sectionHeight) / $this->mayflower->layout->printHeight);
+      if ($this->mayflower->posY > ($startPage * $this->mayflower->layout->printHeight)) { // page not blank
+        $this->mayflower->newPage();
+        $startPage = floor($this->mayflower->posY / $this->mayflower->layout->printHeight);
+        $endPage   = floor(($this->mayflower->posY + $sectionHeight) / $this->mayflower->layout->printHeight);
       }
     }
 
@@ -193,17 +193,17 @@ class ExporterFPdf extends Exporter
       }
       $this->mayflower->reportStartPageBody();
       if (!$this->DesignMode) {
-        #$this->outSectionWithCallback(0, $this->mayflower->reportBuff->posY, $this->layout->reportWidth, $sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
+        #$this->outSectionWithCallback(0, $this->mayflower->posY, $this->layout->reportWidth, $sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
         $formatCount = $page - $startPage + 1;
         $this->onPrint($cancel, $formatCount);
         if (!$cancel) {
-          $this->_pdf->outSection(0, $this->mayflower->reportBuff->posY, $this->mayflower->layout->reportWidth, $sectionHeight, $secBuff);
+          $this->_pdf->outSection(0, $this->mayflower->posY, $this->mayflower->layout->reportWidth, $sectionHeight, $secBuff);
         }
       } else {
-        $this->_pdf->outSection(0, $this->mayflower->reportBuff->posY, $this->mayflower->layout->reportWidth, $sectionHeight, &$secBuff);
+        $this->_pdf->outSection(0, $this->mayflower->posY, $this->mayflower->layout->reportWidth, $sectionHeight, &$secBuff);
       }      
     }
-    $this->mayflower->reportBuff->posY += $sectionHeight;
+    $this->mayflower->posY += $sectionHeight;
   }
   
   function endSectionInSubReport($sectionHeight, $keepTogether)
@@ -216,10 +216,10 @@ class ExporterFPdf extends Exporter
     $formatCount = 1;
     $this->onPrint($cancel, $formatCount);
     if (!$cancel) {
-      $this->_pdf->outSection(0, $this->mayflower->reportBuff->posY, $this->mayflower->layout->reportWidth, $sectionHeight, $buff);
+      $this->_pdf->outSection(0, $this->mayflower->posY, $this->mayflower->layout->reportWidth, $sectionHeight, $buff);
     }
 
-    $this->mayflower->reportBuff->posY += $sectionHeight;
+    $this->mayflower->posY += $sectionHeight;
   }
 
 

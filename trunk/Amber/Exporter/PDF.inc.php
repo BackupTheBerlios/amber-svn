@@ -7,30 +7,6 @@
  */
  
  
-class reportBuff
-{
-  var $reportPages;    // buffer when inReport
-  var $actpageNo;      // pageNumber
-  
-  var $posY;
-  
-  function reportBuff($layout)
-  {
-    $this->actpageNo = -1;
-    $this->_report->layout = $layout; 
-  }
-  
-  
-  function newPage()
-  {
-    $this->posY = ($this->actpageNo + 1) * $this->_report->layout->printHeight;
-  }
-
-
-}
-
-
- 
 class mayflower
 {
   var $pdf;
@@ -46,10 +22,7 @@ class mayflower
   
   function mayflower(&$layout, &$pdf)
   {
-    $this->reportBuff =& new reportBuff($layout);
-    $this->posY =& $this->reportBuff->posY;
-    $this->reportPages =& $this->reportBuff->reportPages;
-    $this->actpageNo =& $this->reportBuff->actpageNo;
+    $this->actpageNo = -1;
     $this->layout =& $layout;
     $this->pdf =& $pdf;
   }  
@@ -76,6 +49,11 @@ class mayflower
   {
     return $this->actpageNo + 1;
   }
+  
+  function newPage()
+  {
+    $this->posY = ($this->actpageNo + 1) * $this->layout->printHeight;
+  }
 
   function posYinPage()
   {
@@ -95,12 +73,12 @@ class mayflower
   
   function enterReport()
   {
-    $this->mayflower->reportBuff->posY = 0;
+    $this->posY = 0;
   }
   
   function exitReport()
   {
-    $this->actpageNo = -2;
+    $this->actpageNo = -1;
     $this->_setOutBuff();
   }
   

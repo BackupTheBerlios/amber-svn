@@ -11,7 +11,7 @@
 class reportPaged extends Report
 {
   var $layout;
-  var $reportBuff;
+  var $mayflower;
 
   /**
    * @access private
@@ -24,7 +24,7 @@ class reportPaged extends Report
     }
     $this->layout =& new pageLayout($this, $isSubreport, $isDesignMode);
     $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
-    $this->reportBuff=& $this->_exporter->mayflower->reportBuff;
+    $this->mayflower=& $this->_exporter->mayflower;
   }
 
   /**
@@ -46,7 +46,7 @@ class reportPaged extends Report
 
   function newPage()
   {
-    $this->reportBuff->newPage();
+    $this->_exporter->mayflower->newPage();
   }
 
   function outPageHeader($pageY, $pageX, &$exporter)
@@ -57,7 +57,7 @@ class reportPaged extends Report
     $h = $this->layout->pageHeaderHeight;
     $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
     $deltaY = $pageY * $this->layout->printHeight - $y;
-    $exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->reportBuff->reportPages[$pageY]['Head']);
+    $exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->mayflower->reportPages[$pageY]['Head']);
   }
   function outPage($pageY, $pageX, &$exporter)
   {
@@ -67,7 +67,7 @@ class reportPaged extends Report
     $h = $this->layout->printHeight;
     $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
     $deltaY = $pageY * $this->layout->printHeight - $y;
-    $exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->reportBuff->reportPages[$pageY]['']);
+    $exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->mayflower->reportPages[$pageY]['']);
   }
   function outPageFooter($pageY, $pageX, &$exporter)
   {
@@ -77,7 +77,7 @@ class reportPaged extends Report
     $h = $this->layout->pageFooterHeight;
     $deltaX = $this->layout->leftMargin - $pageX * $this->layout->printWidth;
     $deltaY = $pageY * $this->layout->printHeight - $y;
-    $exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->reportBuff->reportPages[$pageY]['Foot']);
+    $exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->mayflower->reportPages[$pageY]['Foot']);
   }
 
 }
