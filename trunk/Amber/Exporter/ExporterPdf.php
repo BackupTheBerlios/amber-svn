@@ -57,7 +57,16 @@ class ExporterFPdf extends Exporter
       }
     }
     if (!$asSubreport) {
-      $this->_pdf->startReport($report->layout);
+      $this->_pdf->SetCompression(false);
+      $this->_pdf->SetRightMargin($layout->rightMargin);
+      $this->_pdf->SetLeftMargin($layout->leftMargin);
+      $this->_pdf->SetTopMargin($layout->topMargin);
+      $this->_pdf->SetAutoPageBreak(false, $layout->bottomMargin);
+  
+      $this->_pdf->SetFont('helvetica');    // need to set font, drawcolor, fillcolor before AddPage
+      $this->_pdf->SetDrawColor(0, 0, 0);   // else we get strange errors. prb fpdf does some optimisations which we break
+      $this->_pdf->SetFillColor(0, 0, 0);
+      $this->_pdf->AddPage();
     }
   }
 
@@ -81,6 +90,61 @@ class ExporterFPdf extends Exporter
     }
   }
   
+  function comment($s)
+  {
+    $this->_pdf->_out("\n%$s\n");
+  }
+  
+  function _pageHeaderOrFooterEnd($posY, $width, $height, &$buff)
+  {
+    $this->_pdf->SetCoordinate(0, -$posY);
+    $this->_pdf->SetClipping(0, 0, $width, $height);
+    $this->comment("end Head/Foot-Section:1\n");
+    $this->_pdf->_out($buff);
+    $this->_pdf->RemoveClipping();
+    $this->_pdf->RemoveCoordinate();
+  }
+  
+  function outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff)
+  {
+    $this->_pdf->SetClipping($x, $y, $w, $h);
+    $this->_pdf->SetCoordinate($deltaX, $deltaY);
+    $this->_pdf->_out($dataBuff);
+    $this->_pdf->RemoveCoordinate();
+    $this->_pdf->RemoveClipping();
+  }
+  
+  function outSection($x, $y, $w, $h, $backColor, &$secBuff)
+  {
+    $this->_pdf->SetCoordinate(-$x, -$y);
+    $this->_pdf->SetClipping(0, 0, $w, $h);
+    
+    $this->_pdf->SetXY(0, 0);
+    $this->_pdf->_backColor($backColor);
+    $fill = true;
+    $text = '';
+    $border = 0;
+    $ln = 0; //pos after printing
+    $align = 'C';
+    $backstyle= 1;
+    $this->_pdf->Cell($w, $h, $text, $border, $ln, $align, $fill);
+
+    $this->_pdf->_out($secBuff);
+    $this->_pdf->RemoveClipping();
+    $this->_pdf->RemoveCoordinate();
+  }
+
+  
+  function Bookmark($txt,$level=0,$y=0, $pageNo, $posYinPage, $inReport)
+  {
+    $this->_pdf->Bookmark($txt,$level,$y, $pageNo, $posYinPage, $inReport);
+  }
+  
+  function AddPage()
+  {
+    $this->_pdf->AddPage();
+  }  
+      
 
   /*********************************
    *  Controls - pdf

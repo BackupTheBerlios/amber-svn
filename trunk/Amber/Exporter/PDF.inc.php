@@ -27,19 +27,6 @@ class PDF extends FPDF
     }
   }
   
-  function setOutBuffer(&$buff, $info)
-  {
-    //info parameter for testing only -- remove if no longer needed
-    $this->cache =& $buff;
-    $this->incache = true;
-  }
-  
-  function unsetBuffer()
-  {
-    unset($this->cache);
-    $this->incache = false;
-  }    
-  
 ////////////////////////////////////////////////////////
 //
 // stuff to stay
@@ -75,65 +62,7 @@ class PDF extends FPDF
     }
     return $instance;
   }
-
-  function startReport(&$layout)
-  {
-    $this->SetCompression(false);
-    $this->SetRightMargin($layout->rightMargin);
-    $this->SetLeftMargin($layout->leftMargin);
-    $this->SetTopMargin($layout->topMargin);
-    $this->SetAutoPageBreak(false, $layout->bottomMargin);
-
-    $this->SetFont('helvetica');    // need to set font, drawcolor, fillcolor before AddPage
-    $this->SetDrawColor(0, 0, 0);   // else we get strange errors. prb fpdf does some optimisations which we break
-    $this->SetFillColor(0, 0, 0);
-    $this->AddPage();
-  }
   
-  function comment($s)
-  {
-    $this->_out("\n%$s\n");
-  }
-  
-  function outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff)
-  {
-    $this->SetClipping($x, $y, $w, $h);
-    $this->SetCoordinate($deltaX, $deltaY);
-    $this->_out($dataBuff);
-    $this->RemoveCoordinate();
-    $this->RemoveClipping();
-  }
-  
-  function _pageHeaderOrFooterEnd($posY, $width, $height, &$buff)
-  {
-    $this->SetCoordinate(0, -$posY);
-    $this->SetClipping(0, 0, $width, $height);
-    $this->comment("end Head/Foot-Section:1\n");
-    $this->_out($buff);
-    $this->RemoveClipping();
-    $this->RemoveCoordinate();
-  }
-  
-  function outSection($x, $y, $w, $h, $backColor, &$secBuff)
-  {
-    $this->SetCoordinate(-$x, -$y);
-    $this->SetClipping(0, 0, $w, $h);
-    
-    $this->SetXY(0, 0);
-    $this->_backColor($backColor);
-    $fill = true;
-    $text = '';
-    $border = 0;
-    $ln = 0; //pos after printing
-    $align = 'C';
-    $backstyle= 1;
-    $this->Cell($w, $h, $text, $border, $ln, $align, $fill);
-
-    $this->_out($secBuff);
-    $this->RemoveClipping();
-    $this->RemoveCoordinate();
-  }
-
   function printBox(&$para)
   {
     if ($para->italic) {
@@ -167,7 +96,7 @@ class PDF extends FPDF
       $this->Cell($para->width, $para->height, '', 'RLTB', 0, $para->falign, 0);
     }
   }
-  
+
   function printBoxPdf(&$para)
   {
     $this->SetXY($para->x, $para->y);

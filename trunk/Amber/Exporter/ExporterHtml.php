@@ -29,10 +29,19 @@ class ExporterHtml extends Exporter
   var $_CtrlStdValues;
   var $_posY;
   
+  var $_pdf;
+  
   // Report - html
+
+  function &getExporterBasicClass(&$layout, $reset)
+  {
+    return HTML::getInstance($layout, $reset);
+  }  
 
   function startReportSubExporter(&$report, $asSubreport = false, $isDesignMode = false)
   {
+
+    $this->_pdf =& $this->getExporterBasicClass($report->layout, $reset);
     $tmp = '';
     if (!$this->_asSubreport) {
       $tmp = "\n<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n<head>\n";

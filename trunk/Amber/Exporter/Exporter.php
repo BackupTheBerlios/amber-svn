@@ -25,12 +25,11 @@ class Exporter
   var $_section;
   var $DesignMode = false;
 
+  var $_base; // ref to pdf/html
   /**
    * @access public
    * @param bool
    */
-
-
 
 
   function setDocumentTitle($title)
@@ -46,6 +45,7 @@ class Exporter
     $this->_asSubreport = $asSubreport;
     $this->DesignMode = $isDesignMode;
     $this->_blankPage = true;
+    $this->_base =& $this->getExporterBasicClass($report->layout, !$asSubreport);
     $this->startReportSubExporter($report, $asSubreport, $isDesignMode);
   }
 
@@ -112,6 +112,19 @@ class Exporter
   function endReportSubExporter(&$report)
   {
   }
+  
+  function setOutBuffer(&$buff, $info)
+  {
+    //info parameter for testing only -- remove if no longer needed
+    $this->_base->cache =& $buff;
+    $this->_base->incache = true;
+  }
+  
+  function unsetBuffer()
+  {
+    unset($this->_base->cache);
+    $this->_base->incache = false;
+  }    
 }
 
 ?>

@@ -75,7 +75,7 @@ class pageLayout
 
 class mayflower
 {
-  var $pdf;
+  var $exporter;
 
   var $subReportIndex = 0;
   var $subReportbuff;
@@ -86,17 +86,17 @@ class mayflower
   var $sectionType;    // 'Head', 'Foot' or ''
   var $layout;
   
-  function mayflower(&$pdf)
+  function mayflower(&$exporter)
   {
     $this->actpageNo = -1;
-    $this->pdf =& $pdf;
+    $this->exporter =& $exporter;
   }  
 
-  function &getInstance(&$pdf, $reset)
+  function &getInstance(&$exporter, $reset)
   {
     static $instance;
     if (is_null($instance) || $reset) {
-      $instance = new mayflower($pdf);
+      $instance = new mayflower($exporter);
     }  
     return $instance;
   }
@@ -104,11 +104,11 @@ class mayflower
   function _setOutBuff()
   { 
     if ($this->bufferIndex) {
-      $this->pdf->setOutBuffer($this->buffer[$this->bufferIndex], 'section');
+      $this->exporter->setOutBuffer($this->buffer[$this->bufferIndex], 'section');
     } elseif ($this->inReport()) {
-      $this->pdf->setOutBuffer($this->reportPages[$this->actpageNo][$this->sectionType], "report page".$this->sectionType.$this->actpageNo);
+      $this->exporter->setOutBuffer($this->reportPages[$this->actpageNo][$this->sectionType], "report page".$this->sectionType.$this->actpageNo);
     } else {
-      $this->pdf->unsetBuffer();
+      $this->exporter->unsetBuffer();
     }  
   }
   

@@ -12,7 +12,6 @@ class reportPaged extends Report
 {
   var $layout;
   var $mayflower;
-  var $_pdf;       //fixme: rename this!
 
   /**
    * @access private
@@ -24,15 +23,14 @@ class reportPaged extends Report
       return;
     }
     $this->layout =& new pageLayout($this, $this->_asSubReport, $isDesignMode);
-    $this->_pdf =& $this->_exporter->getExporterBasicClass($this->layout, !$this->_asSubReport);
-    $this->mayflower =& mayflower::getInstance($this->_pdf, !$this->_asSubReport);
+    $this->mayflower =& mayflower::getInstance($this->_exporter, !$this->_asSubReport);
     $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
     if ($isDesignMode) {
       $this->initDesignHeader();
     }  
     if ($isSubreport) {
       $this->mayflower->bufferPush();
-      $this->_pdf->comment("StartSubreport"); // remove this!!!
+      $this->_exporter->comment("StartSubreport"); // remove this!!!
     } else {  
       $this->mayflower->StartReportBuffering();
       $this->posY = 0;
@@ -49,7 +47,7 @@ class reportPaged extends Report
     }
     if ($this->_asSubReport) {
       $this->newPage();
-      $this->_pdf->comment("EndSubreport");
+      $this->_exporter->comment("EndSubreport");
       $this->subReportBuff = $this->mayflower->bufferPop(); //a real copy
       return;
     } else {
@@ -65,13 +63,13 @@ class reportPaged extends Report
       foreach(array_keys($this->mayflower->reportPages) as $pageY) {
         for($pageX = 0; $pageX <= $endPageX; $pageX++) {
           if (!$firstPage) {
-            $this->_pdf->AddPage();
+            $this->_exporter->AddPage();
           }
           $firstPage = false;
   
-          $this->outPageHeader($pageY, $pageX, $this->_pdf);  
-          $this->outPage($pageY, $pageX, $this->_pdf);  
-          $this->outPageFooter($pageY, $pageX, $this->_pdf);  
+          $this->outPageHeader($pageY, $pageX, $this->_exporter);  
+          $this->outPage($pageY, $pageX, $this->_exporter);  
+          $this->outPageFooter($pageY, $pageX, $this->_exporter);  
         }
       }
     }
@@ -118,8 +116,7 @@ class reportPaged extends Report
   {
     $this->_exporter->startSection($section, $width, $buffer);
     $this->mayflower->bufferPush();
-    $this->_pdf->comment('Start Section:');
-#    $this->_pdf->fillBackColorInWindow($section->BackColor, $section->_report->Width, $section->Height);
+    $this->_exporter->comment('Start Section:');
   }  
 
   function _endSection(&$section, $height, &$buffer)
@@ -203,7 +200,7 @@ class reportPaged extends Report
       $this->endSectionInSubReport($section, $sectionHeight, $keepTogether);
       return;
     }  
-    $this->_pdf->comment("end Body-Section:1\n");
+    $this->_exporter->comment("end Body-Section:1\n");
     $secBuff = $this->mayflower->bufferPop();
     $startPage = floor($this->posY / $this->layout->printHeight);
     $endPage   = floor(($this->posY + $sectionHeight) / $this->layout->printHeight);
@@ -229,10 +226,10 @@ class reportPaged extends Report
         $formatCount = $page - $startPage + 1;
         $this->_exporter->onPrint($cancel, $formatCount);
         if (!$cancel) {
-          $this->_pdf->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $secBuff);
+          $this->_exporter->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $secBuff);
         }
       } else {
-        $this->_pdf->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $secBuff);
+        $this->_exporter->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $secBuff);
       }      
     }
     $this->posY += $sectionHeight;
@@ -240,7 +237,7 @@ class reportPaged extends Report
   
   function endSectionInSubReport(&$section, $sectionHeight, $keepTogether)
   {
-    $this->_pdf->comment("end Subreport-Body-Section:2\n");
+    $this->_exporter->comment("end Subreport-Body-Section:2\n");
     $buff = $this->mayflower->bufferPop();
 
     $this->mayflower->reportStartPageBody();
@@ -248,7 +245,7 @@ class reportPaged extends Report
     $formatCount = 1;
     $this->_exporter->onPrint($cancel, $formatCount);
     if (!$cancel) {
-      $this->_pdf->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $buff);
+      $this->_exporter->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $buff);
     }
 
     $this->posY += $sectionHeight;
@@ -258,14 +255,14 @@ class reportPaged extends Report
   {
    $this->mayflower->reportStartPageHeader();
    $buff = $this->mayflower->bufferPop();
-   $this->_pdf->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->layout->printHeight, $this->layout->reportWidth, $this->layout->pageHeaderHeight, $buff);
+   $this->_exporter->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->layout->printHeight, $this->layout->reportWidth, $this->layout->pageHeaderHeight, $buff);
   }
 
   function pageFooterEnd()
   {
     $this->mayflower->reportStartPageFooter();
     $buff = $this->mayflower->bufferPop();
-    $this->_pdf->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->layout->printHeight, $this->layout->reportWidth, $this->layout->pageFooterHeight, $buff);
+    $this->_exporter->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->layout->printHeight, $this->layout->reportWidth, $this->layout->pageFooterHeight, $buff);
   }
   
   function printPageFooter()
@@ -284,7 +281,7 @@ class reportPaged extends Report
   
   function Bookmark($txt,$level=0,$y=0)
   {
-    $this->_pdf->Bookmark($txt, $level, $y, $this->mayflower->page(), $this->posYinPage(), $this->mayflower->inReport());
+    $this->_exporter->Bookmark($txt, $level, $y, $this->mayflower->page(), $this->posYinPage(), $this->mayflower->inReport());
   }
   
   function newPage()
