@@ -134,9 +134,9 @@ class ExporterFPdf extends Exporter
   function outSectionStart($y, $w, $h, $backColor, $sectionName='')
   {
     $this->_pdf->SetCoordinate(0, -$y);
-    $this->_pdf->SetClipping(0, 0, $w, $h);
+    $this->_pdf->SetClipping(0, 0, $w, $h + SectionBorder);
 
-    $this->_pdf->SetXY(0, 0);
+    $this->_pdf->SetXY(0, 0 + SectionBorder);
     $this->_pdf->_backColor($backColor);
     $fill = true;
     $text = '';

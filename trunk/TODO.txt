@@ -3,7 +3,6 @@ TODO for first public release
 
 - examples
   - simple report (first time through. No data)
-  - birthday list (sorting by expressions)
      
     
 - finish work on documentation

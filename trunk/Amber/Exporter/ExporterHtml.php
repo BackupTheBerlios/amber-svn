@@ -11,7 +11,7 @@ require_once 'HTML.inc.php';
 
 define('__SCALE__', 1);           // scaling factor. Don't use fractions or errors will occur:
                                   // fractions in border-width are not shown with current browsers
-define('__HAIRLINEWIDTH__', 15);  // width of hairline in twips; here 1px
+define('__HAIRLINEWIDTH__', 20);  // width of hairline in twips; here 1px
 
 
 ExporterFactory::register('html', 'ExporterHtml');
@@ -112,11 +112,18 @@ class ExporterHtml extends Exporter
   {
     $style['left'] = 0;
     $style['top'] = $this->_html_twips($y);
-    $style['height'] = $this->_html_twips($h);
+    $style['height'] = $this->_html_twips($h + BorderCheat);
     $style['width'] = $this->_html_twips($w);
-    $style['background-color'] = $this->_html_color($backColor);
 
     echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">\n";
+
+    //background Box
+    if ($style['background-color'] <> 0xFFFFFF) { //not white
+      $style['top'] = $this->_html_twips(BorderCheat);
+      $style['height'] = $this->_html_twips($h);
+      $style['background-color'] = $this->_html_color($backColor);
+      echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">&nbsp;</div>\n";
+    }  
   }
 
 
@@ -404,8 +411,8 @@ Class ControlExporterHtml
     $value =& $ctrl->Properties;
     $LeftPaddingHtml = 0;  // 0
     $RightPaddingHtml = 0; // 0
-    $TopPaddignHtml = 0;
-    $Bottompaddinghtml = 0;
+    $TopPaddingHtml = 0;
+    $BottomPaddingHtml = 0;
     if ($value['BorderWidth'] == 0) {
       $BorderWidthHtml = __HAIRLINEWIDTH__; // 1/pt
     } else {
@@ -415,7 +422,8 @@ Class ControlExporterHtml
 
     // Position
     if ($value['Top'] <> $std['Top']) {
-      $out .= 'top: ' . ExporterHTML::_html_twips($ctrl->Properties['Top']) . '; ';
+      $topHtml = $value['Top'] - 1/2 * $BorderWidthHtml - $TopPaddingHtml + 15;
+      $out .= 'top: ' . ExporterHTML::_html_twips($topHtml) . '; ';
     }
     if (($value['Left'] <> $std['Left']) or ($value['BorderWidth'] <> $std['BorderWidth'])) {
       $leftHtml = $value['Left'] - 1/2 * $BorderWidthHtml - $LeftPaddingHtml + 15;
@@ -424,7 +432,8 @@ Class ControlExporterHtml
 
     // Height & width
     if ($value['Height'] <> $std['Height']) {
-      $out .= 'height: ' . ExporterHTML::_html_twips($ctrl->Properties['Height']) . '; ';
+      $heightHtml = $value['Height'] - $BorderWidthHtml - $TopPaddingHtml - $BottomPaddingHtml;
+      $out .= 'height: ' . ExporterHTML::_html_twips($heightHtml) . '; ';
     }
 
     if (($value['Width'] <> $std['Width']) or ($value['BorderWidth'] <> $std['BorderWidth'])) {
