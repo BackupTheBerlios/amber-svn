@@ -23,7 +23,7 @@ class ReportLoader extends ObjectLoader
 
     $rs = $db->SelectLimit($sql, 1);
     if (!$rs) {
-      //showError('Database Error ' . $this->_db->ErrorNo(), $this->_db->ErrorMsg());
+      //Amber::showError('Database Error ' . $this->_db->ErrorNo(), $this->_db->ErrorMsg());
       return false;
     }
     $this->_data = $rs->FetchRow();

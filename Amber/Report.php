@@ -97,7 +97,7 @@ class Report
     if (is_object($cfgObj) && is_a($cfgObj, 'AmberConfig')) {
       $this->_globalConfig = $cfgObj;
     } else {
-      showError('Warning - Report::setConfig()', 'Invalid paramater');
+      Amber::showError('Warning - Report::setConfig()', 'Invalid paramater');
     }
   }
 
@@ -144,10 +144,10 @@ class Report
   /*function setCacheDir($dirName)
   {
     if (!is_dir($dirName)) {
-      showError('Error', 'setCacheDir(): Directory name given is not a directory or does not exist: ' . htmlentities($dirName));
+      Amber::showError('Error', 'setCacheDir(): Directory name given is not a directory or does not exist: ' . htmlentities($dirName));
       $this->_xmlLoader->setCacheEnabled(false);
     } elseif (!is_writable($dirName)) {
-      showError('Error', 'setCacheDir(): Cannot write to cache directory: ' . htmlentities($dirName));
+      Amber::showError('Error', 'setCacheDir(): Cannot write to cache directory: ' . htmlentities($dirName));
       $this->_xmlLoader->setCacheEnabled(false);
     } else{
       $this->_xmlLoader->setCacheDir($dirName);
@@ -180,9 +180,9 @@ class Report
   function setReportDir($dirName)
   {
     if (!is_dir($dirName)) {
-      showError('Error', 'setReportDir(): Directory name given is not a directory or does not exist: ' . htmlentities($dirName));
+      Amber::showError('Error', 'setReportDir(): Directory name given is not a directory or does not exist: ' . htmlentities($dirName));
     } elseif (!is_readable($dirName)) {
-      showError('Error', 'setReportDir(): Cannot write to cache directory: ' . htmlentities($dirName));
+      Amber::showError('Error', 'setReportDir(): Cannot write to cache directory: ' . htmlentities($dirName));
     } else{
       if (empty($dirName)) {
         $this->_reportDir = '';
@@ -225,7 +225,7 @@ class Report
       $conResult = @$db->PConnect($dbCfg['host'], $dbCfg['username'], $dbCfg['pwd'], $dbCfg['dbname']);
       $db->SetFetchMode(ADODB_FETCH_ASSOC);
       if ($conResult == false) {
-        showError('Database Error '  . $db->ErrorNo(), $db->ErrorMsg());
+        Amber::showError('Database Error '  . $db->ErrorNo(), $db->ErrorMsg());
         die();
       }
       $this->_db =& $db;
@@ -265,7 +265,7 @@ class Report
     }
 
     if ($loadResult == false) {
-      showError('Error ', 'An error occured when trying to open the report');
+      Amber::showError('Error ', 'An error occured when trying to open the report');
       die();
     }
 
@@ -286,7 +286,7 @@ class Report
         $this->_Code =& new $className;
         $classLoaded = true;
       } else {
-        showError('Error', 'Cannot instatiate undefined class "' . $className . '"');
+        Amber::showError('Error', 'Cannot instatiate undefined class "' . $className . '"');
       }
     }
     if (!$classLoaded) {
@@ -519,7 +519,7 @@ class Report
     $this->_data =& $db->GetAll($sql);
     if (empty($this->_data)) {
       if ($db->ErrorNo() != 0) {
-        showError('Database Error ' . $db->ErrorNo(), $db->ErrorMsg());
+        Amber::showError('Database Error ' . $db->ErrorNo(), $db->ErrorMsg());
         die();
       }
     }

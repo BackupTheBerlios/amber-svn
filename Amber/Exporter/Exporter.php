@@ -79,7 +79,8 @@ class Exporter
   {
     // set the exporter of Control $ctrl
     // do something like $ctrl->_exporter =& new ControlExporter;
-    die('Abstract function called: Exporter::setControlExporter, type: ' . $this->type);
+    Amber::showError('Error', 'Abstract function called: Exporter::setControlExporter, type: ' . $this->type);
+    die();
   }
 
   // Helper functions

@@ -84,7 +84,7 @@ class SimpleSelectParser extends Parser
 
     $this->getTok();
     if (($this->token == '') || ($this->token != 'select')) {
-      showError('Error', __CLASS__ . '::' . __FUNCTION__ . '(): Not a select query');
+      Amber::showError('Error', __CLASS__ . '::' . __FUNCTION__ . '(): Not a select query');
       return;
     }
     $idx = 'select';

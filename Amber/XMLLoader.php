@@ -81,7 +81,7 @@ class XMLLoader
     //$cacheFileName = $this->_cacheDir . '/' . basename($fileName);
 
     if (!file_exists($fileName)) {
-      showError('Error', 'XML file not found: ' . htmlspecialchars($fileName));
+      Amber::showError('Error', 'XML file not found: ' . htmlspecialchars($fileName));
       die();
     }
 

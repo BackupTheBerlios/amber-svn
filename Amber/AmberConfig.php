@@ -23,7 +23,7 @@ class AmberConfig
   function fromXML($fileName)
   {
     if (!file_exists($fileName)) {
-      showError('Error', 'Config file not found: ' . htmlspecialchars($fileName));
+      Amber::showError('Error', 'Config file not found: ' . htmlspecialchars($fileName));
       die();
     }
 

@@ -97,7 +97,7 @@ class Section
       foreach ($data['Controls'] as $c) {
         $ctl =& ControlFactory::create($c['ControlType'], $c);
         if ($ctl == false) {
-          showError('Warning', 'Skipping unsupported control type: ' . htmlentities($c['ControlType']));
+          Amber::showError('Warning', 'Skipping unsupported control type: ' . htmlentities($c['ControlType']));
         } else {
           $this->Controls[] =& $ctl;
           $parent->Controls[$ctl->Name] =& $ctl;
