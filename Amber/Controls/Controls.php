@@ -498,12 +498,43 @@ class ComboBox extends Control
 
   function printNormal()
   {
-    $this->_exporter->printNormal($this, $buffer, $this->Caption);
+    $this->_doQuery();
+    $this->_exporter->printNormal($this, $buffer, $this->_data);
   }
 
   function printDesign(&$buffer)
   {
-    echo "<select><option></option></select>";
+    $this->_doQuery();
+    $this->_exporter->printDesign($this, $buffer, $this->_data);
+  }
+
+  function requery()
+  {
+    $this->_doQuery();
+  }
+
+  function _doQuery()
+  {
+    $db =& Amber::currentDb();
+
+    if ($this->RowSourceType == 'Table/Query') {
+      $db->SetFetchMode(ADODB_FETCH_BOTH);
+      $data = $db->GetAll($this->RowSource);
+    }
+
+    if (isset($this->BoundColumn)) {
+      // Indexes in Access start with 1
+      $bound = $this->BoundColumn - 1;
+    } else {
+      $bound = 0;
+    }
+
+    // FIXME: Determine first visible row -> option value
+
+    $this->_data = array();
+    foreach ($data as $idx => $row) {
+      $this->_data[$row[$bound]] = $row[1];
+    }
   }
 }
 
