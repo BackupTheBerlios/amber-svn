@@ -22,6 +22,7 @@ class AmberXMLServer extends IXR_Server
       'Amber.fileExists' => 'this:fileExists',
       'Amber.getReportList' => 'this:getReportList',
       'Amber.getReport' => 'this:getReport',
+      'Amber.setReportCode' => 'this:setReportCode',
       'Amber.getFormList' => 'this:getFormList',
       'Amber.getForm' => 'this:getForm',
       'Amber.getCode' => 'this:getCode'
@@ -127,7 +128,7 @@ class AmberXMLServer extends IXR_Server
 
   function getReportList()
   {
-    $db = $this->sysDb();
+    $db =& $this->sysDb();
     $dict = NewDataDictionary($db);
     $sql = 'Select name from ' . $dict->TableName($this->sysTableName) . ' WHERE type=' . $this->objectTypes['report'];
 
@@ -136,7 +137,7 @@ class AmberXMLServer extends IXR_Server
   
   function getFormList()
   {
-    $db = $this->sysDb();
+    $db =& $this->sysDb();
     $dict = NewDataDictionary($db);
     $sql = 'Select name from ' . $dict->TableName($this->sysTableName) . ' WHERE type=' . $this->objectTypes['form'];
 
@@ -145,7 +146,7 @@ class AmberXMLServer extends IXR_Server
   
   function getForm($name)
   {
-    $db = $this->sysDb();
+    $db =& $this->sysDb();
     $dict = NewDataDictionary($db);
     $sql = 'Select * from ' . $dict->TableName($this->sysTableName) . ' WHERE name=' . $db->Quote($name) . ' AND type=' . $this->objectTypes['form'];
 
@@ -154,11 +155,24 @@ class AmberXMLServer extends IXR_Server
   
   function getReport($name)
   {
-    $db = $this->sysDb();
+    $db =& $this->sysDb();
     $dict = NewDataDictionary($db);
     $sql = 'Select * from ' . $dict->TableName($this->sysTableName) . ' WHERE name=' . $db->Quote($name) . ' AND type=' . $this->objectTypes['report'];
 
     return $db->GetAll($sql);
+  }
+  
+  function setReportCode($param)
+  {
+    $name = $param[0];
+    $code = $param[1];
+
+    $db =& $this->sysDb();
+    $dict = NewDataDictionary($db);
+    $sql = 'UPDATE ' . $dict->TableName($this->sysTableName) . ' SET code=' . $db->Quote($code) . ' WHERE name=' . $db->Quote($name) . ' AND type=' . $this->objectTypes['report'];
+
+    $db->Execute($sql);
+    return true;
   }
 
   function getCode($name)
