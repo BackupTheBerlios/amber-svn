@@ -175,12 +175,13 @@ class Report
     //
     $this->Width = $xml['Width'];
     if (isset($xml['Printer'])) {
-      $this->LeftMargin = wennleer($xml['Printer']['LeftMargin'], 720);
-      $this->RightMargin = wennleer($xml['Printer']['RightMargin'], 720);
-      $this->TopMargin = wennleer($xml['Printer']['TopMargin'], 720);
-      $this->BottomMargin = wennleer($xml['Printer']['BottomMargin'], 720);
-      $this->Orientation = MSPageOrientation($xml['Printer']['Orientation']);
-      MSPageSize($xml['Printer']['PaperSize'], $this->PaperSize, $this->PaperWidth, $this->PaperHeight);
+      $prt =& $xml['Printer'];
+      $this->LeftMargin = empty($prt['LeftMargin']) ? 720 : $prt['LeftMargin'];
+      $this->RightMargin = empty($prt['RightMargin']) ? 720 : $prt['RightMargin'];
+      $this->TopMargin = empty($prt['RigTopMargin']) ? 720 : $prt['TopMargin'];
+      $this->BottomMargin = empty($prt['BottomMargin']) ? 720 : $prt['BottomMargin'];
+      $this->Orientation = MSPageOrientation($prt['Orientation']);
+      MSPageSize($prt['PaperSize'], $this->PaperSize, $this->PaperWidth, $this->PaperHeight);
     }
 
     if (isset($xml['RecordSource']) && ($xml['RecordSource'] != '')) {

@@ -56,8 +56,8 @@ class Section
   {
     $this->_parent =& $parent;
     $this->Name = $data['Name'];
-    $this->Height = wennleer($data['Height'], 0);
-    $this->ForceNewPage = wennleer($data['ForceNewPage'], 0);
+    $this->Height = empty($data['Height']) ? 0 : $data['Height'];
+    $this->ForceNewPage = empty($data['ForceNewPage']) ? 0 : $data['ForceNewPage'];
 
     if (isset($data['Visible'])) {
       $this->Visible = $data['Visible'];
