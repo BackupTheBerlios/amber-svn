@@ -546,7 +546,7 @@ class FontBoxExporterHtml extends ControlExporterHtml
     }
 
     if ($value['FontUnderline'] <> $std['FontUnderline']) {
-      if ($ctrl->Properties['FontUnderline'] == -1) {
+      if ($ctrl->Properties['FontUnderline'] <> 0) {
         $out .= 'text-decoration: underline; ';
       } else {
         $out .= 'text-decoration: none; ';
