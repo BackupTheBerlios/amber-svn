@@ -406,8 +406,9 @@ class Label extends FontBox
   {
     if (!$this->Visible) {
       return false;
-#    } elseif ($this->Parent) {                                FIX THIS!!!!!!
-#      return REPORT->controls[$this->Parent]->isVisible();    label gets invisible if its control get invisible
+    } elseif ($this->Parent) {
+      $parentCtrl =& $this->Parent;
+      return $parentCtrl->isVisible();   // label gets invisible if its parent control get invisible
     } else {
       return true;
     }

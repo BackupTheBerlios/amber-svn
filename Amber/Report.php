@@ -173,6 +173,22 @@ class Report extends AmberObject
         }
       }
     }
+    
+    /*
+     * in labels: change property Parent from name (string) to reference (&obj)
+     */
+    
+    //FIXME: this should be moved to Control-Class (with a few parameter-changes.....) 
+
+    if (is_array($this->Controls)) {
+      foreach ($this->Controls as $i => $ctrl) {
+        if (isset($ctrl->Parent)) {
+          $this->Controls[$i]->Parent =& $this->Controls[$ctrl->Parent];              
+          $this->Controls[$i]->Properties['Parent'] =& $this->Controls[$ctrl->Parent];
+        }
+      }     
+    }
+    
 
     /*
      * Group Levels
