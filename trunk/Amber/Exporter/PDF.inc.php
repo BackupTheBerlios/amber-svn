@@ -468,8 +468,10 @@ class PDF extends FPDF
   $this->SetAutoPageBreak(true,2*$margin);
   //Full width display mode
   $this->SetDisplayMode('fullwidth');
-  //Compression
-  $this->SetCompression(true);
+  //Enable compression
+	$this->SetCompression(true);
+	//Set default PDF version number
+	$this->PDFVersion='1.3';
 }
 
 
