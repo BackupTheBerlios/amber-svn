@@ -146,13 +146,12 @@ class ReportPaged extends Report
     $this->layout->fillRestOfPageIfDirty();
   }
   
-///////////////////////////
-//
-// ex mayflower: report part
-//
-///////////////////////////
-
-      
+  /**
+   *
+   * @access public
+   * @return int current page number
+   *
+   */
   function page()
   {
     return $this->layout->pageNo + 1;

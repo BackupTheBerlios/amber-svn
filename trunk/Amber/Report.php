@@ -784,40 +784,6 @@ class Report extends AmberObject
     $this->_exporter->startReport($this, $this->asSubReport, true);
   }
 
-  /**
-   * @access private
-   */
-  function _endReport()
-  {
-  }
-
-  function _startSection(&$section, $width)
-  {
-  }
-
-  function _endSection(&$section, $height)
-  {
-  }
-
-  /**
-   *
-   * @access public
-   * @return int current page number
-   *
-   */
-  function page()
-  {
-  }
-
-  function newPage()
-  {
-  }
-
-  function Bookmark($txt,$level=0,$y=0)
-  {
-    //Bookmarks only for paged reports -- nothing for subReports
-  }
-
   function outSection($formatCount, $posY, $sectionHeight, &$secBuff, &$section)
   {
     $this->_exporter->outSectionStart($posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $section->Name);

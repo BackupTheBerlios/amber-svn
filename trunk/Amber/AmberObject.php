@@ -22,12 +22,13 @@ class AmberObject
     if (is_object($cfgObj) && is_a($cfgObj, 'AmberConfig')) {
       $this->_globalConfig = $cfgObj;
     } else {
-      Amber::showError('Warning - Report::setConfig()', 'Invalid paramater');
+      Amber::showError('Warning - AmberObject::setConfig()', 'Invalid paramater');
     }
   }
 
   /**
    * @access public
+   * @abstract
    * @param array xml data
    */
   function initialize(&$data)
@@ -37,6 +38,7 @@ class AmberObject
 
   /**
    * @access public
+   * @abstract
    * @param string
    */
   function run($type)
