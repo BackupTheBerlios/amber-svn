@@ -23,7 +23,7 @@ class reportPaged extends Report
       if (!$isSubReport) {
         $this->reportBuff =& new reportBuff($this->layout);
       }
-      $this->_exporter->startReport($this, $isSubreport);
+      $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
     }
   }
 

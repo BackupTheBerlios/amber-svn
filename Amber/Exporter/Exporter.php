@@ -29,10 +29,9 @@ class Exporter
    * @access public
    * @param bool
    */
-  function setDesignMode($value)
-  {
-    $this->DesignMode = $value;
-  }
+
+
+
 
   function setDocumentTitle($title)
   {
@@ -40,11 +39,12 @@ class Exporter
   }
 
   // Report
-  function startReport(&$report, $asSubreport = false)
+  function startReport(&$report, $asSubreport = false, $isDesignMode = false)
   {
     $this->_start = microtime();
     $this->_report =& $report;
     $this->_asSubreport = $asSubreport;
+    $this->DesignMode = $isDesignMode;
     $this->_blankPage = true;
     $this->_exporterInit();
   }

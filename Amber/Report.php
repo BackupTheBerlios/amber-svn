@@ -305,7 +305,6 @@ class Report extends AmberObject
   {
     $this->_installExporter($type);
     $this->_exporter->setDocumentTitle($this->Name);
-    $this->_exporter->setDesignMode(true);
 
     $this->_startReport($isSubreport, true);
 
@@ -392,7 +391,7 @@ class Report extends AmberObject
   function _startReport($isSubreport, $isDesignMode)
   {
     if (isset($this->_exporter)) {
-      $this->_exporter->startReport($this, $isSubreport);
+      $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
     }
   }
 
