@@ -6,7 +6,7 @@ Class Betreute_nach_EB_Schule_mit_Gruppen_PBetr_kurz extends phpReport_UserFunct
   var $interfaceVersion = 2; //Do not change this
 
   /***********************************
-   * Formulae from calculated fields 
+   * Formulae from calculated fields
    ***********************************/
   function Report_FirstFormat(&$report)
   {
@@ -22,3 +22,4 @@ Class Betreute_nach_EB_Schule_mit_Gruppen_PBetr_kurz extends phpReport_UserFunct
 
 }
 
+?>
