@@ -9,7 +9,7 @@
 
 require_once 'HTML.inc.php';
 
-define('__SCALE__', 1.1); // used in html_twips(), FontBox::load()
+define('__SCALE__', 1.0); // used in html_twips(), FontBox::load()
 
 ExporterFactory::register('html', 'ExporterHtml');
 ExporterFactory::register('phtml', 'ExporterHtml');
