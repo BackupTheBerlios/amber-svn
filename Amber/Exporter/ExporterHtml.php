@@ -232,10 +232,10 @@ class ExporterHtml extends Exporter
       return '0px';
     }
 
-    return round(__SCALE__ * $twips / 15)  . "px";
-    //return round(__SCALE__ * $twips / 20)  . "pt";
-    //return round(__SCALE__ * $twips / 1440, 6) . "in";
-    //return round(__SCALE__ * $twips / 1440 * 2.54, 4) . 'cm';
+    return number_format(__SCALE__ * $twips / 15, 0, '.', '') . 'px';
+    //return number_format(__SCALE__ * $twips / 20, 0, '.', '') . 'pt';
+    //return number_format(__SCALE__ * $twips / 1440, 5, '.', '') . 'in';
+    //return number_format(__SCALE__ * $twips / 1440 * 2.54, 4, '.', '') . 'cm';
   }
 
   function _html_color($color)
@@ -308,22 +308,22 @@ Class ControlExporterHtml
 
     // Position
     if ($value['Top'] <> $std['Top']) {
-      $out .= 'top: ' . $this->_html_twips($ctrl->Properties['Top']) . '; ';
+      $out .= 'top: ' . ExporterHTML::_html_twips($ctrl->Properties['Top']) . '; ';
     }
     if ($value['Left'] <> $std['Left']) {
-      $out .= 'left: ' . $this->_html_twips($ctrl->Properties['Left']) . '; ';
+      $out .= 'left: ' . ExporterHTML::_html_twips($ctrl->Properties['Left']) . '; ';
     }
     if ($value['Height'] <> $std['Height']) {
-      $out .= 'height: ' . $this->_html_twips($ctrl->Properties['Height']) . '; ';
+      $out .= 'height: ' . ExporterHTML::_html_twips($ctrl->Properties['Height']) . '; ';
     }
     if ($value['Width'] <> $std['Width']) {
-      $out .= 'width: ' . $this->_html_twips($ctrl->Properties['Width']) . '; ';
+      $out .= 'width: ' . ExporterHTML::_html_twips($ctrl->Properties['Width']) . '; ';
     }
 
     // Backstyle
     if (($value['BackColor'] <> $std['BackColor']) || ($value['BackStyle'] <> $std['BackStyle'])) {
       if ($ctrl->Properties['BackStyle'] != 0) {
-          $out .= 'background-color: ' . $this->_html_color($ctrl->Properties['BackColor']) . '; ';
+          $out .= 'background-color: ' . ExporterHTML::_html_color($ctrl->Properties['BackColor']) . '; ';
       }
     }
 
@@ -336,7 +336,7 @@ Class ControlExporterHtml
       }
     }
     if ($value['BorderColor'] <> $std['BorderColor']) {
-        $out .= 'border-color:' . $this->_html_color($ctrl->Properties['BorderColor']) . '; ';
+        $out .= 'border-color:' . ExporterHTML::_html_color($ctrl->Properties['BorderColor']) . '; ';
     }
     if ($value['BorderStyle'] <> $std['BorderStyle']) {
       $out .= 'border-style:' . $this->_html_borderstyle($ctrl->Properties['BorderStyle'], $ctrl->Properties['BorderLineStyle']) . '; ';
@@ -356,27 +356,6 @@ Class ControlExporterHtml
     }
 
     return $out;
-  }
-
-  function _html_twips($twips)
-  {
-    if (!is_numeric($twips)) {
-      return '0px';
-    } else {
-      return round(__SCALE__ * $twips / 15)  . "px";
-      //return round(__SCALE__ * $twips / 20)  . "pt";
-      //return round(__SCALE__ * $twips / 1440, 5) . "in";
-      //return round(__SCALE__ * $twips / 1440 * 2.54, 4) . 'cm';
-    }
-  }
-
-  function _html_color($color)
-  {
-    if (!is_numeric($color)) {
-      return '#ff0000';
-    } else {
-      return '#' . substr(('000000' . dechex($color)), -6);
-    }
   }
 
   function _html_borderstyle($style, $linestyle)
@@ -468,7 +447,7 @@ class FontBoxExporterHtml extends ControlExporterHtml
     }
 
     if ($value['ForeColor'] <> $std['ForeColor']) {
-      $out .= 'color: ' . $this->_html_color($ctrl->Properties['ForeColor']) . '; ';
+      $out .= 'color: ' . ExporterHTML::_html_color($ctrl->Properties['ForeColor']) . '; ';
     }
     return $out;
   }

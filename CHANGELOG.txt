@@ -1,3 +1,8 @@
+20040718:
+- htmlExporter: now invariant to setlocale (even inch and cm)
+- pdfExporter: sections can now spread over several pages (height and width). support for page-header and -footer is broken
+
+
 20040716:
 - Introduced class ObjectLoader: abstraction layer for loading and accessing report definitions from either database or file system
 - minor code cleanups

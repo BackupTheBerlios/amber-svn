@@ -66,8 +66,11 @@ class ExporterFPdf extends Exporter
         }
       }
     }
-    $this->_pdf->ReportStart($report->Width);
-    $this->_posY = 0;
+    if ($this->DesignMode) {
+      $this->_pdf->ReportStart($this, $report->Width);
+    } else {
+      $this->_pdf->ReportStart($this, $report->Width, $report->PageHeader->Height, $report->PageFooter->Height);
+    } 
   }
 
   function getPostamble(&$report)
@@ -111,25 +114,66 @@ class ExporterFPdf extends Exporter
 
   function sectionPrintStart(&$sec, $width, &$buffer)
   {
-    if (($sec->_PagePart == 'Foot') and (!$this->DesignMode)) {
-      $this->_pdf->SetY(-($sec->Height + $this->_report->BottomMargin));
-    }
     $this->_pdf->sectionStart();
     $this->_backColor($sec->BackColor);
+    $text = '';
     $border = 0;
-    $this->_pdf->SetXY(0, 0);
-    $this->_pdf->Cell($sec->_parent->Width, $sec->Height, '', $border, 1, 'C', 1);
+    $ln = 0; //pos after printing
+    $align = 'C';
+    $fill = 1;
+    $this->_pdf->Cell($sec->_parent->Width, $sec->Height, $text, $border, $ln, $align, $fill);
   }
 
   function sectionPrintEnd(&$sec, $height, &$buffer)
   {
 #print "called<br>";
-    if (!($sec->_PagePart == 'Foot') or ($this->DesignMode)) {
+    if (!$sec->_PagePart or $this->DesignMode) {
       $this->_pdf->sectionEnd($height);
-      $this->_posY += $height;
+    } elseif ($sec->_PagePart == 'foot') {  
+      $this->_pdf->pageFooterEnd();
+    } else {
+      $this->_pdf->pageHeaderEnd();
     }    
   }
 
+
+
+  /*
+  * callback function for PDF: init printing of page footer if necessary
+  * 
+  * @access public
+  */
+  function printPageFooter()
+  {
+    if (!$this->DesignMode) {
+      #$this->_report->_printNormalSection('PageFooter'); 
+    }
+  }
+  
+  /*
+  * callback function for PDF: init printing of page header if necessary
+  * 
+  * @access public
+  */
+  function printpageHeader()
+  {
+    if (!$this->DesignMode) {
+      $this->_report->_printNormalSection('PageHeader'); 
+    }
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   /*********************************
    *  Page handling
    *********************************/
@@ -249,10 +293,12 @@ class ExporterFPdf extends Exporter
   function dump($var)
   {
     $width = 0;
-    $height = 0.25;
+    $height = 240;
     $falign = 'C';
-    $fill = 1;
+    $fill = 0;
+    $this->_pdf->sectionStart();
     $this->_pdf->Cell($width, $height, print_r($var, 1), '0', 0, $falign, $fill);
+    $this->_pdf->sectionEnd($height);
   }
 
   function _backColor($color)

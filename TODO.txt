@@ -13,6 +13,4 @@ Important details for inclusion into documentation
 --------------------------------------------------
 - ctype extension required (--> lexer)
 - remember to set locale if your language has special characters
-- ExporterPdf: if detail section is larger than the height of the page it will
-  nontheless be printed without page break
 - grouping: atm the sql statement must include corresponding order by clauses
