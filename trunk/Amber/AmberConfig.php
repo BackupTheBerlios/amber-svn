@@ -56,9 +56,28 @@ class AmberConfig
     return true;
   }
 
-  function getUsername()
+  function get($str)
   {
-    return $this->database['username'];
+    $path = split('/', $str);
+
+    if ($path[0] == 'db') {
+      $conf =& $this->database;
+    } else if ($path[0] == 'sys') {
+      $conf =& $this->sys_objects;
+    } else {
+      Amber::showError('AmberConfig::get()', 'Invalid root: "' . $path[0] . '"');
+    }
+    unset($path[0]);
+
+    foreach ($path as $p) {
+      if (!isset($conf[$p])) {
+        //Amber::showError('AmberConfig::get()', 'No such element: "' . $p . '"');
+        return '';
+      }
+      $conf =& $conf[$p];
+    }
+
+    return $conf;
   }
 
   function setUsername($value)
@@ -66,19 +85,9 @@ class AmberConfig
     $this->database['username'] = $value;
   }
 
-  function getPassword()
-  {
-    return $this->database['password'];
-  }
-
   function setPassword($value)
   {
     $this->database['password'] = $value;
-  }
-
-  function getHost()
-  {
-    return $this->database['host'];
   }
 
   function setHost($value)
@@ -86,19 +95,9 @@ class AmberConfig
     $this->database['host'] = $value;
   }
 
-  function getDriver()
-  {
-    return $this->database['driver'];
-  }
-
   function setDriver($value)
   {
     $this->database['driver'] = $value;
-  }
-
-  function getDbName()
-  {
-    return $this->database['dbname'];
   }
 
   function setDbName($value)
@@ -106,29 +105,14 @@ class AmberConfig
     $this->database['dbname'] = $value;
   }
 
-  function getMedium()
-  {
-    return $this->sys_objects['medium'];
-  }
-
   function setMedium($value)
   {
     $this->sys_objects['medium'] = $value;
   }
 
-  function getBasePath()
-  {
-    return $this->sys_objects['basepath'];
-  }
-
   function setBasePath($value)
   {
     $this->sys_objects['basepath'] = $value;
-  }
-
-  function getSysDbConfig()
-  {
-    return $this->sys_objects['database'];
   }
 
   function setSysUsername($value)

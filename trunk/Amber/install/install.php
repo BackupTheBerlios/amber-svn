@@ -82,6 +82,8 @@ $cfg = new AmberConfig();
 if (file_exists($filename)) {
   $cfg->fromXML($filename);
 }
+$dbcfg = $cfg->get('db');
+$syscfg = $cfg->get('sys');
 
 ?>
 
@@ -96,39 +98,39 @@ if (file_exists($filename)) {
     </tr>
     <tr>
       <td>Host:</td><td>
-      <input name="host" type="text" value="<?php echo htmlspecialchars($cfg->getHost()) ?>"></td>
+      <input name="host" type="text" value="<?php echo htmlspecialchars($dbcfg['host']) ?>"></td>
     </tr>
     <tr>
       <td>Username:</td><td>
-      <input name="username" type="text" value="<?php echo htmlspecialchars($cfg->getUsername()) ?>"></td>
+      <input name="username" type="text" value="<?php echo htmlspecialchars($dbcfg['username']) ?>"></td>
     </tr>
     <tr>
       <td>Password:</td>
-      <td><input name="password" type="text" value="<?php echo htmlspecialchars($cfg->getPassword()) ?>"></td>
+      <td><input name="password" type="text" value="<?php echo htmlspecialchars($dbcfg['password']) ?>"></td>
     </tr>
     <tr>
       <td>Database:</td>
-      <td><input name="dbname" type="text" value="<?php echo htmlspecialchars($cfg->getDbName()) ?>"></td>
+      <td><input name="dbname" type="text" value="<?php echo htmlspecialchars($dbcfg['dbname']) ?>"></td>
     </tr>
     <tr>
       <td class="install_header" colspan="2"><p><em><strong>Sys_objects</strong></em></p></td>
     </tr>
     </tr>
       <td>Medium:</td>
-      <td><select name="medium"><option value="db" <?php if ($cfg->getMedium() == 'db') echo 'selected'; else echo ''; ?>>Database</option><option value="file" <?php if ($cfg->getMedium() == 'file') echo 'selected'; else echo ''; ?>>File</option></select></td>
+      <td><select name="medium"><option value="db" <?php if ($syscfg['medium'] == 'db') echo 'selected'; else echo ''; ?>>Database</option><option value="file" <?php if ($syscfg['medium'] == 'file') echo 'selected'; else echo ''; ?>>File</option></select></td>
     </tr>
 
-    <?php if ($cfg->getMedium() == 'file') { ?>
+    <?php if ($syscfg['medium'] == 'file') { ?>
 
     <tr>
       <td>BasePath:</td>
-      <td><input name="basepath" type="text" value="<?php echo htmlspecialchars($cfg->getBasePath()) ?>"></td>
+      <td><input name="basepath" type="text" value="<?php echo htmlspecialchars($syscfg['basepath']) ?>"></td>
     </tr>
 
     <?php } ?>
     <?php
-      if ($cfg->getMedium() == 'db') {
-        $syscfg = $cfg->getSysDbConfig();
+      if ($syscfg['medium'] == 'db') {
+        $syscfg = $cfg->get('sys/database');
     ?>
 
     <tr>

@@ -71,7 +71,7 @@ class Amber
     $amber =& Amber::getInstance();
 
     if (!isset($amber->_db)) {
-      $dbCfg =& $amber->_config->database;
+      $dbCfg =& $amber->_config->get('db');
       $db =& ADONewConnection($dbCfg['driver']);
       $conResult = @$db->NConnect($dbCfg['host'], $dbCfg['username'], $dbCfg['password'], $dbCfg['dbname']);
       $db->SetFetchMode(ADODB_FETCH_ASSOC);
@@ -98,7 +98,7 @@ class Amber
     $amber =& Amber::getInstance();
 
     if (!isset($amber->_sysdb)) {
-      $sysdbCfg =& $amber->_config->getSysDbConfig();
+      $sysdbCfg =& $amber->_config->get('sys/database');
       $sysdb =& ADONewConnection($sysdbCfg['driver']);
       $conResult = @$sysdb->NConnect($sysdbCfg['host'], $sysdbCfg['username'], $sysdbCfg['password'], $sysdbCfg['dbname']);
       $sysdb->SetFetchMode(ADODB_FETCH_ASSOC);
@@ -161,7 +161,8 @@ class Amber
   function &loadObject($type, $name)
   {
     if (!isset($this->_objectLoader)) {
-      if ($this->_config->getMedium() == 'db') {
+      $medium = $this->_config->get('sys/medium');
+      if ($medium == 'db') {
         $this->_objectLoader =& new ObjectLoaderDb();
         $this->_objectLoader->setDatabase(Amber::sysDb());
       } else {

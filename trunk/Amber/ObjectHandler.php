@@ -11,15 +11,15 @@
  *
  * @package PHPReport
  * @subpackage ObjectHandler
- * Singleton ObjectHandler: reference objects by handle instead direct ref 
- * This avoids weird dumps of circular references 
+ * Singleton ObjectHandler: reference objects by handle instead direct ref
+ * This avoids weird dumps of circular references
  */
 class ObjectHandler
 {
   //////////////////////////////////////////////////////////////////
   // PUBLIC PROPERTIES
   //////////////////////////////////////////////////////////////////
-  
+
 
   //////////////////////////////////////////////////////////////////
   // PRIVATE PROPERTIES
@@ -41,25 +41,30 @@ class ObjectHandler
   function getHandle(&$obj)
   {
     $me =& ObjectHandler::getInstance();
-    $me->_id ++;
+    $me->_id++;
     $me->_list[$me->_id] =& $obj;
     return $me->_id;
   }
-  
+
   /**
    *
    * @access public
    * @param  integer handle of object to return
-   * @return &object 
+   * @return &object
    *
    */
   function &getObject($handle)
   {
     $me =& ObjectHandler::getInstance();
+    if (!isset($me->_list[$handle])) {
+      Amber::showError('ObjectHandler::getObject()', 'Invalid handle: [' . $handle . ']');
+      return null;
+    }
+
     return $me->_list[$handle];
-  }       
-  
-  
+  }
+
+
   //////////////////////////////////////////////////////////////////
   // PRIVATE METHODS
   //////////////////////////////////////////////////////////////////
