@@ -20,3 +20,4 @@ Class Betreute_nach_EB_Schule_mit_Gruppen_PBetr extends phpReport_UserFunctions
   }
 }
 
+?>

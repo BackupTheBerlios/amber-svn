@@ -30,4 +30,4 @@ Class TestReport extends phpReport_UserFunctions
   //Option Explicit
 
 }
-
+?>

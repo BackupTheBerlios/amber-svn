@@ -280,7 +280,7 @@ class Report
       if ($this->_loaderType == 'db') {
         eval($objLoader->getCode()); // code in database is currently being stored without php tags! fix this!
       } else {
-        eval(' ?' . '> ' . $objLoader->getCode() . ' <' . '?php ');
+        eval(' ?' . '>' . $objLoader->getCode() . '<' . '?php ');
       }
       if (class_exists($className)) {
         $this->_Code =& new $className;

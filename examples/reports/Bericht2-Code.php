@@ -18,4 +18,4 @@ Class Bericht2 extends phpReport_UserFunctions
   }
 
 }
-
+?>
