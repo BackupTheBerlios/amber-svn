@@ -36,6 +36,18 @@ class reportPaged extends Report
       $this->_exporter->endReport($this);
     }
   }
+
+  function page()
+  {
+    return $this->reportBuff->page();
+  }
+
+  function newPage()
+  {
+    $this->reportBuff->newPage();
+  }
+
+
 }
 
 class reportBuff

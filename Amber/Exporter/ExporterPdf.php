@@ -191,16 +191,6 @@ class ExporterFPdf extends Exporter
     parent::endSection($section, $height, $buffer);
   }
 
-  function page()
-  {
-    return $this->_report->reportBuff->page();
-  }
-
-  function newPage()
-  {
-    $this->_pdf->reportBuff->newPage();
-  }
-
   /*
   * callback function for PDF: init printing of page footer if necessary
   *
