@@ -221,21 +221,14 @@ class PDF extends FPDF
   var $outlines=array();
   var $OutlineRoot;
 
-  function Bookmark($txt,$level=0,$y=0, $pageNo, $posYinPage)
+  function Bookmark($txt, $level=0, $pageNo, $posYinPage)
   {
-    if ($pageNo <= 0) {
-      if($y==-1)
-        $y=$this->GetY();
-      $this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$this->page());
-    } else {
-      if($y == -1)
-        $y = $posYinPage;
-      $p = $pageNo;
-      if ($p <= 0)
-        $p = 1;
-
-      $this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$p);
-    }
+    $p = $pageNo;
+    if ($p <= 0)
+      $p = 1;
+    $this->outlines[]=array('t'=>$txt, 'l'=>$level, 'y'=>$posYinPage, 'p'=>$p);
+    #print_r(array('txt'=>$txt, 'level'=>$level, 'posY'=>$posYinPage, 'page'=>$p));
+    #print "\n";
   }
 
   function _putbookmarks()

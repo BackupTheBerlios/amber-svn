@@ -147,9 +147,9 @@ class ExporterFPdf extends Exporter
   }
 
 
-  function Bookmark($txt,$level=0,$y=0, $pageNo, $posYinPage)
-  {
-    $this->_pdf->Bookmark($txt,$level,$y, $pageNo, $posYinPage);
+  function Bookmark($txt,$level=0, $pageNo, $posYinPage)
+  {  
+    $this->_pdf->Bookmark($txt, $level, $pageNo, $posYinPage);
   }
 
   function startPage()

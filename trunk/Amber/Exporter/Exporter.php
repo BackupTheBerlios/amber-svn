@@ -96,6 +96,14 @@ class Exporter
   {
     return $this->_base->bufferEnd();
   }
+  
+  function Bookmark($txt, $level=0)
+  {
+    # only realized in pdf at the Moment.
+    
+  }
+  
+
 }
 
 ?>

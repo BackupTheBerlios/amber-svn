@@ -294,7 +294,7 @@ class Report extends AmberObject
       
       foreach ($keys as $rowNumber) {
         $this->Cols =& $this->_data[$rowNumber];
-
+        $this->Columns =& $this->Cols;
         // Load Data
         $this->onLoadData($Cancel);
         if (!$Cancel) {
@@ -903,6 +903,19 @@ class Report extends AmberObject
     $this->noHeadFoot = $value;
   }
 
+   /**
+   *
+   * creates a bookmark; (only realized in pdf at the moment)
+   *
+   * @access public
+   * @param string   text title to print (i.e. name of group header)
+   * @param integer optional level of title if a multi-leveled tree is to be build (multiple group headers)
+   */
+  function Bookmark($txt, $level=0)
+  { 
+    $this->_exporter->Bookmark($txt, $level, $this->page(), $this->layout->posYinPage());
+  }
+  
   /**
    * @access protected
    */

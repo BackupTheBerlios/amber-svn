@@ -132,12 +132,7 @@ class ReportPaged extends Report
       $this->_printNormalSection($this->PageHeader);
     }  
   }
-  
-  function Bookmark($txt,$level=0,$y=0)
-  {
-    $this->_exporter->Bookmark($txt, $level, $y, $this->page(), $this->layout->posYinPage());
-  }
-  
+
   function newPage()
   {
     $this->layout->fillRestOfPage();
