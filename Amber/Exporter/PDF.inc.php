@@ -8,6 +8,12 @@
 class PDF extends FPDF
 {
 
+////////////////////////////////////////////////////////
+//
+// stuff to move
+//
+//////////////////////////////////////////////////////// 
+
   var $_inSection;      // int index to sectionBuff
   var $_inReport;       // bool 
   var $_inSubReport;    // integer index to subReportBuff
@@ -17,19 +23,6 @@ class PDF extends FPDF
   var $_actPageNo;      // pageNumber
   var $_sectionType;    // 'Head', 'Foot' or ''
 
-  var $_fontList = array(
-        'arial' => 'helvetica', 
-        'ms sans serif' => 'helvetica', 
-        'small fonts' => 'helvetica',
-        
-        'courier new' => 'courier');
-
-
-////////////////////////////////////////////////////////
-//
-// methods to move
-//
-//////////////////////////////////////////////////////// 
 
   //////////////////////////////////////////////////////////////////////////
   //
@@ -75,31 +68,36 @@ class PDF extends FPDF
       }
     }
   }
-        
-        
-        
-  /**
-   *
-   * @access public
-   * @param string orientation: 'P' - portrait, 'L' - Landscape
-   * @param string or number 'pt' point, 'mm' millimeter, cm centimeter, in inch, 
-            or number/fraction of points to use in usercoordinates
-   * @param string format 
-   * @return &object the PDF-instance
-   *
-   * PDF is singleton: one instance to handle report and subreports
-   *
-   */
-  function &getInstance($orient, $unit, $size, $reset)
+
+
+  function page()
   {
-    static $instance = null;
-
-    if (is_null($instance) or $reset) {
-      $instance = new PDF($orient, $unit, $size);
-    }
-
-    return $instance;
+    return $this->_actPageNo + 1;
   }
+
+  function newPage()
+  {
+    $this->_posY = ($this->_actPageNo + 1) * $this->_printHeight;
+  }
+
+  function pageHeaderEnd()
+  {
+   $this->_sectionType = 'Head';
+   $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->_printHeight, $this->_headerHeight);
+  }
+
+  function pageFooterEnd()
+  {
+    $this->_sectionType = 'Foot';
+    $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->_printHeight, $this->_footerHeight);
+  }
+
+        
+////////////////////////////////////////////////////////
+//
+// stuff to sort out
+//
+//////////////////////////////////////////////////////// 
 
   
   //////////////////////////////////////////////////////////////////////////
@@ -111,37 +109,17 @@ class PDF extends FPDF
   //////////////////////////////////////////////////////////////////////////
   function _out($s)
   {
-  
-  
-    if (strpos($s, 'Reportheader')) {
-#      print "_inSection: $this->_inSection<br>";
-#      print "_inSubReport: $this->_inSubReport<br>";
-#      print "_inReport: $this->_inReport<br>";
-#      print $s;
-#      print "<br><br>";
-    }
     if($this->state <> 2) {
       parent::_out($s);
     } elseif ($this->_inSection > $this->_inSubReport) {
       $this->_sectionBuff[$this->_inSection] .= $s . "\n";
-      #parent::_out($s);
     } elseif ($this->_inSubReport) {
       $this->_subReportBuff[$this->_inSubReport] .= $s . "\n";     
     } elseif ($this->_inReport) {
-#      print "\n************************************\n" . $s . "\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n";
       $this->_reportPages[$this->_actPageNo][$this->_sectionType] .= $s . "\n";
     } else {
       parent::_out($s);
     }
-  }
-  
-  function endReportBuffering()
-  {
-    if (!$this->_inReport) {
-      Amber::showError('Error', 'endReport: no report open');
-      die();
-    }  
-    $this->_inReport = false;
   }
   
   function startReportBuffering()
@@ -152,6 +130,16 @@ class PDF extends FPDF
     }  
     $this->_inReport = true;
   }
+
+  function endReportBuffering()
+  {
+    if (!$this->_inReport) {
+      Amber::showError('Error', 'endReport: no report open');
+      die();
+    }  
+    $this->_inReport = false;
+  }
+  
   
        
 
@@ -209,23 +197,6 @@ class PDF extends FPDF
     $this->_posY += $sectionHeight;
   }
 
-  function outSection($sectionHeight, $callCnt, &$exporter, &$secBuff)
-  {
-    $this->SetCoordinate(0, -$this->_posY);
-    $this->SetClipping(0, 0, $this->_reportWidth, $sectionHeight);
-
-    if (!$exporter->DesignMode) {
-      $exporter->onPrint($cancel, $callCnt);
-      if (!$cancel) {
-        $this->_out($secBuff);
-      }
-    } else {
-      $this->_out($secBuff);
-    } 
-    $this->RemoveClipping();
-    $this->RemoveCoordinate();
-  }
-  
   function endSectionSubReport($sectionHeight, $keepTogether)
   {
     $this->_out("\n%end Subreport-Body-Section:" . ($this->_inSection) . "\n\n");
@@ -244,28 +215,6 @@ class PDF extends FPDF
     $this->RemoveClipping();
     $this->RemoveCoordinate();
     $this->_posY += $sectionHeight;
-  }
-
-  function page()
-  {
-    return $this->_actPageNo + 1;
-  }
-
-  function newPage()
-  {
-    $this->_posY = ($this->_actPageNo + 1) * $this->_printHeight;
-  }
-
-  function pageHeaderEnd()
-  {
-   $this->_sectionType = 'Head';
-   $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->_printHeight, $this->_headerHeight);
-  }
-
-  function pageFooterEnd()
-  {
-    $this->_sectionType = 'Foot';
-    $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->_printHeight, $this->_footerHeight);
   }
 
   function _pageHeaderOrFooterEnd($posY, $height)
@@ -305,8 +254,43 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
     return $this->_subReportBuff[$this->_inSubReport + 1];
   }  
 
-
+////////////////////////////////////////////////////////
+//
+// stuff to stay
+//
+//////////////////////////////////////////////////////// 
+        
+   var $_fontList = array(
+        'arial' => 'helvetica', 
+        'ms sans serif' => 'helvetica', 
+        'small fonts' => 'helvetica',
+        
+        'courier new' => 'courier');
   
+  /**
+   *
+   * @access public
+   * @param string orientation: 'P' - portrait, 'L' - Landscape
+   * @param string or number 'pt' point, 'mm' millimeter, cm centimeter, in inch, 
+            or number/fraction of points to use in usercoordinates
+   * @param string format 
+   * @return &object the PDF-instance
+   *
+   * PDF is singleton: one instance to handle report and subreports
+   *
+   */
+   
+  function &getInstance($orient, $unit, $size, $reset)
+  {
+    static $instance = null;
+
+    if (is_null($instance) or $reset) {
+      $instance = new PDF($orient, $unit, $size);
+    }
+
+    return $instance;
+  }
+
   function init(&$exporter, $width, $headerHeight=0, $footerHeight=0)
   {
     $this->_exporter =& $exporter;
@@ -355,6 +339,23 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
     $this->_out($dataBuff);
     $this->RemoveCoordinate();
     $this->RemoveClipping();
+  }
+  
+  function outSection($sectionHeight, $callCnt, &$exporter, &$secBuff)
+  {
+    $this->SetCoordinate(0, -$this->_posY);
+    $this->SetClipping(0, 0, $this->_reportWidth, $sectionHeight);
+
+    if (!$exporter->DesignMode) {
+      $exporter->onPrint($cancel, $callCnt);
+      if (!$cancel) {
+        $this->_out($secBuff);
+      }
+    } else {
+      $this->_out($secBuff);
+    } 
+    $this->RemoveClipping();
+    $this->RemoveCoordinate();
   }
 
   function printBox(&$para)
