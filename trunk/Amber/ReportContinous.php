@@ -20,7 +20,7 @@ class ReportContinous extends Report
     $this->_exporter->endReport($this);
   }
   
-  function _startSection(&$section, $width, &$buffer)
+  function _startSection(&$section, $width)
   {
     if (!(($section->_PagePart) or ($this->designMode))) {
       if ($this->_blankPage) {
@@ -32,12 +32,13 @@ class ReportContinous extends Report
         $this->_printNormalSection($this->PageHeader); 
       }
     }
-    $buffer = null;
+    $this->_exporter->bufferStart();
   }
 
-  function _endSection(&$section, $height, &$buffer)
+  function _endSection(&$section, $height)
   {
-    $this->outSection(1, $this->_posY, $height, &$buffer, &$section);
+    $buff = $this->_exporter->bufferEnd();
+    $this->outSection(1, $this->_posY, $height, &$buff, &$section);
     $this->_posY += $height;
   }
   

@@ -28,13 +28,13 @@ class ReportSubReport extends ReportPaged
     $this->subReportBuff = $this->subReportEndBuffer(); //a real copy
   }
   
-  function _startSection(&$section, $width, &$buffer)
+  function _startSection(&$section, $width)
   {
     $this->_exporter->bufferStart();
     $this->_exporter->comment('Start Section:');
   }  
  
-  function _endSection(&$section, $height, &$buffer)
+  function _endSection(&$section, $height)
   {
     $this->_exporter->comment("end Subreport-Body-Section:2\n");
     $buff = $this->_exporter->bufferEnd();

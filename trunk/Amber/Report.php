@@ -478,9 +478,9 @@ class Report extends AmberObject
       if ($section->hasForceNewPageBefore()) {
         $this->newPage();
       }
-      $this->_startSection($section, $this->Width, $buffer);
-      $height = $section->printNormal($buffer);
-      $this->_endSection($section, $height, $buffer);
+      $this->_startSection($section, $this->Width);
+      $height = $section->printNormal();
+      $this->_endSection($section, $height);
 
 
       if ($section->hasForceNewPageAfter()) {
@@ -504,9 +504,9 @@ class Report extends AmberObject
       } else {
         $this->sectionPrintDesignHeader($section->EventProcPrefix);
       }
-      $this->_startSection($section, $this->Width, $buffer);
-      $section->printDesign($buffer);
-      $this->_endSection($section, $section->Height, $buffer);
+      $this->_startSection($section, $this->Width);
+      $section->printDesign();
+      $this->_endSection($section, $section->Height);
     }
   }
 
@@ -692,9 +692,9 @@ class Report extends AmberObject
     $this->_designSection->Controls['label']->Caption = $text;
     $buffer = '';
     
-    $this->_startSection($this->_designSection, $this->Width, $buffer);
-    $height = $this->_designSection->printNormal($buffer);
-    $this->_endSection($this->_designSection, $height, $buffer);
+    $this->_startSection($this->_designSection, $this->Width);
+    $height = $this->_designSection->printNormal();
+    $this->_endSection($this->_designSection, $height);
   }
 
   function _setDocumentTitle($name)
@@ -728,11 +728,11 @@ class Report extends AmberObject
   {
   }
   
-  function _startSection(&$section, $width, &$buffer)
+  function _startSection(&$section, $width)
   {
   }  
 
-  function _endSection(&$section, $height, &$buffer)
+  function _endSection(&$section, $height)
   {
   }  
   

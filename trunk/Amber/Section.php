@@ -140,13 +140,13 @@ class Section
   * @param integer  start position (relative to report) to place section in twips
   *
   */
-  function printNormal(&$buffer)
+  function printNormal()
   {
     $maxHeight = 0;
     if ((isset($this->Controls)) && (!$cancel)) {
       $keys = array_keys($this->Controls);
       foreach ($keys as $key) {
-        $height = $this->Controls[$key]->printNormal($buffer);
+        $height = $this->Controls[$key]->printNormal();
         if ($height > $maxHeight) {
           $maxHeight = $height;
         }
@@ -167,14 +167,14 @@ class Section
    * @param obj GroupLevel
    *
    */
-  function printDesign(&$buffer)
+  function printDesign()
   {
     // print controls
     if (isset($this->Controls)) {
       reset($this->Controls);
       while (current($this->Controls)) {
         $key = key($this->Controls);
-        $this->Controls[$key]->printDesign($buffer);
+        $this->Controls[$key]->printDesign();
         next($this->Controls);
       }
     }

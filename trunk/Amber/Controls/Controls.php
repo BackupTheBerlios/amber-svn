@@ -103,10 +103,9 @@ class Control
   *
   * @access public
   * @abstract
-  * @param mixed buffer passed thru for exporter's usage
   *
   */
-  function printNormal(&$buffer) { }
+  function printNormal() { }
 
   /**
   *
@@ -204,16 +203,16 @@ class Rectangle extends Control
     parent::Control($hReport);
   }
 
-  function printNormal(&$buffer)
+  function printNormal()
   {
-    $this->_exporter->printNormal($this, $buffer, '');
+    $this->_exporter->printNormal($this, '');
     return $this->stdHeight();
   }
 
-  function printDesign(&$buffer)
+  function printDesign()
   {
     $ctrl = $this->prepareDesign();
-    $this->_exporter->printDesign($ctrl, $buffer, '');
+    $this->_exporter->printDesign($ctrl, '');
   }
 }
 
@@ -326,23 +325,23 @@ class TextBox extends FontBox
     $this->_registerProperties($newProperties);
   }
 
-  function printNormal(&$buffer)
+  function printNormal()
   {
     if ($this->Value == '0000-00-00 00:00:00') {
       $this->Value = null;
     }
     if ($this->Format) {
-      $this->_exporter->printNormal($this, $buffer, Format($this->Value, strval($this->Format), $this->DecimalPlaces));
+      $this->_exporter->printNormal($this, Format($this->Value, strval($this->Format), $this->DecimalPlaces));
     } else {
-      $this->_exporter->printNormal($this, $buffer, $this->Value);
+      $this->_exporter->printNormal($this, $this->Value);
     }
     return $this->stdHeight(); ### FIX THIS: CanGrow.....
   }
 
-  function printDesign(&$buffer)
+  function printDesign()
   {
     $ctrl = $this->prepareDesign();
-    $this->_exporter->printDesign($ctrl, $buffer, $ctrl->ControlSource);
+    $this->_exporter->printDesign($ctrl, $ctrl->ControlSource);
   }
 
   function isVisible()
@@ -396,16 +395,16 @@ class Label extends FontBox
     $this->_registerProperties($extProperties);
   }
 
-  function printNormal(&$buffer)
+  function printNormal()
   {
-    $this->_exporter->printNormal($this, $buffer, $this->Caption);
+    $this->_exporter->printNormal($this, $this->Caption);
     return $this->stdHeight();
   }
 
-  function printDesign(&$buffer)
+  function printDesign()
   {
     $ctrl = $this->prepareDesign();
-    $this->_exporter->printDesign($ctrl, $buffer, $ctrl->Caption);
+    $this->_exporter->printDesign($ctrl, $ctrl->Caption);
   }
 
   function isVisible()
@@ -453,10 +452,10 @@ class SubReport extends Control
     $this->_registerProperties($newProperties);
   }
 
-  function printNormal(&$buffer)
+  function printNormal()
   {
     if (!$this->SourceObject) {
-      $this->_exporter->printNormal($this, $buffer, '');
+      $this->_exporter->printNormal($this, '');
       return $this->stdHeight(); ##FIX ME: actual height
     }
 
@@ -492,15 +491,15 @@ class SubReport extends Control
       $this->_subReport->Filter = implode(' AND ', $reportFilterArray);
     }  
     
-    $this->_exporter->printNormal($this, $buffer, $this->Value);
+    $this->_exporter->printNormal($this, $this->Value);
     
     return $this->stdHeight(); ##FIX ME: actual height
   }
 
-  function printDesign(&$buffer)
+  function printDesign()
   {
     $ctrl = $this->prepareDesign();
-    $this->_exporter->printDesign($ctrl, $buffer, $ctrl->Name);
+    $this->_exporter->printDesign($ctrl, $ctrl->Name);
   }
 }
 
@@ -530,18 +529,18 @@ class ComboBox extends Control
     $this->_registerProperties($newProperties);
   }
 
-  function printNormal(&$buffer)
+  function printNormal()
   {
     $this->_doQuery();
-    $this->_exporter->printNormal($this, $buffer, $this->_data);
+    $this->_exporter->printNormal($this, $this->_data);
 
     return $this->stdHeight(); ##FIX ME: actual height
   }
 
-  function printDesign(&$buffer)
+  function printDesign()
   {
     $this->_doQuery();
-    $this->_exporter->printDesign($this, $buffer, $this->_data);
+    $this->_exporter->printDesign($this, $this->_data);
 
     return $this->stdHeight(); ##FIX ME: actual height
   }
@@ -604,14 +603,14 @@ class CheckBox extends Control
     $this->_registerProperties($newProperties);
   }
 
-  function printNormal(&$buffer)
+  function printNormal()
   {
-    $this->_exporter->printNormal($this, $buffer, $this->Value);
+    $this->_exporter->printNormal($this, $this->Value);
   }
 
-  function printDesign(&$buffer)
+  function printDesign()
   {
-    $this->_exporter->printDesign($this, $buffer, true);
+    $this->_exporter->printDesign($this, true);
   }
 }
 
@@ -633,12 +632,12 @@ class Dummy extends Control
     parent::Control($hReport);
   }
 
-  function printNormal(&$buffer)
+  function printNormal()
   {
     return 0;
   }
 
-  function printDesign(&$buffer)
+  function printDesign()
   {
     return 0;
   }

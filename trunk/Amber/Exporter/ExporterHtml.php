@@ -314,14 +314,14 @@ Class ControlExporterHtml
     }
   }
 
-  function printNormal(&$control, &$buffer, $content)
+  function printNormal(&$control, $content)
   {
-    $buffer .= $this->getTag($control, $content);
+    echo $this->getTag($control, $content);
   }
 
-  function printDesign(&$control, &$buffer, $content)
+  function printDesign(&$control, $content)
   {
-    $this->printNormal($control, $buffer, $content);
+    echo $this->getTag($control, $content);
   }
 
   function getTag(&$control, $value = null)

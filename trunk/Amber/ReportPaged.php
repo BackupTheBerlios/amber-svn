@@ -79,13 +79,13 @@ class reportPaged extends Report
     $this->_exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $this->reportPages[$pageY]['Foot']);
   }
 
-  function _startSection(&$section, $width, &$buffer)
+  function _startSection(&$section, $width)
   {
     $this->_exporter->bufferStart();
     $this->_exporter->comment('Start Section:');
   }  
 
-  function _endSection(&$section, $height, &$buffer)
+  function _endSection(&$section, $height)
   {
     if ($this->designMode) {
       $this->endNormalSection($section, $height, false);

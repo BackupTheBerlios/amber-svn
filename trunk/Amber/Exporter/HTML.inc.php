@@ -12,12 +12,22 @@ class HTML
 
   function _out($s)
   {
-    if ($this->incache) {
-      $this->cache .= $s . "\n";
-    } else {
-      echo $s;
-    }
+    echo $s;
   }
+
+  function bufferStart()
+  {
+    ob_start();
+  }
+  
+  function bufferEnd()
+  {
+    return ob_get_clean();
+  }      
+
+
+
+
   
   function &getInstance(&$layout, $reset)
   {

@@ -152,14 +152,14 @@ class ExporterFPdf extends Exporter
 
 
 
-  function printNormal(&$control, &$buffer, $content)
+  function printNormal(&$control, $content)
   {
     $type = strtolower(get_class($control));
     #echo $type;
     if ($type == 'checkbox') {
-      return $this->printNormalCheckBox($control, $buffer, $content);
+      return $this->printNormalCheckBox($control, $content);
     } elseif ($type == 'subreport') {
-      return $this->printNormalSubReport($control, $buffer, $content);
+      return $this->printNormalSubReport($control, $content);
     }
     #$content = $type;
     if (!$control->isVisible()) {
@@ -191,7 +191,7 @@ class ExporterFPdf extends Exporter
     $this->_pdf->printBox($para);
   }
 
-  function printNormalCheckBox(&$control, &$buffer, $content)
+  function printNormalCheckBox(&$control, $content)
   {
     if (!$control->isVisible()) {
       return;
@@ -233,7 +233,7 @@ class ExporterFPdf extends Exporter
     $this->_pdf->printBox($para);
   }
   
-  function printNormalSubReport(&$control, &$buffer, $content)
+  function printNormalSubReport(&$control, $content)
   {
     if (!$control->isVisible()) {
       return;
@@ -265,9 +265,9 @@ class ExporterFPdf extends Exporter
 
   }
 
-  function printDesign(&$control, &$buffer, $content)
+  function printDesign(&$control, $content)
   {
-    $this->printNormal($control, $buffer, $content);
+    $this->printNormal($control, $content);
   }
 
   /*********************************
