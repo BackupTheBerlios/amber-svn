@@ -92,21 +92,14 @@ class Exporter
   {
   }
  
-  function setOutBuffer(&$buff)
+  function bufferStart()
   {
-    $this->_base->cache =& $buff;
-    $this->_base->incache = true;
+    $this->_base->bufferStart();
   }
 
-  function &getOutBuffer()
+  function bufferEnd()
   {
-    return $this->_base->cache;
-  }  
-  
-  function unsetBuffer()
-  {
-    unset($this->_base->cache);
-    $this->_base->incache = false;
+    return $this->_base->bufferEnd();
   }
 }
 

@@ -90,16 +90,6 @@ class ExporterFPdf extends Exporter
     $this->_pdf->_out("\n%$s\n");
   }
   
-  function _pageHeaderOrFooterEnd($posY, $width, $height, &$buff)
-  {
-    $this->_pdf->SetCoordinate(0, -$posY);
-    $this->_pdf->SetClipping(0, 0, $width, $height);
-    $this->comment("end Head/Foot-Section:1\n");
-    $this->_pdf->_out($buff);
-    $this->_pdf->RemoveClipping();
-    $this->_pdf->RemoveCoordinate();
-  }
-  
   function outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff)
   {
     $this->_pdf->SetClipping($x, $y, $w, $h);
@@ -137,9 +127,9 @@ class ExporterFPdf extends Exporter
   }
 
   
-  function Bookmark($txt,$level=0,$y=0, $pageNo, $posYinPage, $inReport)
+  function Bookmark($txt,$level=0,$y=0, $pageNo, $posYinPage)
   {
-    $this->_pdf->Bookmark($txt,$level,$y, $pageNo, $posYinPage, $inReport);
+    $this->_pdf->Bookmark($txt,$level,$y, $pageNo, $posYinPage);
   }
   
   function AddPage()

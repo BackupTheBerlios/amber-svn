@@ -22,7 +22,8 @@ class reportPaged extends Report
     if (!$this->designMode) {
       $this->_printNormalSection($this->PageFooter);
     }  
- 
+
+    $this->reportPages[$this->actpageNo][''] = $this->_exporter->bufferEnd();
     $this->endReportBuffering();
     
     $this->outPages();
@@ -33,9 +34,8 @@ class reportPaged extends Report
   function outPages()
   {
     $firstPage = true;  //first page is out
-    $endPageX = floor($this->layout->_reportWidth / $this->layout->printWidth);
     foreach(array_keys($this->reportPages) as $pageY) {
-      for($pageX = 0; $pageX <= $endPageX; $pageX++) {
+      for($pageX = 0; $pageX <= $this->layout->pagesHorizontal - 1; $pageX++) {
         if (!$firstPage) {
           $this->_exporter->AddPage();
         }
@@ -81,16 +81,16 @@ class reportPaged extends Report
 
   function _startSection(&$section, $width, &$buffer)
   {
-    $section->sectionStartBuffer($this->_exporter);
+    $this->_exporter->bufferStart();
     $this->_exporter->comment('Start Section:');
   }  
 
   function _endSection(&$section, $height, &$buffer)
   {
-    if (!$section->_PagePart) {
-      $this->endNormalSection($section, $height, $section->KeepTogether);
-    } elseif ($this->designMode) {
+    if ($this->designMode) {
       $this->endNormalSection($section, $height, false);
+    } elseif ($section->_PagePart == '') {
+      $this->endNormalSection($section, $height, $section->KeepTogether);
     } elseif ($section->_PagePart == 'Foot') {
       $this->pageFooterEnd($section);
     } else {
@@ -111,7 +111,7 @@ class reportPaged extends Report
   function endNormalSection(&$section, $sectionHeight, $keepTogether)
   {
     $this->_exporter->comment("end Body-Section:1\n");
-    $secBuff = $section->sectionEndBuffer($this->_exporter);
+    $secBuff = $this->_exporter->bufferEnd();
     if ($keepTogether) {                 // section doesn't fit on page and keepTogether
       if ($this->_newPageAvoidsSectionSplit($sectionHeight)) {
         $this->newPage();
@@ -124,11 +124,12 @@ class reportPaged extends Report
       if (($page <> $this->actpageNo)) {
         if ($this->actpageNo >= 0) {
           $this->printPageFooter();
+          $this->reportPages[$this->actpageNo][''] = $this->_exporter->bufferEnd();
         }
-        $this->setPageIndex($page);
+        $this->actpageNo = $page;
+        $this->_exporter->bufferStart();
         $this->printPageHeader();
       }
-      $this->reportStartPageBody();
       $this->outSection($page - $startPage + 1, $this->posY, $sectionHeight, $secBuff, $section);
     }
     $this->posY += $sectionHeight;
@@ -136,16 +137,18 @@ class reportPaged extends Report
   
   function pageHeaderEnd(&$section)
   {
-   $buff = $section->sectionEndBuffer($this->_exporter);
-   $this->reportStartPageHeader();
-   $this->_exporter->_pageHeaderOrFooterEnd($this->actpageNo * $this->layout->printHeight, $this->layout->reportWidth, $this->layout->pageHeaderHeight, $buff);
+   $buff = $this->_exporter->bufferEnd();
+   $this->_exporter->bufferStart();
+   $this->outSection(1, $this->actpageNo * $this->layout->printHeight, $this->layout->pageHeaderHeight, $buff, $section);
+   $this->reportPages[$this->actpageNo]['Head'] = $this->_exporter->bufferEnd();
   }
 
   function pageFooterEnd(&$section)
   {
-    $buff = $section->sectionEndBuffer($this->_exporter);
-    $this->reportStartPageFooter();
-    $this->_exporter->_pageHeaderOrFooterEnd($this->actpageNo * $this->layout->printHeight, $this->layout->reportWidth, $this->layout->pageFooterHeight, $buff);
+    $buff = $this->_exporter->bufferEnd();
+    $this->_exporter->bufferStart();
+    $this->outSection(1, $this->actpageNo * $this->layout->printHeight, $this->layout->pageFooterHeight, $buff, $section);
+    $this->reportPages[$this->actpageNo]['Foot'] = $this->_exporter->bufferEnd();
   }
   
   function printPageFooter()
@@ -165,7 +168,7 @@ class reportPaged extends Report
   function Bookmark($txt,$level=0,$y=0)
   {
     $posYinPage = ($this->posY - ($this->actpageNo * $this->layout->printHeight));
-    $this->_exporter->Bookmark($txt, $level, $y, $this->page(), $posYinPage, $this->inReport());
+    $this->_exporter->Bookmark($txt, $level, $y, $this->page(), $posYinPage);
   }
   
   function newPage()
@@ -181,53 +184,14 @@ class reportPaged extends Report
 ///////////////////////////
 
       
-  function _setOutBuff()
-  { 
-    if ($this->inReport()) {
-      $this->_exporter->setOutBuffer($this->reportPages[$this->actpageNo][$this->sectionType], "report page".$this->sectionType.$this->actpageNo);
-    } else {
-      $this->_exporter->unsetBuffer();
-    }  
-  }
-  
   function page()
   {
     return $this->actpageNo + 1;
   }
   
-  function setPageIndex($index)
-  {    
-    $this->actpageNo = $index;
-    $this->_setOutBuff();
-  }        
-  
-  function reportStartPageHeader()
-  {
-    $this->sectionType = 'Head';
-    $this->_setOutBuff();
-  }
-    
-  function reportStartPageBody()
-  {
-    $this->sectionType = '';
-    $this->_setOutBuff();
-  }
-    
-  function reportStartPageFooter()
-  {
-    $this->sectionType = 'Foot';
-    $this->_setOutBuff();
-  }  
-   
-
   function endReportBuffering()
   {
-    if (!$this->inReport()) {
-      Amber::showError('Error', 'endReport: no report open');
-      die();
-    }  
     $this->actpageNo = -1;
-    $this->_setOutBuff();
   }
 
   function inReport()
@@ -302,5 +266,6 @@ class pageLayout
     }
     $this->printWidth  = ($this->paperWidth - $this->leftMargin - $this->rightMargin); //width of printable area of page (w/o morgins)
     $this->printHeight = ($this->paperHeight - $this->topMargin - $this->bottomMargin - $this->pageHeaderHeight - $this->pageFooterHeight); //height of printable area of page (w/o morgins)
+    $this->pagesHorizontal = floor($this->reportWidth / $this->printWidth) + 1; // No of pages needed to print report
   }
 }

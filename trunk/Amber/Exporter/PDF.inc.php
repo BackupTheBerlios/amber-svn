@@ -20,13 +20,30 @@ class PDF extends FPDF
   {
     if($this->state <> 2) {
       parent::_out($s);
-    } elseif ($this->incache) {
-      $this->cache .= $s . "\n";
+    } elseif ($this->_SP > 0) {
+      $this->_stack[$this->_SP] .= $s . "\n";
     } else {
       parent::_out($s);
     }
   }
   
+  var $_SP = 0;
+  var $_stack;
+  
+  function bufferStart()
+  {
+    $this->_SP++;
+    $this->_stack[$this->_SP] = '';
+  }
+  
+  function bufferEnd()
+  {
+    $this->_SP--;
+    return $this->_stack[$this->_SP + 1];
+  }      
+  
+
+
 ////////////////////////////////////////////////////////
 //
 // stuff to stay
@@ -203,9 +220,9 @@ class PDF extends FPDF
   var $outlines=array();
   var $OutlineRoot;
 
-  function Bookmark($txt,$level=0,$y=0, $pageNo, $posYinPage, $inReport)
+  function Bookmark($txt,$level=0,$y=0, $pageNo, $posYinPage)
   {
-    if (!$inReport) {
+    if ($pageNo <= 0) {
       if($y==-1)
         $y=$this->GetY();
       $this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$this->page());
