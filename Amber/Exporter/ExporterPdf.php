@@ -129,14 +129,17 @@ class ExporterFPdf extends Exporter
 #print "called<br>";
     if (!$sec->_PagePart or $this->DesignMode) {
       $this->_pdf->sectionEnd($height);
-    } elseif ($sec->_PagePart == 'foot') {  
+    } elseif ($sec->_PagePart == 'Foot') {  
       $this->_pdf->pageFooterEnd();
     } else {
       $this->_pdf->pageHeaderEnd();
     }    
   }
 
-
+  function page() 
+  {
+    return $this->_pdf->_actPageNo + 1;
+  }
 
   /*
   * callback function for PDF: init printing of page footer if necessary
@@ -146,7 +149,7 @@ class ExporterFPdf extends Exporter
   function printPageFooter()
   {
     if (!$this->DesignMode) {
-      #$this->_report->_printNormalSection('PageFooter'); 
+      $this->_report->_printNormalSection('PageFooter'); 
     }
   }
   
@@ -162,66 +165,6 @@ class ExporterFPdf extends Exporter
     }
   }
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  /*********************************
-   *  Page handling
-   *********************************/
-  function newPage()
-  {
-    if (!$this->_blankPage) {
-      if (!$this->DesignMode) {
-        $this->_report->_printNormalSection('PageFooter'); // FIXME: this has to be done by the Report class!!!
-        $this->_report->OnPage();
-      }  
-      $this->_pageNo++;
-    }
-    $this->_blankPage = true;
-  }
-
-  function Page()
-  {
-    return $this->_pageNo;
-  }
-
-  function beforePrinting(&$section)
-  {
-    if ($this->DesignMode) {
-      $y = $this->_pdf->GetY();
-      if (($y + $section->Height) > ($this->_pdf->PageBreakTrigger)) {
-        $this->newPage();
-      }
-    } else {
-      if (($section->ForceNewPage == 1) or ($section->ForceNewPage == 3)) {
-        $this->newPage();
-      } else {
-        $y = $this->_pdf->GetY();
-        if (($y + $section->Height) > ($this->_pdf->PageBreakTrigger - $this->_report->PageFooter->Height)) {
-          $this->newPage();
-        }
-      }
-    }  
-  }
-
-  function afterPrinting(&$section, &$doItAgain)
-  {
-    if (!$this->DesignMode) {    
-      if (($section->ForceNewPage == 2) or ($section->ForceNewPage == 3)) {
-        $this->newPage();
-      }
-    }  
-    $doItAgain = false;
-  }
 
   /*********************************
    *  Controls - pdf

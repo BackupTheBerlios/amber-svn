@@ -1,6 +1,9 @@
 TODO for first public release
 -----------------------------
 
+- re-introduce forceNewPage in new Version of PDF-exporter
+
+
 - examples
 - finish work on documentation
 - sequence diagram (especially for triggers)

@@ -2,6 +2,7 @@
 
 //error_reporting(E_ALL | E_NOTICE);
 ini_set('max_execution_time', '600');
+ini_set('memory_limit', '32M');
 ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/../lib/');
 
 require_once '../Amber/Amber.php';

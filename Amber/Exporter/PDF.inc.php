@@ -13,6 +13,7 @@ class PDF extends FPDF
   var $_buff;
   var $_reportPages;
   var $_actPageNo;
+  var $_sectionType;    // 'Head', 'Foot' or ''
   
     
   function _out($s)
@@ -23,7 +24,7 @@ class PDF extends FPDF
       $this->_buff .= $s . "\n";
       #parent::_out($s);
     } elseif ($this->_inReport) {
-      $this->_reportPages[$this->_actPageNo] .= $s . "\n";
+      $this->_reportPages[$this->_actPageNo][$this->_sectionType] .= $s . "\n";
     } else {
       parent::_out($s);
     }
@@ -41,24 +42,29 @@ class PDF extends FPDF
   {
     $this->_out("% SectionEnd");
     $this->_inSection = false;
+    $secBuff = $this->_buff;
     $startPage = floor($this->_posY / $this->_printHeight);
     $endPage   = floor(($this->_posY + $sectionHeight) / $this->_printHeight);
 
     for ($page = $startPage; $page <= $endPage; $page++) {
-      if ($page <> $this->_actPageNo) {
-        if ($this->_actPageNo > 0) {
+      if (($page <> $this->_actPageNo)) {
+        if ($this->_actPageNo >= 0) {
           $this->_exporter->printPageFooter();
+          $this->_sectionType = 'Foot'; 
           $this->_out("% pageFooter: ".$this->_actPageNo);
         }  
         $this->_actPageNo = $page;
+        $this->_sectionType = 'Head'; 
         $this->_out("% [pageHeader: ".$this->_actPageNo);
         $this->_exporter->printPageHeader();
+        $this->_sectionType = 'Head'; 
         $this->_out("% ]pageHeader: ".$this->_actPageNo);
       }
                   
+      $this->_sectionType = '';
       $this->SetCoordinate(0, -$this->_posY);
       $this->SetClipping(0, 0, $this->_reportWidth, $sectionHeight);
-      $this->_out($this->_buff);
+      $this->_out($secBuff);
       $this->RemoveClipping();   
       $this->RemoveCoordinate();
     }
@@ -67,17 +73,19 @@ class PDF extends FPDF
 
   function pageHeaderEnd()
   {
-#    $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->_printHeight - $this->tMargin, $this->_headerHeight);
-    $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->_printHeight, $this->_headerHeight);
+   $this->_sectionType = 'Head'; 
+   $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->_printHeight, $this->_headerHeight);
   }  
   
   function pageFooterEnd()
   {
-    $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->_printHeight + $this->_printHeight, $this->_footerHeight);
+    $this->_sectionType = 'Foot';
+    $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->_printHeight, $this->_footerHeight);
   }
   
   function _pageHeaderOrFooterEnd($posY, $height)
   {
+    $this->_out("% PageSectionEnd");
     $this->_inSection = false;
     $this->SetCoordinate(0, -$posY);
     $this->SetClipping(0, 0, $this->_reportWidth, $height);
@@ -96,7 +104,7 @@ class PDF extends FPDF
     $this->_printWidth  = ($this->w - $this->lMargin - $this->rMargin); //width of printable area of page (w/o morgins)
     $this->_printHeight = ($this->h - $this->tMargin - $this->bMargin - $this->_footerHeight - $this->_headerHeight); //height of printable area of page (w/o morgins)
     $this->_posY = 0;
-    $this->_actPageNo = 0;
+    $this->_actPageNo = -1;
 
     $this->SetFont('helvetica');    // need to set font, drawcolor, fillcolor before AddPage 
     $this->SetDrawColor(0, 0, 0);   // else we get strange errors. prb fpdf does some optimisations which we break
@@ -118,13 +126,34 @@ class PDF extends FPDF
           $this->AddPage();
         }  
         $firstPage = false;
-#        $this->SetClipping($this->lMargin, $this->tMargin + $this->_headerHeight, $this->_printWidth, $this->_printHeight);
+
+        $y = $this->tMargin;
+        $this->SetClipping($this->lMargin, $this->tMargin, $this->_printWidth, $this->_headerHeight);
         $deltaX = $this->lMargin - $pageX * $this->_printWidth;
-        $deltaY = $pageY * $this->_printHeight - $this->tMargin - $this->_headerHeight;
+       # $deltaY = $pageY * $this->_printHeight - $this->tMargin;
+        $deltaY = $pageY * $this->_printHeight - $y;
         $this->SetCoordinate($deltaX, $deltaY);
-        $this->_out($this->_reportPages[$pageY]);
+        $this->_out($this->_reportPages[$pageY]['Head']);
         $this->RemoveCoordinate();
-#        $this->RemoveClipping();
+        $this->RemoveClipping();
+
+        $y = $this->tMargin + $this->_headerHeight;
+        $this->SetClipping($this->lMargin, $y, $this->_printWidth, $this->_printHeight);
+        $deltaX = $this->lMargin - $pageX * $this->_printWidth;
+        $deltaY = $pageY * $this->_printHeight - $y;
+        $this->SetCoordinate($deltaX, $deltaY);
+        $this->_out($this->_reportPages[$pageY]['']);
+        $this->RemoveCoordinate();
+        $this->RemoveClipping();
+
+        $y = $this->tMargin + $this->_headerHeight + $this->_printHeight;
+        $this->SetClipping($this->lMargin, $y, $this->_printWidth, $this->_footerHeight);
+        $deltaX = $this->lMargin - $pageX * $this->_printWidth;
+        $deltaY = $pageY * $this->_printHeight - $y;
+        $this->SetCoordinate($deltaX, $deltaY);
+        $this->_out($this->_reportPages[$pageY]['Foot']);
+        $this->RemoveCoordinate();
+        $this->RemoveClipping();
       }
     } 
   }  
