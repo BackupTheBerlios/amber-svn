@@ -31,7 +31,8 @@ class Section
   var $_onPrintFunc;  //Function to call after opening the section, but before any controls are printed. only Set iff present
   var $_parent;   //The Report
   var $_PagePart; //'Head', 'Foot', ''
-
+  var $_Aggregates; // Collected Aggregates
+  
   //////////////////////////////////////////////////////////////////
   // PUBLIC METHODS
   //////////////////////////////////////////////////////////////////
@@ -226,7 +227,7 @@ class Section
   }
 
   /**
-   * @access private
+   * @access public
    */
   function _resetRunningSum()
   {
@@ -239,6 +240,33 @@ class Section
       }
     }
   }
+
+
+  /**
+   * @access public
+   * @param string type of Aggregate-Object to create (sum, avg, ...)
+   * @return object 
+   */
+  function &createAggregate($type)
+  { 
+    $agg =& AggregateFactory::create($type);
+    $this->Aggregates[] =& $agg;
+    return $agg; 
+  }
+
+  /**
+   * @access public
+   */
+  function _resetAggregate()
+  {
+    if (is_array($this->Aggregates)) {
+      $keys = array_keys($this->Aggregates);
+      foreach($keys as $key) {
+        $this->Aggregates[$key]->reset();
+      }
+    }
+  }
+
 
   /**
    * @access protected

@@ -17,6 +17,9 @@ require_once 'Exporter/ExporterFactory.php';
 require_once 'Controls/ControlFactory.php';
 require_once 'AmberReport_UserFunctions.php';
 require_once 'quicksort.php';
+require_once 'Aggregate.php';
+require_once 'AggregateFactory.php';
+
 require_once 'basic.php';
 require_once 'misc.php';
 
@@ -59,7 +62,8 @@ class Report extends AmberObject
 
   var $Controls;      //List of all Controls
   var $ControlValues; // ControlValues[Name] is shortcut for Controls[Name]->Value
-
+  var $Sections;      // List of all Sections, indexed by their Name
+  
   var $Cols;
 
   //////////////////////////////////////////////////////////////////
@@ -192,9 +196,11 @@ class Report extends AmberObject
     foreach ($sections as $secName) {
       if (isset($xml[$secName])) {
         $this->$secName =& new Section($secName);
+        $this->Sections[$secName] =& $this->$secName;
         $this->$secName->load($this, $xml[$secName]);
       } else {
         $this->$secName =& new SectionNull($secName);
+        $this->Sections[$secName] =& $this->$secName;
         $this->$secName->load($this, array());
       }
     }
@@ -209,6 +215,7 @@ class Report extends AmberObject
           $t =& $this->$groupSecName; // reference to array
           $t[$i] =& new GroupSection($groupSecName);
           $t[$i]->load($this, $sectionXML);
+          $this->Sections[$t[$i]->Name] =& $t[$i];
         }
       }
     }
@@ -303,6 +310,7 @@ class Report extends AmberObject
           } else {
             $level = $this->_getGroupLevel($this->Cols, $oldRow);
             $this->_printNormalGroupFooters($maxLevel, $level);
+            $this->_resetAggregate($maxLevel, $level);
           }
 
           // Evaluate Expressions
@@ -752,6 +760,43 @@ class Report extends AmberObject
     }
 
     $this->Detail->_RunningSum();
+  }
+  
+  /**
+   * @access public
+   * @param string type name (sum, avg, count etc.)
+   * @param string section name 
+   * @return Object 
+   */
+  function &createAggregate($type, $sectionName)
+  {
+    if (isset($this->Sections[$sectionName])) {
+      return $this->Sections[$sectionName]->createAggregate($type);
+    } else {
+      Amber::showError('Error', 'Section "' . $sectionName . "\" not found. Valid section names are:\n" . implode(', ', array_keys($this->Sections)));
+    } 
+  }
+
+  /**
+   * @access protected
+   * @param int
+   * @param int
+   */
+  function _resetAggregate($maxLevel, $level)
+  {
+    for ($i = $level; $i < $maxLevel; $i++) {
+      if (isset($this->GroupHeaders[$i])) {
+        $this->GroupHeaders[$i]->_resetAggregate();
+      }
+    }
+
+    for ($i = $level; $i < $maxLevel; $i++) {
+      if (isset($this->GroupFooters[$i])) {
+        $this->GroupFooters[$i]->_resetAggregate();
+      }
+    }
+
+    $this->Detail->_resetAggregate();
   }
   
   /**
