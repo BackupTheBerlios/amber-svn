@@ -9,6 +9,7 @@
 
 ControlFactory::register('100', 'Label');
 ControlFactory::register('101', 'Rectangle');
+ControlFactory::register('102', 'Dummy'); // Line
 //ControlFactory::register('104', 'CommandButton');
 ControlFactory::register('106', 'CheckBox');
 ControlFactory::register('109', 'TextBox');
@@ -448,7 +449,7 @@ class SubReport extends Control
   }
 
   var $report;
-  function printNormal()
+  function printNormal(&$buffer)
   {
     if (!$this->SourceObject) {
       $this->_exporter->printNormal($this, $buffer, '');
@@ -457,13 +458,16 @@ class SubReport extends Control
 
     if (!$this->report) {
       $amber =& Amber::getInstance();
-      $this->report =& $amber->OpenReport($this->SourceObject);
+      ob_start();
+      $amber->OpenReport($this->SourceObject, AC_NORMAL, '', 'typo3');
+      $buffer .= ob_get_contents();
+      ob_end_clean();
     }
 
     # $this->report->setFilter(....)
     # $this->_exporter->printSubReport().....
 
-    $this->_exporter->printNormal($this, $buffer, $this->Name);
+    //$this->_exporter->printNormal($this, $buffer, $this->Name);
     return $this->stdHeight(); ##FIX ME: actual height
   }
 
@@ -504,12 +508,16 @@ class ComboBox extends Control
   {
     $this->_doQuery();
     $this->_exporter->printNormal($this, $buffer, $this->_data);
+
+    return $this->stdHeight(); ##FIX ME: actual height
   }
 
   function printDesign(&$buffer)
   {
     $this->_doQuery();
     $this->_exporter->printDesign($this, $buffer, $this->_data);
+
+    return $this->stdHeight(); ##FIX ME: actual height
   }
 
   function requery()
@@ -560,13 +568,13 @@ class CheckBox extends Control
   function Checkbox($hReport)
   {
     parent::Control($hReport);
-    
+
     $newProperties =
       array(
         'ControlSource'   => '',
         'HideDuplicates' => false
       );
-      
+
     $this->_registerProperties($newProperties);
   }
 

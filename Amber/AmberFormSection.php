@@ -79,14 +79,13 @@ class AmberFormSection
    */
   function _startSection(&$buffer)
   {
-    echo '<Amber:section>';
-    //$exporter =& $this->_parent->_exporter;
-    /*if ((!$this->_PagePart) && (!$exporter->DesignMode)) {
+    $exporter =& $this->_parent->_exporter;
+    if ((!$this->_PagePart) && (!$exporter->DesignMode)) {
       if (($this->ForceNewPage == 1) || ($this->ForceNewPage == 3)) {
-        $exporter->newPage();
+        //$exporter->newPage();
       }
-    }*/
-    //$exporter->startSection($this, $this->_parent->Width, $buffer);
+    }
+    $exporter->startSection($this, $this->_parent->Width, $buffer);
   }
 
   /**
@@ -94,14 +93,13 @@ class AmberFormSection
    */
   function _endSection($height, &$buffer)
   {
-    echo '</Amber:section>';
-    /*$exporter =& $this->_parent->_exporter;
+    $exporter =& $this->_parent->_exporter;
     $exporter->endSection($this, $height, $buffer);
     if ((!$this->_PagePart) && (!$exporter->DesignMode)) {
       if (($this->ForceNewPage == 2) || ($this->ForceNewPage == 3)) {
-        $exporter->newPage();
+        //$exporter->newPage();
       }
-    }*/
+    }
   }
 }
 

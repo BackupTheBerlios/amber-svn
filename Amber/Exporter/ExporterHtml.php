@@ -55,10 +55,11 @@ class ExporterHtml extends Exporter
 
     echo $tmp;
   }
-  
+
   function getReportCssStyles(&$report, $cssClassPrefix)
   {
     $this->cssClassPrefix = $cssClassPrefix;
+
     if (is_array($report->Controls)) {
       $css = '';
       foreach ($report->Controls as $ctrl) {
@@ -68,12 +69,14 @@ class ExporterHtml extends Exporter
         if ($ctrl->ControlType == 112) {      //subreport XXX FIX THIS: direct reference to Controltype!!!!!
 
           #ooops: $ctrl->report isn't set yet! (gets opened with ctrl->printNormal, when the control is actually printed)
-          $css .= $ctrl->report->_exporter->getReportCssStyles($ctrl->report, $ctrl->report->EventProcPrefix);
+          //$css .= $ctrl->report->_exporter->getReportCssStyles($ctrl->report, $ctrl->report->EventProcPrefix);
         }
       }
     }
+
+
     return $css;
-  }  
+  }
 
   function endReport(&$report)
   {
@@ -349,7 +352,7 @@ class ExporterHtml extends Exporter
    * @access private
    * @param obj Control
    * @param string prefix
-   * @return string  The control's default properies as CSS definition 
+   * @return string  The control's default properies as CSS definition
    */
 
   function getCssStyle(&$control, $prefix)
@@ -673,7 +676,7 @@ class ComboBoxExporterHtml extends ControlExporterHtml
     }
     $out .= "</select>\n";
 
-    echo $out;
+    return $out;
   }
 }
 

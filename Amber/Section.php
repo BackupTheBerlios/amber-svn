@@ -20,9 +20,9 @@ class Section
   var $ForceNewPage = 0;
   var $Controls;
 
-  
+
   var $printed;               // set by printNormal: section got printed (or not...)
-  
+
   //////////////////////////////////////////////////////////////////
   // PRIVATE PROPERTIES
   //////////////////////////////////////////////////////////////////

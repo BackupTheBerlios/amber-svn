@@ -91,7 +91,7 @@ class ObjectLoaderDb extends ObjectLoader
   var $_data;
   var $sysTable = 'tx_amber_sys_objects';
 
-  function setDatabase($db)
+  function setDatabase(&$db)
   {
     if (!is_object($db)) {
       $this->_lastError = 'Parameter given is not an ADODB database object';
@@ -178,9 +178,9 @@ class ObjectLoaderDb extends ObjectLoader
     }
     $sql .= ' type=' . $this->objectTypes[$type];
 
-    $rs = $this->_db->Execute($sql);
+    $rs =& $this->_db->Execute($sql);
     if (!$rs) {
-      $this->_lastError = 'Query failed: "' . $sql . '"';
+      $this->_lastError = 'Query failed: "' . $sql . '", ErrorMsg: ' . $this->_db->ErrorMsg();
       return false;
     }
 

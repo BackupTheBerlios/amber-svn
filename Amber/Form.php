@@ -97,21 +97,18 @@ class Form extends AmberObject
    * @access private
    */
   function _startForm(){
-    /*if (isset($this->_exporter)) {
+    if (isset($this->_exporter)) {
       $this->_exporter->startReport($this);
-    }*/
-
-    echo '<form>';
+    }
   }
 
   /**
    * @access private
    */
   function _endForm(){
-    /*if (isset($this->_exporter)) {
+    if (isset($this->_exporter)) {
       $this->_exporter->endReport($this);
-    }*/
-    echo '</form>';
+    }
   }
 
   /**
@@ -120,7 +117,16 @@ class Form extends AmberObject
    */
   function _printNormalSection($sectionName)
   {
-    $this->$sectionName->printNormal();
+    $sec =& $this->$sectionName;
+    if (isset($sec)) {
+      $this->$sectionName->printNormal();
+    }
+  }
+
+  function OnPage()
+  {
+    // NewPage is executed; gets only called from class pdage...
+    //$this->_Code->Report_Page($this);
   }
 }
 

@@ -31,7 +31,6 @@ class ExporterTypo3 extends ExporterHtml
     $uniqueId = 'AmberReport' . mt_rand();
 
     // General styles
-    Amber::showError('info', $this->getUserAgent());
     if ($this->getUserAgent() == 'msie') {
       $generalCSS = ".AmberReport { position: absolute; }\n";
     } else {

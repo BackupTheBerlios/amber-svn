@@ -64,7 +64,7 @@ class Amber
     if (!isset($amber->_db)) {
       $dbCfg =& $amber->_config->database;
       $db =& ADONewConnection($dbCfg['driver']);
-      $conResult = @$db->Connect($dbCfg['host'], $dbCfg['username'], $dbCfg['password'], $dbCfg['dbname']);
+      $conResult = @$db->NConnect($dbCfg['host'], $dbCfg['username'], $dbCfg['password'], $dbCfg['dbname']);
       $db->SetFetchMode(ADODB_FETCH_ASSOC);
       if ($conResult == false) {
         Amber::showError('Database Error '  . $db->ErrorNo(), $db->ErrorMsg());
@@ -83,7 +83,7 @@ class Amber
     if (!isset($amber->_sysdb)) {
       $sysdbCfg =& $amber->_config->getSysDbConfig();
       $sysdb =& ADONewConnection($sysdbCfg['driver']);
-      $conResult = @$sysdb->Connect($sysdbCfg['host'], $sysdbCfg['username'], $sysdbCfg['password'], $sysdbCfg['dbname']);
+      $conResult = @$sysdb->NConnect($sysdbCfg['host'], $sysdbCfg['username'], $sysdbCfg['password'], $sysdbCfg['dbname']);
       $sysdb->SetFetchMode(ADODB_FETCH_ASSOC);
       if ($conResult == false) {
         Amber::showError('Database Error '  . $sysdb->ErrorNo(), $sysdb->ErrorMsg());
