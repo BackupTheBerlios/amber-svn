@@ -199,7 +199,7 @@ class ExporterFPdf extends Exporter
   }
 
 
-  
+
   function printBox(&$para)
   {
     if ($para->italic) {
@@ -212,7 +212,7 @@ class ExporterFPdf extends Exporter
       $fstyle .= 'U';
     }
     $para->font = strtolower($para->font);
-    
+
     //echo "'".$control->FontName."' => '".$this->_fontList[$control->FontName]."'<br>";
     $this->_pdf->SetFont($this->_fontList[$para->font], $fstyle, $para->fsize);
 
@@ -240,14 +240,14 @@ class ExporterFPdf extends Exporter
     $type = strtolower(get_class($control));
     #echo $type;
     if ($type == 'checkbox') {
-      return $this->printNormalCheckBox(&$control, &$buffer, $content);
-    } 
-    #$content = $type; 
+      return $this->printNormalCheckBox($control, $buffer, $content);
+    }
+    #$content = $type;
     if (!$control->isVisible()) {
       return;
     }
     $para = new printBoxparameter;
-    
+
     $para->italic = $control->FontItalic;
     $para->bold  = ($control->FontWeight >= 600);
     $para->underline = $control->FontUnderline;
@@ -261,26 +261,26 @@ class ExporterFPdf extends Exporter
     $para->height = $control->Height;
     $para->backstyle= $control->BackStyle;
 
-    $para->content = $content;        
+    $para->content = $content;
     $para->forecolor = $control->ForeColor;
     $para->backcolor = $control->BackColor;
-    
+
     $para->borderstyle = $control->BorderStyle;
     $para->bordercolor = $control->Bordercolor;
     $para->borderwidth = $control->BorderWidth * 20;
-    
+
     $this->printBox($para);
   }
 
 
-  
+
   function printNormalCheckBox(&$control, &$buffer, $content)
   {
     if (!$control->isVisible()) {
       return;
     }
     $para = new printBoxparameter;
-    
+
     #$para->italic = false;
     $para->bold  = true;
     #$para->underline = false;
@@ -294,8 +294,8 @@ class ExporterFPdf extends Exporter
     $para->height = 11 * 15;
 
     $para->content = $content;
-    
-            
+
+
     $para->backstyle = 1;
     if ($content === 0) {
       $para->content = '';
@@ -307,15 +307,15 @@ class ExporterFPdf extends Exporter
       $para->content = '';
       $para->backcolor = 0xCCCCCC;
     }
-           
+
     $para->forecolor = 0;
     $para->borderstyle = 1;
     $para->bordercolor = 0;
     $para->borderwidth = 20;
-    
+
     $this->printBox($para);
  }
-  
+
   function printDesign(&$control, &$buffer, $content)
   {
     $this->printNormal($control, $buffer, $content);
@@ -391,7 +391,7 @@ class ExporterFPdf extends Exporter
  *  parameter class for exporterFPdf's printBox
  */
 
-  class printBoxParameter 
+  class printBoxParameter
   {
     var $content;               // the content to display
 
@@ -407,10 +407,10 @@ class ExporterFPdf extends Exporter
     var $italic = false;        // bool: italics
     var $bold = false;          // bool: bold
     var $underline = false;     // bool: underline
-    
+
     var $backstyle = 1;         // 0 - background transparent, 1 - use backgroundcolor
     var $backcolor = 0;         // background color in rgb
-    
+
     var $borderstyle = 1;       // 0 - border transparent, 1 - use bordercolor
     var $bordercolor = 0;       // border color in rgb
     var $borderwidth = 0;       // border width in pt ***** *20
