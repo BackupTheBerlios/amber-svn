@@ -748,7 +748,6 @@ class Report extends AmberObject
 
   function _setDesignMode($value)
   {
-    $this->setNoAutoPage($value);
     $this->setNoHeadFoot($value);
     $this->ignoreOnPrint = $value;
     $this->ignoreKeepTogether = $value;

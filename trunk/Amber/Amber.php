@@ -163,10 +163,13 @@ class Amber
 
   /**
    * @static
+   * @param string
+   * @param
+   * @param string
+   * @param string
+   * @param bool
    * @access public
-   * @return ADOConnection Connection to database containing the table where the report definitions are stored
-   * or null if Amber has not been configured to use a system database
-   */ 
+   */
   function OpenReport($reportName, $mode = AC_NORMAL, $where = '', $type = 'html', $noMargin = false)
   {
     $mgr =& $this->getObjectManager();
@@ -291,7 +294,7 @@ class Amber
 
   /**
    * @static
-   * @access protected
+   * @access public
    * @param string
    * @param string
    * @param bool If set to true the output will be returned as string, otherwise it will be echoed

@@ -3,16 +3,17 @@
 /**
  *
  * @package PHPReport
- * @subpackage ObjectHandler
+ * @subpackage ReportEngine
  *
  */
 
 /**
- *
- * @package PHPReport
- * @subpackage ObjectHandler
  * Singleton ObjectHandler: reference objects by handle instead direct ref
  * This avoids weird dumps of circular references
+ *
+ * @package PHPReport
+ * @subpackage ReportEngine
+ * 
  */
 class ObjectHandler
 {
@@ -34,7 +35,7 @@ class ObjectHandler
   /**
    *
    * @access public
-   * @param  &object object to register
+   * @param  mixed object to register
    * @return integer handle of registered object
    *
    */
@@ -50,7 +51,7 @@ class ObjectHandler
    *
    * @access public
    * @param  integer handle of object to return
-   * @return &object
+   * @return mixed
    *
    */
   function &getObject($handle)
@@ -69,6 +70,12 @@ class ObjectHandler
   // PRIVATE METHODS
   //////////////////////////////////////////////////////////////////
 
+  /**
+   *
+   * @access private
+   * @return ObjectHandler
+   *
+   */
   function &getInstance()
   {
     static $instance = null;

@@ -1,7 +1,20 @@
 <?php
 
+/**
+*
+* @package PHPReport
+* @subpackage ReportEngine
+*
+*/
+
 require_once 'AmberConfig.php';
 
+/**
+*
+* @package PHPReport
+* @subpackage ReportEngine
+*
+*/
 class AmberObject
 {
   var $_globalConfig;
