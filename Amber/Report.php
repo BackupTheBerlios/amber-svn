@@ -332,7 +332,8 @@ class Report extends AmberObject
    * @access private
    *
    */
-  function _makeSqlFilter($sql, $filter) {
+  function _makeSqlFilter($sql, $filter)
+  {
     $parser = new SimpleSelectParser($sql);
     $sqlParts = $parser->parse();
     if ($sqlParts == false) {
@@ -345,7 +346,7 @@ class Report extends AmberObject
       if ($sqlParts['where'] == '') {
         $sqlParts['where'] = $filter;
       } else {
-        $sqlParts['where'] = '(' . $sqlParts['where'] .') AND (' . $filter . ')';
+        $sqlParts['where'] = '(' . $sqlParts['where'] . ') AND (' . $filter . ')';
       }
     }
 
@@ -387,7 +388,8 @@ class Report extends AmberObject
   /**
    * @access private
    */
-  function _startReport($isSubreport){
+  function _startReport($isSubreport)
+  {
     if (isset($this->_exporter)) {
       $this->_exporter->startReport($this, $isSubreport);
     }
@@ -396,7 +398,8 @@ class Report extends AmberObject
   /**
    * @access private
    */
-  function _endReport(){
+  function _endReport()
+  {
     if (isset($this->_exporter)) {
       $this->_exporter->endReport($this);
     }
@@ -405,7 +408,8 @@ class Report extends AmberObject
   /**
    * @access private
    */
-  function _setHasData(){
+  function _setHasData()
+  {
     if (is_null($this->RecordSource)) {
       $this->HasData = -1;
     } elseif (!is_array($this->_data)) {
@@ -438,7 +442,6 @@ class Report extends AmberObject
         }
       }
     }
-    //Amber::showError('test', Amber::dump($this->Controls, true));
   }
 
   /**

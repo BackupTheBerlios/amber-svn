@@ -57,7 +57,7 @@ class Amber
     return $instance;
   }
 
-  function currentDb()
+  function &currentDb()
   {
     $amber =& Amber::getInstance();
 
@@ -84,7 +84,7 @@ class Amber
     return $amber->_db;
   }
 
-  function sysDb()
+  function &sysDb()
   {
     $amber =& Amber::getInstance();
 

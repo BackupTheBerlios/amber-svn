@@ -453,7 +453,7 @@ class SubReport extends Control
   function printNormal(&$buffer)
   {
     if (!$this->SourceObject) {
-      $this->_exporter->printNormal($this, $buffer, 'Ungebunden');
+      $this->_exporter->printNormal($this, $buffer, '');
       return $this->stdHeight(); ##FIX ME: actual height
     }
 
@@ -476,6 +476,13 @@ class SubReport extends Control
     foreach ($linkChild as $idx => $lc) {
       $propName = $linkMaster[$idx];
       $rep =& ObjectHandler::getObject($this->_hReport);
+      // FIXME:
+      // - filter value has to be handled according to it's type
+      //   We need to have the recordset instead of a plain array here
+      if (!isset($rep->Cols[$propName])) {
+        Amber::showError('Error', 'LinkMasterField "' . htmlspecialchars($propName) . '" does not exist.');
+        die();
+      }
       $reportFilterArray[] = $lc . '=' . $rep->Cols[$propName];
     }
     $this->_subReport->Filter = implode(' AND ', $reportFilterArray);
