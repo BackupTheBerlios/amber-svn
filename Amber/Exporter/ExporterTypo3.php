@@ -30,7 +30,7 @@ class ExporterTypo3 extends ExporterHtml
     if (is_array($report->Controls)) {
       foreach ($report->Controls as $ctrl) {
         $ctrl->_exporter->_saveStdValues($ctrl);
-        $ret .= $this->getCssStyle($ctrl) . "\n";
+        $ret .= $this->getCssStyle($ctrl, $this->cssClassPrefix) . "\n";
       }
     }
 

@@ -21,8 +21,10 @@ class ExporterHtml extends Exporter
 {
 
   var $type = 'html';
+  var $cssClassPrefix = 's';
   var $_pageNo = 1;
   var $_blankPage;
+
 
   var $_CtrlStdValues;
 
@@ -38,20 +40,20 @@ class ExporterHtml extends Exporter
     if (!$this->_asSubreport) {
       $ret = "<html>\n<head>\n";
       $ret .= "\t<title>" . $this->_docTitle . "</title>\n";
-    }  
+    }
     $ret .= "\t<style type=\"text/css\">\n";
     if (is_array($report->Controls)) {
       foreach ($report->Controls as $ctrl) {
         $ctrl->_exporter->_saveStdValues($ctrl);
-        $ret .= $this->getCssStyle($ctrl) . "\n";
+        $ret .= $this->getCssStyle($ctrl, $this->cssClassPrefix) . "\n";
       }
     }
     $ret .= "</style>\n";
-    
+
     if (!$this->_asSubreport) {
       $ret .= "</head>\n";
       $ret .= "<body style=\"background-color: #aaaaaa;\">\n";
-    }  
+    }
     echo $ret;
   }
 
@@ -60,7 +62,7 @@ class ExporterHtml extends Exporter
     parent::endReport($report);
     if (!$this->_asSubreport) {
       echo "</body>\n</html>\n";
-    }  
+    }
   }
 
   // Section - html
@@ -213,6 +215,7 @@ class ExporterHtml extends Exporter
     }
     $objName = $classList[$type];
     $ctrl->_exporter =& new $objName;
+    $ctrl->_exporter->cssClassPrefix = $this->cssClassPrefix;
   }
 
   // Helper functions - html
@@ -245,12 +248,13 @@ class ExporterHtml extends Exporter
 
   // Local functions
 
-  function getCssStyle(&$control)
+  function getCssStyle(&$control, $prefix)
   {
 #    $control->Properties['isVisible'] = $control->isVisible();
     $control->Properties['isVisible'] = $control->Properties['Visible'];
     $nil = array('ForeColor' => 16777216, 'BackColor' => 16777216, 'BorderColor' => 16777216, 'BorderWidth' => -9999); // illegal values
-    return '.s' . $control->id . "\t/* " . $control->Name . ' */ { position: absolute; overflow:hidden; ' . $control->_exporter->getStyle($control, $control->Properties, $nil) . '}';
+    $cssClassName = '.' . $prefix . $control->id;
+    return $cssClassName . "\t/* " . $control->Name . ' */ { position: absolute; overflow:hidden; ' . $control->_exporter->getStyle($control, $control->Properties, $nil) . '}';
   }
 }
 
@@ -263,6 +267,7 @@ class ExporterHtml extends Exporter
 Class ControlExporterHtml
 {
   var $_stdValues;
+
   function _saveStdValues(&$ctrl)
   {
     // Attributwerte als Standard sichern
@@ -283,10 +288,10 @@ Class ControlExporterHtml
     $this->printNormal($control, $buffer, $content);
   }
 
-  function getTag(&$control, $value=Null)
+  function getTag(&$control, $value = null)
   {
-    //$out =  "\t\t<!-- " . $control->Name . " --><div class=\"s" . $control->id . '"';
-    $out =  "\t\t<div class=\"s" . $control->id . '"';
+    $cssClassName = $this->cssClassPrefix . $control->id;
+    $out =  "\t\t<div class=\"" . $cssClassName . '"';
 
     $this->_stdValues['Value'] =  $control->Properties['Value'];
     $control->Properties['isVisible'] = $control->isVisible();
