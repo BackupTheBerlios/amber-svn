@@ -46,17 +46,19 @@ class Control
       '_OldValue' => ''
     );
   var $_exporter;
+  var $_hReport;
 
   /**
   *
   * @access public
   *
   */
-  function Control()
+  function Control($hReport)
   {
     static $id = 0;
 
     $this->id = $id++;
+    $this->_hReport = $hReport;
 
     // "Connect" class attributes with properties array
     foreach (array_keys($this->Properties) as $key) {
@@ -196,9 +198,9 @@ class Control
 class Rectangle extends Control
 {
 
-  function Rectangle()
+  function Rectangle($hReport)
   {
-    parent::Control();
+    parent::Control($hReport);
   }
 
   function printNormal(&$buffer)
@@ -257,9 +259,9 @@ class FontBox extends Control
   * @access public
   *
   */
-  function FontBox()
+  function FontBox($hReport)
   {
-    parent::Control();
+    parent::Control($hReport);
 
     $newProperties = array(
       'ForeColor' => 0,
@@ -306,9 +308,9 @@ class TextBox extends FontBox
   * @access public
   *
   */
-  function TextBox()
+  function TextBox($hReport)
   {
-    parent::FontBox();
+    parent::FontBox($hReport);
 
     $newProperties =
       array(
@@ -379,9 +381,9 @@ class Label extends FontBox
   * @access public
   *
   */
-  function Label()
+  function Label($hReport)
   {
-    parent::FontBox();
+    parent::FontBox($hReport);
 
     $extProperties = array(
       'Caption' => ''
@@ -430,9 +432,9 @@ class SubReport extends Control
   * @access public
   *
   */
-  function SubReport()
+  function SubReport($hReport)
   {
-    parent::Control();
+    parent::Control($hReport);
 
     $newProperties =
       array(
@@ -455,7 +457,6 @@ class SubReport extends Control
 
     if (!$this->report) {
       $amber =& Amber::getInstance();
-      #$this->report = $this->_parent->....  // make a copy of the report
       $this->report =& $amber->OpenReport($this->SourceObject);
     }
 
@@ -486,9 +487,9 @@ class ComboBox extends Control
   * @access public
   *
   */
-  function ComboBox()
+  function ComboBox($hReport)
   {
-    parent::Control();
+    parent::Control($hReport);
 
     $newProperties =
       array(
@@ -556,9 +557,9 @@ class Dummy extends Control
   * @access public
   *
   */
-  function Dummy()
+  function Dummy($hReport)
   {
-    parent::Control();
+    parent::Control($hReport);
   }
 
   function printNormal(&$buffer)

@@ -17,6 +17,7 @@ require_once 'Exporter/ExporterFactory.php';
 require_once 'Controls/ControlFactory.php';
 require_once 'phpReport_UserFunctions.php';
 require_once 'basic.php';
+require_once 'ObjectHandler.php';
 
 /**
  *
@@ -107,7 +108,7 @@ class Report extends AmberObject
   function initialize(&$data)
   {
     $this->Name = $data['name'];
-
+    $this->hReport = objectHandler::getHandle($this);
     $res =& XMLLoader::_makeXMLTree($data['design']);
     $xml = $res['report'];
 
