@@ -69,6 +69,15 @@ class reportBuff
   var $actpageNo;      // pageNumber
   var $sectionType;    // 'Head', 'Foot' or ''
   
+  var $pageLayout;
+  
+  var $posY;
+  
+  function reportBuff($layout)
+  {
+    $this->actpageNo = -1;
+    $this->layout = $layout; 
+  }
   
   function out(&$s)
   {
@@ -108,15 +117,11 @@ class ExporterFPdf extends Exporter
     if ($this->_asSubreport) {
       $this->_pdf->startSubReport();
     } else {  
-      $this->_pdf->SetCompression(false);
       $this->layout->rightMargin = $report->RightMargin;
       $this->layout->leftMargin = $report->LeftMargin;
       $this->layout->topMargin = $report->TopMargin;
 
       $this->layout->bottomMargin = $report->BottomMargin;
-      $this->reportBuff =& new reportBuff();
-      $this->_pdf->reportBuff =& $this->reportBuff;
-      $this->_pdf->reportBuff->actpageNo = -1;
       if ($this->DesignMode) {
         $this->layout->pageHeaderHeight = 0;
         $this->layout->pageFooterHeight = 0;
@@ -125,8 +130,9 @@ class ExporterFPdf extends Exporter
         $this->layout->pageFooterHeight = $report->PageFooter->Height;
       }
       $this->layout->calcPrintableArea();
+      $this->reportBuff =& new reportBuff($this->layout);
       $this->_pdf->init($this, $report->Width, $this->layout);
-      $this->_pdf->StartReportBuffering();
+      $this->_pdf->StartReportBuffering($this->reportBuff);
     }
   }
   

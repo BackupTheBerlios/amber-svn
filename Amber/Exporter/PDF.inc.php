@@ -84,13 +84,14 @@ class PDF extends FPDF
     }
   }
   
-  function startReportBuffering()
+  function startReportBuffering(&$reportBuff)
   {
     if ($this->_inReport) {
       Amber::showError('Error', 'startReport: a report is already started!');
       die();
     }  
     $this->_inReport = true;
+    $this->reportBuff =& $reportBuff;
   }
 
   function endReportBuffering()
@@ -258,10 +259,7 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
   {
     $this->_exporter =& $exporter;
     $this->layout = $layout;
-#    $this->_headerHeight = $layout->pageHeaderHeight;
-#    $this->_footerHeight = $layout->pageFooterHeight;
-#    $this->_printWidth  = $layout->printWidth;
-#    $this->_printHeight = $layout->printHeight;
+    $this->SetCompression(false);
     $this->_reportWidth = $width;
     $this->_posY = 0;
 
