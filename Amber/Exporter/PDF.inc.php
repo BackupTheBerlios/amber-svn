@@ -19,9 +19,9 @@ class PDF extends FPDF
   var $_inSubReport;    // integer index to subReportBuff
   var $_subReportBuff;  //
   var $_sectionBuff;    // array buffer for sections (to make sections re-entrand)
-  var $_reportPages;    // buffer when inReport
-  var $_actPageNo;      // pageNumber
-  var $_sectionType;    // 'Head', 'Foot' or ''
+#  var $reportBuff->reportPages;    // buffer when inReport
+#  var $reportBuff->actpageNo;      // pageNumber
+#  var $reportBuff->sectionType;    // 'Head', 'Foot' or ''
 
 
   //////////////////////////////////////////////////////////////////////////
@@ -29,10 +29,10 @@ class PDF extends FPDF
   // startReport / endReport 
   //
   // inside a report the FPDF's output gets cached in 
-  //      $this->_reportPages[$this->_actPageNo][$this->_sectionType]
+  //      $this->reportBuff->_reportPages[$this->reportBuff->actpageNo][$this->reportBuff->sectionType]
   // where 
-  //      $this->_actPageNo     is the current page number and
-  //      $this->_sectionType   is 'Head' for page header, 'Foot' for page footer or '' for page body
+  //      $this->reportBuff->actpageNo     is the current page number and
+  //      $this->reportBuff->sectionType   is 'Head' for page header, 'Foot' for page footer or '' for page body
   //
   // when the report ends, the output is processed and possible divided horizontal
   // among several pages, if the report is wider than one page
@@ -43,24 +43,24 @@ class PDF extends FPDF
 
   function page()
   {
-    return $this->_actPageNo + 1;
+    return $this->reportBuff->actpageNo + 1;
   }
 
   function newPage()
   {
-    $this->_posY = ($this->_actPageNo + 1) * $this->layout->printHeight;
+    $this->_posY = ($this->reportBuff->actpageNo + 1) * $this->layout->printHeight;
   }
 
   function pageHeaderEnd()
   {
-   $this->_sectionType = 'Head';
-   $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->layout->printHeight, $this->layout->pageHeaderHeight);
+   $this->reportBuff->sectionType = 'Head';
+   $this->_pageHeaderOrFooterEnd($this->reportBuff->actpageNo * $this->layout->printHeight, $this->layout->pageHeaderHeight);
   }
 
   function pageFooterEnd()
   {
-    $this->_sectionType = 'Foot';
-    $this->_pageHeaderOrFooterEnd($this->_actPageNo * $this->layout->printHeight, $this->layout->pageFooterHeight);
+    $this->reportBuff->sectionType = 'Foot';
+    $this->_pageHeaderOrFooterEnd($this->reportBuff->actpageNo * $this->layout->printHeight, $this->layout->pageFooterHeight);
   }
 
         
@@ -87,7 +87,7 @@ class PDF extends FPDF
     } elseif ($this->_inSubReport) {
       $this->_subReportBuff[$this->_inSubReport] .= $s . "\n";     
     } elseif ($this->_inReport) {
-      $this->_reportPages[$this->_actPageNo][$this->_sectionType] .= $s . "\n";
+      $this->reportBuff->reportPages[$this->reportBuff->actpageNo][$this->reportBuff->sectionType] .= $s . "\n";
     } else {
       parent::_out($s);
     }
@@ -155,14 +155,14 @@ class PDF extends FPDF
     }
 
     for ($page = $startPage; $page <= $endPage; $page++) {
-      if (($page <> $this->_actPageNo)) {
-        if ($this->_actPageNo >= 0) {
+      if (($page <> $this->reportBuff->actpageNo)) {
+        if ($this->reportBuff->actpageNo >= 0) {
           $this->_exporter->printPageFooter();
         }
-        $this->_actPageNo = $page;
+        $this->reportBuff->actpageNo = $page;
         $this->_exporter->printPageHeader();
       }
-      $this->_sectionType = '';
+      $this->reportBuff->sectionType = '';
       $this->outSection(0, $this->_posY, $this->_reportWidth, $sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
     }
     $this->_posY += $sectionHeight;
@@ -173,7 +173,7 @@ class PDF extends FPDF
     $this->_out("\n%end Subreport-Body-Section:" . ($this->_inSection) . "\n\n");
     $this->_inSection--;
 
-    $this->_sectionType = '';
+    $this->reportBuff->sectionType = '';
     $this->SetCoordinate(0, -$this->_posY);
     $this->SetClipping(0, 0, $this->_reportWidth, $sectionHeight);
 
@@ -439,8 +439,8 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
       $this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$this->PageNo());
     } else {
       if($y == -1)
-        $y = $this->_posY - ($this->_actPageNo * $this->layout->printHeight);
-      $p = $this->_actPageNo + 1;
+        $y = $this->_posY - ($this->reportBuff->actpageNo * $this->layout->printHeight);
+      $p = $this->reportBuff->actpageNo + 1;
       if ($p <= 0)
         $p = 1;
 
