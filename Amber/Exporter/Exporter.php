@@ -45,7 +45,7 @@ class Exporter
   function endReport(&$report)
   {
     $this->newPage();
-    Amber::dump('Exec time: ' . microtime_diff($this->_start, microtime()));
+    $this->dump('Exec time: ' . microtime_diff($this->_start, microtime()));
   }
 
   // Section

@@ -491,5 +491,3 @@ class PDF extends FPDF
 */
 
 }
-
-

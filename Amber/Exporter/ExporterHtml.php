@@ -106,7 +106,7 @@ class ExporterHtml extends Exporter
         $this->_posY += $this->_report->TopMargin;
         $this->_report->_printNormalSection('PageHeader'); // FIXME: this has to be done by the Report class!!!
       }
-    }  
+    }
     $buffer = null;
   }
 
@@ -145,13 +145,13 @@ class ExporterHtml extends Exporter
 
     if ($this->DesignMode) {
         $out .= $buffer;
-    } else {        
+    } else {
       $this->onPrint(&$cancel, 1);
       if (!$cancel) {
         $out .= $buffer;
-      }  
+      }
     }
-    
+
     if ($this->DesignMode) {
       $out .= "\t</div>\n";
     } else {
@@ -159,7 +159,7 @@ class ExporterHtml extends Exporter
     }
     echo $out;
     $this->_posY += $height;
-    parent::endSection($section, $height, $buffer);    
+    parent::endSection($section, $height, $buffer);
   }
 
   // Page handling - html

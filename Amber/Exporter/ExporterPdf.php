@@ -301,5 +301,3 @@ class ExporterFPdf extends Exporter
     }
   }
 }
-
-
