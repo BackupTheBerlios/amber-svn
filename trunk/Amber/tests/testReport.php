@@ -69,12 +69,12 @@ class testReport extends PHPUnit_TestCase
   function test_ReportRuns()
   {
     $amber =& $this->setAmberConfig();
-
+    $co = 'You need a report "Bericht1" in Your installation to run these tests successfully.';
     ob_start();
     $amber->OpenReport('Bericht1', AC_NORMAL, '', 'html');
     $s = trim(ob_get_contents());
     ob_end_clean();
-    $this->assertEquals('[<!DOCTYPE ]', "[" . substr($s, 0, 10) . "]",    'Test1a html, normal: <html> without leading stuff');
+    $this->assertEquals('[<!DOCTYPE ]', "[" . substr($s, 0, 10) . "]",    'Test1a html, normal: <html> without leading stuff' . "\n" . $co);
     $this->assertEquals("[</html>]", "[" . substr($s, -7) . "]",   'Test1b html, normal: </html>\n');
 
     ob_start();
@@ -88,14 +88,14 @@ class testReport extends PHPUnit_TestCase
     $amber->OpenReport('Bericht1', AC_NORMAL, '', 'testpdf');
     $s = ob_get_contents();
     ob_end_clean();
-    $this->assertEquals('[%PDF-]', "[" . substr($s, 0, 5) . "]",  'Test3a pdf, normal');
+    $this->assertEquals('[%PDF-1.3]', "[" . substr($s, 0, 8) . "]",  'Test3a pdf, normal');
     $this->assertEquals("[%%EOF\n]", "[" . substr($s, -6) . "]",     'Test3b pdf, normal');
 
     ob_start();
     $amber->OpenReport('Bericht1', AC_DESIGN, '', 'testpdf');
     $s = ob_get_contents();
     ob_end_clean();
-    $this->assertEquals('[%PDF-]', "[" . substr($s, 0, 5) . "]",  'Test4a pdf, Design');
+    $this->assertEquals('[%PDF-1.3]', "[" . substr($s, 0, 8) . "]",  'Test4a pdf, Design');
     $this->assertEquals("[%%EOF\n]", "[" . substr($s, -6) . "]",     'Test4b pdf, Design');
 
 
@@ -104,6 +104,9 @@ class testReport extends PHPUnit_TestCase
 
 $suite  = new PHPUnit_TestSuite("testReport");
 $result = PHPUnit::run($suite);
-echo $result->toHTML();
+$s = $result->toHTML();
+if (strpos($s, 'failed')) {
+   print $s;
+}   
 
 ?>

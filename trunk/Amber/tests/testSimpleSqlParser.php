@@ -98,7 +98,10 @@ class testSimpleSelectParser extends PHPUnit_TestCase
 
 $suite  = new PHPUnit_TestSuite("testSimpleSelectParser");
 $result = PHPUnit::run($suite);
-echo $result->toHTML();
+$s = $result->toHTML();
+if (strpos($s, 'failed')) {
+   print $s;
+}   
 
 ?>
 

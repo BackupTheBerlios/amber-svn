@@ -143,6 +143,9 @@ print "Test switched off for now"; return;
 
 $suite  = new PHPUnit_TestSuite("testReportConstant");
 $result = PHPUnit::run($suite);
-echo $result->toHTML();
+$s = $result->toHTML();
+if (strpos($s, 'failed')) {
+   print $s;
+}   
 
 ?>

@@ -354,9 +354,15 @@ class Basic_Format extends myTestCase
 
 $suite  = new PHPUnit_TestSuite("Basic_Format_internals");
 $result = PHPUnit::run($suite);
-echo $result -> toHTML();
+$s = $result->toHTML();
+if (strpos($s, 'failed')) {
+   print $s;
+}   
 
 $suite  = new PHPUnit_TestSuite("Basic_Format");
 $result = PHPUnit::run($suite);
-echo $result -> toHTML();
+$s = $result->toHTML();
+if (strpos($s, 'failed')) {
+   print $s;
+}   
 ?>

@@ -48,6 +48,15 @@ class testReports extends myTestCase
       ob_end_clean();
       $testClass->assertHtml($s);
     }
+
+    $report =& new ReportPaged();
+    $report->Name = $reportArray->Name;
+    $report->hReport = objectHandler::getHandle($report);
+    
+    $report->_Code =& $testClass;
+
+    $report->initialize_report($reportArray);
+
     if (method_exists($testClass, 'assertPdf')) {
       ob_start();
       $report->run('testpdf');

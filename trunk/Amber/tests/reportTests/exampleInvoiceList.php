@@ -13,17 +13,42 @@ class exampleInvoiceList extends AmberReport_UserFunctions
 // a simple report in the docu
 {
  
+  var $interfaceVersion = 3; //Do not change this
+
+  /***********************************
+   * Formulae from calculated fields 
+   ***********************************/
   function Report_EvaluateExpressions()
   {
-    $val =& $this->val;
-    $col =& $this->col;
+    $val  =& $this->val;  //access to control values with $val['Text1'], a shorthand for $this->Text1->Value
+    $col  =& $this->col;  //access to column values with $col['columnName']
 
-    $val['name'] = $col['firstname'] . ' ' . $col['lastname'];
-    $this->Text18->addValue($val['amount'], 'sum');        
-    $val['Text26'] = 'Page  ' . $this->Page();
+    $val['name'] = $col['firstname'] . " " . $col['lastname'];
+    $this->Text18->sum($val['amount']);
+print "###" . $val['amount'] . "->" . $val['Text18'] ."###\n";    
+    $val['Text26'] = "Page  " . $this->Page();
 
   }
-                       
+
+  function Report_CompareRows(&$rowA, &$rowB)
+  {
+    //to avoid extra sorting uncomment the following line (or delete this method alltogether)
+    # return 'dont sort me!';
+  
+    $a0 = $rowA['year'];
+    $b0 = $rowB['year'];
+    $ord0 =  1; //ascending
+
+    $a1 = $rowA['lastname'];
+    $b1 = $rowB['lastname'];
+    $ord1 =  1; //ascending
+
+    if     ($a0 > $b0) { return  $ord0;}
+    elseif ($a0 < $b0) { return -$ord0;}
+    elseif ($a1 > $b1) { return  $ord1;}
+    elseif ($a1 < $b1) { return -$ord1;}
+    else   { return  0;}
+  }
   
 //TEST  
   function assertHtml($html)
@@ -32,26 +57,41 @@ class exampleInvoiceList extends AmberReport_UserFunctions
     $id = get_class($this) . '->assertHtml'; 
     $test->assertContains('>Sample Company Ltd.<', $html, $id . ' Title');
     $test->assertContains('>Invoices<',            $html, $id . ' SubTitle');
+    $test->assertContains('>2001<',                $html, $id . ' GroupHeader');
     $test->assertContains('>Alice Anderson<',      $html, $id . ' Alice');
-    $test->assertContains('>Susan Smith<',         $html, $id . ' Susan');
-    $test->assertContains('>Page  1<',             $html, $id . ' Page');
+    $test->assertContains('>04.01.2002<',          $html, $id . ' billing date');
+    $test->assertContains('>321,82 ',              $html, $id . ' amount 321,82');
+    $test->assertContains('>1.475,08',             $html, $id . ' Sum1');
+    $test->assertContains('>1.542,35 ',            $html, $id . ' Sum2');
+    $test->assertContains('>1.237,55 ',            $html, $id . ' Sum3');
+    $test->assertContains('>489,59 ',              $html, $id . ' Sum4');
+    $test->assertContains('>Page  1<',             $html, $id . ' Page-1');
+    $test->assertContains('>Page  2<',             $html, $id . ' Page-2'); 
   }
   
   function assertPdf($html)
   {
     $test =& $this->test;
     $id = get_class($this) . '->assertPdf'; 
-    $test->assertContains('Sample Company Ltd.', $html, $id . ' Title');
-    $test->assertContains('Invoices',            $html, $id . ' SubTitle');
-    $test->assertContains('Alice Anderson',      $html, $id . ' Alice');
-    $test->assertContains('Susan Smith',         $html, $id . ' Susan');
-    $test->assertContains('Page  1',             $html, $id . ' Page');
+    $test->assertContains('(Sample Company Ltd.)', $html, $id . ' Title');
+    $test->assertContains('(Invoices)',            $html, $id . ' SubTitle');
+    $test->assertContains('(2001)',                $html, $id . ' GroupHeader');
+    $test->assertContains('(Alice Anderson)',      $html, $id . ' Alice');
+    $test->assertContains('(04.01.2002)',          $html, $id . ' billing date');
+    $test->assertContains('(998,00 ',              $html, $id . ' amount');
+    $test->assertContains('(1.475,08',            $html, $id . ' Sum1');
+    $test->assertContains('(1.542,35 ',           $html, $id . ' Sum2');
+    $test->assertContains('(1.237,55 ',           $html, $id . ' Sum3');
+    $test->assertContains('(489,59 ',             $html, $id . ' Sum4');
+    $test->assertContains('(Page  1)',             $html, $id . ' Page-1');
+    $test->assertContains('(Page  2)',             $html, $id . ' Page-2');
   }
   function getLayout()
   { $s = <<<EOD
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <report>
-    <RecordSource>SELECT customer.*, bill.* FROM customer INNER JOIN bill ON [customer].[id]=[bill].[customer]; </RecordSource>
+    <RecordSource>SELECT customer.*, bill.* FROM customer INNER JOIN bill ON [customer].[id]=[bill].[customer];</RecordSource>
+    <BorderStyle>2</BorderStyle>
     <Width>8844</Width>
     <Picture>(keines)</Picture>
     <PicturePages>0</PicturePages>
@@ -59,6 +99,7 @@ class exampleInvoiceList extends AmberReport_UserFunctions
     <Name>Invoice list</Name>
     <PictureData></PictureData>
     <PicturePalette></PicturePalette>
+    <Orientation>0</Orientation>
     <Printer>
         <BottomMargin>1417</BottomMargin>
         <ColorMode>1</ColorMode>
@@ -108,13 +149,13 @@ class exampleInvoiceList extends AmberReport_UserFunctions
                 <Name>Bezeichnungsfeld9</Name>
                 <ControlType>100</ControlType>
                 <Caption>Sample Company Ltd.</Caption>
-                <Left>0</Left>
+                <Left>-3</Left>
                 <Top>283</Top>
                 <Width>8835</Width>
                 <Height>615</Height>
                 <BackStyle>1</BackStyle>
                 <BackColor>6697881</BackColor>
-                <BorderStyle>1</BorderStyle>
+                <BorderStyle>0</BorderStyle>
                 <ForeColor>16777215</ForeColor>
                 <FontName>Arial</FontName>
                 <FontSize>24</FontSize>
@@ -160,6 +201,7 @@ class exampleInvoiceList extends AmberReport_UserFunctions
                 <Name>year</Name>
                 <ControlType>109</ControlType>
                 <ControlSource>year</ControlSource>
+                <IMESentenceMode>0</IMESentenceMode>
                 <Left>0</Left>
                 <Top>0</Top>
                 <Width>8841</Width>
@@ -266,13 +308,14 @@ class exampleInvoiceList extends AmberReport_UserFunctions
         <EventProcPrefix>Detailbereich</EventProcPrefix>
         <Name>Detailbereich</Name>
         <KeepTogether>-1</KeepTogether>
-        <Height>570</Height>
+        <Height>270</Height>
         <Controls>
             <item id="name">
                 <EventProcPrefix>name</EventProcPrefix>
                 <Name>name</Name>
                 <ControlType>109</ControlType>
                 <ControlSource>=[firstname] &amp; &quot; &quot; &amp; [lastname]</ControlSource>
+                <IMESentenceMode>0</IMESentenceMode>
                 <Left>1022</Left>
                 <Top>0</Top>
                 <Width>2766</Width>
@@ -291,6 +334,7 @@ class exampleInvoiceList extends AmberReport_UserFunctions
                 <Name>title</Name>
                 <ControlType>109</ControlType>
                 <ControlSource>title</ControlSource>
+                <IMESentenceMode>0</IMESentenceMode>
                 <Left>283</Left>
                 <Top>0</Top>
                 <Width>696</Width>
@@ -309,6 +353,7 @@ class exampleInvoiceList extends AmberReport_UserFunctions
                 <Name>date</Name>
                 <ControlType>109</ControlType>
                 <ControlSource>date</ControlSource>
+                <IMESentenceMode>0</IMESentenceMode>
                 <Left>4025</Left>
                 <Top>0</Top>
                 <Width>1701</Width>
@@ -318,7 +363,7 @@ class exampleInvoiceList extends AmberReport_UserFunctions
                 <FontName>Arial</FontName>
                 <FontSize>10</FontSize>
                 <TextFontCharSet>0</TextFontCharSet>
-                <TextAlign>3</TextAlign>
+                <TextAlign>0</TextAlign>
                 <Section>0</Section>
                 <zIndex>30</zIndex>
             </item>
@@ -328,6 +373,7 @@ class exampleInvoiceList extends AmberReport_UserFunctions
                 <ControlType>109</ControlType>
                 <ControlSource>amount</ControlSource>
                 <Format>Euro</Format>
+                <IMESentenceMode>0</IMESentenceMode>
                 <Left>6349</Left>
                 <Top>0</Top>
                 <Width>1701</Width>
@@ -337,42 +383,42 @@ class exampleInvoiceList extends AmberReport_UserFunctions
                 <FontName>Arial</FontName>
                 <FontSize>10</FontSize>
                 <TextFontCharSet>0</TextFontCharSet>
-                <TextAlign>3</TextAlign>
+                <TextAlign>0</TextAlign>
                 <Section>0</Section>
                 <zIndex>40</zIndex>
-            </item>
-            <item id="amountRunning">
-                <EventProcPrefix>amountRunning</EventProcPrefix>
-                <Name>amountRunning</Name>
-                <ControlType>109</ControlType>
-                <ControlSource>amount</ControlSource>
-                <Format>Euro</Format>
-                <Visible>1</Visible>
-                <RunningSum>1</RunningSum>
-                <Left>8077</Left>
-                <Top>0</Top>
-                <Width>716</Width>
-                <Height>270</Height>
-                <BackStyle>1</BackStyle>
-                <BackColor>255</BackColor>
-                <BorderStyle>0</BorderStyle>
-                <FontName>Arial</FontName>
-                <FontSize>8</FontSize>
-                <TextFontCharSet>0</TextFontCharSet>
-                <TextAlign>3</TextAlign>
-                <Section>0</Section>
-                <zIndex>50</zIndex>
             </item>
         </Controls>
     </Detail>
     <GroupFooters>
         <item id="0"> 
-        <index>0</index>
-        <EventProcPrefix>Gruppenfuﬂ0</EventProcPrefix>
-        <Name>Gruppenfuﬂ0</Name>
+            <index>0</index>
+        <EventProcPrefix>Gruppenfuss1</EventProcPrefix>
+        <Name>Gruppenfuﬂ1</Name>
         <KeepTogether>-1</KeepTogether>
         <Height>1133</Height>
         <Controls>
+            <item id="Text18">
+                <EventProcPrefix>Text18</EventProcPrefix>
+                <Name>Text18</Name>
+                <ControlType>109</ControlType>
+                <ControlSource>=sum([amount])</ControlSource>
+                <Format>Euro</Format>
+                <IMESentenceMode>0</IMESentenceMode>
+                <Left>6324</Left>
+                <Top>113</Top>
+                <Width>1716</Width>
+                <Height>270</Height>
+                <BackStyle>1</BackStyle>
+                <BorderStyle>0</BorderStyle>
+                <FontName>Arial</FontName>
+                <FontSize>10</FontSize>
+                <FontWeight>700</FontWeight>
+                <TextFontCharSet>0</TextFontCharSet>
+                <TextAlign>0</TextAlign>
+                <FontBold>1</FontBold>
+                <Section>6</Section>
+                <zIndex>10</zIndex>
+            </item>
             <item id="Bezeichnungsfeld19">
                 <EventProcPrefix>Bezeichnungsfeld19</EventProcPrefix>
                 <Name>Bezeichnungsfeld19</Name>
@@ -406,32 +452,11 @@ class exampleInvoiceList extends AmberReport_UserFunctions
                 <Section>6</Section>
                 <zIndex>30</zIndex>
             </item>
-            <item id="Text18">
-                <EventProcPrefix>Text18</EventProcPrefix>
-                <Name>Text18</Name>
-                <ControlType>109</ControlType>
-                <ControlSource>=[amountRunning]</ControlSource>
-                <Format>Euro</Format>
-                <Left>6029</Left>
-                <Top>213</Top>
-                <Width>2011</Width>
-                <Height>270</Height>
-                <BackStyle>1</BackStyle>
-                <BorderStyle>0</BorderStyle>
-                <FontName>Arial</FontName>
-                <FontSize>10</FontSize>
-                <FontWeight>700</FontWeight>
-                <TextFontCharSet>0</TextFontCharSet>
-                <TextAlign>3</TextAlign>
-                <FontBold>1</FontBold>
-                <Section>6</Section>
-                <zIndex>10</zIndex>
-            </item>
         </Controls>
         </item>
     </GroupFooters>
     <PageFooter> 
-        <EventProcPrefix>Seitenfuﬂbereich</EventProcPrefix>
+        <EventProcPrefix>Seitenfussbereich</EventProcPrefix>
         <Name>Seitenfuﬂbereich</Name>
         <Height>510</Height>
         <Controls>
@@ -440,6 +465,7 @@ class exampleInvoiceList extends AmberReport_UserFunctions
                 <Name>Text26</Name>
                 <ControlType>109</ControlType>
                 <ControlSource>=&quot;Page  &quot; &amp; [Page]</ControlSource>
+                <IMESentenceMode>0</IMESentenceMode>
                 <Left>4</Left>
                 <Top>113</Top>
                 <Width>8781</Width>
@@ -459,19 +485,36 @@ EOD;
     return $s;
   }
   
+
+
   function getData()
-  {  
-    $customer = array(
-      array('id'=>1, 'title'=>'Mr.', 'lastname'=>'Jackson', 'firstname'=>'John'),  	   	   	
-      array('id'=>2, 'title'=>'Mr.', 'lastname'=>'Bown', 'firstname'=>'Bob'), 	  	  	
-      array('id'=>3, 'title'=>'Mrs.', 'lastname'=>'Anderson', 'firstname'=>'Alice'), 	  	  	
-      array('id'=>4, 'title'=>'Ms.', 'lastname'=>'Smith', 'firstname'=>'Susan'), 	  	  	
-      array('id'=>5, 'title'=>'Mr.', 'lastname'=>'Tompson', 'firstname'=>'Terry'), 	  	  	
-      array('id'=>6, 'title'=>'Mr.', 'lastname'=>'Bean', 'firstname'=>'Ben'), 	  	  	
-      array('id'=>7, 'title'=>'Mr.', 'lastname'=>'Smith', 'firstname'=>'Sam'), 	  	  	
-      array('id'=>8, 'title'=>'Mrs.', 'lastname'=>'Clark', 'firstname'=>'Catherine')	  	  	
-    ); 
-    return $customer; 
+  {
+    $res = array(
+      array('id' => 1, 'title' => 'Mr.', 'lastname' => 'Jackson', 'firstname' => 'John', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 1, 'date' => '2002-01-04 00:00:00', 'year' => 2001, 'customer' => 1, 'amount' => 321.82),
+      array('id' => 2, 'title' => 'Mr.', 'lastname' => 'Bown', 'firstname' => 'Bob', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 2, 'date' => '2002-01-04 00:00:00', 'year' => 2001, 'customer' => 2, 'amount' => 72.2),
+      array('id' => 3, 'title' => 'Mrs.', 'lastname' => 'Anderson', 'firstname' => 'Alice', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 3, 'date' => '2002-01-04 00:00:00', 'year' => 2001, 'customer' => 3, 'amount' => 998),
+      array('id' => 4, 'title' => 'Ms.', 'lastname' => 'Smith', 'firstname' => 'Susan', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 4, 'date' => '2002-01-05 00:00:00', 'year' => 2001, 'customer' => 4, 'amount' => 83.06),
+      array('id' => 3, 'title' => 'Mrs.', 'lastname' => 'Anderson', 'firstname' => 'Alice', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 5, 'date' => '2002-06-30 00:00:00', 'year' => 2002, 'customer' => 3, 'amount' => 400),
+      array('id' => 5, 'title' => 'Mr.', 'lastname' => 'Tompson', 'firstname' => 'Terry', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 6, 'date' => '2003-01-08 00:00:00', 'year' => 2002, 'customer' => 5, 'amount' => 12.3),
+      array('id' => 1, 'title' => 'Mr.', 'lastname' => 'Jackson', 'firstname' => 'John', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 7, 'date' => '2003-01-08 00:00:00', 'year' => 2002, 'customer' => 1, 'amount' => 84.12),
+      array('id' => 8, 'title' => 'Mrs.', 'lastname' => 'Clark', 'firstname' => 'Catherine', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 8, 'date' => '2003-01-08 00:00:00', 'year' => 2002, 'customer' => 8, 'amount' => 37.49),
+      array('id' => 2, 'title' => 'Mr.', 'lastname' => 'Bown', 'firstname' => 'Bob', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 9, 'date' => '2003-01-08 00:00:00', 'year' => 2002, 'customer' => 2, 'amount' => 728.1),
+      array('id' => 4, 'title' => 'Ms.', 'lastname' => 'Smith', 'firstname' => 'Susan', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 10, 'date' => '2003-01-12 00:00:00', 'year' => 2002, 'customer' => 4, 'amount' => 91),
+      array('id' => 6, 'title' => 'Mr.', 'lastname' => 'Bean', 'firstname' => 'Ben', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 11, 'date' => '2003-01-12 00:00:00', 'year' => 2002, 'customer' => 6, 'amount' => 145.61),
+      array('id' => 7, 'title' => 'Mr.', 'lastname' => 'Smith', 'firstname' => 'Sam', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 12, 'date' => '2003-01-12 00:00:00', 'year' => 2002, 'customer' => 7, 'amount' => 43.73),
+      array('id' => 4, 'title' => 'Ms.', 'lastname' => 'Smith', 'firstname' => 'Susan', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 13, 'date' => '2003-12-30 00:00:00', 'year' => 2003, 'customer' => 4, 'amount' => 55.13),
+      array('id' => 1, 'title' => 'Mr.', 'lastname' => 'Jackson', 'firstname' => 'John', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 14, 'date' => '2003-12-30 00:00:00', 'year' => 2003, 'customer' => 1, 'amount' => 99),
+      array('id' => 6, 'title' => 'Mr.', 'lastname' => 'Bean', 'firstname' => 'Ben', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 15, 'date' => '2003-12-30 00:00:00', 'year' => 2003, 'customer' => 6, 'amount' => 32.28),
+      array('id' => 2, 'title' => 'Mr.', 'lastname' => 'Bown', 'firstname' => 'Bob', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 16, 'date' => '2003-12-30 00:00:00', 'year' => 2003, 'customer' => 2, 'amount' => 17.89),
+      array('id' => 7, 'title' => 'Mr.', 'lastname' => 'Smith', 'firstname' => 'Sam', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 17, 'date' => '2005-12-30 00:00:00', 'year' => 2003, 'customer' => 7, 'amount' => 633.21),
+      array('id' => 8, 'title' => 'Mrs.', 'lastname' => 'Clark', 'firstname' => 'Catherine', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 18, 'date' => '2004-01-02 00:00:00', 'year' => 2003, 'customer' => 8, 'amount' => 256.87),
+      array('id' => 5, 'title' => 'Mr.', 'lastname' => 'Tompson', 'firstname' => 'Terry', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 19, 'date' => '2004-01-02 00:00:00', 'year' => 2003, 'customer' => 5, 'amount' => 143.17),
+      array('id' => 5, 'title' => 'Mr.', 'lastname' => 'Tompson', 'firstname' => 'Terry', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 20, 'date' => '2004-09-17 00:00:00', 'year' => 2004, 'customer' => 5, 'amount' => 65.6),
+      array('id' => 1, 'title' => 'Mr.', 'lastname' => 'Jackson', 'firstname' => 'John', 'street' => null, 'zip' => null, 'city' => null, 'nr' => 21, 'date' => '2005-11-08 00:00:00', 'year' => 2004, 'customer' => 1, 'amount' => 423.99),
+    );
+    return $res;
   }
+
+
 }     
 ?>

@@ -2,6 +2,13 @@ TODO for first public release
 -----------------------------
 
 - examples
+  - simple report (first time through. No data)
+  - invoice list (expressions and sums)
+    default format is always left. should be right for numbers
+    default format for date (now it displays text)
+  - birthday list (sorting by expressions)
+     
+    
 - finish work on documentation
 - sequence diagram (especially for triggers)
 - list of supported attributes
