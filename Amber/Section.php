@@ -27,7 +27,7 @@ class Section
   var $_onFormatFunc; //Function to call before opening section. only Set iff present
   var $_onPrintFunc;  //Function to call after opening the section, but before any controls are printed. only Set iff present
   var $_parent;   //The Report
-  var $_PagePart; //1-Pageheader, 2-Pagefooter, null-other Section
+  var $_PagePart; //'Head', 'Foot', ''
 
   //////////////////////////////////////////////////////////////////
   // PUBLIC METHODS
@@ -70,6 +70,9 @@ class Section
     }
     if (isset($data['CanShrink'])) {
       $this->CanShrink = $data['CanShrink'];
+    }
+    if (isset($data['KeepTogether'])) {
+      $this->KeepTogether = $data['KeepTogether'];
     }
     if (isset($this->$data['EventProcPrefix'])) {
       $this->EventProcPrefix = $data['EventProcPrefix'];
@@ -119,7 +122,6 @@ class Section
       $height = 0;
     } else {
       $this->_startSection($buffer);
-      $this->_OnPrint($cancel);
       // print controls
       $maxHeight = 0;
       if (isset($this->Controls) && !$cancel) {
@@ -192,11 +194,11 @@ class Section
    * @access private
    * @param int
    */
-  function _OnPrint(&$cancel) {
+  function _OnPrint(&$cancel, $formatCount) {
     $funct =$this->_OnPrintFunc;
     $obj =& $this->_parent->_Code;
     $cancel = false;
-    $obj->$funct($this->_parent, $cancel, 1);
+    $obj->$funct($this->_parent, $cancel, $formatCount);
   }
 
   /**
@@ -217,7 +219,13 @@ class Section
    */
   function _startSection(&$buffer)
   {
-    $this->_parent->_exporter->startSection($this, $this->_parent->Width, $buffer);
+    $exporter =& $this->_parent->_exporter;
+    if ((!$this->_PagePart) and (!$exporter->DesignMode)) {
+      if (($this->ForceNewPage == 1) or ($this->ForceNewPage == 3)) {
+        $exporter->newPage();
+      }
+    }  
+    $exporter->startSection($this, $this->_parent->Width, $buffer);
   }
 
   /**
@@ -225,7 +233,13 @@ class Section
    */
   function _endSection($height, &$buffer)
   {
-    $this->_parent->_exporter->endSection($this, $height, $buffer);
+    $exporter =& $this->_parent->_exporter;
+    $exporter->endSection($this, $height, $buffer);
+    if ((!$this->_PagePart) and (!$exporter->DesignMode)) {
+      if (($this->ForceNewPage == 2) or ($this->ForceNewPage == 3)) {
+        $exporter->newPage();
+      }
+    }
   }
 
   /**

@@ -96,7 +96,7 @@ class ExporterFPdf extends Exporter
   */
   function sectionPrintDesignHeader($text) 
   {
-    $this->_pdf->sectionStart();
+    $this->_pdf->startSection();
     $height = 240; //12pt
     
     $this->_backColor(0xDDDDDD);
@@ -109,12 +109,13 @@ class ExporterFPdf extends Exporter
     $this->_pdf->SetXY(0, 0);
     $this->_pdf->Cell($this->_report->Width, $height, $text, $border, 1, 'L', 1);
 
-    $this->_pdf->sectionEnd($height+1);
+    $this->_pdf->endSection($height+1);
   }  
 
   function startSection(&$section, $width, &$buffer)
   {
-    $this->_pdf->sectionStart();
+    parent::startSection($section, $width, $buffer);
+    $this->_pdf->startSection();
     $this->_backColor($section->BackColor);
     $text = '';
     $border = 0;
@@ -126,19 +127,24 @@ class ExporterFPdf extends Exporter
 
   function endSection(&$section, $height, &$buffer)
   {
-#print "called<br>";
     if (!$section->_PagePart or $this->DesignMode) {
-      $this->_pdf->sectionEnd($height);
+      $this->_pdf->endSection($height, $section->KeepTogether);
     } elseif ($section->_PagePart == 'Foot') {  
       $this->_pdf->pageFooterEnd();
     } else {
       $this->_pdf->pageHeaderEnd();
-    }    
+    }
+    parent::endSection($section, $height, $buffer);    
   }
 
   function page() 
   {
-    return $this->_pdf->_actPageNo + 1;
+    return $this->_pdf->page();
+  }
+  
+  function newPage()
+  {
+    $this->_pdf->newPage();    
   }
 
   /*
@@ -239,9 +245,9 @@ class ExporterFPdf extends Exporter
     $height = 240;
     $falign = 'C';
     $fill = 0;
-    $this->_pdf->sectionStart();
+    $this->_pdf->startSection();
     $this->_pdf->Cell($width, $height, print_r($var, 1), '0', 0, $falign, $fill);
-    $this->_pdf->sectionEnd($height);
+    $this->_pdf->endSection($height, false);
   }
 
   function _backColor($color)

@@ -30,46 +30,67 @@ class PDF extends FPDF
     }
   }
   
-  function sectionStart()
+  function startSection()
   {
     $this->_buff = '';
     $this->_inSection = true;
-    $this->_out("% SectionStart");
     $this->SetXY(0, 0);
   }
   
-  function sectionEnd($sectionHeight)
+  function endSection($sectionHeight, $keepTogether)
   {
-    $this->_out("% SectionEnd");
     $this->_inSection = false;
     $secBuff = $this->_buff;
     $startPage = floor($this->_posY / $this->_printHeight);
     $endPage   = floor(($this->_posY + $sectionHeight) / $this->_printHeight);
+    if ($keepTogether and ($startPage <> $endPage)) {
+      if ($this->_posY > ($startPage * $this->_printHeight)) { // page not blank
+        $this->newPage();
+        $startPage = floor($this->_posY / $this->_printHeight);
+        $endPage   = floor(($this->_posY + $sectionHeight) / $this->_printHeight);
+      }  
+    }  
 
     for ($page = $startPage; $page <= $endPage; $page++) {
       if (($page <> $this->_actPageNo)) {
         if ($this->_actPageNo >= 0) {
           $this->_exporter->printPageFooter();
           $this->_sectionType = 'Foot'; 
-          $this->_out("% pageFooter: ".$this->_actPageNo);
         }  
         $this->_actPageNo = $page;
         $this->_sectionType = 'Head'; 
-        $this->_out("% [pageHeader: ".$this->_actPageNo);
         $this->_exporter->printPageHeader();
         $this->_sectionType = 'Head'; 
-        $this->_out("% ]pageHeader: ".$this->_actPageNo);
       }
                   
       $this->_sectionType = '';
       $this->SetCoordinate(0, -$this->_posY);
       $this->SetClipping(0, 0, $this->_reportWidth, $sectionHeight);
+
+      if (!$this->_exporter->DesignMode) {
+        $formatCount = $page - $startpage + 1;
+        $this->_exporter->onPrint(&$cancel, $formatCount);
+        if (!$cancel) {
+          $this->_out($secBuff);
+        }  
+      }
+      
       $this->_out($secBuff);
       $this->RemoveClipping();   
       $this->RemoveCoordinate();
     }
     $this->_posY += $sectionHeight;
   }  
+
+  function page() 
+  {
+    return $this->_actPageNo + 1;
+  }
+  
+  function newPage()
+  {
+    $this->_posY = ($this->_actPageNo + 1) * $this->_printHeight;    
+  }
 
   function pageHeaderEnd()
   {
@@ -85,7 +106,6 @@ class PDF extends FPDF
   
   function _pageHeaderOrFooterEnd($posY, $height)
   {
-    $this->_out("% PageSectionEnd");
     $this->_inSection = false;
     $this->SetCoordinate(0, -$posY);
     $this->SetClipping(0, 0, $this->_reportWidth, $height);
@@ -217,9 +237,19 @@ class PDF extends FPDF
 
   function Bookmark($txt,$level=0,$y=0)
   {
+    if (!$this->_inReport) {
       if($y==-1)
-          $y=$this->GetY();
+        $y=$this->GetY();
       $this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$this->PageNo());
+    } else {
+      if($y == -1)
+        $y = $this->_posY - ($this->_actPageNo * $this->_printHeight);
+      $p = $this->_actPageNo + 1;
+      if ($p <= 0) 
+        $p = 1;
+        
+      $this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$p);
+    }
   }
 
   function _putbookmarks()

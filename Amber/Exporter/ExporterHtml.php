@@ -26,13 +26,9 @@ class ExporterHtml extends Exporter
 
   var $_CtrlStdValues;
 
-  var $_report;
-
   var $_posY; //
 
   // Report - html
-
-
 
   function startReport(&$report)
   {
@@ -60,7 +56,6 @@ class ExporterHtml extends Exporter
     parent::endReport($report);
     echo "</body>\n</html>\n";
   }
-
 
   // Section - html
 
@@ -98,9 +93,6 @@ class ExporterHtml extends Exporter
   function startSection(&$section, $width, &$buffer)
   {
     if (!(($section->_PagePart) or ($this->DesignMode))) {
-      if (($section->ForceNewPage == 1) or ($section->ForceNewPage == 3)) {
-        $this->newPage();
-      }
       if ($this->_blankPage) {
         $this->_blankPage = false;
         $out = "\t<div name=\"TopMargin\"style = \"position: absolute; overflow: hidden; ";
@@ -120,6 +112,7 @@ class ExporterHtml extends Exporter
 
   function endSection(&$section, $height, &$buffer)
   {
+    parent::startSection($section, $width, $buffer);
     $cheatWidth  = 59; // cheat: add 1.5pt to height and 3pt to width so borders get printed in Mozilla ###FIX ME
     if ($height == 0) {
       $cheatHeight = 0;
@@ -149,7 +142,14 @@ class ExporterHtml extends Exporter
       $out .= 'background-color: ' . $this->_html_color($section->BackColor) . '; ';
       $out .= "\">\n";
     }
-    $out .= $buffer;
+
+    if (!$this->DesignMode) {
+      $this->onPrint(&$cancel, 1);
+      if (!$cancel) {
+        $out .= $buffer;
+      }  
+    }
+    
     if ($this->DesignMode) {
       $out .= "\t</div>\n";
     } else {
@@ -157,12 +157,7 @@ class ExporterHtml extends Exporter
     }
     echo $out;
     $this->_posY += $height;
-    if ((!$this->_PagePart) and (!$this->DesignMode)) {
-      if (($section->ForceNewPage == 2) or ($section->ForceNewPage == 3)) {
-        $this->newPage();
-      }
-    }
-
+    parent::endSection($section, $height, $buffer);    
   }
 
   // Page handling - html

@@ -1,3 +1,8 @@
+20040722:
+- exporters: refactoring. ForceNewPage now working again with pdf
+- exporterPdf: section.KeepTogether introduced. 
+- exporterPdf: bookmarks work again. Now PDF works as of 20040706. (wtf did I do all the time?)
+
 20040721:
 - exporters: interface clean up
 
