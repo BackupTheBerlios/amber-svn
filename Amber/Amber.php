@@ -10,6 +10,7 @@
 define('__AMBER_BASE__', dirname(__FILE__));
 
 require_once __AMBER_BASE__ . '/Report.php';
+require_once __AMBER_BASE__ . '/ReportPaged.php';
 require_once 'adodb/adodb.inc.php';
 require_once 'ObjectLoader.php';
 
@@ -133,7 +134,7 @@ class Amber
         
     if ($type == 'report') {
       if (stristr($type, 'pdf') != false) {
-        return  new report();
+        return  new reportPaged();
       } else {
         return  new report();
       }  
