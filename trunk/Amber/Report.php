@@ -307,43 +307,40 @@ class Report extends AmberObject
     }
     else  // Loop through all records
     {                              
+      $this->ComputeColumns();
       $keys = array_keys($this->_data);
-      
       $this->sort($keys);
-      
       foreach ($keys as $rowNumber) {
         $this->Cols =& $this->_data[$rowNumber];
         $this->Columns =& $this->Cols;
         $this->_Code->col =& $this->Cols;
         // Load Data
         $this->onLoadData($Cancel);
-        if (!$Cancel) {
-          if ($isFirstRecord) {
-            $level = 0;
-          } else {
-            $level = $this->_getGroupLevel($this->Cols, $oldRow);
-            $this->_printNormalGroupFooters($maxLevel, $level);
-            $this->_resetAggregate($maxLevel, $level);
-          }
-          // Evaluate Expressions
-          $this->_setControlValues($this->Cols);
-          $this->_resetRunningSum($maxLevel, $level);
-          $this->EvaluateExpressions();
-          $this->_runningSum($maxLevel, $level);
-
-          // Next Record
-          $this->OnNextRecord();
-          if ($isFirstRecord) {
-            $this->_printNormalSection($this->ReportHeader);
-          }
-          $this->_printNormalGroupHeaders($maxLevel, $level);
-
-          // Detail
-          $this->_printNormalSection($this->Detail);
-
-          $oldRow =& $this->Cols;
-          $isFirstRecord = false;
+        if ($isFirstRecord) {
+          $level = 0;
+        } else {
+          $level = $this->_getGroupLevel($this->Cols, $oldRow);
+          $this->_printNormalGroupFooters($maxLevel, $level);
+          $this->_resetAggregate($maxLevel, $level);
         }
+        // Evaluate Expressions
+        $this->_setControlValues($this->Cols);
+        $this->_resetRunningSum($maxLevel, $level);
+        $this->EvaluateExpressions();
+        $this->_runningSum($maxLevel, $level);
+
+        // Next Record
+        $this->OnNextRecord();
+        if ($isFirstRecord) {
+          $this->_printNormalSection($this->ReportHeader);
+        }
+        $this->_printNormalGroupHeaders($maxLevel, $level);
+
+        // Detail
+        $this->_printNormalSection($this->Detail);
+
+        $oldRow =& $this->Cols;
+        $isFirstRecord = false;
       }
     }
 
@@ -557,6 +554,19 @@ class Report extends AmberObject
     $sorter->sort();
   }
 
+  function computeColumns()
+  { 
+    $keys = array_keys($this->_data);
+    foreach ($keys as $rowNumber) {
+      $this->_Code->col =& $this->_data[$rowNumber];
+      $Cancel = false;
+      $this->_Code->Report_ComputeColumn($Cancel, $this->_Code->col);
+      if ($Cancel) {
+        unset($this->_data[$rowNumber]);
+      }  
+    }
+  }  
+  
   /**
    * @access protected
    * @param int

@@ -44,7 +44,7 @@ class quicksort {
   
       $firstElement = 0;
       $lastElement = count($this->array) - 1;
-      $res = $this->cmpClass->Report_Sort($this->array[$this->keys[$firstElement]], $this->array[$this->keys[$firstElement]]); 
+      $res = $this->cmpClass->Report_CompareRows($this->array[$this->keys[$firstElement]], $this->array[$this->keys[$firstElement]]); 
       if ($res !== 0) {
         return false; // no compare function given
       } else {  
@@ -63,11 +63,11 @@ class quicksort {
   
       while ($fromLeft <= $fromRight) {
   
-        while ($this->cmpClass->Report_Sort($this->array[$this->keys[$fromLeft]], $middleElement) < 0) {
+        while ($this->cmpClass->Report_CompareRows($this->array[$this->keys[$fromLeft]], $middleElement) < 0) {
           $fromLeft++;
         }
               
-        while ($this->cmpClass->Report_Sort($this->array[$this->keys[$fromRight]], $middleElement) > 0) {
+        while ($this->cmpClass->Report_CompareRows($this->array[$this->keys[$fromRight]], $middleElement) > 0) {
           $fromRight--;
         }
   

@@ -17,13 +17,13 @@ require_once 'adodb/adodb-time.inc.php';
  *
  */
 
-function Format($value, $fmt)
+function Format($value, $fmt, $prec=2)
 {
   static $fmtCache;               //speed: cache _format object (0.9sec)
-  $f = $fmtCache[$fmt];
+  $f = $fmtCache[$fmt][$prec];
   if (!$f) {
-    $f =& new _format($fmt);
-    $fmtCache[$fmt] =& $f;
+    $f =& new _format($fmt, $prec);
+    $fmtCache[$fmt][$prec] =& $f;
   } else {
   }
   return $f->format($value, $fmt);
@@ -40,7 +40,7 @@ function Format($value, $fmt)
  * @param mixed if condition is false return this parameter
  *
  */
-function Iif($condition, $truePart, $falsePart)
+function IIf($condition, $truePart, $falsePart)
 {
   if ($condition) {
     return $truePart;
@@ -121,8 +121,44 @@ function IsNull($value)
   return is_null($value);
 }
 
+function Day($value)
+{
+  if (is_null($value)) {
+      return null;
+  } elseif (preg_match(
+       "|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ -]?(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
+  	($value), $rr)) {
+    return $rr[3];
+  } else {
+    die('Basic.Day: not a Date: "' . $value . '"');
+  }
+}        
+    
+function Month($value)
+{
+  if (is_null($value)) {
+      return null;
+  } elseif (preg_match(
+       "|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ -]?(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
+  	($value), $rr)) {
+    return $rr[2];
+  } else {
+    die('Basic.Month: not a Date: "' . $value . '"');
+  }
+}        
 
-
+function Year($value)
+{
+  if (is_null($value)) {
+      return null;
+  } elseif (preg_match(
+       "|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ -]?(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
+  	($value), $rr)) {
+    return $rr[1];
+  } else {
+    die('Basic.Year: not a Date: "' . $value . '"');
+  }
+}        
 
 
 class _format
@@ -559,7 +595,9 @@ class _format
     }
 
     if ($fmt[$pos]['token'] == '.') {
-      $res .= $this->getDecimalPoint();
+      if (($digitPost0 > 0) or ( $digitPost0 > 0)) {
+        $res .= $this->getDecimalPoint();
+      }  
       $pos++;
     }
 
@@ -852,7 +890,14 @@ function str2date($d)
 
 function getStdFormat($locale='', $prec=2)
 {
-  $zero = str_repeat('0', $prec);
+  if ($prec > 0) {
+    $zero = '0.' . str_repeat('0', $prec);
+  } elseif (($prec === 0) || ($prec == '0')) {
+    $zero = '0.';
+  } else {
+    $zero = '0.#';
+  }
+   
   if (!$locale) {
     $locale = substr(setlocale(LC_TIME, 0),0,2);
   }
@@ -871,10 +916,10 @@ function getStdFormat($locale='', $prec=2)
       'general number'  =>  '',
       'currency'        =>  '#,##0.00 DM',
       'euro'            =>  '#,##0.00 EUR',
-      'fixed'           =>  '0.' . $zero,
-      'standard'        =>  '#,##0.' . $zero,
-      'percent'         =>  '0.' . $zero . '%',
-      'scientific'      =>  '0.' . $zero . 'E+00',
+      'fixed'           =>  $zero,
+      'standard'        =>  '#,##' . $zero,
+      'percent'         =>  $zero . '%',
+      'scientific'      =>  $zero . 'E+00',
       'true/false'      =>  '"Wahr";"Wahr";"Falsch"',
       'yes/no'          =>  '"Ja";"Ja";"Nein"',
       'on/off'          =>  '"Ein";"Ein";"Aus"'
@@ -891,10 +936,10 @@ function getStdFormat($locale='', $prec=2)
       'general number'  =>  '#.#',
       'currency'        =>  '#,##0.00 $',
       'euro'            =>  '#,##0.00 EUR',
-      'fixed'           =>  '0.' . $zero,
-      'standard'        =>  '#,##0.' . $zero,
-      'percent'         =>  '0.' . $zero . '%',
-      'scientific'      =>  '0.' . $zero . 'E+00',
+      'fixed'           =>  $zero,
+      'standard'        =>  '#,##' . $zero,
+      'percent'         =>  $zero . '%',
+      'scientific'      =>  $zero . 'E+00',
       'true/false'      =>  '"True";"True";"False"',
       'yes/no'          =>  '"Yes";"Yes";"No"',
       'on/off'          =>  '"On";"On";"Off"'

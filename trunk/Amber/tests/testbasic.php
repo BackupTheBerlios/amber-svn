@@ -254,6 +254,8 @@ class Basic_Format extends myTestCase
     $this->assertEquals('1.234,57',      Format(1234.5678, "Standard"),         "Standard");
     $this->assertEquals('123456,78%',    Format(1234.5678, "Percent"),   "Percent");
     $this->assertEquals('1,23E+03',     Format(1234.5678, "Scientific"),   "Scientific");
+    $this->assertEquals('1234,57',     Format(1234.5678, "fixed", 2),   "Fixed 2");
+    $this->assertEquals('1234',        Format(1234.5678, "fixed", 0),   "Fixed 0");
 
     $this->assertEquals('Wahr',     Format(true, "True/False"), "True/False: true");
     $this->assertEquals('Ja',       Format(true, "Yes/No"),     "Yes/No: true");
@@ -298,7 +300,7 @@ class Basic_Format extends myTestCase
 
     //###dispens### $this->assertEquals(' birt03a3: #&&-&& 03.01.2238',      Format("123456", " birthday: #&&-&& dd.mm.yyyy"), 'Test31');
   #  $this->assertEquals('birthday: #34-56 dd.mm.yyyy',       Format("123456", "!birthday: #&&-&& dd.mm.yyyy"), 'Test32');
-    $this->assertEquals('12345birthday: 6&&-&& dd,mm.yyyy',  Format("123456", "#birthday: #&&-&& dd.mm.yyyy"), 'Test33');
+    $this->assertEquals('12345birthday: 6&&-&& ddmm.yyyy',  Format("123456", "#birthday: #&&-&& dd.mm.yyyy"), 'Test33');
 
 
     // separation of Format parts (positive, negative, zero and NULL) is done inside the different Format functions

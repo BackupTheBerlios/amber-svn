@@ -10,13 +10,14 @@
 class AmberReport_UserFunctions
 {
   function Report_Open(&$Cancel) { }
+  function Report_ComputeColumn(&$Cancel, &$col)  {$this->Report_OnLoadData($Cancel);}
+  function Report_OnLoadData(&$Cancel) { $Cancel = false;}
+  function Report_CompareRows(&$rowA, &$rowB) {return 'noSort!';}
   function Report_NoData(&$Cancel) { $Cancel = true; }
-  function Report_OnLoadData(&$Cancel) { $Cancel = false; }
   function Report_EvaluateExpressions() { }
   function Report_OnNextRecord() { }
   function Report_Page() { }
   function Report_Close() { }
-  function Report_Sort(&$a, &$b) { return 'noSort!'; }
   function allSections_Format(&$Cancel, $FormatCount = 1) { } // see also Class SectionNull
   function allSections_Print (&$Cancel, $FormatCount = 1) { } // see also Class SectionNull
 
