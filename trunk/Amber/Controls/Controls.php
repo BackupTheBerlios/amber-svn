@@ -327,9 +327,11 @@ class TextBox extends FontBox
 
   function printNormal()
   {
+    // FIXME: This is specific to MySQL!!
     if ($this->Value == '0000-00-00 00:00:00') {
       $this->Value = null;
     }
+
     if ($this->Format) {
       $this->_exporter->printNormal($this, Format($this->Value, strval($this->Format), $this->DecimalPlaces));
     } else {
@@ -359,7 +361,7 @@ class TextBox extends FontBox
   {
     if ($this->RunningSum) {
       $this->_sum += $this->Value;
-      $this->Value += $this->_sum;
+      $this->Value = $this->_sum;
     }
   }
 

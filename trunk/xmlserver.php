@@ -18,6 +18,7 @@ class AmberXMLServer extends IXR_Server
   function processRequest()
   {
     $this->IXR_Server(array(
+      'Amber.ping' => 'this:ping';
       'Amber.writeReportXML' => 'this:writeReportXML',
       'Amber.fileExists' => 'this:fileExists',
       'Amber.getReportList' => 'this:getReportList',
@@ -63,6 +64,11 @@ class AmberXMLServer extends IXR_Server
     }
 
     return $amber->sysDb();
+  }
+
+  function ping()
+  {
+    return 'pong';
   }
 
   function writeReportXML($param)

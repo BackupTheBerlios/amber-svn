@@ -292,13 +292,21 @@ class Report extends AmberObject
       $keys = array_keys($this->_data);
       foreach ($keys as $rowNumber) {
         $this->Cols =& $this->_data[$rowNumber];
+        //$this->onLoadData()
         $level = $this->_getGroupLevel($this->Cols, $oldRow);
+
+        $this->_printNormalGroupFooters($maxLevel, $level);
+
         $this->_setControlValues();
         $this->OnFirstFormat($cancel);
-        if (!$cancel) {
-          $this->_printNormalGroupFooters($maxLevel, $level);
+        
+        if (!$cancel) {          
+          $this->_resetRunningSum($maxLevel, $level);
+          $this->_calcRunningSum();
+          $this->OnNextRecord();
+          
           $this->_printNormalGroupHeaders($maxLevel, $level);
-          $this->_resetRunningSum($level, $maxLevel);
+          //$this->onDetailFormat()
           $this->_printNormalSection($this->Detail);
           $oldRow =& $this->Cols;
         }
@@ -410,7 +418,7 @@ class Report extends AmberObject
       $db->Execute($sql);
       if ($db->errorNo() != 0) {
         Amber::showError('Database error while trying to create temporary table ('
-          . $db->errorNo() . ')', $db->errorMsg());
+          . $db->ErrorNo() . ')', $db->ErrorMsg());
         die();
       }
 
@@ -467,6 +475,25 @@ class Report extends AmberObject
     }
   }
 
+   /**
+   * 
+   * @access protected
+   */
+  function _calcRunningSum()
+  {
+    // set values of control bound to columns
+    if (is_array($this->Controls)) {
+      $keys = array_keys($this->Controls);
+      foreach ($keys as $index) {
+        $ctrl  =& $this->Controls[$index];
+        if (method_exists($ctrl, '_runningSum') && isset($ctrl->RunningSum)) {
+          $ctrl->_runningSum();
+        }
+      }
+    }
+
+  }
+
   /**
    * @access protected
    * @param int
@@ -477,6 +504,16 @@ class Report extends AmberObject
     $cancel = false;
     $this->_Code->Report_Open($this, $cancel);
   }
+
+    /**
+   * @access protected
+   * @param int
+   */
+  function OnNextRecord()
+  {
+    $this->_Code->Report_OnNextRecord($this);
+  }
+
 
   /**
    * @access protected
@@ -524,7 +561,6 @@ class Report extends AmberObject
    */
   function _printNormalSection(&$section)
   {
-    $section->_RunningSum();
     if ($section->isVisible()) {
       $height = 0;
     } else {
@@ -650,13 +686,12 @@ class Report extends AmberObject
    * @param int
    * @param int
    */
-  function _resetRunningSum($level, $maxLevel)
+  function _resetRunningSum($maxLevel, $level)
   {
     $s = '';
     $resetLevel = $maxLevel;
     for ($i = $maxLevel-1; $i >= $level; $i--) {
       if (isset($this->GroupHeaders[$i]) or (isset($this->GroupFooters[$i]))) {
-        $s .= $i;
         $resetLevel = $i;
       }
     }

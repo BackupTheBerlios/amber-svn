@@ -143,7 +143,7 @@ class Section
   function printNormal()
   {
     $maxHeight = 0;
-    if ((isset($this->Controls)) && (!$cancel)) {
+    if (isset($this->Controls)) {
       $keys = array_keys($this->Controls);
       foreach ($keys as $key) {
         if ($this->Controls[$key]->isVisible()) {
@@ -212,17 +212,18 @@ class Section
   /**
    * @access private
    */
-  function _RunningSum()
+  /*function _RunningSum()
   {
     if (is_array($this->Controls)) {
       $keys = array_keys($this->Controls);
       foreach($keys as $key) {
-        if (isset($this->Controls[$key]->RunningSum)) { //optimisation
-          $this->Controls[$key]->_RunningSum();
+        $ctrl =& $this->Controls[$key];
+        if (isset($ctrl->RunningSum)) { //optimisation
+          $ctrl->_RunningSum();
         }
       }
     }
-  }
+  }*/
 
   /**
    * @access private

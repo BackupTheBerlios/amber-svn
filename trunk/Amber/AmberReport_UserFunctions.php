@@ -11,9 +11,14 @@ class AmberReport_UserFunctions
 {
   function Report_FirstFormat(&$report, &$Cancel)
   {
+    $Cancel = false;
   }
 
   function Report_Open(&$report, &$Cancel)
+  {
+  }
+
+  function Report_OnNextRecord(&$report)
   {
   }
 
