@@ -61,7 +61,25 @@ class ExporterFPdf extends Exporter
     if ($this->_asSubreport) {
       $this->_pdf->endSubReport();
     } else {  
-      $this->endReport1($this->_report->Width);
+      $this->_report->_printNormalSection('PageFooter');
+  
+      $this->_pdf->endReportBuffering();
+    
+      $firstPage = true;  //first page is out
+  
+      $endPageX = floor($this->_report->layout->_reportWidth / $this->_report->layout->printWidth);
+      foreach(array_keys($this->_report->reportBuff->reportPages) as $pageY) {
+        for($pageX = 0; $pageX <= $endPageX; $pageX++) {
+          if (!$firstPage) {
+            $this->_pdf->AddPage();
+          }
+          $firstPage = false;
+  
+          $this->_report->outPageHeader($pageY, $pageX, $this->_pdf);  
+          $this->_report->outPage($pageY, $pageX, $this->_pdf);  
+          $this->_report->outPageFooter($pageY, $pageX, $this->_pdf);  
+        }
+      }
       $this->sendOutputFile();
     }
   }
@@ -79,29 +97,6 @@ class ExporterFPdf extends Exporter
     }
   }
   
-  function endReport1()
-  {
-    $this->printPageFooter();
-
-    $this->_pdf->endReportBuffering();
-  
-    $firstPage = true;  //first page is out
-
-    $endPageX = floor($this->_report->layout->_reportWidth / $this->_report->layout->printWidth);
-    foreach(array_keys($this->_report->reportBuff->reportPages) as $pageY) {
-      for($pageX = 0; $pageX <= $endPageX; $pageX++) {
-        if (!$firstPage) {
-          $this->_pdf->AddPage();
-        }
-        $firstPage = false;
-
-        $this->_report->outPageHeader($pageY, $pageX, $this->_pdf);  
-        $this->_report->outPage($pageY, $pageX, $this->_pdf);  
-        $this->_report->outPageFooter($pageY, $pageX, $this->_pdf);  
-      }
-    }
-  }
-
   /*********************************
    *  Section
    *********************************/
@@ -168,9 +163,7 @@ class ExporterFPdf extends Exporter
   */
   function printPageFooter()
   {
-    if (!$this->DesignMode) {
-      $this->_report->_printNormalSection('PageFooter');
-    }
+    $this->_report->_printNormalSection('PageFooter');
   }
 
   /*
@@ -180,9 +173,7 @@ class ExporterFPdf extends Exporter
   */
   function printpageHeader()
   {
-    if (!$this->DesignMode) {
-      $this->_report->_printNormalSection('PageHeader');
-    }
+    $this->_report->_printNormalSection('PageHeader');
   }
 
 
