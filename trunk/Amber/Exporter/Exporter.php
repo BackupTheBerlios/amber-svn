@@ -23,7 +23,6 @@ class Exporter
   var $_docTitle;
   var $_report;
   var $_section;
-  var $DesignMode = false;
 
   var $_base; // ref to pdf/html
   /**
@@ -38,12 +37,12 @@ class Exporter
   }
 
   // Report
-  function startReport(&$report, $asSubreport = false, $isDesignMode = false)
+  function startReport(&$report, $asSubreport = false)
   {
     $this->_start = microtime();
     $this->_asSubreport = $asSubreport;
     $this->_base =& $this->getExporterBasicClass($report->layout, !$asSubreport);
-    $this->startReportSubExporter($report, $asSubreport, $isDesignMode);
+    $this->startReportSubExporter($report, $asSubreport);
   }
 
   function endReport(&$report)
@@ -74,7 +73,7 @@ class Exporter
    * @access protected
    * @return void
    */
-  function startReportSubExporter(&$report, $asSubreport = false, $isDesignMode = false)
+  function startReportSubExporter(&$report, $asSubreport = false)
   {
   }
 

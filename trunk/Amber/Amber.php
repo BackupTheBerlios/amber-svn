@@ -139,11 +139,11 @@ class Amber
     // Run it
     switch ($mode) {
       case AC_DESIGN:
-        $rep->printDesign($type, false);
+        $rep->printDesign($type);
         break;
       case AC_NORMAL:
       default:
-        $rep->run($type, false);
+        $rep->run($type);
         break;
     }
   }

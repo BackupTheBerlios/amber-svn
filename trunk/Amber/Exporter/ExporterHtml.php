@@ -36,7 +36,7 @@ class ExporterHtml extends Exporter
     return HTML::getInstance($layout, $reset);
   }  
 
-  function startReportSubExporter(&$report, $asSubreport = false, $isDesignMode = false)
+  function startReportSubExporter(&$report, $asSubreport = false)
   {
     $this->layout =& $report->layout;
     
@@ -619,12 +619,8 @@ class SubReportExporterHtml extends ControlExporterHtml
       return $out;
     }
 
-    #ob_start();
-    #$rep->resetMargin(true);
-    $rep->run('html', true);
-    #$repHtml = ob_get_contents();
+    $rep->run('html');
     $repHtml = $rep->subReportBuff;
-    #ob_end_clean();
 
     // Get tags for subreport control
     $out = parent::getTag($control, '##CONTENT##');

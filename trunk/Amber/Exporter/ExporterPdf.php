@@ -46,7 +46,7 @@ class ExporterFPdf extends Exporter
    *  Report-pdf
    *********************************/
 
-  function startReportSubExporter(&$report, $asSubreport = false, $isDesignMode = false)
+  function startReportSubExporter(&$report, $asSubreport = false)
   {
     $reset = (!$asSubreport);
     $this->_pdf =& $this->getExporterBasicClass($report->layout, $reset);
@@ -283,8 +283,7 @@ class ExporterFPdf extends Exporter
     if (is_null($rep)) {
       $para->content = '';
     } else {
-      $rep->resetMargin(true);
-      $rep->run('pdf', true);
+      $rep->run('pdf');
       $para->content = "\n%Start SubReport\n" . $rep->subReportBuff . "\n%End SubReport\n"; 
     }
     #$para->content = "(TEST)";

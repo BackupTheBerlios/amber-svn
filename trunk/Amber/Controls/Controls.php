@@ -473,6 +473,8 @@ class SubReport extends Control
       return 0;
     }
     
+    $this->_subReport->setSubReport();
+    
     // Construct filter
     if (($this->LinkChildFields != null) && ($this->LinkMasterFields != null)) {
       $linkChild = explode(';', $this->LinkChildFields);

@@ -219,23 +219,23 @@ class Report extends AmberObject
    * @param string 'html', 'pdf' (synonyms: '.pdf', 'fpdf') depending on which exporter to use
    *
    */
-  function run($type, $isSubreport)
+  function run($type)
   {
     $this->_installExporter($type);
     $this->_setDocumentTitle($this->Name);
-    $this->designMode = false;
-    $this->_startReport($isSubreport);
+
+    $this->_startReport();
 
     $this->OnOpen($cancel);
     if ($cancel) {
-      $this->_endReport($isSubreport);
+      $this->_endReport();
       return;
     }
     $this->_fetchDataFromDatabase();
     if ($this->_HasData() == 0) {
       $this->OnNoData($cancel);
       if ($cancel) {
-        $this->_endReport($isSubreport);
+        $this->_endReport();
         return;
       }
     }
@@ -272,15 +272,7 @@ class Report extends AmberObject
     $this->_printNormalSection($this->ReportFooter);
     $this->newPage();
     $this->OnClose();
-    $this->_endReport($isSubreport);
-  }
-
-  function resetMargin()
-  {
-    $this->LeftMargin = 0;
-    $this->RightMargin = 0;
-    $this->TopMargin = 0;
-    $this->BottomMargin = 0;
+    $this->_endReport();
   }
 
   /**
@@ -291,13 +283,13 @@ class Report extends AmberObject
    * @param string 'html', 'pdf' (synonyms: '.pdf', 'fpdf') depending on which exporter to use
    *
    */
-  function printDesign($type, $isSubreport)
+  function printDesign($type)
   {
     $this->_installExporter($type);
     $this->_setDocumentTitle($this->Name);
 
-    $this->designMode = true;
-    $this->_startReport($isSubreport);
+    $this->setDesignMode();
+    $this->_startReport();
 
     $maxLevel = count($this->_groupFields);
 
@@ -311,7 +303,7 @@ class Report extends AmberObject
     $this->_printDesignSection($this->ReportFooter);
     $this->_printDesignSection($this->PageFooter);
     $this->newPage();
-    $this->_endReport($isSubreport);
+    $this->_endReport();
   }
 
   //////////////////////////////////////////////////////////////////
@@ -712,17 +704,46 @@ class Report extends AmberObject
 
   function setContinous()
   {
-    $this->isContinous = true;
-  }  
+    $this->noAutoPage();
+  }
 
-
-  function _startReport($isSubreport)
+  function setDesignMode()
   {
-    if ($this->designMode) {
-      $this->initDesignHeader();
-    }
-    $this->layout =& new pageLayout($this, $isSubreport, $this->designMode, $this->isContinous);
-    $this->_exporter->startReport($this, $isSubreport, $this->designMode);
+    $this->noHeadFoot();
+    $this->ignoreOnPrint = true;
+    $this->ignoreKeepTogether = true;
+    $this->printHeadFootAsNormalSection = true;
+    $this->initDesignHeader();
+  }
+
+  function setSubReport()
+  {
+    $this->asSubReport = true;
+    $this->noAutoPage();
+    $this->noMargins();
+    $this->noHeadFoot();
+  }
+  
+  function noAutoPage()
+  {
+    $this->noAutoPage = true;
+  }
+  
+  function noMargins()
+  {
+    $this->noMargins = true;
+  }
+  
+  function noHeadFoot()
+  {
+    $this->noHeadFoot = true;
+  }
+  
+  function _startReport()
+  {
+    $this->layout =& new pageLayout($this);
+    
+    $this->_exporter->startReport($this, $this->asSubReport, true);
   }
 
   /**
@@ -762,7 +783,7 @@ class Report extends AmberObject
   function outSection($formatCount, $posY, $sectionHeight, &$secBuff, &$section)
   {
     $this->_exporter->outSectionStart($posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $section->Name);
-    if ($this->designMode) {
+    if ($this->ignoreOnPrint) {
       $this->_exporter->out($secBuff);
     } else {
       $section->_onPrint($cancel, $formatCount);
@@ -772,8 +793,6 @@ class Report extends AmberObject
     }      
     $this->_exporter->outSectionEnd();
   }
-
-
 }
 
 

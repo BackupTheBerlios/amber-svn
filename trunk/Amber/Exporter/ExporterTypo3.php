@@ -21,7 +21,7 @@ class ExporterTypo3 extends ExporterHtml
 
   // Report - Typo3
 
-  function startReportSubExporter(&$report, $asSubreport = false, $isDesignMode = false)
+  function startReportSubExporter(&$report, $asSubreport = false)
   {
     $css = $this->getReportCssStyles($report, $this->cssClassPrefix);
     $this->setCss($css);

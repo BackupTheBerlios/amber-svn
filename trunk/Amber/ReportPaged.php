@@ -13,11 +13,6 @@ class reportPaged extends Report
   var $layout;
 
 
-  function _startReport($isSubreport)
-  {
-    parent::_startReport($isSubreport);
-  }
-
   /** 
    * @access private
    */
@@ -40,7 +35,7 @@ class reportPaged extends Report
   
   function outPage()
   {
-    if ($this->layout->asSubReport) {
+    if ($this->asSubReport) {
       $this->subReportBuff = $this->layout->body;
     } else {
       for($pageX = 0; $pageX <= $this->layout->pagesHorizontal - 1; $pageX++) {
@@ -72,8 +67,8 @@ class reportPaged extends Report
 
   function _endSection(&$section, $height)
   {
-    if ($this->designMode) {
-      $this->endNormalSection($section, $height, false);
+    if ($this->printHeadFootAsNormalSection) {
+      $this->endNormalSection($section, $height, !$this->ignoreKeepTogether);
     } elseif ($section->_PagePart == '') {
       $this->endNormalSection($section, $height, $section->KeepTogether);
     } elseif ($section->_PagePart == 'Foot') {
@@ -169,7 +164,6 @@ class reportPaged extends Report
 class pageLayout
 {
   var $unit;          //unit in pt
-  var $designMode;    // bool: I am designmode  (no page-header/-footer)
   
   var $paperWidth;
   var $paperHeight;
@@ -198,23 +192,14 @@ class pageLayout
   var $printWidth;
   var $printHeight;
 
-  function pageLayout(&$report, $asSubReport, $designMode, $continous=false)
+  
+  
+  
+  function pageLayout(&$report)
   { 
-    $this->designMode = $designMode;
-    $this->asSubReport = $asSubReport;   
-    if ($this->asSubReport) {
-      $this->noAutoPageY = true;
-      $this->noAutoPageX = true;
-      $this->noMargins = true;
-      $this->noHeadFoot = true;
-    }    
-    if ($this->designMode) {
-      $this->noHeadFoot = true;
-    }    
-    if ($continous) {
-      $this->noAutoPageY = true;
-      $this->noAutoPageX = true;
-    }
+    $this->noAutoPage = $report->noAutoPage;
+    $this->noMargins = $report->noMargins;
+    $this->noHeadFoot = $report->noHeadFoot;
     
     $this->unit = 1/20;
     $this->reportWidth = $report->Width;
@@ -246,7 +231,7 @@ class pageLayout
       $this->pageFooterHeight = $report->PageFooter->Height;
     }
     
-    if ($this->noAutoPageX) {
+    if ($this->noAutoPage) {
       $this->printWidth  = $this->reportWidth; 
       $this->pagesHorizontal = 1;
     } else {
@@ -254,7 +239,7 @@ class pageLayout
       $this->pagesHorizontal = floor($this->reportWidth / $this->printWidth) + 1; // No of pages needed to print report
     }
 
-    if (!$this->noAutoPageY) {
+    if (!$this->noAutoPage) {
       $this->printHeight = ($this->paperHeight - $this->topMargin - $this->bottomMargin - $this->pageHeaderHeight - $this->pageFooterHeight); //height of printable area of page (w/o margins)
     }  
 
@@ -268,7 +253,7 @@ class pageLayout
     $this->footer = '';
     $this->pageNo++;
     $this->newpage = 0;
-    if ($this->noAutoPageY) {
+    if ($this->noAutoPage) {
       $this->pagePosY = $this->posY;
     } else {  
       $this->pagePosY = $this->pageNo * $this->printHeight;
@@ -277,7 +262,7 @@ class pageLayout
   
   function getPageWithOffset($offset)
   {
-    if (!$this->noAutoPageY) {
+    if (!$this->noAutoPage) {
       return floor(($offset + $this->posY) / $this->printHeight);
     } elseif ($this->pageNo < 0) {
       return 0;
@@ -294,7 +279,7 @@ class pageLayout
   function fillrestOfPage()
   {
     $this->newpage = 1;
-    if (!$this->noAutoPageY) {
+    if (!$this->noAutoPage) {
       $this->posY = $this->pagePosY + $this->printHeight;  //move posY to end of page (fill rest of page with space)
     } else {
       $this->printHeight = $this->posY - $this->pagePosY;  //set page size to actual position 
@@ -308,7 +293,7 @@ class pageLayout
   
   function paperHeight()
   {
-    if ($this->noAutoPageY) {
+    if ($this->noAutoPage) {
       return $this->topMargin + $this->bottomMargin + $this->pageHeaderHeight + $this->pageFooterHeight + ($this->posY - $this->pagePosY);
     } else {
       return $this->paperHeight;
@@ -317,7 +302,7 @@ class pageLayout
   
   function newPageAvoidsSectionSplit($sectionHeight)  // end of section will be on same page, wether with or without pagebreak
   {
-    if ($this->noAutoPageY) {
+    if ($this->noAutoPage) {
       return false;
     } else {  
       $startNewPage =  (floor($this->posY / $this->printHeight) + 1) * $this->printHeight;
