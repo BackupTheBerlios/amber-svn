@@ -21,7 +21,7 @@ class Module
 
   function run()
   {
-    eval(' ?>' . $this->code . '<?php ');
+    Amber::evaluate('module "' . $this->name . '"', $this->code);
   }
 }
 

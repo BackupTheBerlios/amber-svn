@@ -329,6 +329,22 @@ class Amber
       echo $out;
     }
   }
+  /**
+   * @static
+   * @access public
+   * @param string
+   */
+  function evaluate($name, &$code)
+  {
+    ob_start();
+    $result = eval(' ?' . '>' . $code . '<' . '?php ');
+    $message = ob_get_contents();
+    ob_end_clean();
+    if ($result === false) {
+      Amber::showError('Unable to evaluate ' . $name , $message);
+      die();
+    }
+  }
 }
 
 ?>
