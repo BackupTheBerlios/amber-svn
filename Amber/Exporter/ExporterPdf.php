@@ -39,6 +39,12 @@ class pageLayout
   
   var $pageHeaderHeight;
   var $pageFooterHeight;
+  
+  //////////////////////
+  // 'calculated' fields
+  /////////////////////
+  var $printWidth;
+  var $printHeight;
 
   function set_orientation($orientation, $width, $height)
   {
@@ -49,6 +55,11 @@ class pageLayout
       $this->paperWidth = $height;
       $this->paperHeight = $width;
     } 
+  }
+  function calcPrintableArea()
+  {
+    $this->printWidth  = ($this->paperWidth - $this->leftMargin - $this->rightMargin); //width of printable area of page (w/o morgins)
+    $this->printHeight = ($this->paperHeight - $this->topMargin - $this->bottomMargin - $this->pageHeaderHeight - $this->pageFooterHeight); //height of printable area of page (w/o morgins)
   }
 }
 
@@ -100,6 +111,7 @@ class ExporterFPdf extends Exporter
         $layout->pageHeaderHeight = $report->PageHeader->Height;
         $layout->pageFooterHeight = $report->PageFooter->Height;
       }
+      $layout->calcPrintableArea();
       $this->_pdf->init($this, $report->Width, $layout);
       $this->_pdf->StartReportBuffering();
     }

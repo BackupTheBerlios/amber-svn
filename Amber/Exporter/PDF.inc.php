@@ -266,17 +266,19 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
   function init(&$exporter, $width, &$layout)
   {
     $this->_exporter =& $exporter;
+    $this->layout = $layout;
+    $this->_headerHeight = $layout->pageHeaderHeight;
+    $this->_footerHeight = $layout->pageFooterHeight;
+    $this->_printWidth  = $layout->printWidth;
+    $this->_printHeight = $layout->printHeight;
+    $this->_reportWidth = $width;
+    $this->_posY = 0;
+
     $this->SetCompression(false);
     $this->SetRightMargin($layout->rightMargin);
     $this->SetLeftMargin($layout->leftMargin);
     $this->SetTopMargin($layout->topMargin);
     $this->SetAutoPageBreak(false, $layout->bottomMargin);
-    $this->_reportWidth = $width;
-    $this->_headerHeight = $layout->pageHeaderHeight;
-    $this->_footerHeight = $layout->pageFooterHeight;
-    $this->_printWidth  = ($this->w - $layout->leftMargin - $layout->rightMargin); //width of printable area of page (w/o morgins)
-    $this->_printHeight = ($this->h - $layout->topMargin - $layout->bottomMargin - $layout->pageHeaderHeight - $layout->pageFooterHeight); //height of printable area of page (w/o morgins)
-    $this->_posY = 0;
 
     $this->SetFont('helvetica');    // need to set font, drawcolor, fillcolor before AddPage
     $this->SetDrawColor(0, 0, 0);   // else we get strange errors. prb fpdf does some optimisations which we break
