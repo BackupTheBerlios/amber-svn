@@ -15,7 +15,6 @@ define('__HAIRLINEWIDTH__', 15);  // width of hairline in twips; here 1px
 
 
 ExporterFactory::register('html', 'ExporterHtml');
-ExporterFactory::register('phtml', 'ExporterHtml');
 
 /**
  *

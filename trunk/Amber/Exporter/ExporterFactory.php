@@ -34,7 +34,9 @@ class ExporterFactory
   // PUBLIC METHODS
   //////////////////////////////////////////////////////////////////
   /**
-   * @return ExporterFactory reference to singleton
+   * @static
+   * @access private
+   * @return ExporterFactory Reference to singleton
    */
   function &getInstance()
   {
@@ -48,6 +50,7 @@ class ExporterFactory
   }
 
   /**
+   * @static
    * @access public
    * @param string
    * @param Report
@@ -69,13 +72,22 @@ class ExporterFactory
   }
 
   /**
+   * Create association between an exporter type string and the class which
+   * will be responsible to handle output.
+   *
+   * @static
    * @access public
-   * @param string
-   * @param string
+   * @param string Unique type
+   * @param string Name of the class which must be instantiated for this type of exporter
    */
   function register($type, $className)
   {
     $instance =& ExporterFactory::getInstance();
+
+    if (array_key_exists($type, $instance->_classList)) {
+      Amber::showError('Error', 'Duplicate exporter type: "' . $type . '"');
+      die();
+    }
     $instance->_classList[$type] = $className;
   }
 }
