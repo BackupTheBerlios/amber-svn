@@ -187,6 +187,12 @@ class Control
 */
 class Rectangle extends Control
 {
+  
+  function Rectangle()
+  {
+    parent::Control();
+  }  
+  
   function printNormal(&$buffer)
   {
     $this->_exporter->printNormal($this, $buffer, '');

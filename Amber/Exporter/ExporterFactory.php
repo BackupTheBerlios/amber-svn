@@ -60,7 +60,7 @@ class ExporterFactory
 
     $ex =& new $className;
     $ex->_report =& $report;
-
+    $ex->createdAs = $type;
     return $ex;
   }
 

@@ -5,6 +5,7 @@ ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/../
 
 require_once '../Report.php';
 require_once 'unit.php';
+require_once '../Amber.php';
 
 class testReport extends PHPUnit_TestCase
 {
@@ -38,6 +39,82 @@ class testReport extends PHPUnit_TestCase
       report::_makeSqlFilter('select * from table where ; a ;;; ;;;', 'NPNr = 13'),     'Test3a');
   }
 
+  function &makeBericht1()
+  {
+    $cfgFileName = '../conf/localconf.xml';
+    if (!file_exists($cfgFileName)) {
+      showError('Error: localconf.xml does not exist', 'Amber needs to be configured before you can use it. <br>Use the <a href="../Amber/install/index.php" target="_blank">install tool</a> to set up the database connection.');
+    }
+    $cfg = new AmberConfig;
+    $cfg->fromXML($cfgFileName);
+
+    setlocale (LC_CTYPE, 'de_DE', 'de_DE@euro');
+    setlocale (LC_TIME, 'de_DE', 'de_DE@euro'); // needed for date, time
+    setlocale (LC_MONETARY, 'de_DE', 'de_DE@euro'); // needed for numbers
+
+    $rep =& new Report();
+    $rep->setConfig($cfg);
+
+    $rep->setReportDir('reports');
+    $rep->setLoader('file');
+    $rep->load('Bericht1');
+    
+    return $rep;
+    
+  }
+  
+  function test_ReportRuns()
+  {
+    $rep =& $this->makeBericht1();
+
+    ob_start();
+    $rep->run('html');
+    $s = ob_get_contents();
+    ob_end_clean();
+    $this->assertEquals('[<html>]', "[" . substr($s, 0, 6) . "]",    'Test1a html, normal: <html> without leading stuff');
+    $this->assertEquals("[</html>\n]", "[" . substr($s, -8) . "]",   'Test1b html, normal: </html>\n');
+
+    ob_start();
+    $rep->printDesign('html');
+    $s = ob_get_contents();
+    ob_end_clean();
+    $this->assertEquals('[<html>]', "[" . substr($s, 0, 6) . "]",    'Test2a html, design: <html> without leading stuff');
+    $this->assertEquals("[</html>\n]", "[" . substr($s, -8) . "]",   'Test2b html, design: </html>\n');
+    
+    ob_start();
+    $rep->run('testpdf');
+    $s = ob_get_contents();
+    ob_end_clean();
+    $this->assertEquals('[%PDF-]', "[" . substr($s, 0, 5) . "]",  'Test3a pdf, normal');
+    $this->assertEquals("[%%EOF\n]", "[" . substr($s, -6) . "]",     'Test3b pdf, normal');
+    
+    ob_start();
+    $rep->printDesign('testpdf');
+    $s = ob_get_contents();
+    ob_end_clean();
+    $this->assertEquals('[%PDF-]', "[" . substr($s, 0, 5) . "]",  'Test4a pdf, Design');
+    $this->assertEquals("[%%EOF\n]", "[" . substr($s, -6) . "]",     'Test4b pdf, Design');
+    
+   
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 }
 
 $suite  = new PHPUnit_TestSuite("testReport");

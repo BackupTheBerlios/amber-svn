@@ -14,6 +14,7 @@ require_once('PDF.inc.php');
 ExporterFactory::register('pdf', 'ExporterFPdf');
 ExporterFactory::register('.pdf', 'ExporterFPdf');
 ExporterFactory::register('fpdf', 'ExporterFPdf');
+ExporterFactory::register('testpdf', 'ExporterFPdf');
 
 
 /**
@@ -78,7 +79,11 @@ class ExporterFPdf extends Exporter
     parent::endReport($report);
     #echo "pdf->Output();<br>";
     $this->_pdf->ReportEnd($report->Width);
-    $this->_pdf->Output('out.pdf',"I");
+    if ($this->createdAs == 'testpdf') {
+      print $this->_pdf->Output('out.txt', 'S');
+    } else {
+      $this->_pdf->Output('out.pdf', 'I');
+    }  
   }
 
   /*********************************
