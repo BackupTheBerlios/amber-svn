@@ -39,7 +39,7 @@ class ExporterFPdf extends Exporter
     $this->_blankPage = true;
     $orient = $this->_pdf_orientation($report->Orientation);
     $size = array($report->PaperWidth / 1440, $report->PaperHeight / 1440);
-    #dump($size);
+    #Amber::dump($size);
     $this->_pdf =& new PDF($orient, 'in', $size);
     $this->_pdf->SetRightMargin($report->RightMargin / 1440);
     $this->_pdf->SetLeftMargin($report->LeftMargin / 1440);
@@ -73,12 +73,12 @@ class ExporterFPdf extends Exporter
   /*********************************
    *  Section
    *********************************/
-  function sectionPrintDesignHeader($text) 
+  function sectionPrintDesignHeader($text)
   {
     if ($this->_blankPage) {
         $this->_pdf->AddPage();
         $this->_blankPage = false;
-    }  
+    }
     $this->_secStartX = $this->_pdf->GetX();
     $this->_secStartY = $this->_pdf->GetY();
 
@@ -95,14 +95,14 @@ class ExporterFPdf extends Exporter
       $this->_secStartY = ($this->_secEndY - $sec->Height / 1440);
     }
     $this->_pdf->SetXY($this->_secEndX, $this->_secEndY + 1/72);
-    
+
     $this->_pdf->SetXY($this->_secStartX, $this->_secStartY);
     $this->_pdf->SetLineWidth($control->BorderWidth / 1440);
     $this->_borderColor(0x000000);
     $this->_pdf->Cell($this->_report->Width / 1440, 12/72, '', 'TLRB', 0, 'L', 0);
 
     $this->_pdf->SetXY($this->_secEndX, $this->_secEndY + 1/72);
-  }  
+  }
 
   function sectionPrintStart(&$sec)
   {
@@ -139,7 +139,7 @@ class ExporterFPdf extends Exporter
       if (!$this->DesignMode) {
         $this->_report->_printNormalSection('PageFooter'); // FIXME: this has to be done by the Report class!!!
         $this->_report->OnPage();
-      }  
+      }
       $this->_pageNo++;
     }
     $this->_blankPage = true;
@@ -177,16 +177,16 @@ class ExporterFPdf extends Exporter
         $this->_blankPage = false;
         $this->_report->_printNormalSection('PageHeader'); // FIXME: this has to be done by the Report class!!!
       }
-    }  
+    }
   }
 
   function afterPrinting(&$section, &$doItAgain)
   {
-    if (!$this->DesignMode) {    
+    if (!$this->DesignMode) {
       if (($section->ForceNewPage == 2) or ($section->ForceNewPage == 3)) {
         $this->newPage();
       }
-    }  
+    }
     $doItAgain = false;
   }
 
@@ -200,7 +200,7 @@ class ExporterFPdf extends Exporter
     // we let $this do the work, after all we only need printNormal and printPreview
   }
 
-    
+
   function printNormal(&$control, &$buffer, $content)
   {
     if (!$control->Visible) {

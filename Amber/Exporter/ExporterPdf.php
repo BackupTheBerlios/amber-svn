@@ -42,9 +42,9 @@ class ExporterFPdf extends Exporter
     $this->_blankPage = true;
     $orient = $this->_pdf_orientation($report->Orientation);
     $size = array($report->PaperWidth, $report->PaperHeight);
-    #dump($size);
+    #Amber::dump($size);
     $this->_pdf =& new PDF($orient, 1/20, $size);
-    $this->_pdf->SetCompression(false);    
+    $this->_pdf->SetCompression(false);
     $this->_pdf->SetRightMargin($report->RightMargin);
     $this->_pdf->SetLeftMargin($report->LeftMargin);
     $this->_pdf->SetTopMargin($report->TopMargin);
@@ -71,7 +71,7 @@ class ExporterFPdf extends Exporter
       $this->_pdf->ReportStart($this, $report->Width);
     } else {
       $this->_pdf->ReportStart($this, $report->Width, $report->PageHeader->Height, $report->PageFooter->Height);
-    } 
+    }
   }
 
   function endReport(&$report)
@@ -83,7 +83,7 @@ class ExporterFPdf extends Exporter
       print $this->_pdf->Output('out.txt', 'S');
     } else {
       $this->_pdf->Output('out.pdf', 'I');
-    }  
+    }
   }
 
   /*********************************
@@ -94,16 +94,16 @@ class ExporterFPdf extends Exporter
   /**
   *
   * for design mode: print border between sections
-  * 
+  *
   * @access public
   * @param  string name of header to print
   * @return integer height printed in twips
   */
-  function sectionPrintDesignHeader($text) 
+  function sectionPrintDesignHeader($text)
   {
     $this->_pdf->startSection();
     $height = 240; //12pt
-    
+
     $this->_backColor(0xDDDDDD);
     $this->_textColor(0x000000);
     $this->_pdf->SetFont('helvetica', '', 8);
@@ -115,7 +115,7 @@ class ExporterFPdf extends Exporter
     $this->_pdf->Cell($this->_report->Width, $height, $text, $border, 1, 'L', 1);
 
     $this->_pdf->endSection($height+1, true);
-  }  
+  }
 
   function startSection(&$section, $width, &$buffer)
   {
@@ -134,48 +134,48 @@ class ExporterFPdf extends Exporter
   {
     if (!$section->_PagePart or $this->DesignMode) {
       $this->_pdf->endSection($height, $section->KeepTogether);
-    } elseif ($section->_PagePart == 'Foot') {  
+    } elseif ($section->_PagePart == 'Foot') {
       $this->_pdf->pageFooterEnd();
     } else {
       $this->_pdf->pageHeaderEnd();
     }
-    parent::endSection($section, $height, $buffer);    
+    parent::endSection($section, $height, $buffer);
   }
 
-  function page() 
+  function page()
   {
     return $this->_pdf->page();
   }
-  
+
   function newPage()
   {
-    $this->_pdf->newPage();    
+    $this->_pdf->newPage();
   }
 
   /*
   * callback function for PDF: init printing of page footer if necessary
-  * 
+  *
   * @access public
   */
   function printPageFooter()
   {
     if (!$this->DesignMode) {
-      $this->_report->_printNormalSection('PageFooter'); 
+      $this->_report->_printNormalSection('PageFooter');
     }
   }
-  
+
   /*
   * callback function for PDF: init printing of page header if necessary
-  * 
+  *
   * @access public
   */
   function printpageHeader()
   {
     if (!$this->DesignMode) {
-      $this->_report->_printNormalSection('PageHeader'); 
+      $this->_report->_printNormalSection('PageHeader');
     }
   }
-  
+
 
   /*********************************
    *  Controls - pdf
@@ -187,7 +187,7 @@ class ExporterFPdf extends Exporter
     // we let $this do the work, after all we only need printNormal and printPreview
   }
 
-    
+
   function printNormal(&$control, &$buffer, $content)
   {
     if (!$control->Visible) {

@@ -92,7 +92,7 @@ function MSPageSize($type, &$name, &$width, &$height)
   $name   = $pageList[$type][0];
   $width  = $pageList[$type][1];
   $height = $pageList[$type][2];
-  #dump(array('type'=>$type, 'name'=>$name, 'width'=>$width/1440, 'height'=>$height/1440));
+  #Amber::dump(array('type'=>$type, 'name'=>$name, 'width'=>$width/1440, 'height'=>$height/1440));
 }
 
 ?>

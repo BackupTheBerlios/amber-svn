@@ -360,7 +360,7 @@ class Report
   function run($type)
   {
     $this->_installExporter($type);
-    //dump($this->_exporter->type);
+    //Amber::dump($this->_exporter->type);
     $this->_exporter->setDocumentTitle($this->Name);
 
     $this->OnOpen($cancel);

@@ -28,8 +28,8 @@ class Exporter
   function setDesignMode()
   {
     $this->DesignMode = true;
-  }  
-  
+  }
+
   function setDocumentTitle($title)
   {
     $this->_docTitle = $title;
@@ -45,20 +45,20 @@ class Exporter
   function endReport(&$report)
   {
     $this->newPage();
-    $this->dump('Exec time: ' . microtime_diff($this->_start, microtime()));
+    Amber::dump('Exec time: ' . microtime_diff($this->_start, microtime()));
   }
 
   // Section
-  function startSection(&$section, $width, &$buffer) 
+  function startSection(&$section, $width, &$buffer)
   {
     $this->_sections[] =& $section;
   }
-  
+
   function endSection(&$section, $height, &$buffer)
   {
     array_pop($this->_sections);
   }
-  
+
   function sectionPrintDesignHeader($text='') {}
 
   // Page handling
@@ -71,8 +71,8 @@ class Exporter
     $top =& $this->_sections[count($this->_sections) - 1];
     if (!is_null($top)) {
       $top->_OnPrint(&$cancel, $formatCount);
-    }  
-  }  
+    }
+  }
 
   // Controls
   function setControlExporter($ctrl)
@@ -82,13 +82,6 @@ class Exporter
     Amber::showError('Error', 'Abstract function called: Exporter::setControlExporter, type: ' . $this->type);
     die();
   }
-
-  // Helper functions
-  function dump($var)
-  {
-    print_r($var, 1);
-  }
-
 }
 
 ?>

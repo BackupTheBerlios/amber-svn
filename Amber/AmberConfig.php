@@ -53,6 +53,39 @@ class AmberConfig
     fclose($fp);
   }
 
+  function getUsername()
+  {
+    return $this->database['username'];
+  }
+
+  function getPassword()
+  {
+    return $this->database['password'];
+  }
+
+  function getHost()
+  {
+    return $this->database['host'];
+  }
+
+  function getDriver()
+  {
+    return $this->database['driver'];
+  }
+
+  function getDbName()
+  {
+    return $this->database['dbname'];
+  }
+
+  function getMedium()
+  {
+    return $this->sys_objects['medium'];
+  }
+
+  /**
+   * @private
+   */
   function writeArray($filehandle, $confArray)
   {
     static $indent = '';

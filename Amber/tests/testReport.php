@@ -43,7 +43,7 @@ class testReport extends PHPUnit_TestCase
   {
     $cfgFileName = '../conf/localconf.xml';
     if (!file_exists($cfgFileName)) {
-      showError('Error: localconf.xml does not exist', 'Amber needs to be configured before you can use it. <br>Use the <a href="../Amber/install/index.php" target="_blank">install tool</a> to set up the database connection.');
+      Amber::showError('Error: localconf.xml does not exist', 'Amber needs to be configured before you can use it. <br>Use the <a href="../Amber/install/index.php" target="_blank">install tool</a> to set up the database connection.');
     }
     $cfg = new AmberConfig;
     $cfg->fromXML($cfgFileName);

@@ -16,7 +16,7 @@ class Amber
   {
     $db = Amber::currentDb();
     $m = new ModuleLoader();
-    if ($this->_config->sys_objects['medium'] == 'db') {
+    if ($this->_config->getMedium() == 'db') {
       $m->loadFromDb($db);
     } else {
       $m->loadFromFile('modules/');
@@ -84,7 +84,7 @@ class Amber
   {
     $rep =& new Report();
     $rep->setConfig($this->_config);
-    if ($this->_config->sys_objects['medium'] == 'db') {
+    if ($this->_config->getMedium() == 'db') {
       $rep->setLoader('db');
     } else {
       $rep->setReportDir('reports');

@@ -43,7 +43,7 @@ class AmberXMLServer extends IXR_Server
       $conResult = @$db->PConnect($cfg->host, $cfg->username, $cfg->pwd, $cfg->database);
       $db->SetFetchMode(ADODB_FETCH_ASSOC);
       if ($conResult == false) {
-        showError('Database Error '  . $db->ErrorNo(), $db->ErrorMsg());
+        Amber::showError('Database Error '  . $db->ErrorNo(), $db->ErrorMsg());
         die();
       }
       $this->_db =& $db;
