@@ -17,7 +17,7 @@
   <tr>
     <td>
       <a href="doc/index.html" target="_blank">Class documentation</a><br>
-      <a href="mmcache.php" target="_blank">MMCache</a><br>
+      <a href="Amber/install/mmcache.php" target="_blank">MMCache</a><br>
     </td>
   </tr>
 </table>
