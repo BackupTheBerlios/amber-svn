@@ -90,10 +90,6 @@ class ExporterFPdf extends Exporter
 {
   var $type = 'fpdf';
   var $_pdf;
-#  var $_blankPage;
-#  var $_pageNo = 1;
-
-#  var $_posY;
 
   /*********************************
    *  Report-pdf

@@ -39,7 +39,7 @@ class PDF extends FPDF
 
   function newPage()
   {
-    $this->_posY = ($this->reportBuff->actpageNo + 1) * $this->layout->printHeight;
+    $this->reportBuff->posY = ($this->reportBuff->actpageNo + 1) * $this->layout->printHeight;
   }
 
   function pageHeaderEnd()
@@ -136,13 +136,13 @@ class PDF extends FPDF
     $this->_out("\n%end Body-Section:" . ($this->_inSection) . "\n\n");
     $secBuff = $this->_sectionBuff[$this->_inSection];
     $this->_inSection--;
-    $startPage = floor($this->_posY / $this->layout->printHeight);
-    $endPage   = floor(($this->_posY + $sectionHeight) / $this->layout->printHeight);
+    $startPage = floor($this->reportBuff->posY / $this->layout->printHeight);
+    $endPage   = floor(($this->reportBuff->posY + $sectionHeight) / $this->layout->printHeight);
     if ($keepTogether and ($startPage <> $endPage)) {
-      if ($this->_posY > ($startPage * $this->layout->printHeight)) { // page not blank
+      if ($this->reportBuff->posY > ($startPage * $this->layout->printHeight)) { // page not blank
         $this->newPage();
-        $startPage = floor($this->_posY / $this->layout->printHeight);
-        $endPage   = floor(($this->_posY + $sectionHeight) / $this->layout->printHeight);
+        $startPage = floor($this->reportBuff->posY / $this->layout->printHeight);
+        $endPage   = floor(($this->reportBuff->posY + $sectionHeight) / $this->layout->printHeight);
       }
     }
 
@@ -155,9 +155,9 @@ class PDF extends FPDF
         $this->_exporter->printPageHeader();
       }
       $this->reportBuff->sectionType = '';
-      $this->outSection(0, $this->_posY, $this->_reportWidth, $sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
+      $this->outSection(0, $this->reportBuff->posY, $this->_reportWidth, $sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
     }
-    $this->_posY += $sectionHeight;
+    $this->reportBuff->posY += $sectionHeight;
   }
 
   function endSectionSubReport($sectionHeight, $keepTogether)
@@ -166,7 +166,7 @@ class PDF extends FPDF
     $this->_inSection--;
 
     $this->reportBuff->sectionType = '';
-    $this->SetCoordinate(0, -$this->_posY);
+    $this->SetCoordinate(0, -$this->reportBuff->posY);
     $this->SetClipping(0, 0, $this->_reportWidth, $sectionHeight);
 
     $formatCount = 1;
@@ -177,7 +177,7 @@ class PDF extends FPDF
 
     $this->RemoveClipping();
     $this->RemoveCoordinate();
-    $this->_posY += $sectionHeight;
+    $this->reportBuff->posY += $sectionHeight;
   }
 
   function _pageHeaderOrFooterEnd($posY, $height)
@@ -261,7 +261,7 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
     $this->layout = $layout;
     $this->SetCompression(false);
     $this->_reportWidth = $width;
-    $this->_posY = 0;
+    $this->reportBuff->posY = 0;
 
     $this->SetCompression(false);
     $this->SetRightMargin($layout->rightMargin);
@@ -428,7 +428,7 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
       $this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$this->PageNo());
     } else {
       if($y == -1)
-        $y = $this->_posY - ($this->reportBuff->actpageNo * $this->layout->printHeight);
+        $y = $this->reportBuff->posY - ($this->reportBuff->actpageNo * $this->layout->printHeight);
       $p = $this->reportBuff->actpageNo + 1;
       if ($p <= 0)
         $p = 1;
