@@ -60,12 +60,20 @@ class ExporterFPdf extends Exporter
       $this->_pdf->SetTopMargin($report->TopMargin);
       $this->_pdf->SetAutoPageBreak(false, $report->BottomMargin);
       if ($this->DesignMode) {
-        $this->_pdf->startReport($this, $report->Width);
+        $this->startReport1($report->Width);
       } else {
-        $this->_pdf->startReport($this, $report->Width, $report->PageHeader->Height, $report->PageFooter->Height);
+        $this->startReport1($report->Width, $report->PageHeader->Height, $report->PageFooter->Height);
       }
     }
   }
+  
+  function startReport1($width, $headerHeight=0, $footerHeight=0)
+  {
+    $this->_pdf->_actPageNo = -1;
+    $this->_pdf->init($this, $width, $headerHeight, $footerHeight);
+    $this->_pdf->StartReportBuffering();
+  }
+  
 
   function _exporterExit()
   {
@@ -73,7 +81,7 @@ class ExporterFPdf extends Exporter
     if ($this->_asSubreport) {
       $this->_pdf->endSubReport();
     } else {  
-      $this->_pdf->endReport($this->_report->Width);
+      $this->endReport1($this->_report->Width);
       if ($this->createdAs == 'testpdf') {
         print $this->_pdf->Output('out.txt', 'S');
       } else {
@@ -82,6 +90,29 @@ class ExporterFPdf extends Exporter
         } else {
           $this->_pdf->Output('out.pdf', 'I');
         }
+      }
+    }
+  }
+  
+  function endReport1()
+  {
+    $this->printPageFooter();
+
+    $this->_pdf->endReportBuffering();
+    
+    $firstPage = true;  //first page is out
+
+    $endPageX = floor($this->_pdf->_reportWidth / $this->_pdf->_printWidth);
+    foreach(array_keys($this->_pdf->_reportPages) as $pageY) {
+      for($pageX = 0; $pageX <= $endPageX; $pageX++) {
+        if (!$firstPage) {
+          $this->_pdf->AddPage();
+        }
+        $firstPage = false;
+
+        $this->_pdf->outPageHeader($pageY, $pageX, $this->_pdf->_reportPages[$pageY]['Head']);  
+        $this->_pdf->outPage($pageY, $pageX, $this->_pdf->_reportPages[$pageY]['']);  
+        $this->_pdf->outPageFooter($pageY, $pageX, $this->_pdf->_reportPages[$pageY]['Foot']);  
       }
     }
   }

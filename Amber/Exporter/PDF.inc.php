@@ -39,13 +39,6 @@ class PDF extends FPDF
   //
   //////////////////////////////////////////////////////////////////////////
        
-  function startReport(&$exporter, $width, $headerHeight=0, $footerHeight=0)
-  {
-    $this->_actPageNo = -1;
-    $this->init($exporter, $width, $headerHeight, $footerHeight);
-    $this->StartReportBuffering();
-  }
-  
   function endReport()
   {
     $this->_exporter->printPageFooter();
