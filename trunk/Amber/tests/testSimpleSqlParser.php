@@ -54,6 +54,15 @@ class testSimpleSelectParser extends PHPUnit_TestCase
     $this->assertEquals('b = 0', $result['where']);
   }
 
+  function testStrings()
+  {
+    $parser =& new SimpleSelectParser('SELECT *, "column-name" FROM [table] WHERE b=0');
+    $result = $parser->parse();
+
+    $this->assertEquals('* ,"column-name"', $result['select']);
+    $this->assertEquals('"table"', $result['from']);
+  }
+
   function testBoolConversion()
   {
     $parser =& new SimpleSelectParser('SELECT * FROM a WHERE b=false AND c = true');

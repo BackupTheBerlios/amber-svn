@@ -89,6 +89,8 @@ class SimpleSelectParser extends Parser
       if (!in_array($this->token, $delimiter)) {
         if ($this->token == '.') {
           $tokenTextList .= '.';
+        } else if ($this->token == 'text_val') {
+          $tokenTextList .= '"' . $this->getTokText() . '"';
         } else if (in_array(strtolower($this->getTokText()) , $this->accessKeywords, true)) {
           $tmpTok = strtolower($this->getTokText());
           if ($tmpTok == 'false') {
