@@ -59,7 +59,7 @@ class ControlFactory
       $className = $factory->_classList['null'];
     }
     // if classname is still invalid
-    if (!class_exists($className, false)) {
+    if (!class_exists($className)) {
       // FIXME: raise error
       return false;
     }
