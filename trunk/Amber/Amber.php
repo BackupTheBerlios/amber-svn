@@ -120,14 +120,14 @@ class Amber
     return $amber->_sysdb;
   }
 
-  function OpenReport($reportName, $mode = AC_NORMAL, $filter = '', $type = 'html', $noMargin = false)
+  function OpenReport($reportName, $mode = AC_NORMAL, $where = '', $type = 'html', $noMargin = false)
   {
     $rep =& $this->loadObject('report', $reportName);
     if (!$rep) {
       return false;
     }
 
-    $rep->Filter = $filter;
+    $rep->setWhere($where);
     $rep->setNoMargins($noMargin);
 
     if (($type == 'html') || ($type == 'typo3')) {

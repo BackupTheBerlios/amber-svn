@@ -53,6 +53,7 @@ class Report extends AmberObject
   var $ReportFooter;
 
   var $Filter;
+  var $Where; // where-clause (applied before filter)
 
   var $Controls;      //List of all Controls
   var $ControlValues; // ControlValues[Name] is shortcut for Controls[Name]->Value
@@ -88,13 +89,26 @@ class Report extends AmberObject
   /**
    *
    * @access public
-   * @see setFilter()
+   * @see setWhere()
    *
    */
   function setFilter($filter)
   {
     if (is_string($filter)) {
       $this->Filter = $filter;
+    }
+  }
+  
+  /**
+   *
+   * @access public
+   * @see setFilter()
+   *
+   */
+  function setWhere($where)
+  {
+    if (is_string($where)) {
+      $this->Where = $where;
     }
   }
 
@@ -356,7 +370,7 @@ class Report extends AmberObject
     if (empty($this->RecordSource)) {
       return;
     }
-    $sql = $this->_makeSqlFilter($this->RecordSource, $this->Filter);
+    $sql = $this->_makeSqlFilter($this->RecordSource, $this->Where);
 
     // Execute query
     $db =& Amber::currentDb();
