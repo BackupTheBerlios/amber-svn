@@ -30,7 +30,7 @@ class AmberConfig
     $loader = new XMLLoader(false);
     $res = $loader->getArray($fileName);
 
-    if (is_array($res)) {
+    if (is_array($res) && is_array($res['config'])) {
       foreach ($res['config'] as $key => $value) {
             $this->$key = $value;
       }
@@ -39,18 +39,18 @@ class AmberConfig
 
   function toXML($fileName)
   {
-
     $properties = array(
-      'database' => array('username', 'password', 'host', 'driver', 'dbname'),
-      'sys_objects' => array('medium')
+      'database', 'sys_objects'
     );
 
     $fp = fopen($fileName, 'w');
     fwrite($fp, '<?xml version="1.0" encoding="iso-8859-1"?>' . "\n");
     fwrite($fp, "<config>\n");
-    writeArray($fp, $properties);
+    $this->writeArray($fp, '', $this);
     fwrite($fp, "</config>\n");
     fclose($fp);
+
+    return true;
   }
 
   function getUsername()
@@ -58,9 +58,19 @@ class AmberConfig
     return $this->database['username'];
   }
 
+  function setUsername($value)
+  {
+    $this->database['username'] = $value;
+  }
+
   function getPassword()
   {
     return $this->database['password'];
+  }
+
+  function setPassword($value)
+  {
+    $this->database['password'] = $value;
   }
 
   function getHost()
@@ -68,9 +78,19 @@ class AmberConfig
     return $this->database['host'];
   }
 
+  function setHost($value)
+  {
+    $this->database['host'] = $value;
+  }
+
   function getDriver()
   {
     return $this->database['driver'];
+  }
+
+  function setDriver($value)
+  {
+    $this->database['driver'] = $value;
   }
 
   function getDbName()
@@ -78,27 +98,38 @@ class AmberConfig
     return $this->database['dbname'];
   }
 
+  function setDbName($value)
+  {
+    $this->database['dbname'] = $value;
+  }
+
   function getMedium()
   {
     return $this->sys_objects['medium'];
   }
 
+  function setMedium($value)
+  {
+    $this->sys_objects['medium'] = $value;
+  }
+
   /**
    * @private
    */
-  function writeArray($filehandle, $confArray)
+  function writeArray($filehandle, $name, $confArray)
   {
     static $indent = '';
+    static $stack = array();
 
     $indent .= '  ';
     foreach ($confArray as $key => $prop) {
       if (is_array($prop)) {
         fwrite($filehandle, $indent . "<$key>\n");
-        writeArray($filehandle, $prop);
+        $this->writeArray($filehandle, $key, $prop);
         fwrite($filehandle, $indent . "</$key>\n");
       } else {
-        $value = htmlentities($this->$prop);
-        fwrite($filehandle, $indent. "<$prop>" . $value . "</$prop>\n");
+        htmlentities($this->$prop);
+        fwrite($filehandle, $indent . "<$key>" . $prop . "</$key>\n");
       }
     }
     $indent = substr($indent, 0, count($indent) - 3);

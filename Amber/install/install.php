@@ -1,24 +1,38 @@
 <?php
 
+ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/../../lib/');
+
 require_once 'header.inc';
+require_once 'Amber/Amber.php';
+require_once 'Amber/AmberConfig.php';
 require_once 'Amber/XMLLoader.php';
 
-$filename = 'Amber/conf/localconf.xml';
+$filename = __AMBER_BASE__ . '/conf/localconf.xml';
+
 
 if (isset($_POST['doUpdate'])) {
-  if (!updateLocalconf($filename, $_POST)) {
-    if (!is_writable($filename)) {
-      $msg = "Unable to update localconf.xml<p />" . htmlentities(dirname(__FILE__) . '/' . $filename) . " needs to be writeable";
-    } else {
-      $msg = "Unable to update localconf.xml<p /> Unknown error, please report!";
+    $props = array('Username', 'Password', 'Host', 'Driver', 'DbName', 'Medium');
+    $cfg = new AmberConfig();
+
+    foreach ($props as $p) {
+      $methodName = 'set' . $p;
+      $postVal = $_POST[strtolower($p)];
+      $cfg->$methodName($postVal);
     }
-  } else {
-    $msg = "Configuraton successfully written to:<p />" . htmlentities(realpath($filename));
-  }
-  echo '<div align="center"><div style="text-align: left; color: #000000; width: 450; font-size: 10pt; border: #ee0000 2pt solid; background-color: #ffffff; padding: 5px;"><strong>' . $msg . '</strong></div></div>';
+
+    if (!$cfg->toXML($filename)) {
+      $msg = "Unable to update localconf.xml<p />" . htmlentities($filename) . " needs to be writeable";
+    } else {
+      $msg = "Configuraton successfully written to:<p />" . htmlentities($filename);
+    }
+    echo '<div align="center"><div style="text-align: left; color: #000000; width: 450; font-size: 10pt; border: #ee0000 2pt solid; background-color: #ffffff; padding: 5px;"><strong>' . $msg . '</strong></div></div>';
+
+    unset($cfg);
 }
-$conf = readLocalconf($filename);
-$conf = $conf['config'];
+
+// Re-read for display
+$cfg = new AmberConfig();
+$cfg->fromXML($filename);
 
 ?>
 
@@ -33,26 +47,26 @@ $conf = $conf['config'];
     </tr>
     <tr>
       <td>Host:</td><td>
-      <input name="host" type="text" value="<?php echo htmlspecialchars($conf['database']['host']) ?>"></td>
+      <input name="host" type="text" value="<?php echo htmlspecialchars($cfg->getHost()) ?>"></td>
     </tr>
     <tr>
       <td>Username:</td><td>
-      <input name="username" type="text" value="<?php echo htmlspecialchars($conf['database']['username']) ?>"></td>
+      <input name="username" type="text" value="<?php echo htmlspecialchars($cfg->getUsername()) ?>"></td>
     </tr>
     <tr>
       <td>Password:</td>
-      <td><input name="password" type="text" value="<?php echo htmlspecialchars($conf['database']['password']) ?>"></td>
+      <td><input name="password" type="text" value="<?php echo htmlspecialchars($cfg->getPassword()) ?>"></td>
     <tr>
     </tr>
       <td>Database:</td>
-      <td><input name="dbname" type="text" value="<?php echo htmlspecialchars($conf['database']['dbname']) ?>"></td>
+      <td><input name="dbname" type="text" value="<?php echo htmlspecialchars($cfg->getDbName()) ?>"></td>
     </tr>
     <tr>
       <td colspan="2"><p><em><strong>Sys_objects</strong></em></p></td>
     </tr>
     </tr>
       <td>Medium:</td>
-      <td><select name="medium"><option value="db" <?php if ($conf['sys_objects']['medium'] == 'db') echo 'selected'; else echo ''; ?>>Database</option><option value="file" <?php if ($conf['sys_objects']['medium'] == 'file') echo 'selected'; else echo ''; ?>>File</option></select></td>
+      <td><select name="medium"><option value="db" <?php if ($cfg->getMedium() == 'db') echo 'selected'; else echo ''; ?>>Database</option><option value="file" <?php if ($cfg->getMedium() == 'file') echo 'selected'; else echo ''; ?>>File</option></select></td>
     </tr>
     <tr>
       <td colspan="2" align="center"><input type="submit" name="doUpdate" value="Update localconf.xml"></td>
@@ -65,58 +79,4 @@ $conf = $conf['config'];
 
 <?php
   require_once 'footer.inc';
-?>
-
-<?php
-
-function readLocalconf($fileName)
-{
-  if (file_exists($fileName)) {
-    $loader = new XMLLoader(false);
-    $conf = $loader->getArray($fileName);
-
-    return $conf;
-  }
-
-  return array();
-}
-
-function updateLocalconf($fileName, $p)
-{
-  $properties = array(
-    'database' => array('username', 'password', 'host', 'driver', 'dbname'),
-    'sys_objects' => array('medium')
-  );
-
-  $fp = @fopen($fileName, 'w');
-  if ($fp == false) {
-    return false;
-  }
-  fwrite($fp, '<?xml version="1.0" encoding="iso-8859-1"?>' . "\n");
-  fwrite($fp, "<config>\n");
-  writeArray($fp, $properties);
-  fwrite($fp, "</config>\n");
-  fclose($fp);
-
-  return true;
-}
-
-function writeArray($filehandle, $confArray)
-{
-  static $indent = '';
-
-  $indent .= '  ';
-  foreach ($confArray as $key => $prop) {
-    if (is_array($prop)) {
-      fwrite($filehandle, $indent . "<$key>\n");
-      writeArray($filehandle, $prop);
-      fwrite($filehandle, $indent . "</$key>\n");
-    } else {
-      $value = htmlentities(stripslashes($_POST[$prop]));
-      fwrite($filehandle, $indent. "<$prop>" . $value . "</$prop>\n");
-    }
-  }
-  $indent = substr($indent, 0, count($indent) - 3);
-}
-
 ?>
