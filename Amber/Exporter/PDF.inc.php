@@ -6,6 +6,40 @@
  *
  */
  
+ 
+class reportBuff
+{
+  var $reportPages;    // buffer when inReport
+  var $actpageNo;      // pageNumber
+  var $sectionType;    // 'Head', 'Foot' or ''
+  
+  var $posY;
+  
+  function reportBuff($layout)
+  {
+    $this->actpageNo = -1;
+    $this->_report->layout = $layout; 
+  }
+  
+  function out(&$s)
+  {
+    $this->reportPages[$this->actpageNo][$this->sectionType] .= $s . "\n";
+  }
+  
+  function newPage()
+  {
+    $this->posY = ($this->actpageNo + 1) * $this->_report->layout->printHeight;
+  }
+  
+  function page()
+  {
+    return $this->actpageNo + 1;
+  }
+
+}
+
+
+ 
 class mayflower
 {
   var $subReportIndex = 0;
@@ -44,6 +78,24 @@ class mayflower
   {
     return ($this->inReport == true);
   }      
+  
+  function reportStartPageHeader()
+  {
+    $this->reportBuff->sectionType = 'Head';
+  }  
+  function reportStartPageBody()
+  {
+    $this->reportBuff->sectionType = '';
+  }  
+  function reportStartPageFooter()
+  {
+    $this->reportBuff->sectionType = 'Foot';
+  }  
+  
+  
+  
+  
+  
   
   function inSectionOrSubReport()
   {
@@ -108,10 +160,8 @@ class PDF extends FPDF
   // startReport / endReport 
   //
   // inside a report the FPDF's output gets cached in 
-  //      $this->mayflower->reportBuff->_reportPages[$this->mayflower->reportBuff->actpageNo][$this->mayflower->reportBuff->sectionType]
   // where 
   //      $this->mayflower->reportBuff->actpageNo     is the current page number and
-  //      $this->mayflower->reportBuff->sectionType   is 'Head' for page header, 'Foot' for page footer or '' for page body
   //
   // when the report ends, the output is processed and possible divided horizontal
   // among several pages, if the report is wider than one page
@@ -122,13 +172,13 @@ class PDF extends FPDF
 
   function pageHeaderEnd()
   {
-   $this->mayflower->reportBuff->sectionType = 'Head';
+   $this->mayflower->reportStartPageHeader();
    $this->_pageHeaderOrFooterEnd($this->mayflower->reportBuff->actpageNo * $this->layout->printHeight, $this->layout->pageHeaderHeight);
   }
 
   function pageFooterEnd()
   {
-    $this->mayflower->reportBuff->sectionType = 'Foot';
+    $this->mayflower->reportStartPageFooter();
     $this->_pageHeaderOrFooterEnd($this->mayflower->reportBuff->actpageNo * $this->layout->printHeight, $this->layout->pageFooterHeight);
   }
 
@@ -228,7 +278,7 @@ class PDF extends FPDF
         $this->mayflower->reportBuff->actpageNo = $page;
         $this->_exporter->printPageHeader();
       }
-      $this->mayflower->reportBuff->sectionType = '';
+      $this->mayflower->reportStartPageBody();
       $this->outSection(0, $this->mayflower->reportBuff->posY, $this->layout->reportWidth, $sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
     }
     $this->mayflower->reportBuff->posY += $sectionHeight;
@@ -239,7 +289,7 @@ class PDF extends FPDF
     $this->comment("end Subreport-Body-Section:" . ($this->mayflower->getSectionIndexForCommentOnly()) . "\n");
     $buff = $this->mayflower->sectionPop();
 
-    $this->mayflower->reportBuff->sectionType = '';
+    $this->mayflower->reportStartPageBody();
     $this->SetCoordinate(0, -$this->mayflower->reportBuff->posY);
     $this->SetClipping(0, 0, $this->layout->reportWidth, $sectionHeight);
 

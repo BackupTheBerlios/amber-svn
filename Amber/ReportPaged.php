@@ -84,38 +84,6 @@ class reportPaged extends Report
 
 }
 
-class reportBuff
-{
-  var $reportPages;    // buffer when inReport
-  var $actpageNo;      // pageNumber
-  var $sectionType;    // 'Head', 'Foot' or ''
-  
-  var $posY;
-  
-  function reportBuff($layout)
-  {
-    $this->actpageNo = -1;
-    $this->_report->layout = $layout; 
-  }
-  
-  function out(&$s)
-  {
-    $this->reportPages[$this->actpageNo][$this->sectionType] .= $s . "\n";
-  }
-  
-  function newPage()
-  {
-    $this->posY = ($this->actpageNo + 1) * $this->_report->layout->printHeight;
-  }
-  
-  function page()
-  {
-    return $this->actpageNo + 1;
-  }
-
-}
-
-
 
 class pageLayout
 {
