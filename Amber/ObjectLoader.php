@@ -9,7 +9,7 @@
 
 require_once 'adodb/adodb.inc.php';
 require_once 'Report.php';
-
+require_once 'Form.php';
 
 /**
 *
@@ -130,9 +130,13 @@ class ObjectLoaderDb extends ObjectLoader
       return false;
     }
 
-    Amber::dump($data);
+    $data['code'] = '<?php ' . $data['code'] . ' ?>';
 
-    return true;
+    $form =& new Form();
+    $form->setConfig($this->_globalConfig);
+    $form->initialize($data);
+
+    return $form;
   }
 
   /*

@@ -9,9 +9,10 @@
 
 require_once 'misc.php';
 require_once 'AmberConfig.php';
-require_once 'Section.php';
+require_once 'AmberObject.php';
 require_once 'ObjectLoader.php';
 require_once 'SimpleSQLParser.php';
+require_once 'Section.php';
 require_once 'Exporter/ExporterFactory.php';
 require_once 'Controls/ControlFactory.php';
 require_once 'phpReport_UserFunctions.php';
@@ -23,7 +24,7 @@ require_once 'basic.php';
  * @subpackage ReportEngine
  *
  */
-class Report
+class Report extends AmberObject
 {
   //////////////////////////////////////////////////////////////////
   // PUBLIC PROPERTIES
@@ -81,49 +82,7 @@ class Report
    */
   function Report()
   {
-    $this->_globalConfig = new AmberConfigNull();
-  }
-
-  /**
-   *
-   * @access public
-   * @param AmberConfig
-   *
-   */
-  function setConfig($cfgObj)
-  {
-    if (is_object($cfgObj) && is_a($cfgObj, 'AmberConfig')) {
-      $this->_globalConfig = $cfgObj;
-    } else {
-      Amber::showError('Warning - Report::setConfig()', 'Invalid paramater');
-    }
-  }
-
-  /**
-   * Sets the directory that contains the report files
-   *
-   * Specifying an invalid (non-existant or not readable directory) will result in
-   * an error message to be shown
-   *
-   * @see getReportDir()
-   *
-   * @access public
-   * @param string name of the directory
-   *
-   */
-  function setReportDir($dirName)
-  {
-    if (!is_dir($dirName)) {
-      Amber::showError('Error', 'setReportDir(): Directory name given is not a directory or does not exist: ' . htmlentities($dirName));
-    } elseif (!is_readable($dirName)) {
-      Amber::showError('Error', 'setReportDir(): Cannot write to cache directory: ' . htmlentities($dirName));
-    } else{
-      if (empty($dirName)) {
-        $this->_reportDir = '';
-      } else {
-        $this->_reportDir = $dirName;
-      }
-    }
+    parent::AmberObject();
   }
 
   /**

@@ -97,7 +97,7 @@ class Amber
   {
     $rep =& $this->loadObject('report', $reportName);
     if ($rep == false) {
-      return;
+      return false;
     }
 
     $rep->Filter = $filter;
@@ -123,6 +123,8 @@ class Amber
     if ($form == false) {
       return false;
     }
+    
+    $form->run();
   }
 
   function &loadObject($type, $name)
@@ -214,7 +216,7 @@ class Amber
   {
     $id = 'AmberError' . mt_rand();
 
-    echo '<div id="' . $id . '" style="border: solid 3px #ff0000; background-color: #eeeeee; padding: 5px; z-index: 99999; position: relative; margin-top: 10px;">';
+    echo '<div id="' . $id . '" style="margin: 20px; border: solid 2px #ff0000; background-color: yellow; padding: 20px; z-index: 99999; position: relative; margin-top: 10px;">';
     echo '<p align="center"><b>' . $title . '</b></p>';
     echo '<p align="center">' . $text .'</p>';
     echo '<p align="center"><input type="button" value="Ok" onclick="document.getElementById(\'' . $id . '\').style.display = \'none\';" style="width: 80px;" /></p>';
