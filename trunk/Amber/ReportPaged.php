@@ -37,7 +37,7 @@ class reportPaged extends Report
   function outPage(&$page)
   {
     for($pageX = 0; $pageX <= $this->layout->pagesHorizontal - 1; $pageX++) {
-      $this->_exporter->AddPage();
+      $this->_exporter->startPage();
       $deltaX = $pageX * $this->layout->printWidth;
       $x = $this->layout->leftMargin;
       $w = $this->layout->printWidth;
@@ -53,13 +53,13 @@ class reportPaged extends Report
       $y = $this->layout->topMargin + $this->layout->pageHeaderHeight + $this->layout->printHeight;
       $h = $this->layout->pageFooterHeight;
       $this->_exporter->outWindowRelative($deltaX, $x, $y, $w, $h, $page->footer);
+      $this->_exporter->endPage();
     }
   }
   
   function _startSection(&$section, $width)
   {
     $this->_exporter->bufferStart();
-    $this->_exporter->comment('Start Section:');
   }  
 
   function _endSection(&$section, $height)
@@ -76,25 +76,17 @@ class reportPaged extends Report
   }
   
   
-  function _newPageAvoidsSectionSplit($sectionHeight)           // end of section will be on same page, wether with or without pagebreak
-  {
-    $endPageWithoutNewPage = floor(($this->posY + $sectionHeight) / $this->layout->printHeight);
-    $startNewPage =  (floor($this->posY / $this->layout->printHeight) + 1) * $this->layout->printHeight;
-    $endPageWithNewPage = floor(($startNewPage + $sectionHeight) / $this->layout->printHeight);
-    return ($endPageWithoutNewPage == $endPageWithNewPage);           // end of section will be on same page, wether with or without pagebreak
-  }
   
   function endNormalSection(&$section, $sectionHeight, $keepTogether)
   {
-    $this->_exporter->comment("end Body-Section:1\n");
     $secBuff = $this->_exporter->bufferEnd();
     if ($keepTogether) {                 // section doesn't fit on page and keepTogether
-      if ($this->_newPageAvoidsSectionSplit($sectionHeight)) {
+      if ($this->actPage->newPageAvoidsSectionSplit($sectionHeight)) {
         $this->newPage();
       }
     }
-    $startPage = floor($this->posY / $this->layout->printHeight);
-    $endPage   = floor(($this->posY + $sectionHeight) / $this->layout->printHeight);
+    $startPage = $this->actPage->getPageWithOffset(0);
+    $endPage   = $this->actPage->getPageWithOffset($sectionHeight);
 
     for ($page = $startPage; $page <= $endPage; $page++) {
       if (($page <> $this->actPage->pageNo)) {
@@ -107,9 +99,9 @@ class reportPaged extends Report
         $this->_exporter->bufferStart();
         $this->printPageHeader();
       }
-      $this->outSection($page - $startPage + 1, $this->posY - $this->actPage->posY, $sectionHeight, $secBuff, $section);
+      $this->outSection($page - $startPage + 1, $this->actPage->posYinPage(), $sectionHeight, $secBuff, $section);
     }
-    $this->posY += $sectionHeight;
+    $this->actPage->addHeight($sectionHeight);
   }
   
   function pageHeaderEnd(&$section)
@@ -144,13 +136,12 @@ class reportPaged extends Report
   
   function Bookmark($txt,$level=0,$y=0)
   {
-    $posYinPage = ($this->posY - $this->actpage->posY);
-    $this->_exporter->Bookmark($txt, $level, $y, $this->page(), $posYinPage);
+    $this->_exporter->Bookmark($txt, $level, $y, $this->page(), $this->actPage->getposYinPage());
   }
   
   function newPage()
   {
-    $this->posY = $this->actpage->posY + $this->layout->printHeight;
+    $this->actPage->fillRestOfPage();
   }
 
   
@@ -178,8 +169,8 @@ class pageLayout
   var $unit;          //unit in pt
   var $designMode;    // bool: I am designmode  (no page-header/-footer)
   
-  var $paperwidth;
-  var $paperheight;
+  var $paperWidth;
+  var $paperHeight;
   
   var $rightMargin;
   var $leftMargin;
@@ -249,12 +240,14 @@ class pageLayout
 
 class WidePage
 {
+  var $layout;
+
   var $header;
   var $body;
   var $footer;
-  
-  var $layout;
   var $pageNo = -1;
+  var $pagePosY;
+  var $posY;
   
   function WidePage(&$layout)
   {
@@ -268,6 +261,36 @@ class WidePage
     $this->body = '';
     $this->footer = '';
     $this->pageNo++;
-    $this->posY = $this->pageNo * $this->layout->printHeight;
+    $this->pagePosY = $this->pageNo * $this->layout->printHeight;
   }
+  
+  function getPageWithOffset($offset)
+  {
+    return floor(($offset + $this->posY) / $this->layout->printHeight);
+  }
+  
+  function posYinPage()
+  {
+    return $this->posY - $this->pagePosY;
+  }  
+  
+  function fillrestOfPage()
+  {
+    $this->actPage->posY = $this->actPage->pagePosY + $this->layout->printHeight;
+  }
+  
+  function addHeight($height)
+  {
+    $this->posY += $height;
+  }  
+  
+  
+  function newPageAvoidsSectionSplit($sectionHeight)           // end of section will be on same page, wether with or without pagebreak
+  {
+    $endPageWithoutNewPage = floor(($this->posY + $sectionHeight) / $this->layout->printHeight);
+    $startNewPage =  (floor($this->posY / $this->layout->printHeight) + 1) * $this->layout->printHeight;
+    $endPageWithNewPage = floor(($startNewPage + $sectionHeight) / $this->layout->printHeight);
+    return ($endPageWithoutNewPage == $endPageWithNewPage);           // end of section will be on same page, wether with or without pagebreak
+  }
+
 }

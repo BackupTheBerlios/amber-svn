@@ -14,8 +14,7 @@ class ReportSubReport extends ReportPaged
   {
     parent::_startReport($isSubreport);
 
-    $this->subReportStartBuffer();
-    $this->_exporter->comment("StartSubreport"); // remove this!!!
+    $this->_exporter->bufferStart();
   }
   
     /** 
@@ -24,44 +23,21 @@ class ReportSubReport extends ReportPaged
   function _endReport()
   {
     #$this->newPage();
-    $this->_exporter->comment("EndSubreport");
-    $this->subReportBuff = $this->subReportEndBuffer(); //a real copy
+    $this->subReportBuff = $this->_exporter->bufferEnd(); //a real copy
   }
   
   function _startSection(&$section, $width)
   {
     $this->_exporter->bufferStart();
-    $this->_exporter->comment('Start Section:');
   }  
  
   function _endSection(&$section, $height)
   {
-    $this->_exporter->comment("end Subreport-Body-Section:2\n");
     $buff = $this->_exporter->bufferEnd();
 
     $this->outSection(1, $this->posY, $height, &$buff, &$section);
 
     $this->posY += $height;
   }
-  
-///////////////////////////
-//
-// ex mayflower: subReport part
-//
-///////////////////////////
-  
-  
-  
-  function subReportStartBuffer()
-  {
-    $this->_exporter->bufferStart();
-  }
- 
-  function subReportEndBuffer()
-  {
-    return $this->_exporter->bufferEnd();
-  }
-
-
 
 }

@@ -73,24 +73,27 @@ class ExporterHtml extends Exporter
     $this->_base->_out("<!-- $s -->\n");
   }
 
-  function outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff)
+  function outWindowRelative($deltaX, $x, $y, $w, $h, &$dataBuff)
   {
-    $this->comment("***deltaX: $deltaX, deltaY: $deltaY, x: $x, y: $y");
+    $this->comment("***deltaX: $deltaX, x: $x, y: $y");
     $out = "\t<div ";
-    $style1['left'] = $this->_html_twips(-$x);;
-    $style1['top'] = $this->_html_twips(-$y);
+    $style1['left'] = $this->_html_twips($x);;
+    $style1['top'] = $this->_html_twips($y);
     $style1['height'] = $this->_html_twips($h);
     $style1['width'] = $this->_html_twips($w);
+    $style1['overflow'] = 'hidden';
+    
     $out .=  ' style="' . $this->arrayToStyle($style1) . "\">\n";
     
     $out .= "\t<div ";
-    $style2['left'] = $this->_html_twips($deltaX);
-    $style2['top'] = $this->_html_twips($deltaY);
+    $style2['left'] = $this->_html_twips(-$deltaX);
+    $style2['overflow'] = 'visible';
+    
     $out .=  ' style="' . $this->arrayToStyle($style2) . "\">\n";
     
     $out .= $dataBuff;
     
-    $out .= "\t</div>\n";
+    $out .= "\t</div></div>\n";
     echo $out;
   }
 
@@ -99,12 +102,12 @@ class ExporterHtml extends Exporter
     echo $secBuff;
   }
     
-/*  function outSectionEnd()
+  function outSectionEnd1()
   {
     echo "\t</div name='sectionEND'>\n";
   }
   
-  function outSectionStart($y, $w, $h, $backColor, $sectionName='')
+  function outSectionStart1($y, $w, $h, $backColor, $sectionName='')
   {
     $style['left'] = 0;
     $style['top'] = $this->_html_twips($y);
@@ -114,11 +117,32 @@ class ExporterHtml extends Exporter
     
     echo "\t<div  name='sectionStart' style=\"" . $this->arrayToStyle($style) . "\">\n";
   }
-*/
+
   
-  function AddPage()
+  function startPage()
   {
-    $this->comment('###PAGE###');
+    $style['position'] = 'relative';
+    #$style['left'] = 0;
+    #$style['top'] = 0;
+    $style['background-color'] = "#FFFFFF";
+    $style['height'] = $this->_html_twips($this->layout->paperHeight);
+    $style['width'] = $this->_html_twips($this->layout->paperWidth);
+    echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">\n";
+    $this->comment('###PAGE Start###');
+  }
+  
+  function endPage()
+  {
+    $this->comment('###PAGE End ###');
+    echo "</div>\n";
+    $style['position'] = 'relative';
+    #$style['left'] = 0;
+    #$style['top'] = 0;
+    #$style['background-color'] = "#DDDDDD";
+    $style['height'] = '2px';
+    $style['width'] = '1px';
+    echo "\t<div style=\"" . $this->arrayToStyle($style) . "\"> &nbsp; </div>\n";
+    
   }  
 
   

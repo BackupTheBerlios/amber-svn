@@ -101,7 +101,7 @@ class ExporterFPdf extends Exporter
   //
   // x, y: coordinates page area (header, body footer) relative to paper left/top (coordinates include left/top margins)
   // w, h: width/height of page area (header, body footer)
-  // deltaX, deltaY: coordinates of page start (upper left corner without page margins) relative to report's upper left corner
+  // deltaX coordinates of page body start (left corner) relative to report's left side
   //
   // purpose: 
   //    1. clip area to get printed on page
@@ -152,13 +152,17 @@ class ExporterFPdf extends Exporter
     $this->_pdf->Bookmark($txt,$level,$y, $pageNo, $posYinPage);
   }
   
-  function AddPage()
+  function startPage()
   {
     if (!$this->firstPage) {
       $this->_pdf->AddPage();
     }
     $this->firstPage = false;
-  }  
+  }
+  
+  function endPage()
+  {
+  }
       
 
   /*********************************
