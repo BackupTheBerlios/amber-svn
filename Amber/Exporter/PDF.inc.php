@@ -17,6 +17,12 @@ class PDF extends FPDF
   var $_actPageNo;      // pageNumber
   var $_sectionType;    // 'Head', 'Foot' or ''
 
+  var $_fontList = array(
+        'arial' => 'helvetica', 
+        'ms sans serif' => 'helvetica', 
+        'small fonts' => 'helvetica',
+        
+        'courier new' => 'courier');
 
 
   /**

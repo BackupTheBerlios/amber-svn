@@ -29,7 +29,6 @@ class ExporterFPdf extends Exporter
   var $_pdf;
   var $_blankPage;
   var $_pageNo = 1;
-  var $_fontList = array('arial' => 'helvetica', 'ms sans serif' => 'helvetica', 'small fonts' => 'helvetica');
 
   var $_posY;
 
@@ -48,7 +47,7 @@ class ExporterFPdf extends Exporter
       foreach (array_keys($report->Controls) as $ctrlName) {
         if (!empty($report->Controls[$ctrlName]->FontName)) {
           $font = strtolower($report->Controls[$ctrlName]->FontName);
-          if (!$this->_fontList[$font]) {
+          if (!$this->_pdf->_fontList[$font]) {
             // if You get
             // FPDF error: Could not include font definition file
             // uncomment the following line to find font-file
@@ -57,7 +56,7 @@ class ExporterFPdf extends Exporter
             $this->_pdf->AddFont($font, 'B');
             $this->_pdf->AddFont($font, 'I');
             $this->_pdf->AddFont($font, 'BI');
-            $this->_fontList[$font] = $font;
+            $this->_pdf->_fontList[$font] = $font;
           }
         }
       }
@@ -271,7 +270,7 @@ class ExporterFPdf extends Exporter
     $para->backcolor = $control->BackColor;
 
     $para->borderstyle = $control->BorderStyle;
-    $para->bordercolor = $control->Bordercolor;
+    $para->bordercolor = $control->BorderColor;
     $para->borderwidth = $control->BorderWidth * 20;
 
     $this->printBox($para);
