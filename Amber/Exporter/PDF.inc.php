@@ -8,10 +8,12 @@
  
 class subReportBuff
 {
-  var $subReportIndex;
+  var $subReportIndex = 0;
   var $subReportbuff;
-  var $sectionIndex;
+  var $sectionIndex = 0;
   var $sectionBuff;
+  
+  var $inReport = false;
   
   function out($s)
   { 
@@ -22,6 +24,21 @@ class subReportBuff
     }  
   }
 
+  function enterReport()
+  {
+    $this->inReport = true;
+  }
+  
+  function exitReport()
+  {
+    $this->inReport = false;
+  }
+  
+  function inReport()
+  {
+    return ($this->inReport == true);
+  }      
+  
   function inSectionOrSubReport()
   {
     return (($this->sectionIndex > $this->subReportIndex) or ($this->subReportIndex > 0));
@@ -78,7 +95,6 @@ class PDF extends FPDF
 //
 //////////////////////////////////////////////////////// 
 
-  var $_inReport;       // bool 
 
 
   //////////////////////////////////////////////////////////////////////////
@@ -131,7 +147,7 @@ class PDF extends FPDF
       parent::_out($s);
     } elseif ($this->subReportBuff->inSectionOrSubReport()) {
       $this->subReportBuff->out($s);
-    } elseif ($this->_inReport) {
+    } elseif ($this->subReportBuff->inReport()) {
       $this->reportBuff->out($s);
     } else {
       parent::_out($s);
@@ -140,21 +156,21 @@ class PDF extends FPDF
   
   function startReportBuffering(&$reportBuff)
   {
-    if ($this->_inReport) {
+    if ($this->subReportBuff->inReport()) {
       Amber::showError('Error', 'startReport: a report is already started!');
       die();
     }  
-    $this->_inReport = true;
+    $this->subReportBuff->enterReport();
     $this->reportBuff =& $reportBuff;
   }
 
   function endReportBuffering()
   {
-    if (!$this->_inReport) {
+    if (!$this->subReportBuff->inReport()) {
       Amber::showError('Error', 'endReport: no report open');
       die();
     }  
-    $this->_inReport = false;
+    $this->subReportBuff->exitReport();
   }
   
   
@@ -483,7 +499,7 @@ class PDF extends FPDF
 
   function Bookmark($txt,$level=0,$y=0)
   {
-    if (!$this->_inReport) {
+    if (!$this->subReportBuff->inReport()) {
       if($y==-1)
         $y=$this->GetY();
       $this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$this->PageNo());
