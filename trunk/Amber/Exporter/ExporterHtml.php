@@ -12,6 +12,7 @@ require_once 'HTML.inc.php';
 define('__SCALE__', 1.1); // used in html_twips(), FontBox::load()
 
 ExporterFactory::register('html', 'ExporterHtml');
+ExporterFactory::register('phtml', 'ExporterHtml');
 
 /**
  *
@@ -69,12 +70,57 @@ class ExporterHtml extends Exporter
 
   function comment($s)
   {
-    $this->_base->_out("<!-- $s -->");
+    $this->_base->_out("<!-- $s -->\n");
   }
 
+  function outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff)
+  {
+    $this->comment("***deltaX: $deltaX, deltaY: $deltaY, x: $x, y: $y");
+    $out = "\t<div ";
+    $style1['left'] = $this->_html_twips(-$x);;
+    $style1['top'] = $this->_html_twips(-$y);
+    $style1['height'] = $this->_html_twips($h);
+    $style1['width'] = $this->_html_twips($w);
+    $out .=  ' style="' . $this->arrayToStyle($style1) . "\">\n";
+    
+    $out .= "\t<div ";
+    $style2['left'] = $this->_html_twips($deltaX);
+    $style2['top'] = $this->_html_twips($deltaY);
+    $out .=  ' style="' . $this->arrayToStyle($style2) . "\">\n";
+    
+    $out .= $dataBuff;
+    
+    $out .= "\t</div>\n";
+    echo $out;
+  }
+
+  function out(&$secBuff)
+  {
+    echo $secBuff;
+  }
+    
+/*  function outSectionEnd()
+  {
+    echo "\t</div name='sectionEND'>\n";
+  }
   
+  function outSectionStart($y, $w, $h, $backColor, $sectionName='')
+  {
+    $style['left'] = 0;
+    $style['top'] = $this->_html_twips($y);
+    $style['height'] = $this->_html_twips($h);
+    $style['width'] = $this->_html_twips($w);
+    $style['background-color'] = $this->_html_color($backColor);
+    
+    echo "\t<div  name='sectionStart' style=\"" . $this->arrayToStyle($style) . "\">\n";
+  }
+*/
   
-  
+  function AddPage()
+  {
+    $this->comment('###PAGE###');
+  }  
+
   
   
   function getReportCssStyles(&$report, $cssClassPrefix)
@@ -94,12 +140,6 @@ class ExporterHtml extends Exporter
 
   // Section - html
 
-  function out(&$secBuff)
-  {
-    $this->_base->_out($secBuff);
-  }
-    
-  
   function outSectionStart($y, $width, $height, $backColor, $sectionName='')
   {
     $cheatWidth  = 59; // cheat: add 1.5pt to height and 3pt to width so borders get printed in Mozilla ###FIX ME
@@ -139,7 +179,7 @@ class ExporterHtml extends Exporter
     $out .= "\t</div></div>\n";
     $this->_base->_out($out);
   }
-  
+ 
   // Page handling - html
 
   function printTopMargin($posY)
@@ -321,7 +361,7 @@ Class ControlExporterHtml
 
   function printDesign(&$control, $content)
   {
-    echo $this->getTag($control, $content);
+    $this->printNormal($control, $content);
   }
 
   function getTag(&$control, $value = null)

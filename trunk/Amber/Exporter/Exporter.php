@@ -48,7 +48,6 @@ class Exporter
 
   function endReport(&$report)
   {
-    $this->newPage();
     //$this->dump('Exec time: ' . microtime_diff($this->_start, microtime()));
     $this->endReportSubExporter($report);
   }
@@ -56,10 +55,8 @@ class Exporter
   // Section
   function sectionPrintDesignHeader($text='') {}
 
-  // Page handling
-  function newPage() {} // Close page, prepare a new one
-  function page() {} // return page number
-
+  
+  
 
   // Controls
   function setControlExporter(&$ctrl)

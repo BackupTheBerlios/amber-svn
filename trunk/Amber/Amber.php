@@ -135,13 +135,13 @@ class Amber
     $amber->_stdExporter = $exporter;
         
     if ($type == 'reportSubReport') {
-      if (stristr($exporter, 'pdf') != false) {
+      if (stristr($exporter, 'p') != false) {
         return  new ReportSubReport();
       } else {
         return  new reportContinous();
       }  
     } elseif ($type == 'report') {
-      if (stristr($exporter, 'pdf') != false) {
+      if (stristr($exporter, 'p') != false) {
         return  new reportPaged();
       } else {
         return  new reportContinous();

@@ -90,10 +90,28 @@ class ExporterFPdf extends Exporter
     $this->_pdf->_out("\n%$s\n");
   }
   
+  
+  ////////////////////////
+  //
+  // outWindowRelative -- place Section in $dataBuff on Page
+  // section's x-coordinate is relative to report's left (==0)
+  // section's y-coordinate is relative to report's top (ever growing)
+  //
+  // x, y: coordinates page area (header, body footer) relative to paper left/top (coordinates include left/top margins)
+  // w, h: width/height of page area (header, body footer)
+  // deltaX, deltaY: coordinates of page start (upper left corner without page margins) relative to report's upper left corner
+  //
+  // purpose: 
+  //    1. clip area to get printed on page
+  //    2. transform placement of section from report-relative to page-relative
+  //
+  ////////////////////////
+  
+  
   function outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff)
   {
     $this->_pdf->SetClipping($x, $y, $w, $h);
-    $this->_pdf->SetCoordinate($deltaX, $deltaY);
+    $this->_pdf->SetCoordinate($x - $deltaX, -($y - $deltaY));
     $this->_pdf->_out($dataBuff);
     $this->_pdf->RemoveCoordinate();
     $this->_pdf->RemoveClipping();
