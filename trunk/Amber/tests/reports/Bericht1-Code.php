@@ -7,7 +7,7 @@
 * @ignore
 */
 
-Class Bericht1 extends phpReport_UserFunctions
+Class Bericht1 extends AmberReport_UserFunctions
 {
 
   var $interfaceVersion = 2; //Do not change this

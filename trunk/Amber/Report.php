@@ -15,7 +15,7 @@ require_once 'SimpleSQLParser.php';
 require_once 'Section.php';
 require_once 'Exporter/ExporterFactory.php';
 require_once 'Controls/ControlFactory.php';
-require_once 'phpReport_UserFunctions.php';
+require_once 'AmberReport_UserFunctions.php';
 require_once 'basic.php';
 require_once 'misc.php';
 

@@ -38,7 +38,3 @@ class AmberReport_UserFunctions
   {
   }
 }
-
-class AmberForm_UserFunctions
-{
-}
