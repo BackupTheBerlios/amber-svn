@@ -30,6 +30,11 @@ class Amber
 
   var $_stdExporter; //std-exporter: the exporter the report was opened with
 
+  /**
+   * @static
+   * @access protected
+   *
+   */
   function init()
   {
     $this->_objectManager =& new ObjectManager($this);
@@ -46,6 +51,9 @@ class Amber
   }
 
   /**
+   * @static
+   * @access public
+   * @param AmberConfig
    * @return Amber reference to singleton
    */
   function &getInstance($config = null)
@@ -55,7 +63,7 @@ class Amber
     if (is_null($instance)) {
       if (is_null($config)) {
         // config parameter must be present on singleton creation
-        return false;
+        die(Amber::showError('Error', 'Config parameter must not be null on first call to Amber::getInstance()', true));
       }
       $instance = new Amber();
       if (!is_a($config, 'AmberConfig')) {
@@ -68,6 +76,11 @@ class Amber
     return $instance;
   }
 
+  /**
+   * @static
+   * @access public
+   * @return ObjectManager
+   */
   function &getObjectManager()
   {
     if (!isset($this->_objectManager)) {
@@ -76,7 +89,12 @@ class Amber
 
     return $this->_objectManager;
   }
-    
+
+  /**
+   * @static
+   * @access public
+   * @return ADOConnection Connection to database containing the tables used by reports for data retrieval
+   */ 
   function &currentDb()
   {
     $amber =& Amber::getInstance();
@@ -104,9 +122,21 @@ class Amber
     return $amber->_db;
   }
 
+  /**
+   * @static
+   * @access public
+   * @return ADOConnection Connection to database containing the table where the report definitions are stored
+   * or null if Amber has not been configured to use a system database
+   */ 
   function &sysDb()
   {
     $amber =& Amber::getInstance();
+
+    /* Return null if Amber has not been configured to read object definitions from database */
+    if ($amber->_config->get('sys/medium') != 'db') {
+      $amber->_sysdb = null;
+      return $amber->_sysdb;
+    }
 
     if (!isset($amber->_sysdb)) {
       $sysdbCfg =& $amber->_config->get('sys/database');
@@ -131,6 +161,12 @@ class Amber
     return $amber->_sysdb;
   }
 
+  /**
+   * @static
+   * @access public
+   * @return ADOConnection Connection to database containing the table where the report definitions are stored
+   * or null if Amber has not been configured to use a system database
+   */ 
   function OpenReport($reportName, $mode = AC_NORMAL, $where = '', $type = 'html', $noMargin = false)
   {
     $mgr =& $this->getObjectManager();
@@ -181,7 +217,8 @@ class Amber
    * @static
    * @access public
    * @param mixed
-   * @param bool return If set to true the output will be returned as string, otherwise it will be echoed
+   * @param bool
+   * @return If set to true the output will be returned as string, otherwise it will be echoed
    */
   function dump($var, $ret = false)
   {
@@ -194,11 +231,21 @@ class Amber
     }
   }
 
+  /**
+   * @static
+   * @access protected
+   * @param mixed
+   */
   function _dumpScalar($var)
   {
     return '<div align="center"><pre style="text-align: left; width: 80%; border: solid 1px #ff0000; font-size: 9pt; color: #000000; background-color: #ffffff; padding: 5px; z-index: 99999; position: relative;">' . htmlentities(print_r($var, 1)) . '</pre></div>';
   }
 
+  /**
+   * @static
+   * @access protected
+   * @param mixed
+   */
   function _dumpArray(&$var)
   {
     static $level = 0;
@@ -242,6 +289,13 @@ class Amber
     return $result;
   }
 
+  /**
+   * @static
+   * @access protected
+   * @param string
+   * @param string
+   * @param bool If set to true the output will be returned as string, otherwise it will be echoed
+   */
   function showError($title, $text, $ret = false)
   {
     $id = 'AmberError' . mt_rand();
@@ -265,8 +319,5 @@ class Amber
     }
   }
 }
-
-class nullObject
-{}
 
 ?>
