@@ -37,6 +37,8 @@ class reportBuff
  
 class mayflower
 {
+  var $pdf;
+
   var $subReportIndex = 0;
   var $subReportbuff;
   var $sectionIndex = 0;
@@ -48,10 +50,11 @@ class mayflower
   var $sectionType;    // 'Head', 'Foot' or ''
   var $layout;
   
-  function mayflower(&$reportBuff, &$layout)
+  function mayflower(&$reportBuff, &$layoutm, &$pdf)
   {
     $this->reportBuff =& $reportBuff;
     $this->layout =& $layout;
+    $this->pdf =& $pdf;
   }  
   
   function out($s)
@@ -64,7 +67,18 @@ class mayflower
       $this->reportBuff->reportPages[$this->reportBuff->actpageNo][$this->sectionType] .= $s . "\n";
     }  
   }
-
+  
+  function _setOutBuff()
+  { 
+    if ($this->sectionIndex > $this->subReportIndex) {
+      $this->pdf->setOutBuffer($this->sectionBuff[$this->sectionIndex]);
+    } elseif ($this->subReportIndex) {
+      $this->pdf->setOutBuffer($this->subReportbuff[$this->subReportIndex]);
+    } elseif ($this->inReport) {
+      $this->pdf->setOutBuffer($this->reportBuff->reportPages[$this->reportBuff->actpageNo][$this->sectionType]);
+    }  
+  }
+  
   function pageNo()
   {
     return $this->reportBuff->page();
@@ -128,12 +142,14 @@ class mayflower
   {
    $this->subReportIndex++;
    $this->subReportBuff[$this->subReportIndex] = '';
+   $this->_setOutBuff();
   }
    
   function subReportPop()
   {
     $this->subReportIndex--;
     return $this->subReportbuff[$this->subReportIndex + 1];
+    $this->_setOutBuff();
   }
   
   function subReportGetPopped()
@@ -145,6 +161,7 @@ class mayflower
   {
     $this->sectionIndex++;
     $this->sectionBuff[$this->sectionIndex] = '';
+    $this->_setOutBuff();
   }
   
   function sectionPop()
@@ -223,6 +240,27 @@ class PDF extends FPDF
       parent::_out($s);
     }
   }
+  
+  function _out2($s)
+  {
+    if($this->state <> 2) {
+      parent::_out($s);
+    } elseif (isset($this->cache)) {
+      $this->cache .= $s . "\n";
+    } else {
+      parent::_out($s);
+    }
+  }
+  
+  function setOutBuffer(&$buff)
+  {
+#    $this->cache =& $buff;
+  }
+  function unsetBuffer()
+  {
+    unset($this->cache);
+  }    
+  
   
   function startReportBuffering()
   {
@@ -363,7 +401,7 @@ class PDF extends FPDF
     if (is_null($instance) or $reset) {
       $size = array($layout->paperWidth, $layout->paperHeight);
       $instance = new PDF('p', $layout->unit, $size);
-      $instance->mayflower =& new mayflower($reportBuff, $layout);
+      $instance->mayflower =& new mayflower($reportBuff, $layout, $instance);
     }
 
     return $instance;
