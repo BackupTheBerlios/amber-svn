@@ -38,8 +38,7 @@ class ExporterFPdf extends Exporter
   function startReport(&$report, $asSubreport = false, $isDesignMode = false)
   {
     parent::startReport($report, $asSubreport, $isDesignMode);
-    $report =& $this->_report;
-    $reset = (!$this->_asSubreport);
+    $reset = (!$asSubreport);
     $this->_pdf =& PDF::getInstance($report->layout, $reset);
     if ($report->Controls) {
       foreach (array_keys($report->Controls) as $ctrlName) {
@@ -48,7 +47,7 @@ class ExporterFPdf extends Exporter
         }
       }
     }
-    if ($this->_asSubreport) {
+    if ($asSubreport) {
       $this->_pdf->subReportBuff->push();
       $this->startcomment("StartSubreport");
     } else {  
@@ -59,11 +58,12 @@ class ExporterFPdf extends Exporter
   
   function endReport(&$report)
   {
-    parent::endReport($report);
     if ($this->_asSubreport) {
+      $this->newPage();
       $this->comment("EndSubreport");
       return $this->_pdf->subReportBuff->pop();
     } else {
+      parent::endReport($report);
       if (!$this->_report->layout->designMode) {
         $this->_report->_printNormalSection('PageFooter');
       }  

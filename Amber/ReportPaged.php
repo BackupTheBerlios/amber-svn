@@ -18,13 +18,15 @@ class reportPaged extends Report
    */
   function _startReport($isSubreport, $isDesignMode)
   {
-    if (isset($this->_exporter)) {
-      $this->layout =& new pageLayout($this, $isSubreport, $isDesignMode);
-      if (!$isSubReport) {
-        $this->reportBuff =& new reportBuff($this->layout);
-      }
-      $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
+    if (!isset($this->_exporter)) 
+    {
+      return;
     }
+    $this->layout =& new pageLayout($this, $isSubreport, $isDesignMode);
+    if (!$isSubReport) {
+      $this->reportBuff =& new reportBuff($this->layout);
+    }
+    $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
   }
 
   /**
@@ -32,9 +34,11 @@ class reportPaged extends Report
    */
   function _endReport()
   {
-    if (isset($this->_exporter)) {
-      $this->_exporter->endReport($this);
-    }
+    if (!isset($this->_exporter)) 
+    {
+      return;
+    }  
+    $this->_exporter->endReport($this);
   }
 
   function page()
@@ -141,7 +145,8 @@ class pageLayout
 
   function pageLayout(&$report, $asSubReport, $designMode)
   { 
-    $this->designMode = $designMode;   
+    $this->designMode = $designMode;
+    $this->asSubReport = $asSubReport;   
     $this->unit = 1/20;
     $this->reportWidth = $report->Width;
     if ($report->Orientation == 'portrait') {
