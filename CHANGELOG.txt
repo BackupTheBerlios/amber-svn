@@ -1,4 +1,4 @@
-20040711:
+2004071toll1:
 - Display error message if phpDocumentor cannot be found
 
 20040708:
