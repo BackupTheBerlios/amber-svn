@@ -133,7 +133,7 @@ class Amber
     $amber->_stdExporter = $exporter;
         
     if ($type == 'report') {
-      if (stristr($type, 'pdf') != false) {
+      if (stristr($exporter, 'pdf') != false) {
         return  new reportPaged();
       } else {
         return  new report();

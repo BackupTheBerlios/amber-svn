@@ -37,10 +37,6 @@ class PDF extends FPDF
   //////////////////////////////////////////////////////////////////////////
        
 
-  function newPage()
-  {
-    $this->reportBuff->posY = ($this->reportBuff->actpageNo + 1) * $this->layout->printHeight;
-  }
 
   function pageHeaderEnd()
   {
@@ -140,7 +136,7 @@ class PDF extends FPDF
     $endPage   = floor(($this->reportBuff->posY + $sectionHeight) / $this->layout->printHeight);
     if ($keepTogether and ($startPage <> $endPage)) {
       if ($this->reportBuff->posY > ($startPage * $this->layout->printHeight)) { // page not blank
-        $this->newPage();
+        $this->reportBuff->newPage();
         $startPage = floor($this->reportBuff->posY / $this->layout->printHeight);
         $endPage   = floor(($this->reportBuff->posY + $sectionHeight) / $this->layout->printHeight);
       }

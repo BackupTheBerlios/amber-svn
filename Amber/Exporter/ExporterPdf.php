@@ -83,6 +83,17 @@ class reportBuff
   {
     $this->reportPages[$this->actpageNo][$this->sectionType] .= $s . "\n";
   }
+  
+  function newPage()
+  {
+    $this->posY = ($this->actpageNo + 1) * $this->layout->printHeight;
+  }
+  
+  function page()
+  {
+    return $this->actpageNo + 1;
+  }
+
 }
 
 
@@ -270,12 +281,12 @@ class ExporterFPdf extends Exporter
 
   function page()
   {
-    return $this->reportBuff->actpageNo + 1;
+    return $this->reportBuff->page();
   }
 
   function newPage()
   {
-    $this->_pdf->newPage();
+    $this->_pdf->reportBuff->newPage();
   }
 
   /*
