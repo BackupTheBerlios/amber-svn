@@ -7,11 +7,11 @@
  *
  */
 
-require_once 'misc.php';
 require_once 'AmberConfig.php';
 require_once 'AmberObject.php';
 require_once 'AmberFormSection.php';
 require_once 'ObjectHandler.php';
+require_once 'misc.php';
 
 /**
  *

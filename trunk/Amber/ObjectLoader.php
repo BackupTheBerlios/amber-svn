@@ -8,7 +8,7 @@
 */
 
 require_once 'adodb/adodb.inc.php';
-require_once 'Report.php';
+require_once 'ReportPaged.php';
 require_once 'Form.php';
 
 /**
@@ -26,6 +26,7 @@ class ObjectLoader
    * @access public
    * @param string
    * @param string
+   * @return Report | Form
    */
   function &load($type, $objectName)
   {
@@ -53,6 +54,27 @@ class ObjectLoader
       $this->_lastError = 'ObjectLoader::load(): An unknown error occured';
     }
     return $obj;
+  }
+
+
+  /**
+   *
+   * @access public
+   * @param string
+   * @return array
+   *
+   */
+  function getList($type)
+  {
+    $types = array_keys($this->objectTypes);
+
+    if (!in_array($type, $types)) {
+      $this->_lastError = 'Requested listing of unsupported object type: "' . $type . '"';
+      return false;
+    }
+
+  
+    return array();
   }
 
   /**
@@ -166,6 +188,32 @@ class ObjectLoaderDb extends ObjectLoader
     return $report;
   }
 
+  function getList($type)
+  {
+    $types = array_keys($this->objectTypes);
+
+    if (!in_array($type, $types)) {
+      $this->_lastError = 'Requested listing of unsupported object type: "' . $type . '"';
+      return false;
+    }
+
+  
+    if (!isset($this->_db)) {
+      $this->_lastError = 'ObjectLoader: Database needs to be set before attempting to load an object';
+      return false;
+    }
+
+    $dict = NewDataDictionary($this->_db);
+    $sql = 'SELECT name FROM ' . $dict->TableName($this->sysTable) . ' WHERE';
+    $sql .= ' type=' . $this->objectTypes[$type] . ' ORDER BY name';
+    $result = $this->_db->GetAll($sql);
+
+    foreach ($result as $row) {
+      $list[] = $row['name'];
+    }
+    return $list;
+  }
+  
   function &fetchRecord($type, $name = '')
   {
      if (!isset($this->_db)) {

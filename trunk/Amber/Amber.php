@@ -7,12 +7,9 @@
 *
 */
 
-define('__AMBER_BASE__', dirname(__FILE__));
-
-require_once __AMBER_BASE__ . '/Report.php';
-require_once __AMBER_BASE__ . '/ReportPaged.php';
-require_once 'adodb/adodb.inc.php';
+require_once 'ReportPaged.php';
 require_once 'ObjectLoader.php';
+require_once 'adodb/adodb.inc.php';
 
 define('AC_DESIGN', 1);
 define('AC_NORMAL', 2);
@@ -64,6 +61,23 @@ class Amber
     return $instance;
   }
 
+  function &getObjectLoader()
+  {
+    if (!isset($this->_objectLoader)) {
+      $medium = $this->_config->get('sys/medium');
+      if ($medium == 'db') {
+        $this->_objectLoader =& new ObjectLoaderDb();
+        $this->_objectLoader->setDatabase(Amber::sysDb());
+      } else {
+        $this->_objectLoader =& new ObjectLoaderFile();
+        $this->_objectLoader->setBasePath($this->_config->get('sys/basepath'));
+      }
+      $this->_objectLoader->setConfig($this->_config);
+    }
+
+    return $this->_objectLoader;
+  }
+  
   function &currentDb()
   {
     $amber =& Amber::getInstance();
@@ -156,21 +170,11 @@ class Amber
 
   function &loadObject($type, $name)
   {
-    if (!isset($this->_objectLoader)) {
-      $medium = $this->_config->get('sys/medium');
-      if ($medium == 'db') {
-        $this->_objectLoader =& new ObjectLoaderDb();
-        $this->_objectLoader->setDatabase(Amber::sysDb());
-      } else {
-        $this->_objectLoader =& new ObjectLoaderFile();
-        $this->_objectLoader->setBasePath($this->_config->get('sys/basepath'));
-      }
-      $this->_objectLoader->setConfig($this->_config);
-    }
+    $loader =& Amber::getObjectLoader();
 
-    $result =& $this->_objectLoader->load($type, $name);
+    $result =& $loader->load($type, $name);
     if ($result == false) {
-      Amber::showError('Error', $this->_objectLoader->getLastError());
+      Amber::showError('Error', $loader->getLastError());
       die();
     }
 
