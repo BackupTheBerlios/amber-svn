@@ -55,7 +55,7 @@ class Amber
     if (!isset($amber->_db)) {
       $dbCfg =& $amber->_config->database;
       $db =& ADONewConnection($dbCfg['driver']);
-      $conResult = @$db->PConnect($dbCfg['host'], $dbCfg['username'], $dbCfg['pwd'], $dbCfg['dbname']);
+      $conResult = @$db->PConnect($dbCfg['host'], $dbCfg['username'], $dbCfg['password'], $dbCfg['dbname']);
       $db->SetFetchMode(ADODB_FETCH_ASSOC);
       if ($conResult == false) {
         Amber::showError('Database Error '  . $db->ErrorNo(), $db->ErrorMsg());
