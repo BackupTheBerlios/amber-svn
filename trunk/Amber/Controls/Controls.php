@@ -371,21 +371,26 @@ class TextBox extends FontBox
       $this->_sum = 0;
     }
   }
+
+  /**
+   * @access public
+   * @param array
+   */
   
-  function setControlValue(&$report)
+  function setControlValue(&$values)
   {
-    $source = trim($this->ControlSource);
+    $key = trim($this->ControlSource);
   
-    if (!isset($source)) {
+    if (!isset($key)) {
       # $this->Value = '#NoValue#';
-    } elseif ($source == '') {
+    } elseif ($key == '') {
       $this->Value = Null;
-    } elseif ($source[0] == '=') {
+    } elseif ($key[0] == '=') {
       $this->Value = '#exp';
     } elseif ($this->RunningSum == 1) {
-      $this->Value = $report->Cols[$source];
+      $this->Value = $values[$key];
     } else {
-      $this->Value = $report->Cols[$source];
+      $this->Value = $values[$key];
     }
   }
 }

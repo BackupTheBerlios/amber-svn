@@ -302,7 +302,7 @@ class Report extends AmberObject
           }
 
           // Evaluate Expressions
-          $this->_setControlValues($maxLevel, $level);
+          $this->_setControlValues($this->Cols);
           $this->_resetRunningSum($maxLevel, $level);
           $this->EvaluateExpressions();
           $this->_runningSum($maxLevel, $level);
@@ -471,24 +471,21 @@ class Report extends AmberObject
 
   /**
    * @access protected
+   * @param array
    */
-  function _setControlValues($maxLevel, $level)
-  {
-    for ($i = $level; $i < $maxLevel; $i++) {
-      if (isset($this->GroupHeaders[$i])) {
-        $this->GroupHeaders[$i]->_setControlValues($this);
+  function _setControlValues($values)
+  { // set values of control bound to columns
+    if (is_array($this->Controls)) {
+      $keys = array_keys($this->Controls);
+      foreach ($keys as $index) {
+        $ctrl  =& $this->Controls[$index];
+        if (isset($ctrl->ControlSource)) {  // Control can be bound
+          $ctrl->setControlValue($values);
+        }
       }
     }
-
-    for ($i = $level; $i < $maxLevel; $i++) {
-      if (isset($this->GroupFooters[$i])) {
-        $this->GroupFooters[$i]->_setControlValues($this);
-      }
-    }
-
-    $this->Detail->_setControlValues($this);
   }
-
+    
   /**
    * @access protected
    * @param int
@@ -513,6 +510,7 @@ class Report extends AmberObject
 
   /**
    * @access protected
+   * @param int
    */
   function OnLoadData(&$Cancel)
   {
@@ -798,6 +796,7 @@ class Report extends AmberObject
 
   /**
    * @access protected
+   * @param string
    */
   function sectionPrintDesignHeader($text)
   {
@@ -811,6 +810,7 @@ class Report extends AmberObject
 
   /**
    * @access protected
+   * @param string
    */
   function _setDocumentTitle($name)
   {
