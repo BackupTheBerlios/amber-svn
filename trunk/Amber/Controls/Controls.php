@@ -624,6 +624,17 @@ class CheckBox extends Control
 
     $this->_registerProperties($newProperties);
   }
+  
+  function setControlValue(&$report)
+  {
+    if (!isset($this->ControlSource)) {
+      # $this->Value = '#NoValue#';
+    } elseif ($this->ControlSource == '') {
+      $this->Value = Null;
+    } else {
+      $this->Value = $report->Cols[$this->ControlSource];
+    }
+  }
 
   function printNormal()
   {
