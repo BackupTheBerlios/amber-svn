@@ -32,6 +32,8 @@ class ExporterFPdf extends Exporter
   var $type = 'fpdf';
   var $_pdf;
 
+  var $firstPage = true;  
+
 
   function &getExporterBasicClass(&$layout, $reset)
   {
@@ -108,10 +110,10 @@ class ExporterFPdf extends Exporter
   ////////////////////////
   
   
-  function outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff)
+  function outWindowRelative($deltaX, $x, $y, $w, $h, &$dataBuff)
   {
     $this->_pdf->SetClipping($x, $y, $w, $h);
-    $this->_pdf->SetCoordinate($x - $deltaX, -($y - $deltaY));
+    $this->_pdf->SetCoordinate($x - $deltaX, -$y);
     $this->_pdf->_out($dataBuff);
     $this->_pdf->RemoveCoordinate();
     $this->_pdf->RemoveClipping();
@@ -152,7 +154,10 @@ class ExporterFPdf extends Exporter
   
   function AddPage()
   {
-    $this->_pdf->AddPage();
+    if (!$this->firstPage) {
+      $this->_pdf->AddPage();
+    }
+    $this->firstPage = false;
   }  
       
 

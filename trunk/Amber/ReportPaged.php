@@ -13,6 +13,11 @@ class reportPaged extends Report
   var $layout;
   var $actpageNo = -1;
 
+  function _startReport($isSubreport)
+  {
+    parent::_startReport($isSubreport);
+    $this->actPage =& new Page();
+  }
 
   /** 
    * @access private
@@ -23,58 +28,35 @@ class reportPaged extends Report
       $this->_printNormalSection($this->PageFooter);
     }  
 
-    $this->reportPages[$this->actpageNo][''] = $this->_exporter->bufferEnd();
+    $this->actPage->body = $this->_exporter->bufferEnd();
+    $this->outPage($this->actPage);
     $this->endReportBuffering();
-    
-    $this->outPages();
     
     $this->_exporter->endReport($this);
   }
 
-  function outPages()
+  function outPage(&$page)
   {
-    $firstPage = true;  //first page is out
-    foreach(array_keys($this->reportPages) as $pageY) {
-      for($pageX = 0; $pageX <= $this->layout->pagesHorizontal - 1; $pageX++) {
-        if (!$firstPage) {
-          $this->_exporter->AddPage();
-        }
-        $firstPage = false;
+    for($pageX = 0; $pageX <= $this->layout->pagesHorizontal - 1; $pageX++) {
+      $this->_exporter->AddPage();
+      $deltaX = $pageX * $this->layout->printWidth;
+      $x = $this->layout->leftMargin;
+      $w = $this->layout->printWidth;
 
-        $deltaX = $pageX * $this->layout->printWidth;
-        $deltaY = $pageY * $this->layout->printHeight;
-        $this->outPageHeader($deltaX, $deltaY, $this->reportPages[$pageY]);  
-        $this->outPage($deltaX, $deltaY, $this->reportPages[$pageY]);  
-        $this->outPageFooter($deltaX, $deltaY, $this->reportPages[$pageY]);  
-      }
+      $y = $this->layout->topMargin;
+      $h = $this->layout->pageHeaderHeight;
+      $this->_exporter->outWindowRelative($deltaX, $x, $y, $w, $h, $page->header);
+
+      $y = $this->layout->topMargin + $this->layout->pageHeaderHeight;
+      $h = $this->layout->printHeight;
+      $this->_exporter->outWindowRelative($deltaX, $x, $y, $w, $h, $page->body);
+
+      $y = $this->layout->topMargin + $this->layout->pageHeaderHeight + $this->layout->printHeight;
+      $h = $this->layout->pageFooterHeight;
+      $this->_exporter->outWindowRelative($deltaX, $x, $y, $w, $h, $page->footer);
     }
   }
   
-  function outPageHeader($deltaX, $deltaY, &$page)
-  {
-    $x = $this->layout->leftMargin;
-    $y = $this->layout->topMargin;
-    $w = $this->layout->printWidth;
-    $h = $this->layout->pageHeaderHeight;
-    $this->_exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $page['Head']);
-  }
-  function outPage($deltaX, $deltaY, &$page)
-  {
-    $x = $this->layout->leftMargin;
-    $y = $this->layout->topMargin + $this->layout->pageHeaderHeight;
-    $w = $this->layout->printWidth;
-    $h = $this->layout->printHeight;
-    $this->_exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $page['']);
-  }
-  function outPageFooter($deltaX, $deltaY, &$page)
-  {
-    $x = $this->layout->leftMargin;
-    $y = $this->layout->topMargin + $this->layout->pageHeaderHeight + $this->layout->printHeight;
-    $w = $this->layout->printWidth;
-    $h = $this->layout->pageFooterHeight;
-    $this->_exporter->outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, $page['Foot']);
-  }
-
   function _startSection(&$section, $width)
   {
     $this->_exporter->bufferStart();
@@ -120,31 +102,34 @@ class reportPaged extends Report
       if (($page <> $this->actpageNo)) {
         if ($this->actpageNo >= 0) {
           $this->printPageFooter();
-          $this->reportPages[$this->actpageNo][''] = $this->_exporter->bufferEnd();
+          $this->actPage->body = $this->_exporter->bufferEnd();
+          $this->outPage($this->actPage);
         }
         $this->actpageNo = $page;
+        $this->actPage->reset();
+        $this->actPage->posY = $this->actpageNo * $this->layout->printHeight;
         $this->_exporter->bufferStart();
         $this->printPageHeader();
       }
-      $this->outSection($page - $startPage + 1, $this->posY, $sectionHeight, $secBuff, $section);
+      $this->outSection($page - $startPage + 1, $this->posY - $this->actPage->posY, $sectionHeight, $secBuff, $section);
     }
     $this->posY += $sectionHeight;
   }
   
   function pageHeaderEnd(&$section)
   {
-   $buff = $this->_exporter->bufferEnd();
-   $this->_exporter->bufferStart();
-   $this->outSection(1, $this->actpageNo * $this->layout->printHeight, $this->layout->pageHeaderHeight, $buff, $section);
-   $this->reportPages[$this->actpageNo]['Head'] = $this->_exporter->bufferEnd();
+    $buff = $this->_exporter->bufferEnd();
+    $this->_exporter->bufferStart();
+    $this->outSection(1, 0, $this->layout->pageHeaderHeight, $buff, $section);
+    $this->actPage->header = $this->_exporter->bufferEnd();
   }
 
   function pageFooterEnd(&$section)
   {
     $buff = $this->_exporter->bufferEnd();
     $this->_exporter->bufferStart();
-    $this->outSection(1, $this->actpageNo * $this->layout->printHeight, $this->layout->pageFooterHeight, $buff, $section);
-    $this->reportPages[$this->actpageNo]['Foot'] = $this->_exporter->bufferEnd();
+    $this->outSection(1, 0, $this->layout->pageFooterHeight, $buff, $section);
+    $this->actPage->footer = $this->_exporter->bufferEnd();
   }
   
   function printPageFooter()
@@ -163,7 +148,7 @@ class reportPaged extends Report
   
   function Bookmark($txt,$level=0,$y=0)
   {
-    $posYinPage = ($this->posY - ($this->actpageNo * $this->layout->printHeight));
+    $posYinPage = ($this->posY - $this->actpage->posY);
     $this->_exporter->Bookmark($txt, $level, $y, $this->page(), $posYinPage);
   }
   
@@ -263,5 +248,19 @@ class pageLayout
     $this->printWidth  = ($this->paperWidth - $this->leftMargin - $this->rightMargin); //width of printable area of page (w/o morgins)
     $this->printHeight = ($this->paperHeight - $this->topMargin - $this->bottomMargin - $this->pageHeaderHeight - $this->pageFooterHeight); //height of printable area of page (w/o morgins)
     $this->pagesHorizontal = floor($this->reportWidth / $this->printWidth) + 1; // No of pages needed to print report
+  }
+}
+
+class Page
+{
+  var $header;
+  var $body;
+  var $footer;
+  
+  function reset()
+  {
+    $this->header = '';
+    $this->body = '';
+    $this->footer = '';
   }
 }
