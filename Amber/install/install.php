@@ -9,15 +9,17 @@ require_once 'Amber/XMLLoader.php';
 
 $filename = __AMBER_BASE__ . '/conf/localconf.xml';
 
-
+$cfg = new AmberConfig();
 if (isset($_POST['doUpdate'])) {
-    $props = array('Username', 'Password', 'Host', 'Driver', 'DbName', 'Medium');
-    $cfg = new AmberConfig();
+    $props = array('Username', 'Password', 'Host', 'Driver', 'DbName', 'Medium', 'BasePath');
+    $cfg->fromXML($filename);
 
     foreach ($props as $p) {
       $methodName = 'set' . $p;
-      $postVal = $_POST[strtolower($p)];
-      $cfg->$methodName($postVal);
+      if (isset($_POST[strtolower($p)])) {
+        $postVal = $_POST[strtolower($p)];
+        $cfg->$methodName($postVal);
+      }
     }
 
     if (!$cfg->toXML($filename)) {
@@ -26,8 +28,6 @@ if (isset($_POST['doUpdate'])) {
       $msg = "Configuraton successfully written to:<p />" . htmlentities($filename);
     }
     echo '<div align="center"><div style="text-align: left; color: #000000; width: 450; font-size: 10pt; border: #ee0000 2pt solid; background-color: #ffffff; padding: 5px;"><strong>' . $msg . '</strong></div></div>';
-
-    unset($cfg);
 }
 
 // Re-read for display
@@ -56,8 +56,8 @@ $cfg->fromXML($filename);
     <tr>
       <td>Password:</td>
       <td><input name="password" type="text" value="<?php echo htmlspecialchars($cfg->getPassword()) ?>"></td>
-    <tr>
     </tr>
+    <tr>
       <td>Database:</td>
       <td><input name="dbname" type="text" value="<?php echo htmlspecialchars($cfg->getDbName()) ?>"></td>
     </tr>
@@ -68,6 +68,16 @@ $cfg->fromXML($filename);
       <td>Medium:</td>
       <td><select name="medium"><option value="db" <?php if ($cfg->getMedium() == 'db') echo 'selected'; else echo ''; ?>>Database</option><option value="file" <?php if ($cfg->getMedium() == 'file') echo 'selected'; else echo ''; ?>>File</option></select></td>
     </tr>
+
+    <?php if ($cfg->getMedium() == 'file') { ?>
+
+    <tr>
+      <td>BasePath:</td>
+      <td><input name="basepath" type="text" value="<?php echo htmlspecialchars($cfg->getBasePath()) ?>"></td>
+    </tr>
+
+    <?php } ?>
+
     <tr>
       <td colspan="2" align="center"><input type="submit" name="doUpdate" value="Update localconf.xml"></td>
     </tr>

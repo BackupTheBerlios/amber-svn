@@ -163,7 +163,7 @@ class ObjectLoaderFile extends ObjectLoader
   function setBasePath($path)
   {
     if (empty($path)) {
-      $this->_basePath = '.';
+      $path = '.';
     }
 
     if (!is_dir($path)) {

@@ -44,6 +44,9 @@ class AmberConfig
     );
 
     $fp = fopen($fileName, 'w');
+    if (!$fp) {
+      return false;
+    }
     fwrite($fp, '<?xml version="1.0" encoding="iso-8859-1"?>' . "\n");
     fwrite($fp, "<config>\n");
     $this->writeArray($fp, '', $this);
@@ -111,6 +114,16 @@ class AmberConfig
   function setMedium($value)
   {
     $this->sys_objects['medium'] = $value;
+  }
+
+  function getBasePath()
+  {
+    return $this->sys_objects['basepath'];
+  }
+
+  function setBasePath($value)
+  {
+    $this->sys_objects['basepath'] = $value;
   }
 
   /**
