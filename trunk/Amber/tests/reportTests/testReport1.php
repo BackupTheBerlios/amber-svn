@@ -28,14 +28,26 @@ class testReport1 extends AmberReport_UserFunctions
     $val['Text5'] = $val['Text5'] . 'Test5Test';
   }
   
-  function assert($html)
+  function assertHtml($html)
   { 
     $test =& $this->test;
-    $test->assertContains('Test1Test', $html, 'TestReport1 Text1');
-    $test->assertContains('Test2Test', $html, 'TestReport1 Text2');
-    $test->assertContains('Test3Test', $html, 'TestReport1 Text3');
-    $test->assertContains('Test4Test', $html, 'TestReport1 Text4');
-    $test->assertContains('Test5Test', $html, 'TestReport1 Text5');
+    $id = get_class($this) . '->assertHtml '; 
+    $test->assertContains('Test1Test', $html, $id . 'Text1');
+    $test->assertContains('Test2Test', $html, $id . 'Text2');
+    $test->assertContains('Test3Test', $html, $id . 'Text3');
+    $test->assertContains('Test4Test', $html, $id . 'Text4');
+    $test->assertContains('Test5Test', $html, $id . 'Text5');
+  }
+  
+  function assertPdf($html)
+  { 
+    $test =& $this->test;
+    $id = get_class($this) . '->assertPdf '; 
+    $test->assertContains('Test1Test', $html, $id . 'Text1');
+    $test->assertContains('Test2Test', $html, $id . 'Text2');
+    $test->assertContains('Test3Test', $html, $id . 'Text3');
+    $test->assertContains('Test4Test', $html, $id . 'Text4');
+    $test->assertContains('Test5Test', $html, $id . 'Text5');
   }
   
   function getLayout()

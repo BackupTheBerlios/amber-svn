@@ -26,17 +26,27 @@ class exampleInvoiceList extends AmberReport_UserFunctions
                        
   
 //TEST  
-  function assert($html)
+  function assertHtml($html)
   {
-#print $html;
     $test =& $this->test;
-    $test->assertContains('>Sample Company Ltd.<', $html, get_class($this) . ' Title');
-    $test->assertContains('>Invoices<',            $html, get_class($this) . ' SubTitle');
-    $test->assertContains('>Alice Anderson<',      $html, get_class($this) . ' SubTitle');
-    $test->assertContains('>Susan Smith<',         $html, get_class($this) . ' SubTitle');
-    $test->assertContains('>Page  1<',             $html, get_class($this) . ' Page');
+    $id = get_class($this) . '->assertHtml'; 
+    $test->assertContains('>Sample Company Ltd.<', $html, $id . ' Title');
+    $test->assertContains('>Invoices<',            $html, $id . ' SubTitle');
+    $test->assertContains('>Alice Anderson<',      $html, $id . ' Alice');
+    $test->assertContains('>Susan Smith<',         $html, $id . ' Susan');
+    $test->assertContains('>Page  1<',             $html, $id . ' Page');
   }
   
+  function assertPdf($html)
+  {
+    $test =& $this->test;
+    $id = get_class($this) . '->assertPdf'; 
+    $test->assertContains('Sample Company Ltd.', $html, $id . ' Title');
+    $test->assertContains('Invoices',            $html, $id . ' SubTitle');
+    $test->assertContains('Alice Anderson',      $html, $id . ' Alice');
+    $test->assertContains('Susan Smith',         $html, $id . ' Susan');
+    $test->assertContains('Page  1',             $html, $id . ' Page');
+  }
   function getLayout()
   { $s = <<<EOD
 <?xml version="1.0" encoding="ISO-8859-1"?>

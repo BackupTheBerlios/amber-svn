@@ -41,13 +41,20 @@ class testReports extends myTestCase
       $report->RecordSource = '[Array]';
       $report->_data = $testClass->getData();
     }
-    ob_start();
-    $report->run('html');
-    $s = ob_get_contents();
-    ob_end_clean();
-
-    $testClass->assert($s);
-    return $s;
+    if (method_exists($testClass, 'assertHtml')) {
+      ob_start();
+      $report->run('html');
+      $s = ob_get_contents();
+      ob_end_clean();
+      $testClass->assertHtml($s);
+    }
+    if (method_exists($testClass, 'assertPdf')) {
+      ob_start();
+      $report->run('testpdf');
+      $s = ob_get_contents();
+      ob_end_clean();
+      $testClass->assertPdf($s);
+    }
   }
   
   function tstOneReport($filename)

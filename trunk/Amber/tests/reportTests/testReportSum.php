@@ -33,12 +33,22 @@ class testReportSum extends AmberReport_UserFunctions
                        
   
 //TEST  
-  function assert($html)
+  function assertHtml($html)
   {
     $test =& $this->test;
-    $test->assertContains('161.015,00',    $html, get_class($this) . ' sumSoll9-2');
-    $test->assertContains('1.234.567,00',  $html, get_class($this) . ' sumHaben9-2');
-    $test->assertContains('-1.073.552,00', $html, get_class($this) . ' sumSaldo9-2');
+    $id = get_class($this) . '->assertHtml'; 
+    $test->assertContains('161.015,00',    $html, $id . ' sumSoll9-2');
+    $test->assertContains('1.234.567,00',  $html, $id  . ' sumHaben9-2');
+    $test->assertContains('-1.073.552,00', $html, $id  . ' sumSaldo9-2');
+  }
+  
+  function assertPdf($pdf)
+  {
+    $test =& $this->test;
+    $id = get_class($this) . '->assertPdf'; 
+    $test->assertContains('161.015,00',    $html, $id . ' sumSoll9-2');
+    $test->assertContains('1.234.567,00',  $html, $id  . ' sumHaben9-2');
+    $test->assertContains('-1.073.552,00', $html, $id  . ' sumSaldo9-2');
   }
   
   function getLayout()
