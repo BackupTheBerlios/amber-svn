@@ -520,9 +520,9 @@ class Report extends AmberObject
   /**
    * @access protected
    */
-  function OnEvaluateExpressions()
+  function EvaluateExpressions()
   {
-    $this->_Code->Report_OnEvaluateExpressions();
+    $this->_Code->Report_EvaluateExpressions();
   }
 
     /**
