@@ -19,20 +19,17 @@ ExporterFactory::register('html', 'ExporterHtml');
  */
 class ExporterHtml extends Exporter
 {
-
   var $type = 'html';
   var $cssClassPrefix = 's';
   var $_pageNo = 1;
   var $_blankPage;
 
-
   var $_CtrlStdValues;
-
-  var $_posY; //
-
+  var $_posY;
+  
   // Report - html
 
-  function startReport(&$report, $asSubreport=false)
+  function startReport(&$report, $asSubreport)
   {
     parent::startReport($report, $asSubreport);
     $this->_blankPage = true;
@@ -42,18 +39,19 @@ class ExporterHtml extends Exporter
       $tmp = "<html>\n<head>\n";
       $tmp .= "\t<title>" . $this->_docTitle . "</title>\n";
       echo $tmp;
-    }
-    $css = $this->getReportCssStyles($report, $this->cssClassPrefix);
-    $this->setCSS($css);
 
-    $tmp = '';
-    if (!$this->_asSubreport) {
+      $css = $this->getReportCssStyles($report, $this->cssClassPrefix);
+      $this->setCSS($css);
+
+      $tmp = '';
       $tmp = "</head>\n";
       $tmp .= "<body style=\"background-color: #aaaaaa;\">\n";
+      $tmp .= "\n\n<!-- Start of AmberReport -->\n\n<div class=\"AmberReport\">\n";
+      echo $tmp;
+    } else {
+      $css = $this->getReportCssStyles($report, 'sub_' . $this->cssClassPrefix);
+      $this->setCSS($css);
     }
-    $tmp .= "\n\n<!-- Start of AmberReport -->\n\n<div class=\"AmberReport\">\n";
-
-    echo $tmp;
   }
 
   function getReportCssStyles(&$report, $cssClassPrefix)
@@ -69,11 +67,10 @@ class ExporterHtml extends Exporter
         if ($ctrl->ControlType == 112) {      //subreport XXX FIX THIS: direct reference to Controltype!!!!!
 
           #ooops: $ctrl->report isn't set yet! (gets opened with ctrl->printNormal, when the control is actually printed)
-          //$css .= $ctrl->report->_exporter->getReportCssStyles($ctrl->report, $ctrl->report->EventProcPrefix);
+          //$css .= $ctrl->_report->_exporter->getReportCssStyles($ctrl->_report, $ctrl->_report->EventProcPrefix);
         }
       }
     }
-
 
     return $css;
   }
@@ -275,15 +272,21 @@ class ExporterHtml extends Exporter
 
   function setCSS($css)
   {
-    $ret = "\t<style type=\"text/css\">\n<!--\n";
-    if ($this->getUserAgent() == 'msie') {
-      $ret .= ".AmberReport { position: absolute; }\n";
+    if (!$this->_asSubreport) {
+      $ret = "\t<style type=\"text/css\">\n<!--\n";
+      if ($this->getUserAgent() == 'msie') {
+        $ret .= ".AmberReport { position: absolute; }\n";
+      } else {
+        $ret .= ".AmberReport { position: relative; }\n";
+      }
+      $ret .= ".AmberReport div { position: absolute; overflow: hidden; }\n";
+      $ret .= $css;
+      $ret .= "\n-->\n</style>\n";
     } else {
-      $ret .= ".AmberReport { position: relative; }\n";
+      $ret = "\t<style type=\"text/css\">\n<!--\n";
+      $ret .= $css;
+      $ret .= "\n-->\n</style>\n";
     }
-    $ret .= ".AmberReport div { position: absolute; overflow: hidden; }\n";
-    $ret .= $css;
-    $ret .= "\n-->\n</style>\n";
 
     echo $ret;
   }
@@ -619,6 +622,28 @@ class	LabelExporterHtml extends FontBoxExporterHtml
  */
 class SubReportExporterHtml extends ControlExporterHtml
 {
+  function getTag(&$control, $value = null)
+  {
+    $rep =& $control->_subReport;
+    if (is_null($rep)) {
+      $out = parent::getTag($control, $value);
+      return $out;
+    }
+
+    ob_start();
+    $rep->resetMargin(true);
+    $rep->run('html', true);
+    $repHtml = ob_get_contents();
+    ob_end_clean();
+
+    // Get tags for subreport control
+    $out = parent::getTag($control, '##CONTENT##');
+    
+    // Insert result of subreport execution
+    $out = str_replace('##CONTENT##', $repHtml, $out);
+    
+    return $out;
+  }
 }
 
 /**

@@ -231,15 +231,15 @@ class Report extends AmberObject
    * @param string 'html', 'pdf' (synonyms: '.pdf', 'fpdf') depending on which exporter to use
    *
    */
-  function run($type)
+  function run($type, $isSubreport)
   {
     $this->_installExporter($type);
     $this->_exporter->setDocumentTitle($this->Name);
-    $this->_startReport();
+    $this->_startReport($isSubreport);
     
     $this->OnOpen($cancel);
     if ($cancel) {
-      $this->_endReport();
+      $this->_endReport($isSubreport);
       return;
     }
     $this->_fetchDataFromDatabase();
@@ -247,7 +247,7 @@ class Report extends AmberObject
     if ($this->HasData == 0) {
       $this->OnNoData($cancel);
       if ($cancel) {
-        $this->_endReport();
+        $this->_endReport($isSubreport);
         return;
       }
     }
@@ -280,7 +280,7 @@ class Report extends AmberObject
     $this->_printNormalSection('ReportFooter');
     $this->_exporter->newPage();
     $this->OnClose();
-    $this->_endReport();
+    $this->_endReport($isSubreport);
   }
 
   function resetMargin()
@@ -299,14 +299,14 @@ class Report extends AmberObject
    * @param string 'html', 'pdf' (synonyms: '.pdf', 'fpdf') depending on which exporter to use
    *
    */
-  function printDesign($type)
+  function printDesign($type, $isSubreport)
   {
     $this->_installExporter($type);
     //dump($this->_exporter->type);
     $this->_exporter->setDocumentTitle($this->Name);
     $this->_exporter->setDesignMode(true);
 
-    $this->_startReport();
+    $this->_startReport($isSubreport);
 
     $maxLevel = count($this->_groupFields);
 
@@ -320,7 +320,7 @@ class Report extends AmberObject
     $this->_printDesignSection('ReportFooter');
     $this->_printDesignSection('PageFooter');
     $this->_exporter->newPage();
-    $this->_endReport();
+    $this->_endReport($isSubreport);
   }
 
   //////////////////////////////////////////////////////////////////
@@ -388,9 +388,9 @@ class Report extends AmberObject
   /**
    * @access private
    */
-  function _startReport(){
+  function _startReport($isSubreport){
     if (isset($this->_exporter)) {
-      $this->_exporter->startReport($this);
+      $this->_exporter->startReport($this, $isSubreport);
     }
   }
 

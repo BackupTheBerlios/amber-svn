@@ -13,7 +13,7 @@ ControlFactory::register('102', 'Dummy'); // Line
 //ControlFactory::register('104', 'CommandButton');
 ControlFactory::register('106', 'CheckBox');
 ControlFactory::register('109', 'TextBox');
-ControlFactory::register('111', 'ComboBox');
+ControlFactory::register('111', 'Dummy'); // ComboBox
 ControlFactory::register('112', 'SubReport');
 //ControlFactory::register('122', 'ToggleButton');
 
@@ -428,6 +428,8 @@ class Label extends FontBox
 **/
 class SubReport extends Control
 {
+  var $_subReport;
+
   /**
   *
   * @access public
@@ -448,26 +450,38 @@ class SubReport extends Control
     $this->_registerProperties($newProperties);
   }
 
-  var $report;
   function printNormal(&$buffer)
   {
     if (!$this->SourceObject) {
-      $this->_exporter->printNormal($this, $buffer, '');
+      $this->_exporter->printNormal($this, $buffer, 'Ungebunden');
       return $this->stdHeight(); ##FIX ME: actual height
     }
 
-    if (!$this->report) {
-      $amber =& Amber::getInstance();
-      ob_start();
-      $amber->OpenReport($this->SourceObject, AC_NORMAL, '', 'typo3');
-      $buffer .= ob_get_contents();
-      ob_end_clean();
+    // Convert SourceObject to name and type
+    $source = explode('.', $this->SourceObject);
+    $type = $source[0];
+    $name = $source[1];
+
+    // Try to load report
+    $amber =& Amber::getInstance();
+    $this->_subReport =& $amber->loadObject('report', $name);
+    if ($this->_subReport == false) {
+      Amber::showError('Error', 'Could not load subreport "' . htmlspecialchars($name) . '"');
+      return 0;
     }
-
-    # $this->report->setFilter(....)
-    # $this->_exporter->printSubReport().....
-
-    //$this->_exporter->printNormal($this, $buffer, $this->Name);
+    
+    // Construct filter
+    $linkChild = explode(';', $this->LinkChildFields);
+    $linkMaster = explode(';', $this->LinkMasterFields);
+    foreach ($linkChild as $idx => $lc) {
+      $propName = $linkMaster[$idx];
+      $rep =& ObjectHandler::getObject($this->_hReport - 1); // WAHHHHHHHHHHHHHHHH! Bug in Object Handler?!
+      $reportFilterArray[] = $lc . '=' . $rep->Cols[$propName];
+    }
+    $this->_subReport->Filter = implode(' AND ', $reportFilterArray);
+    
+    $this->_exporter->printNormal($this, $buffer, $this->Value);
+    
     return $this->stdHeight(); ##FIX ME: actual height
   }
 

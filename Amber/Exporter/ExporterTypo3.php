@@ -21,9 +21,9 @@ class ExporterTypo3 extends ExporterHtml
 
   // Report - Typo3
 
-  function startReport(&$report)
+  function startReport(&$report, $asSubreport = false)
   {
-    parent::startReport($report, true);
+    parent::startReport($report, $asSubreport);
   }
 
   function setCSS($css)

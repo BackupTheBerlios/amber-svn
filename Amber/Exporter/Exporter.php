@@ -40,7 +40,7 @@ class Exporter
   }
 
   // Report
-  function startReport(&$report, $asSubreport=false)
+  function startReport(&$report, $asSubreport)
   {
     $this->_start = microtime();
     $this->_report =& $report;
@@ -50,7 +50,7 @@ class Exporter
   function endReport(&$report)
   {
     $this->newPage();
-    $this->dump('Exec time: ' . microtime_diff($this->_start, microtime()));
+    //$this->dump('Exec time: ' . microtime_diff($this->_start, microtime()));
   }
 
   // Section
