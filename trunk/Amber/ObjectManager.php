@@ -29,7 +29,7 @@ class ObjectManager
   {
     $this->amber =& $amber;
     $this->_config =& $amber->_config;
-    
+
     if (!isset($this->objectLoader)) {
       $medium = $this->_config->get('sys/medium');
       if ($medium == 'db') {
@@ -69,7 +69,7 @@ class ObjectManager
       Amber::showError('ObjectManager', 'Requested loading of unsupported object type: "' . $type . '"');
       die();
     }
-  
+
     $obj =& $this->objectLoader->load($type, $name);
 
     if (!$obj) {
@@ -80,14 +80,32 @@ class ObjectManager
     return $obj;
   }
 
+  /**
+   * @access public
+   * @param string
+   * @param string
+   * @param AmberObjectRaw
+   */
+  function saveObject($type, $name, &$obj)
+  {
+    $types = array_keys($this->objectTypes);
+
+    if (!in_array($type, $types)) {
+      Amber::showError('ObjectManager', 'Requested saving of unsupported object type: "' . $type . '"');
+      die();
+    }
+
+    $this->objectLoader->save($type, $name, $obj);
+  }
+
   function &loadReport($name)
   {
     $obj =& $this->loadObject('report', $name);
-    
+
     $report =& new ReportPaged();
     $report->setConfig($this->_config);
     $report->initialize($obj);
-    
+
     return $report;
   }
 
@@ -98,10 +116,10 @@ class ObjectManager
   function &loadModule($name)
   {
     $obj =& $this->loadObject('module', $name);
-    
+
     $module =& new Module;
     $module->initialize($obj);
-    
+
     return $module;
   }
 }

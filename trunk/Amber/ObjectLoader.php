@@ -45,6 +45,17 @@ class ObjectLoader
   function &load($type, $objectName)
   {
   }
+
+  /**
+   * @access public
+   * @abstract
+   * @param string type of object to be loaded (values: "report", "module")
+   * @param string name of object
+   *
+   */
+  function &save($type, $objectName)
+  {
+  }
 }
 
 /**
@@ -120,10 +131,37 @@ class ObjectLoaderDb extends ObjectLoader
     $obj = new AmberObjectRaw;
     $obj->name = $data['name'];
     $obj->class = $data['class'];
-    $obj->code = '<?php ' . $data['code'] . ' ?>';
+    $obj->code = $data['code'];
     $obj->design = $data['design'];
-    
+
     return $obj;
+  }
+
+  /**
+   * @access public
+   * @param string
+   * @param string
+   * @param AmberObjectRaw
+   */
+  function save($type, $objectName, &$obj)
+  {
+    $rs =& $this->fetchRecord($type, $objectName);
+
+    $data = $rs->FetchRow();
+    if (!$data) {
+      Amber::showError('ObjectLoaderDb', 'Object (' . $type . ') "' . $objectName . '" not found in database');
+      die();
+    }
+
+    $data = array();
+    $data = (array)$obj;
+
+    $sql = $this->_db->GetUpdateSql($rs, $data, false);
+    $this->_db->Execute($sql);
+    if ($this->_db->ErrorNo() != 0) {
+      Amber::showError('Database Error ' . $this->_db->ErrorNo(), $this->_db->ErrorMsg());
+      die();
+    }
   }
 
   /**
@@ -216,7 +254,7 @@ class ObjectLoaderFile extends ObjectLoader
         $files[] = basename($file, '.php');
       }
     }
-    
+
     return $files;
   }
 
@@ -232,10 +270,10 @@ class ObjectLoaderFile extends ObjectLoader
         }
       }
     }
-    
+
     return $files;
   }
-  
+
   function &load($type, $objectName)
   {
     switch ($type) {
@@ -249,7 +287,7 @@ class ObjectLoaderFile extends ObjectLoader
 
     return $obj;
   }
-  
+
   /**
    * @access private
    * @return bool
@@ -268,7 +306,7 @@ class ObjectLoaderFile extends ObjectLoader
       Amber::showError('Error', 'Unable to open module "' . $name . '" from ' . $modPath);
       die();
     }
-    
+
     $obj = new AmberObjectRaw;
     $obj->name = basename($name, '.php');
     $obj->code = file_get_contents($modPath . '/' . $name . '.php');
