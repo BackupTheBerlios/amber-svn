@@ -39,7 +39,7 @@ class testReport extends PHPUnit_TestCase
       report::_makeSqlFilter('select * from table where ; a ;;; ;;;', 'NPNr = 13'),     'Test3a');
   }
 
-  function &makeBericht1()
+  function &setAmberConfig()
   {
     $cfgFileName = '../conf/localconf.xml';
     if (!file_exists($cfgFileName)) {
@@ -52,45 +52,36 @@ class testReport extends PHPUnit_TestCase
     setlocale (LC_TIME, 'de_DE', 'de_DE@euro'); // needed for date, time
     setlocale (LC_MONETARY, 'de_DE', 'de_DE@euro'); // needed for numbers
 
-    Amber::getInstance($cfg);
-    $rep =& new Report();
-    $rep->setConfig($cfg);
-
-    $rep->setReportDir('reports');
-    $rep->setLoader('file');
-    $rep->load('Bericht1');
-
-    return $rep;
-
+    return Amber::getInstance($cfg);
   }
 
   function test_ReportRuns()
   {
-    $rep =& $this->makeBericht1();
+    $amber =& $this->setAmberConfig();
 
     ob_start();
-    $rep->run('html');
+    $amber->OpenReport('SimpleReport', AC_NORMAL, '', 'html');
     $s = ob_get_contents();
     ob_end_clean();
     $this->assertEquals('[<html>]', "[" . substr($s, 0, 6) . "]",    'Test1a html, normal: <html> without leading stuff');
     $this->assertEquals("[</html>\n]", "[" . substr($s, -8) . "]",   'Test1b html, normal: </html>\n');
 
     ob_start();
-    $rep->printDesign('html');
+    $amber->OpenReport('SimpleReport', AC_DESIGN, '', 'html');
     $s = ob_get_contents();
     ob_end_clean();
     $this->assertEquals('[<html>]', "[" . substr($s, 0, 6) . "]",    'Test2a html, design: <html> without leading stuff');
     $this->assertEquals("[</html>\n]", "[" . substr($s, -8) . "]",   'Test2b html, design: </html>\n');
 
     ob_start();
-    $rep->run('testpdf');
+    $amber->OpenReport('SimpleReport', AC_NORMAL, '', 'testpdf');
     $s = ob_get_contents();
     ob_end_clean();
     $this->assertEquals('[%PDF-]', "[" . substr($s, 0, 5) . "]",  'Test3a pdf, normal');
     $this->assertEquals("[%%EOF\n]", "[" . substr($s, -6) . "]",     'Test3b pdf, normal');
 
     ob_start();
-    $rep->printDesign('testpdf');
+    $amber->OpenReport('SimpleReport', AC_DESIGN, '', 'testpdf');
     $s = ob_get_contents();
     ob_end_clean();
     $this->assertEquals('[%PDF-]', "[" . substr($s, 0, 5) . "]",  'Test4a pdf, Design');
