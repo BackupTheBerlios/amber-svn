@@ -22,6 +22,7 @@ class AmberConfig
   var $database;
   var $username;
   var $password;
+  var $medium;
 
   function fromXML($fileName)
   {

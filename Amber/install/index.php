@@ -79,6 +79,13 @@ $conf = $conf['config'];
       <td><input name="database" type="text" value="<?php echo htmlspecialchars($conf['database']) ?>"></td>
     </tr>
     <tr>
+      <td colspan="2"><p><em><strong>Sys_objects</strong></em></p></td>
+    </tr>
+    </tr>
+      <td>Medium:</td>
+      <td><select name="medium"><option value="db" <?php if ($conf['medium' == 'db']) echo 'selected'; else echo ''; ?>>Database</option><option value="file" <?php if ($conf['medium'] == 'file') echo 'selected'; else echo ''; ?>>File</option></select></td>
+    </tr>
+    <tr>
       <td colspan="2" align="center"><input type="submit" name="doUpdate" value="Update localconf.xml"></td>
     </tr>
   </table>
@@ -109,7 +116,7 @@ function readLocalconf()
 
 function updateLocalconf($p)
 {
-  $properties = array('username', 'password', 'host', 'driver', 'database');
+  $properties = array('username', 'password', 'host', 'driver', 'database', 'medium');
 
   $fp = fopen('../conf/localconf.xml', 'w');
   fwrite($fp, '<?xml version="1.0" encoding="iso-8859-1"?>' . "\n");
