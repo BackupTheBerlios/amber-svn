@@ -413,6 +413,7 @@ Class ControlExporterHtml
     $RightPaddingHtml = 0; // 0
     $TopPaddingHtml = 0;
     $BottomPaddingHtml = 0;
+    
     if ($value['BorderWidth'] == 0) {
       $BorderWidthHtml = __HAIRLINEWIDTH__; // 1/pt
     } else {
@@ -433,11 +434,17 @@ Class ControlExporterHtml
     // Height & width
     if ($value['Height'] <> $std['Height']) {
       $heightHtml = $value['Height'] - $BorderWidthHtml - $TopPaddingHtml - $BottomPaddingHtml;
+      if ($heightHtml < 0) {
+        $heightHtml = 0;
+      }
       $out .= 'height: ' . ExporterHTML::_html_twips($heightHtml) . '; ';
     }
 
     if (($value['Width'] <> $std['Width']) or ($value['BorderWidth'] <> $std['BorderWidth'])) {
       $widthHtml = $value['Width'] - $BorderWidthHtml - $LeftPaddingHtml- $RightPaddingHtml;
+      if ($widthHtml < 0) {
+        $widthHtml = 0;
+      }
       $out .= 'width: ' . ExporterHTML::_html_twips($widthHtml) . '; ';
     }
 
