@@ -371,6 +371,27 @@ class TextBox extends FontBox
       $this->_sum = 0;
     }
   }
+  
+  function createAggregate($type)
+  {
+    $this->_aggregate =& AggregateFactory::create($type);
+    $this->_aggregate->Value =& $this->Value;
+  }
+  
+  function resetAggregate()
+  {
+    if ($this->_aggregate) {
+      $this->_aggregate->reset();
+    }
+  }
+  
+  function addValue($value)
+  {
+    if ($this->_aggregate) {
+      $this->_aggregate->addValue($value);
+    }
+  }     
+
 }
 
 /**

@@ -265,6 +265,15 @@ class Section
         $this->Aggregates[$key]->reset();
       }
     }
+    
+    if (is_array($this->Controls)) {
+      $keys = array_keys($this->Controls);
+      foreach($keys as $key) {
+        if (isset($this->Controls[$key]->_aggregate)) {
+          $this->Controls[$key]->resetAggregate();
+        }
+      }
+    }
   }
 
 

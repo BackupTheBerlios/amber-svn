@@ -496,12 +496,11 @@ class Report extends AmberObject
       $ctrl  =& $this->Controls[$index];
       if (isset($ctrl->ControlSource)) {  // Control can be bound
         $src = trim($ctrl->ControlSource);
-        if ($src == '') {
+        if ($ctrl->_aggregate) {          // Aggregates have to be set by hand
+        } elseif ($src == '') {
           $ctrl->Value = Null;
         } elseif ($src[0] == '=') {
           $ctrl->Value = '#exp';
-        } elseif ($ctrl->RunningSum == 1) {
-          $ctrl->Value = $values[$src];
         } else {
           $ctrl->Value = $values[$src];
         }
