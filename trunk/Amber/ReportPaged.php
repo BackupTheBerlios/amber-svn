@@ -18,8 +18,7 @@ class reportPaged extends Report
    */
   function _startReport($isSubreport, $isDesignMode)
   {
-    if (!isset($this->_exporter)) 
-    {
+    if (!isset($this->_exporter)) {
       return;
     }
     $this->layout =& new pageLayout($this, $isSubreport, $isDesignMode);
@@ -32,8 +31,7 @@ class reportPaged extends Report
    */
   function _endReport()
   {
-    if (!isset($this->_exporter)) 
-    {
+    if (!isset($this->_exporter)) {
       return;
     }  
     $this->_exporter->endReport($this);

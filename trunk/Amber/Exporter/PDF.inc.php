@@ -7,167 +7,6 @@
  */
  
  
-class mayflower
-{
-  var $pdf;
-
-  var $subReportIndex = 0;
-  var $subReportbuff;
-  var $sectionIndex = 0;
-  var $sectionBuff;
-  
-  var $reportBuff;
-  var $sectionType;    // 'Head', 'Foot' or ''
-  var $layout;
-  
-  function mayflower(&$layout, &$pdf)
-  {
-    $this->actpageNo = -1;
-    $this->layout =& $layout;
-    $this->pdf =& $pdf;
-  }  
-  
-  function _setOutBuff()
-  { 
-    if ($this->sectionIndex > $this->subReportIndex) {
-      $this->pdf->setOutBuffer($this->sectionBuff[$this->sectionIndex], 'section');
-    } elseif ($this->subReportIndex > 0) {
-      $this->pdf->setOutBuffer($this->subReportbuff[$this->subReportIndex], 'subReport');
-    } elseif ($this->inReport()) {
-      $this->pdf->setOutBuffer($this->reportPages[$this->actpageNo][$this->sectionType], "report page".$this->sectionType.$this->actpageNo);
-    } else {
-      $this->pdf->unsetBuffer();
-    }  
-  }
-  
-  function pageNo()
-  {
-    return $this->page();
-  }
-   
-  function page()
-  {
-    return $this->actpageNo + 1;
-  }
-  
-  function newPage()
-  {
-    $this->posY = ($this->actpageNo + 1) * $this->layout->printHeight;
-  }
-
-  function posYinPage()
-  {
-    return ($this->posY - ($this->actpageNo * $this->layout->printHeight));
-  }
-  
-  function setPageIndex($index)
-  {
-    $this->actpageNo = $index;
-    $this->_setOutBuff();
-  }        
-  
-  function getPageIndex()
-  {
-    return $this->actpageNo;
-  }  
-  
-  function enterReport()
-  {
-    $this->posY = 0;
-  }
-  
-  function exitReport()
-  {
-    $this->actpageNo = -1;
-    $this->_setOutBuff();
-  }
-  
-  function inReport()
-  {
-    return ($this->actpageNo >= 0);
-  }      
-  
-  function reportStartPageHeader()
-  {
-    $this->sectionType = 'Head';
-    $this->_setOutBuff();
-  }
-    
-  function reportStartPageBody()
-  {
-    $this->sectionType = '';
-    $this->_setOutBuff();
-  }
-    
-  function reportStartPageFooter()
-  {
-    $this->sectionType = 'Foot';
-    $this->_setOutBuff();
-  }  
-   
-  function inSubReport()
-  {
-    return  ($this->subReportIndex > 0);
-  }   
-
-  function subReportPush()
-  {
-   $this->subReportIndex++;
-   $this->subReportBuff[$this->subReportIndex] = '';
-   $this->_setOutBuff();
-  }
-   
-  function subReportPop()
-  {
-    $this->subReportIndex--;
-    $this->_setOutBuff();
-    return $this->subReportbuff[$this->subReportIndex + 1];
-  }
-  
-  function subReportGetPopped()
-  {
-    return $this->subReportbuff[$this->subReportIndex + 1];  
-  }
-  
-  function sectionPush()
-  {
-    $this->sectionIndex++;
-    $this->sectionBuff[$this->sectionIndex] = '';
-    $this->_setOutBuff();
-  }
-  
-  function sectionPop()
-  {
-    $this->sectionIndex--;
-    $this->_setOutBuff();
-    return $this->sectionBuff[$this->sectionIndex + 1];
-  }
-  
-  function getSectionIndexForCommentOnly()
-  {
-    return $this->sectionIndex;
-  } 
-  
-  
-  function startReportBuffering()
-  {
-    if ($this->inReport()) {
-      Amber::showError('Error', 'startReport: a report is already started!');
-      die();
-    }  
-    $this->enterReport();
-  }
-  
-  function endReportBuffering()
-  {
-    if (!$this->inReport()) {
-      Amber::showError('Error', 'endReport: no report open');
-      die();
-    }  
-    $this->exitReport();
-  }
-} 
- 
 class PDF extends FPDF
 {
 
@@ -235,17 +74,12 @@ class PDF extends FPDF
     if (is_null($instance) or $reset) {
       $size = array($layout->paperWidth, $layout->paperHeight);
       $instance = new PDF('p', $layout->unit, $size);
-      $instance->mayflower =& new mayflower($layout, $instance);
     }
-
     return $instance;
   }
 
-  function init(&$exporter, &$layout)
+  function init(&$layout)
   {
-    $this->_exporter =& $exporter;
-    $this->SetCompression(false);
-
     $this->SetCompression(false);
     $this->SetRightMargin($layout->rightMargin);
     $this->SetLeftMargin($layout->leftMargin);
@@ -451,12 +285,12 @@ class PDF extends FPDF
   var $outlines=array();
   var $OutlineRoot;
 
-  function Bookmark1($txt,$level=0,$y=0, $pageNo, $posYinPage, $inReport)
+  function Bookmark($txt,$level=0,$y=0, $pageNo, $posYinPage, $inReport)
   {
     if (!$inReport) {
       if($y==-1)
         $y=$this->GetY();
-      $this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$this->PageNo());
+      $this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$this->page());
     } else {
       if($y == -1)
         $y = $posYinPage;
