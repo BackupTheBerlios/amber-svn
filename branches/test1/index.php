@@ -2,6 +2,7 @@
   require_once 'Amber/install/header.inc';
 ?>
 
+
 <table height="100%" width="100%">
   <tr height="50">
     <td>
