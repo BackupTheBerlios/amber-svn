@@ -475,12 +475,23 @@ class Report extends AmberObject
    */
   function _setControlValues($values)
   { // set values of control bound to columns
-    if (is_array($this->Controls)) {
-      $keys = array_keys($this->Controls);
-      foreach ($keys as $index) {
-        $ctrl  =& $this->Controls[$index];
-        if (isset($ctrl->ControlSource)) {  // Control can be bound
-          $ctrl->setControlValue($values);
+    if (!is_array($this->Controls)) {
+      return;
+    }
+    
+    $keys = array_keys($this->Controls);
+    foreach ($keys as $index) {
+      $ctrl  =& $this->Controls[$index];
+      if (isset($ctrl->ControlSource)) {  // Control can be bound
+        $src = trim($ctrl->ControlSource);
+        if ($src == '') {
+          $ctrl->Value = Null;
+        } elseif ($src[0] == '=') {
+          $ctrl->Value = '#exp';
+        } elseif ($ctrl->RunningSum == 1) {
+          $ctrl->Value = $values[$src];
+        } else {
+          $ctrl->Value = $values[$src];
         }
       }
     }

@@ -343,7 +343,7 @@ class TextBox extends FontBox
   function printDesign()
   {
     $ctrl =& $this->prepareDesign();
-    $this->_exporter->printDesign($ctrl, $ctrl->ControlSource);
+    $this->_exporter->printDesign($ctrl, $ctrl->ControlSource."\n{".$ctrl->Name."}");
   }
 
   function isVisible()
@@ -369,28 +369,6 @@ class TextBox extends FontBox
   {
     if ($this->RunningSum == 1) {
       $this->_sum = 0;
-    }
-  }
-
-  /**
-   * @access public
-   * @param array
-   */
-  
-  function setControlValue(&$values)
-  {
-    $key = trim($this->ControlSource);
-  
-    if (!isset($key)) {
-      # $this->Value = '#NoValue#';
-    } elseif ($key == '') {
-      $this->Value = Null;
-    } elseif ($key[0] == '=') {
-      $this->Value = '#exp';
-    } elseif ($this->RunningSum == 1) {
-      $this->Value = $values[$key];
-    } else {
-      $this->Value = $values[$key];
     }
   }
 }
@@ -632,17 +610,6 @@ class CheckBox extends Control
       );
 
     $this->_registerProperties($newProperties);
-  }
-  
-  function setControlValue(&$report)
-  {
-    if (!isset($this->ControlSource)) {
-      # $this->Value = '#NoValue#';
-    } elseif ($this->ControlSource == '') {
-      $this->Value = Null;
-    } else {
-      $this->Value = $report->Cols[$this->ControlSource];
-    }
   }
 
   function printNormal()
