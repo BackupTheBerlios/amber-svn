@@ -744,6 +744,70 @@
                 <Parent>Kontrollkästchen45</Parent>
                 <zIndex>339</zIndex>
             </item>
+            <item id="Kontrollkästchen47">
+                <EventProcPrefix>Kontrollkästchen47</EventProcPrefix>
+                <Name>Kontrollkästchen47</Name>
+                <ControlType>106</ControlType>
+                <ControlSource>=&quot;asdf&quot;</ControlSource>
+                <TripleState>0</TripleState>
+                <Left>2433</Left>
+                <Top>8935</Top>
+                <Width>260</Width>
+                <Height>240</Height>
+                <BorderStyle>1</BorderStyle>
+                <OldBorderStyle>1</OldBorderStyle>
+                <Section>0</Section>
+                <zIndex>360</zIndex>
+            </item>
+            <item id="Bezeichnungsfeld48">
+                <EventProcPrefix>Bezeichnungsfeld48</EventProcPrefix>
+                <Name>Bezeichnungsfeld48</Name>
+                <ControlType>100</ControlType>
+                <Caption>Value=&quot;asdf&quot;</Caption>
+                <Left>2663</Left>
+                <Top>8905</Top>
+                <Width>1380</Width>
+                <Height>225</Height>
+                <FontName>Arial</FontName>
+                <FontSize>8</FontSize>
+                <TextFontCharSet>0</TextFontCharSet>
+                <TextAlign>0</TextAlign>
+                <Section>0</Section>
+                <Parent>Kontrollkästchen47</Parent>
+                <zIndex>359</zIndex>
+            </item>
+            <item id="Kontrollkästchen49">
+                <EventProcPrefix>Kontrollkästchen49</EventProcPrefix>
+                <Name>Kontrollkästchen49</Name>
+                <ControlType>106</ControlType>
+                <ControlSource>=&quot;&quot;</ControlSource>
+                <TripleState>0</TripleState>
+                <Left>2433</Left>
+                <Top>9325</Top>
+                <Width>260</Width>
+                <Height>240</Height>
+                <BorderStyle>1</BorderStyle>
+                <OldBorderStyle>1</OldBorderStyle>
+                <Section>0</Section>
+                <zIndex>380</zIndex>
+            </item>
+            <item id="Bezeichnungsfeld50">
+                <EventProcPrefix>Bezeichnungsfeld50</EventProcPrefix>
+                <Name>Bezeichnungsfeld50</Name>
+                <ControlType>100</ControlType>
+                <Caption>Value=&quot;&quot;</Caption>
+                <Left>2663</Left>
+                <Top>9295</Top>
+                <Width>1380</Width>
+                <Height>225</Height>
+                <FontName>Arial</FontName>
+                <FontSize>8</FontSize>
+                <TextFontCharSet>0</TextFontCharSet>
+                <TextAlign>0</TextAlign>
+                <Section>0</Section>
+                <Parent>Kontrollkästchen49</Parent>
+                <zIndex>379</zIndex>
+            </item>
         </Controls>
     </Detail>
     <GroupFooters>

@@ -129,7 +129,7 @@ class ExporterFPdf extends Exporter
     $border = 0;
     $ln = 0; //pos after printing
     $align = 'C';
-    $fill = 1;
+    $backstyle= 1;
     $this->_pdf->Cell($section->_report->Width, $section->Height, $text, $border, $ln, $align, $fill);
   }
 
@@ -191,6 +191,42 @@ class ExporterFPdf extends Exporter
   }
 
 
+  
+  function printBox(&$para)
+  {
+    if ($para->italic) {
+      $fstyle .= 'I';
+    }
+    if ($para->bold) {
+      $fstyle .= 'B';
+    }
+    if ($para->underline) {
+      $fstyle .= 'U';
+    }
+    $para->font = strtolower($para->font);
+    
+    //echo "'".$control->FontName."' => '".$this->_fontList[$control->FontName]."'<br>";
+    $this->_pdf->SetFont($this->_fontList[$para->font], $fstyle, $para->fsize);
+
+    $this->_backColor($para->backcolor);
+    $this->_textColor($para->forecolor);
+    $this->_pdf->SetXY($para->x, $para->y);
+    $this->_pdf->SetClipping($para->x, $para->y, $para->width, $para->height);
+    $this->_pdf->Cell($para->width, $para->height, $para->content, '0', 0, $para->falign, $para->backstyle);
+    $this->_pdf->RemoveClipping();
+    $this->_pdf->SetXY($para->x, $para->y);
+    if ($para->borderstyle <> 0) {
+      $this->_borderColor($para->bordercolor);
+      if ($para->borderwidth == 0) {
+        $this->_pdf->SetLineWidth(1);
+      } else {
+        $this->_pdf->SetLineWidth($para->borderwidth);
+      }
+      $this->_pdf->Cell($para->width, $para->height, '', 'RLTB', 0, $para->falign, 0);
+    }
+  }
+
+
   function printNormal(&$control, &$buffer, $content)
   {
     $type = strtolower(get_class($control));
@@ -202,89 +238,76 @@ class ExporterFPdf extends Exporter
     if (!$control->isVisible()) {
       return;
     }
-    $fstyle = '';
-    if ($control->FontItalic) {
-      $fstyle .= 'I';
-    }
-    if ($control->FontWeight >= 600) {
-      $fstyle .= 'B';
-    }
-    if ($control->FontUnderline) {
-      $fstyle .= 'U';
-    }
-    $fsize = $control->FontSize;
+    $para = new printBoxparameter;
+    
+    $para->italic = $control->FontItalic;
+    $para->bold  = ($control->FontWeight >= 600);
+    $para->underline = $control->FontUnderline;
+    $para->fsize = $control->FontSize;
 
-    //echo "'".$control->FontName."' => '".$this->_fontList[$control->FontName]."'<br>";
-    $font = strtolower($control->FontName);
-    $this->_pdf->SetFont($this->_fontList[$font], $fstyle, $fsize);
-    // todo FontName     $control->FontName
-    $falign = $this->_pdf_textalign($control->TextAlign);
-    $x = ($control->Left +  $this->_secStartX);
-    $y = ($control->Top + $this->_secStartY);
-    $width = $control->Width;
-    $height = $control->Height;
-    $fill = $control->BackStyle;
+    $para->font = $control->FontName;
+    $para->falign = $this->_pdf_textalign($control->TextAlign);
+    $para->x = ($control->Left +  $this->_secStartX);
+    $para->y = ($control->Top + $this->_secStartY);
+    $para->width = $control->Width;
+    $para->height = $control->Height;
+    $para->backstyle= $control->BackStyle;
 
-    $this->_backColor($control->BackColor);
-    $this->_textColor($control->ForeColor);
-    $this->_pdf->SetXY($x, $y);
-    $this->_pdf->SetClipping($x, $y, $width, $height);
-    $this->_pdf->Cell($width, $height, $content, '0', 0, $falign, $fill);
-    $this->_pdf->RemoveClipping();
-    $this->_pdf->SetXY($x, $y);
-    if ($control->BorderStyle <> 0) {
-      $this->_borderColor($control->BorderColor);
-      if ($control->BorderWidth == 0) {
-        $this->_pdf->SetLineWidth(1);
-      } else {
-        $this->_pdf->SetLineWidth($control->BorderWidth * 20);
-      }
-      $this->_pdf->Cell($width, $height, '', 'RLTB', 0, $falign, 0);
-    }
+    $para->content = $content;        
+    $para->forecolor = $control->ForeColor;
+    $para->backcolor = $control->BackColor;
+    
+    $para->borderstyle = $control->BorderStyle;
+    $para->bordercolor = $control->Bordercolor;
+    $para->borderwidth = $control->BorderWidth * 20;
+    
+    $this->printBox($para);
   }
 
+
+  
   function printNormalCheckBox(&$control, &$buffer, $content)
   {
     if (!$control->isVisible()) {
       return;
     }
-
-    $fstyle = 'B';
-    $fsize = 6;
-
-    //echo "'".$control->FontName."' => '".$this->_fontList[$control->FontName]."'<br>";
-    $font = 'helvetica';
-    $this->_pdf->SetFont($this->_fontList[$font], $fstyle, $fsize);
-    // todo FontName     $control->FontName
-    $falign = 'C';
-    $x = ($control->Left +  $this->_secStartX);
-    $y = ($control->Top + $this->_secStartY);
-    $width  = 11 * 15;
-    $height = 11 * 15;
-    $fill = $control->BackStyle;
+    $para = new printBoxparameter;
     
-    if ($content == 0) {
-      $X = '';
+    #$para->italic = false;
+    $para->bold  = true;
+    #$para->underline = false;
+    $para->fsize = 6;
+
+    $para->font = 'helvetica';
+    $para->falign = 'C';
+    $para->x = ($control->Left +  $this->_secStartX);
+    $para->y = ($control->Top + $this->_secStartY);
+    $para->width = 11 * 15;
+    $para->height = 11 * 15;
+
+    $para->content = $content;
+    
+            
+    $para->backstyle = 1;
+    if ($content === 0) {
+      $para->content = '';
+      $para->backcolor = 0xFFFFFF;
+    } elseif (is_numeric($content)) {
+      $para->content = 'X';
+      $para->backcolor = 0xFFFFFF;
     } else {
-      $X = 'X';
-    }    
-    $this->_backColor($control->BackColor);
-    $this->_textColor($control->ForeColor);
-    $this->_pdf->SetXY($x, $y);
-    $this->_pdf->SetClipping($x, $y, $width, $height);
-    $this->_pdf->Cell($width, $height, $X, '0', 0, $falign, $fill);
-    $this->_pdf->RemoveClipping();
-    $this->_pdf->SetXY($x, $y);
-    if ($control->BorderStyle <> 0) {
-      $this->_borderColor($control->BorderColor);
-      if ($control->BorderWidth == 0) {
-        $this->_pdf->SetLineWidth(1);
-      } else {
-        $this->_pdf->SetLineWidth($control->BorderWidth * 20);
-      }
-      $this->_pdf->Cell($width, $height, '', 'RLTB', 0, $falign, 0);
+      $para->content = '';
+      $para->backcolor = 0xCCCCCC;
     }
-  }
+           
+    $para->forecolor = 0;
+    $para->borderstyle = 1;
+    $para->bordercolor = 0;
+    $para->borderwidth = 20;
+    
+    $this->printBox($para);
+ }
+  
   function printDesign(&$control, &$buffer, $content)
   {
     $this->printNormal($control, $buffer, $content);
@@ -299,7 +322,7 @@ class ExporterFPdf extends Exporter
     $width = 0;
     $height = 240;
     $falign = 'C';
-    $fill = 0;
+    $backstyle= 0;
     $this->_pdf->startSection();
     $this->_pdf->Cell($width, $height, print_r($var, 1), '0', 0, $falign, $fill);
     $this->_pdf->endSection($height, false);
@@ -351,3 +374,36 @@ class ExporterFPdf extends Exporter
     }
   }
 }
+
+
+/**
+ *
+ * @package PHPReport
+ * @subpackage Exporter
+ *  parameter class for exporterFPdf's printBox
+ */
+
+  class printBoxParameter 
+  {
+    var $content;               // the content to display
+
+    var $x;                     // x-position in userspace units
+    var $y;                     // y-position in userspace units
+    var $width;                 // width in userspace units
+    var $height;                // height in userspace units
+
+    var $forecolor = 0xFFFFFF;  // text color in rgb
+    var $fsize = 10;            // fontsize in pt
+    var $falign = 'L';          // alignment
+    var $font = 'helvetica';    // font
+    var $italic = false;        // bool: italics
+    var $bold = false;          // bool: bold
+    var $underline = false;     // bool: underline
+    
+    var $backstyle = 1;         // 0 - background transparent, 1 - use backgroundcolor
+    var $backcolor = 0;         // background color in rgb
+    
+    var $borderstyle = 1;       // 0 - border transparent, 1 - use bordercolor
+    var $bordercolor = 0;       // border color in rgb
+    var $borderwidth = 0;       // border width in pt ***** *20
+  }
