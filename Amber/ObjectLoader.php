@@ -278,7 +278,7 @@ class ObjectLoaderFile extends ObjectLoader
     $form =& new Form();
     $form->setConfig($this->_globalConfig);
     $form->initialize($data);
-amber::dump($form);
+
     return $form;
   }
 }
