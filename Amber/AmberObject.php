@@ -5,12 +5,12 @@ require_once 'AmberConfig.php';
 class AmberObject
 {
   var $_globalConfig;
-  
+
   function AmberObject()
   {
     $this->_globalConfig = new AmberConfigNull();
   }
-  
+
   /**
    *
    * @access public
@@ -25,17 +25,25 @@ class AmberObject
       Amber::showError('Warning - Report::setConfig()', 'Invalid paramater');
     }
   }
-  
+
+  /**
+   * @access public
+   * @param array xml data
+   */
   function initialize(&$data)
   {
     Amber::showError('Error', 'Virtual method AmberObject::initialize() not overridden');
   }
-  
+
+  /**
+   * @access public
+   * @param string
+   */
   function run($type)
   {
     Amber::showError('Error', 'Virtual method AmberObject::run() not overridden');
   }
-  
+
   /**
    * @access private
    * @param string

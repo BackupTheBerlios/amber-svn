@@ -196,7 +196,9 @@ class ExporterHtml extends Exporter
       'label'     => 'LabelExporterHtml',
       'rectangle' => 'RectangleExporterHtml',
       'textbox'   => 'TextBoxExporterHtml',
-      'subreport' => 'SubReportExporterHtml');
+      'subreport' => 'SubReportExporterHtml',
+      'combobox' => 'ComboBoxExporterHtml'
+    );
     $type = strtolower(get_class($ctrl));
     if (!array_key_exists($type, $classList)) {
       $type = 'subreport';  // FIXME: Null-Object for unknown Controltypes
@@ -263,7 +265,7 @@ Class ControlExporterHtml
 
   function printNormal(&$control, &$buffer, $content)
   {
-   $buffer .= $this->getTag($control, $content);
+    $buffer .= $this->getTag($control, $content);
   }
 
   function printDesign(&$control, &$buffer, $content)
@@ -482,8 +484,25 @@ class	LabelExporterHtml extends FontBoxExporterHtml
  * @subpackage Exporter
  *
  */
-Class SubReportExporterHtml extends ControlExporterHtml
+class SubReportExporterHtml extends ControlExporterHtml
 {
+}
+
+/**
+ *
+ * @package PHPReport
+ * @subpackage Exporter
+ *
+ */
+
+class ComboBoxExporterHtml extends ControlExporterHtml
+{
+  function getTag(&$control, $value=Null)
+  {
+    echo "test";
+    $out = 'huhu';
+    return $out;
+  }
 }
 
 ?>

@@ -7,7 +7,7 @@
 /**
  * @ignore
  */
-class phpReport_UserFunctions
+class AmberReport_UserFunctions
 {
   function Report_FirstFormat(&$report)
   {
@@ -33,7 +33,7 @@ class phpReport_UserFunctions
   function allSections_Format(&$report, &$Cancel, $FormatCount=1) // see also Class SectionNull
   {
   }
-  
+
   function allSections_Print(&$report, &$Cancel, $FormatCount=1) // see also Class SectionNull
   {
   }

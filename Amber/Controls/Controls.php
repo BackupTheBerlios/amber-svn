@@ -156,7 +156,7 @@ class Control
   function isVisible()
   {
     return $this->Visible;
-  }      
+  }
 
   /**
   *
@@ -194,12 +194,12 @@ class Control
 */
 class Rectangle extends Control
 {
-  
+
   function Rectangle()
   {
     parent::Control();
-  }  
-  
+  }
+
   function printNormal(&$buffer)
   {
     $this->_exporter->printNormal($this, $buffer, '');
@@ -346,8 +346,8 @@ class TextBox extends FontBox
       return false;
     } else {
       return true;
-    }    
-  }      
+    }
+  }
 
   function _runningSum()
   {
@@ -385,7 +385,7 @@ class Label extends FontBox
     $extProperties = array(
                       'Caption' => '',
                       'Parent' => '');
-                      
+
     $this->_registerProperties($extProperties);
   }
 
@@ -409,8 +409,8 @@ class Label extends FontBox
 #      return REPORT->controls[$this->Parent]->isVisible();    label gets invisible if its control get invisible
     } else {
       return true;
-    }    
-  }      
+    }
+  }
 
 }
 
@@ -441,15 +441,15 @@ class SubReport extends Control
       );
     $this->_registerProperties($newProperties);
   }
-  
+
   var $report;
   function printNormal()
   {
     if (!$this->SourceObject) {
       $this->_exporter->printNormal($this, $buffer, '');
-      return $this->stdHeight(); ##FIX ME: actual height        
+      return $this->stdHeight(); ##FIX ME: actual height
     }
-    
+
     if (!$this->report) {
       $amber =& Amber::getInstance();
       #$this->report = $this->_parent->....  // make a copy of the report
@@ -498,7 +498,7 @@ class ComboBox extends Control
 
   function printNormal()
   {
-    echo "<select><option></option></select>";
+    $this->_exporter->printNormal($this, $buffer, $this->Caption);
   }
 
   function printDesign(&$buffer)

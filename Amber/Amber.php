@@ -123,7 +123,7 @@ class Amber
     if ($form == false) {
       return false;
     }
-    
+    $form->Filter = $filter;
     $form->run($type);
   }
 

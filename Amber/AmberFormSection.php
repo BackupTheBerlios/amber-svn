@@ -6,11 +6,13 @@
  * @subpackage ReportEngine
  *
  */
- 
+
 class AmberFormSection
 {
   function load(&$parent, $data)
   {
+    $this->_parent =& $parent;
+
     if (!empty($data['Controls'])) {
       foreach ($data['Controls'] as $c) {
         $ctl =& ControlFactory::create($c['ControlType'], $c);
@@ -24,7 +26,7 @@ class AmberFormSection
       }
     }
   }
-  
+
   /**
    *
    * @access public
@@ -33,6 +35,8 @@ class AmberFormSection
    */
   function printNormal()
   {
+    $this->_startSection($buffer);
+    // print controls
     if ((isset($this->Controls)) && (!$cancel)) {
       $keys = array_keys($this->Controls);
       foreach ($keys as $key) {
@@ -42,8 +46,9 @@ class AmberFormSection
         }
       }
     }
+    $this->_endSection($height, $buffer);
   }
-  
+
   /**
    *
    * @access public
@@ -53,7 +58,7 @@ class AmberFormSection
   function printDesign($GroupLevel = null)
   {
   }
-  
+
   /**
    * @access protected
    * @return bool
@@ -61,6 +66,40 @@ class AmberFormSection
   function isNull()
   {
     return false;
+  }
+
+
+  // FIXME: included to get it running, must be removed later
+  function _onPrint()
+  {
+  }
+
+   /**
+   * @access private
+   */
+  function _startSection(&$buffer)
+  {
+    $exporter =& $this->_parent->_exporter;
+    if ((!$this->_PagePart) && (!$exporter->DesignMode)) {
+      if (($this->ForceNewPage == 1) || ($this->ForceNewPage == 3)) {
+        $exporter->newPage();
+      }
+    }
+    $exporter->startSection($this, $this->_parent->Width, $buffer);
+  }
+
+  /**
+   * @access private
+   */
+  function _endSection($height, &$buffer)
+  {
+    $exporter =& $this->_parent->_exporter;
+    $exporter->endSection($this, $height, $buffer);
+    if ((!$this->_PagePart) && (!$exporter->DesignMode)) {
+      if (($this->ForceNewPage == 2) || ($this->ForceNewPage == 3)) {
+        $exporter->newPage();
+      }
+    }
   }
 }
 

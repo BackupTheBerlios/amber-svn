@@ -125,7 +125,7 @@ class Report extends AmberObject
       }
     }
     if (!$classLoaded) {
-      $this->_Code =& new phpReport_UserFunctions();
+      $this->_Code =& new AmberReport_UserFunctions();
     }
     $this->_ClassName = get_class($this->_Code);
 

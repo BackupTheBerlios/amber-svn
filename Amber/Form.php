@@ -22,6 +22,9 @@ class Form extends AmberObject
 {
   var $Name;
 
+  var $Filter;
+
+  var $_exporter;
   var $_Code;
   var $_ClassName;
 
@@ -76,9 +79,6 @@ class Form extends AmberObject
       }
       $this->$secName->load($this, $xml[$secName]);
     }
-
-
-    //Amber::dump($this);
   }
 
   function run($type)
