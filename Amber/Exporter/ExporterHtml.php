@@ -34,10 +34,10 @@ class ExporterHtml extends Exporter
 
 
 
-  function getPreamble(&$report)
+  function startReport(&$report)
   {
     //ob_start();
-    parent::getPreamble($report);
+    parent::startReport($report);
     $this->_blankPage = true;
 
     $ret = "<html>\n<head>\n";
@@ -55,9 +55,9 @@ class ExporterHtml extends Exporter
     echo $ret;
   }
 
-  function getPostamble(&$report)
+  function endReport(&$report)
   {
-    parent::getPostamble($report);
+    parent::endReport($report);
     echo "</body>\n</html>\n";
   }
 
@@ -95,12 +95,30 @@ class ExporterHtml extends Exporter
     $this->_posY += ($height + 2) * 20;
   }
 
-  function sectionPrintStart(&$sec, $width, &$buffer)
+  function startSection(&$section, $width, &$buffer)
   {
+    if (!(($section->_PagePart) or ($this->DesignMode))) {
+      if (($section->ForceNewPage == 1) or ($section->ForceNewPage == 3)) {
+        $this->newPage();
+      }
+      if ($this->_blankPage) {
+        $this->_blankPage = false;
+        $out = "\t<div name=\"TopMargin\"style = \"position: absolute; overflow: hidden; ";
+        $out .= 'top: '    . $this->_html_twips($this->_posY) .'; ';
+        $out .= 'height: ' . $this->_html_twips($this->_report->TopMargin + 20) . '; ';
+        $out .= 'left: 0; ';
+        $out .= 'width: '  . $this->_html_twips($this->_report->LeftMargin + $this->_report->Width + $this->_report->RightMargin) . '; ';
+        $out .= 'background-color: #ffffff; ';
+        $out .= "\">&nbsp;</div>\n";
+        echo $out;
+        $this->_posY += $this->_report->TopMargin;
+        $this->_report->_printNormalSection('PageHeader'); // FIXME: this has to be done by the Report class!!!
+      }
+    }  
     $buffer = null;
   }
 
-  function sectionPrintEnd(&$sec, $height, &$buffer)
+  function endSection(&$section, $height, &$buffer)
   {
     $cheatWidth  = 59; // cheat: add 1.5pt to height and 3pt to width so borders get printed in Mozilla ###FIX ME
     if ($height == 0) {
@@ -109,26 +127,26 @@ class ExporterHtml extends Exporter
       $cheatHeight = 15;
     }
     if (!$this->DesignMode) {
-      $out = "\t<div name=\"{$sec->Name}-border\"style = \"position: absolute; overflow: hidden; ";
+      $out = "\t<div name=\"{$section->Name}-border\"style = \"position: absolute; overflow: hidden; ";
       $out .= 'top: '    . $this->_html_twips($this->_posY) .'; ';
       $out .= 'height: ' . $this->_html_twips($height + $cheatHeight) . '; ';
       $out .= 'left: 0; ';
       $out .= 'width: '  . $this->_html_twips($this->_report->LeftMargin + $this->_report->Width + $this->_report->RightMargin) . '; ';
       $out .= 'background-color: #ffffff; ';
       $out .= "\">\n";
-      $out .= "\t<div name=\"{$sec->Name}\" style = \"position: absolute; overflow: hidden; ";
+      $out .= "\t<div name=\"{$section->Name}\" style = \"position: absolute; overflow: hidden; ";
       $out .= 'left: '   . $this->_html_twips($this->_report->LeftMargin) . '; ';
       $out .= 'height: ' . $this->_html_twips($height) . '; ';
       $out .= 'width: '  . $this->_html_twips($this->_report->Width + $cheatWidth) . '; ';
-      $out .= 'background-color: ' . $this->_html_color($sec->BackColor) . '; ';
+      $out .= 'background-color: ' . $this->_html_color($section->BackColor) . '; ';
       $out .= "\">\n";
     } else {
-      $out .= "\t<div name=\"{$sec->Name}\" style = \"position: absolute; overflow: hidden; ";
+      $out .= "\t<div name=\"{$section->Name}\" style = \"position: absolute; overflow: hidden; ";
       $out .= 'top: '    . $this->_html_twips($this->_posY) .'; ';
       $out .= 'height: ' . $this->_html_twips($height + $cheatHeight) . '; ';
       $out .= 'left: 0; ';
       $out .= 'width: '  . $this->_html_twips($this->_report->Width + $cheatWidth) . '; ';
-      $out .= 'background-color: ' . $this->_html_color($sec->BackColor) . '; ';
+      $out .= 'background-color: ' . $this->_html_color($section->BackColor) . '; ';
       $out .= "\">\n";
     }
     $out .= $buffer;
@@ -139,6 +157,12 @@ class ExporterHtml extends Exporter
     }
     echo $out;
     $this->_posY += $height;
+    if ((!$this->_PagePart) and (!$this->DesignMode)) {
+      if (($section->ForceNewPage == 2) or ($section->ForceNewPage == 3)) {
+        $this->newPage();
+      }
+    }
+
   }
 
   // Page handling - html
@@ -165,40 +189,6 @@ class ExporterHtml extends Exporter
   function page()
   {
     return $this->_pageNo;
-  }
-
-  function beforePrinting(&$section)
-  {
-    if ($this->DesignMode) {
-      return;
-    }
-    if (($section->ForceNewPage == 1) or ($section->ForceNewPage == 3)) {
-      $this->newPage();
-    }
-    if ($this->_blankPage) {
-      $this->_blankPage = false;
-      $out = "\t<div name=\"TopMargin\"style = \"position: absolute; overflow: hidden; ";
-      $out .= 'top: '    . $this->_html_twips($this->_posY) .'; ';
-      $out .= 'height: ' . $this->_html_twips($this->_report->TopMargin + 20) . '; ';
-      $out .= 'left: 0; ';
-      $out .= 'width: '  . $this->_html_twips($this->_report->LeftMargin + $this->_report->Width + $this->_report->RightMargin) . '; ';
-      $out .= 'background-color: #ffffff; ';
-      $out .= "\">&nbsp;</div>\n";
-      echo $out;
-      $this->_posY += $this->_report->TopMargin;
-      $this->_report->_printNormalSection('PageHeader'); // FIXME: this has to be done by the Report class!!!
-    }
-  }
-
-  function afterPrinting(&$section, &$doItAgain)
-  {
-    if ($this->DesignMode) {
-      return;
-    }
-    if (($section->ForceNewPage == 2) or ($section->ForceNewPage == 3)) {
-      $this->newPage();
-    }
-    $doItAgain = false;
   }
 
   // Controls - html

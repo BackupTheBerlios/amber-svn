@@ -35,31 +35,26 @@ class Exporter
   }
 
   // Report
-  function getPreamble(&$report)
+  function startReport(&$report)
   {
     $this->_start = microtime();
     $this->_report =& $report;
   }
 
-  function getPostamble(&$report)
+  function endReport(&$report)
   {
     $this->newPage();
     $this->dump('Exec time: ' . microtime_diff($this->_start, microtime()));
   }
 
   // Section
-  function sectionPrintStart(&$sec) {}
-  function sectionPrintEnd(&$sec) {}
+  function startSection(&$section) {}
+  function endSection(&$section) {}
   function sectionPrintDesignHeader($text='') {}
 
   // Page handling
   function newPage() {} // Close page, prepare a new one
   function page() {} // return page number
-  function beforePrinting(&$section) {}
-  function afterPrinting(&$section, &$doItAgain)
-  {
-    $doItAgain = false;
-  }
 
   // Controls
   function setControlExporter($ctrl)

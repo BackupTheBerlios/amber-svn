@@ -35,9 +35,9 @@ class ExporterFPdf extends Exporter
   /*********************************
    *  Report-pdf
    *********************************/
-  function getPreamble(&$report)
+  function startReport(&$report)
   {
-    parent::getPreamble($report);
+    parent::startReport($report);
     $this->_blankPage = true;
     $orient = $this->_pdf_orientation($report->Orientation);
     $size = array($report->PaperWidth, $report->PaperHeight);
@@ -73,9 +73,9 @@ class ExporterFPdf extends Exporter
     } 
   }
 
-  function getPostamble(&$report)
+  function endReport(&$report)
   {
-    parent::getPostamble($report);
+    parent::endReport($report);
     #echo "pdf->Output();<br>";
     $this->_pdf->ReportEnd($report->Width);
     $this->_pdf->Output('out.pdf',"I");
@@ -112,24 +112,24 @@ class ExporterFPdf extends Exporter
     $this->_pdf->sectionEnd($height+1);
   }  
 
-  function sectionPrintStart(&$sec, $width, &$buffer)
+  function startSection(&$section, $width, &$buffer)
   {
     $this->_pdf->sectionStart();
-    $this->_backColor($sec->BackColor);
+    $this->_backColor($section->BackColor);
     $text = '';
     $border = 0;
     $ln = 0; //pos after printing
     $align = 'C';
     $fill = 1;
-    $this->_pdf->Cell($sec->_parent->Width, $sec->Height, $text, $border, $ln, $align, $fill);
+    $this->_pdf->Cell($section->_parent->Width, $section->Height, $text, $border, $ln, $align, $fill);
   }
 
-  function sectionPrintEnd(&$sec, $height, &$buffer)
+  function endSection(&$section, $height, &$buffer)
   {
 #print "called<br>";
-    if (!$sec->_PagePart or $this->DesignMode) {
+    if (!$section->_PagePart or $this->DesignMode) {
       $this->_pdf->sectionEnd($height);
-    } elseif ($sec->_PagePart == 'Foot') {  
+    } elseif ($section->_PagePart == 'Foot') {  
       $this->_pdf->pageFooterEnd();
     } else {
       $this->_pdf->pageHeaderEnd();

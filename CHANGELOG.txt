@@ -1,3 +1,6 @@
+20040721:
+- exporters: interface clean up
+
 20040720:
 - pdfExporter: support for page-header and -footer workiing again. forceNewPage still broken. 
                test report GLS with big left border (spreading over 2 pages) needs lots of memory: memorylimit set to 32MB in examples/index.php

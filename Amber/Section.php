@@ -118,8 +118,7 @@ class Section
     if ($cancel or !$this->Visible) {
       $height = 0;
     } else {
-      $this->_pageBeforePrinting();
-      $this->_sectionPrintStart($buffer);
+      $this->_startSection($buffer);
       $this->_OnPrint($cancel);
       // print controls
       $maxHeight = 0;
@@ -139,8 +138,7 @@ class Section
       } else {
         $height = $this->Height;
       }
-      $this->_sectionPrintEnd($height, $buffer);
-      $this->_pageAfterPrinting();
+      $this->_endSection($height, $buffer);
     }
   }
 
@@ -160,8 +158,7 @@ class Section
       } else {
         $this->_sectionPrintDesignHeader($this->EventProcPrefix);
       }
-      $this->_pageBeforePrinting();
-      $this->_sectionPrintStart($buffer);
+      $this->_startSection($buffer);
       // print controls
       if (isset($this->Controls)) {
         reset($this->Controls);
@@ -171,8 +168,7 @@ class Section
           next($this->Controls);
         }
       }
-      $this->_sectionPrintEnd($this->Height, $buffer);
-      $this->_pageAfterPrinting();
+      $this->_endSection($this->Height, $buffer);
     }
   }
 
@@ -219,17 +215,17 @@ class Section
    /**
    * @access private
    */
-  function _sectionPrintStart(&$buffer)
+  function _startSection(&$buffer)
   {
-    $this->_parent->_exporter->sectionPrintStart($this, $this->_parent->Width, $buffer);
+    $this->_parent->_exporter->startSection($this, $this->_parent->Width, $buffer);
   }
 
   /**
    * @access private
    */
-  function _sectionPrintEnd($height, &$buffer)
+  function _endSection($height, &$buffer)
   {
-    $this->_parent->_exporter->sectionPrintEnd($this, $height, $buffer);
+    $this->_parent->_exporter->endSection($this, $height, $buffer);
   }
 
   /**
@@ -262,25 +258,6 @@ class Section
     }
   }
 
-  /**
-   * @access private
-   */
-  function _PageBeforePrinting()
-  {
-    if (!$this->_PagePart) {
-      $this->_parent->_exporter->beforePrinting(&$this);
-    }
-  }
-
-  /**
-   * @access private
-   */
-  function _PageAfterPrinting()
-  {
-    if (!$this->_PagePart) {
-      $this->_parent->_exporter->afterPrinting(&$this, &$doItAgain);
-    }
-  }
 
   /**
    * @access protected

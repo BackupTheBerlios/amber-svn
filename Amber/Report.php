@@ -388,7 +388,7 @@ class Report
       return;
     }
     $this->_fetchDataFromDatabase();
-    $this->_preamble();
+    $this->_startReport();
     $this->_setHasData();
     if ($this->HasData == 0) {
       $this->OnNoData($cancel);
@@ -424,7 +424,7 @@ class Report
     $this->_printNormalGroupFooters($maxLevel, 0);
     $this->_printNormalSection('ReportFooter');
     $this->_exporter->newPage();
-    $this->_postamble();
+    $this->_endReport();
     $this->OnClose();
   }
 
@@ -443,7 +443,7 @@ class Report
     $this->_exporter->setDocumentTitle($this->Name);
     $this->_exporter->setDesignMode();
 
-    $this->_preamble();
+    $this->_startReport();
 
     $maxLevel = count($this->_groupFields);
 
@@ -457,7 +457,7 @@ class Report
     $this->_printDesignSection('ReportFooter');
     $this->_printDesignSection('PageFooter');
     $this->_exporter->newPage();
-    $this->_postamble();
+    $this->_endReport();
   }
 
   //////////////////////////////////////////////////////////////////
@@ -521,18 +521,18 @@ class Report
   /**
    * @access private
    */
-  function _preamble(){
+  function _startReport(){
     if (isset($this->_exporter)) {
-      $this->_exporter->getPreamble($this);
+      $this->_exporter->startReport($this);
     }
   }
 
   /**
    * @access private
    */
-  function _postamble(){
+  function _endReport(){
     if (isset($this->_exporter)) {
-      $this->_exporter->getPostamble($this);
+      $this->_exporter->endReport($this);
     }
   }
 
