@@ -8,11 +8,11 @@
 class PDF extends FPDF
 {
 
-  var $_inSection;
-  var $_inReport;
-  var $_buff;
-  var $_reportPages;
-  var $_actPageNo;
+  var $_inSection;      // int index to sectionBuff
+  var $_inReport;       // bool 
+  var $_sectionBuff;    // array buffer for sections (to make sections re-entrand)
+  var $_reportPages;    // buffer when inReport
+  var $_actPageNo;      // pageNumber
   var $_sectionType;    // 'Head', 'Foot' or ''
 
 
@@ -53,9 +53,10 @@ class PDF extends FPDF
     if($this->state <> 2) {
       parent::_out($s);
     } elseif ($this->_inSection) {
-      $this->_buff .= $s . "\n";
+      $this->_sectionBuff[$this->_inSection] .= $s . "\n";
       #parent::_out($s);
     } elseif ($this->_inReport) {
+#      print "\n************************************\n" . $s . "\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n";
       $this->_reportPages[$this->_actPageNo][$this->_sectionType] .= $s . "\n";
     } else {
       parent::_out($s);
@@ -78,15 +79,16 @@ class PDF extends FPDF
   
   function startSection()
   {
-    $this->_buff = '';
-    $this->_inSection = true;
+    $this->_inSection++;
+    $this->_sectionBuff[$this->_inSection] = "";
     $this->SetXY(0, 0);
   }
-
+  
   function endSection($sectionHeight, $keepTogether)
   {
-    $this->_inSection = false;
-    $secBuff = $this->_buff;
+    $this->_out("\n%end Section:" . ($this->_inSection + 1) . "\n\n");
+    $secBuff = $this->_sectionBuff[$this->_inSection];
+    $this->_inSection--;
     $startPage = floor($this->_posY / $this->_printHeight);
     $endPage   = floor(($this->_posY + $sectionHeight) / $this->_printHeight);
     if ($keepTogether and ($startPage <> $endPage)) {
@@ -119,9 +121,9 @@ class PDF extends FPDF
         if (!$cancel) {
           $this->_out($secBuff);
         }
-      }
-
-      $this->_out($secBuff);
+      } else {
+        $this->_out($secBuff);
+      }  
       $this->RemoveClipping();
       $this->RemoveCoordinate();
     }
@@ -152,10 +154,11 @@ class PDF extends FPDF
 
   function _pageHeaderOrFooterEnd($posY, $height)
   {
-    $this->_inSection = false;
+    $this->_inSection--;
     $this->SetCoordinate(0, -$posY);
     $this->SetClipping(0, 0, $this->_reportWidth, $height);
-    $this->_out($this->_buff);
+$this->_out("\n%end Section:" . ($this->_inSection + 1) . "\n\n");
+    $this->_out($this->_sectionBuff[$this->_inSection + 1]);
     $this->RemoveClipping();
     $this->RemoveCoordinate();
   }
@@ -176,8 +179,12 @@ class PDF extends FPDF
   //////////////////////////////////////////////////////////////////////////
 
 
-  function reportStart(&$exporter, $width, $headerHeight=0, $footerHeight=0)
+  function startReport(&$exporter, $width, $headerHeight=0, $footerHeight=0)
   {
+    if ($this->_inReport) {
+      Amber::showError('Error', 'startReport: a report is already started!');
+      die();
+    }  
     $this->_exporter =& $exporter;
     $this->_reportWidth = $width;
     $this->_headerHeight = $headerHeight;
@@ -194,7 +201,7 @@ class PDF extends FPDF
     $this->_inReport = true;
   }
 
-  function reportEnd()
+  function endReport()
   {
     $this->_exporter->printPageFooter();
     $this->_inReport = false;

@@ -69,9 +69,9 @@ class ExporterFPdf extends Exporter
       $this->_pdf->SetTopMargin($report->TopMargin);
       $this->_pdf->SetAutoPageBreak(false, $report->BottomMargin);
       if ($this->DesignMode) {
-        $this->_pdf->ReportStart($this, $report->Width);
+        $this->_pdf->startReport($this, $report->Width);
       } else {
-        $this->_pdf->ReportStart($this, $report->Width, $report->PageHeader->Height, $report->PageFooter->Height);
+        $this->_pdf->startReport($this, $report->Width, $report->PageHeader->Height, $report->PageFooter->Height);
       }
     }
   }
@@ -79,7 +79,7 @@ class ExporterFPdf extends Exporter
   function _exporterExit()
   {
     #echo "pdf->Output();<br>";
-    $this->_pdf->ReportEnd($this->_report->Width);
+    $this->_pdf->endReport($this->_report->Width);
     if ($this->createdAs == 'testpdf') {
       print $this->_pdf->Output('out.txt', 'S');
     } else {
