@@ -20,11 +20,18 @@ class AmberConfig
   var $database;
   var $sys_objects;
 
+  /**
+   * Read current configuration from disk
+   *
+   * @access public
+   * @param string name of the configuration file
+   * @return bool true on success
+   */
   function fromXML($fileName)
   {
     if (!file_exists($fileName)) {
       Amber::showError('Error', 'Config file not found: ' . htmlspecialchars($fileName));
-      die();
+      return false;
     }
 
     $loader = new XMLLoader(false);
@@ -35,8 +42,17 @@ class AmberConfig
             $this->$key = $value;
       }
     }
+    
+    return true;
   }
 
+  /**
+   * Write current configuration to disk
+   *
+   * @access public
+   * @param string name of the configuration file
+   * @return bool true on success
+   */
   function toXML($fileName)
   {
     $properties = array(
@@ -105,6 +121,10 @@ class AmberConfig
     $this->database['dbname'] = $value;
   }
 
+  /**
+   * @param string medium type, supported values: 'db' or 'file'
+   * @access public
+   */
   function setMedium($value)
   {
     $this->sys_objects['medium'] = $value;
@@ -141,7 +161,7 @@ class AmberConfig
   }
 
   /**
-   * @private
+   * @access private
    */
   function writeArray($filehandle, $name, $confArray)
   {

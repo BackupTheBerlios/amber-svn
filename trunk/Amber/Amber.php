@@ -37,9 +37,54 @@ class Amber
    * @access protected
    *
    */
-  function init()
+  function init(&$config)
   {
+    if (is_null($config)) {
+      // config parameter must be present on singleton creation
+      die(Amber::showError('Error', 'Config parameter must not be null on first call to Amber::init()', true));
+    }
+    if (!is_a($config, 'AmberConfig')) {
+      die(Amber::showError('Error', 'Given parameter is not an instance of AmberConfig', true));
+    }
+    $this->_config = $config;
+      
     $this->_objectManager =& new ObjectManager($this);
+  }
+  
+  /**
+   * Returns a COPY of the current configuration.
+   * Important: you must use setConfig() to change the configuration.
+   *
+   * @static
+   * @access public
+   * @return AmberConfig
+   * @see setConfig()
+   */
+  function getConfig()
+  {
+    return $this->_config;
+  }
+
+  /**
+   * Set new configuraion object
+   *
+   * @static
+   * @access public
+   * @param AmberConfig
+   * @see getConfig()
+   */
+  function setConfig(&$config)
+  {
+    if (is_null($config)) {
+      // config parameter must be present on singleton creation
+      die(Amber::showError('Amber::setConfig()', 'Config parameter must not be null on first call to Amber::init()', true));
+    }
+    if (!is_a($config, 'AmberConfig')) {
+      die(Amber::showError('Amber::setConfig()', 'Given parameter is not an instance of AmberConfig', true));
+    }
+    
+    $instance = Amber::getInstance();
+    $instance->init($config);
   }
 
   /**
@@ -53,16 +98,8 @@ class Amber
     static $instance = null;
 
     if (is_null($instance)) {
-      if (is_null($config)) {
-        // config parameter must be present on singleton creation
-        die(Amber::showError('Error', 'Config parameter must not be null on first call to Amber::getInstance()', true));
-      }
       $instance = new Amber();
-      if (!is_a($config, 'AmberConfig')) {
-        die(Amber::showError('Error', 'Given parameter is not an instance of AmberConfig', true));
-      }
-      $instance->_config = $config;
-      $instance->init();
+      $instance->init($config);
     }
 
     return $instance;

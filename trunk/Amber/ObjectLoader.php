@@ -218,7 +218,7 @@ class ObjectLoaderFile extends ObjectLoader
     }
 
     if (!is_dir($path)) {
-      Amber::showError('ObjectLoaderFile::setBasePath(): Argument given is not a directory: ' . htmlentities($path));
+      Amber::showError('ObjectLoaderFile::setBasePath(): Argument given is not a directory: ' . $path);
       die();
     }
     $this->_basePath = $path;
@@ -343,6 +343,65 @@ class ObjectLoaderFile extends ObjectLoader
     }
 
     return $obj;
+  }
+  
+  /**
+   * @access public
+   * @param string
+   * @param string
+   * @param AmberObjectRaw
+   */
+  function save($type, $objectName, &$obj)
+  {
+    switch ($type) {
+      case 'module':
+        $this->saveModule($objectName, $obj);
+        break;
+      case 'report':
+        $this->saveReport($objectName, $obj);
+        break;
+    }
+  }
+  
+  /**
+   * @access protected
+   * @param string
+   * @param AmberObjectRaw
+   */
+  function saveReport($name, &$obj)
+  {
+    $repPath = $this->_basePath . '/reports/';
+    if (!is_dir($repPath)) {
+      Amber::showError('ObjectLoaderFile', 'Directory does not exist: ' . $repPath);
+    }
+    
+    $fileNameSpec = $repPath . $name . '.xml';
+    $fileNameDesign = $repPath . $name . '-Design.xml';
+    $fileNameCode = $repPath . $name . '-Code.php';
+
+    $fp = fopen($fileNameSpec, 'w');
+    fwrite($fp, '<?xml version="1.0" encoding="ISO-8859-1"?' . ">\r\n");
+    fwrite($fp, "<report>\r\n");
+    fwrite($fp, "\t<Name>" . $obj->name . "</Name>\r\n");
+    fwrite($fp, "\t<ClassName>" . $obj->class .  "</ClassName>\r\n");
+    fwrite($fp, "\t<FileNameDesign>" . basename($fileNameDesign) . "</FileNameDesign>\r\n");
+    fwrite($fp, "\t<FileNameCode>" . basename($fileNameCode) . "</FileNameCode>\r\n");
+    fwrite($fp, "</report>\r\n");
+    
+    $fp = fopen($fileNameDesign, 'w');
+    fwrite($fp, $obj->design);
+    
+    $fp = fopen($fileNameCode, 'w');
+    fwrite($fp, $obj->code);
+  }
+  
+  /**
+   * @access protected
+   * @param string
+   * @param AmberObjectRaw
+   */
+  function saveModule($name, &$obj)
+  {
   }
 }
 
