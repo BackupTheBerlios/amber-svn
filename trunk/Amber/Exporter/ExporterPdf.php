@@ -203,7 +203,9 @@ class ExporterFPdf extends Exporter
     $para->fsize = $control->FontSize;
 
     $para->font = $control->FontName;
-    $para->falign = $this->_pdf_textalign($control->TextAlign);
+    if (($type == 'textbox') || ($type == 'label')) {
+      $para->falign = $this->_pdf_textalign($control->TextAlign());
+    }  
     $para->x = $control->Left;
     $para->y = $control->Top;
     $para->width = $control->Width;
@@ -315,10 +317,10 @@ class ExporterFPdf extends Exporter
   {
     $alignments = array(1 => 'L', 'C', 'R', 'J');
 
-    if (!isset($alignments[$textalign])) {
-      return 'L';
-    } else {
+    if (isset($alignments[$textalign])) {
       return $alignments[$textalign];
+    } else {
+      return 'L';
     }
   }
 

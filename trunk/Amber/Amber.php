@@ -6,6 +6,7 @@
 * @subpackage ReportEngine
 *
 */
+ini_set('include_path', dirname(__FILE__). '/../lib:' . ini_get('include_path'));
 
 require_once 'ReportPaged.php';
 require_once 'ObjectManager.php';

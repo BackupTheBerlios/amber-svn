@@ -292,6 +292,11 @@ class FontBox extends Control
       $this->Properties[$name] = MSColor($this->Properties[$name]);
     }
   }
+
+  function TextAlign()
+  {
+    return $this->TextAlign;
+  }  
 }
 
 /**
@@ -333,11 +338,7 @@ class TextBox extends FontBox
       $this->Value = null;
     }
 
-    if ($this->Format != '') {
-      $this->_exporter->printNormal($this, Format($this->Value, strval($this->Format), $this->DecimalPlaces));
-    } else {
-      $this->_exporter->printNormal($this, $this->Value);
-    }
+    $this->_exporter->printNormal($this, Format($this->Value, strval($this->Format), $this->DecimalPlaces));
     return $this->stdHeight(); ### FIX THIS: CanGrow.....
   }
 
@@ -357,7 +358,22 @@ class TextBox extends FontBox
       return true;
     }
   }
-
+  
+  function TextAlign()
+  {
+    if ($this->TextAlign != 0) {
+      return $this->TextAlign;
+    } elseif (!is_string($this->Value)) {
+      return 3; // right justify numbers
+    } elseif (preg_match(
+       "|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ -]?(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
+    	$this->Value)) {
+      return 3; // right justify dates
+    } else {
+      return 1; // left justify strings
+    }    
+  }  
+  
   function _runningSum()
   {
     if ($this->RunningSum) {

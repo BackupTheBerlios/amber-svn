@@ -312,7 +312,8 @@ class Report extends AmberObject
       $this->_printNormalSection($this->Detail);
     }
     else  // Loop through all records
-    {                              
+    { 
+      $this->reTypeNumericColumns();
       $this->computeColumns();
       $keys = array_keys($this->_data);
       $this->sort($keys);
@@ -469,7 +470,8 @@ class Report extends AmberObject
       $sql = $this->_makeSqlFilter($sql, $this->Filter);
     }
     // Get records
-    $this->_data =& $db->GetAll($sql);
+    $recordSet =& $db->Execute($sql);
+    $this->_data =& $recordSet->GetArray();
     if (empty($this->_data)) {
       if ($db->ErrorNo() != 0) {
         Amber::showError('Database Error ' . $db->ErrorNo(), $db->ErrorMsg());
@@ -477,6 +479,17 @@ class Report extends AmberObject
       }
     }
 
+    $recNo = $recordSet->FieldCount();
+    for ($i = 1; $i <= $recNo; $i++) {
+    	$fld = $recordSet->FetchField($i);
+    	$type = $recordSet->MetaType($fld->type);
+      if (($type == 'L') || ($type == 'I') || ($type == 'N') || ($type == 'R')) {
+         $this->_dataIsNumeric[$fld->name] = $type;
+      } else {
+         unset($this->_dataIsNumeric[$fld->name]);
+      }
+    }     
+    
     if ($createdTemporaryTable) {
       $sql = 'DROP TEMPORARY TABLE IF EXISTS temp' . $uniqueId;
       $db->Execute($sql);
@@ -560,6 +573,30 @@ class Report extends AmberObject
     $sorter->keys =& $keys;
     $sorter->cmpClass =& $this->_Code;
     $sorter->sort();
+  }
+
+  /**      
+   * change _data[][] to numeric value if corresponding column is numeric
+   * @access protected
+   */
+  function reTypeNumericColumns()                                        
+  { 
+    $rowNo = count($this->_data);
+    foreach ($this->_dataIsNumeric as $colname => $type) {
+      if (($type == 'I') || ($type == 'R')) {
+        for ($i = 0; $i < $rowNo; $i++) {
+          $this->_data[$i][$colname] = (int) $this->_data[$i][$colname];
+        }
+      } elseif ($type == 'N') {
+        for ($i = 0; $i < $rowNo; $i++) {
+          $this->_data[$i][$colname] = (float) $this->_data[$i][$colname];
+        }
+      } elseif ($type == 'L') {
+        for ($i = 0; $i < $rowNo; $i++) {
+          $this->_data[$i][$colname] = (bool) $this->_data[$i][$colname];
+        }
+      }
+    }    
   }
 
   /**

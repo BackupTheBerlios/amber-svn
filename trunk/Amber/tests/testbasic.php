@@ -96,6 +96,11 @@ class Basic_Format extends myTestCase
     $this->assertEquals('30.12.99--',   Format("1899-12-30", "dd.mm.yy--;dd.mm.yy;;-Null-"),    'MS Zero-Date-2');
     $this->assertEquals('',             Format(null,         "dd.mm.yyyy;dd.mm.yy;-0-;-Null-"), 'Null-Date-1');
     $this->assertEquals('',             Format(null,         "dd.mm.yyyy;dd.mm.yy;-0-"),        'Null-Date-2');
+    
+    $this->assertEquals('25.02.2005',  Format('2005-02-25', ""),                               'Date no format');  
+    $this->assertEquals('25.02.2005',  Format('2005-02-25 00:00:00', ""),                      'Date no format2');  
+    $this->assertEquals('17:20:00',    Format('1899-12-30 17:20:00', ""),                      'Time no format');  
+    $this->assertEquals('25.02.2005 17:20:00',   Format('2005-02-25 17:20:00', ""),             'DateTime no format');  
   }
 
   function testFormat_Date_DayC()
@@ -105,8 +110,8 @@ class Basic_Format extends myTestCase
     $this->assertEquals('01',              Format('2004-02-01', 'dd')     ,'Test: dd');
     $this->assertEquals('Sun',             Format('2004-02-01', 'ddd')    ,'Test: ddd');
     $this->assertEquals('Sunday',          Format('2004-02-01', 'dddd')   ,'Test: dddd');
-    $this->assertEquals('01.02.04',        Format('2004-02-01', 'ddddd')  ,'Test: ddddd');  //dd.mm.yy
-    $this->assertEquals('01.February.2004',Format('2004-02-01', 'dddddd') ,'Test: dddddd'); //dd.mmmm.yyyy
+    $this->assertEquals('02/01/2004',      Format('2004-02-01', 'ddddd')  ,'Test: ddddd');  //dd.mm.yy
+    $this->assertEquals('Sunday, February 1 2004',Format('2004-02-01', 'dddddd') ,'Test: dddddd'); //dd.mmmm.yyyy
   }
   function testFormat_Date_DayGerman()
   {
@@ -115,8 +120,8 @@ class Basic_Format extends myTestCase
     $this->assertEquals('01',              Format('2004-02-01', 'dd')     ,'Test-de: dd');
     $this->assertEquals('So',              Format('2004-02-01', 'ddd')    ,'Test-de: ddd');
     $this->assertEquals('Sonntag',         Format('2004-02-01', 'dddd')   ,'Test-de: dddd');
-    $this->assertEquals('01.02.04',        Format('2004-02-01', 'ddddd')  ,'Test-de: ddddd'); //dd.mm.yy
-    $this->assertEquals('01.Februar.2004', Format('2004-02-01', 'dddddd') ,'Test-de: dddddd'); //dd.mmmm.yyyy
+    $this->assertEquals('01.02.2004',        Format('2004-02-01', 'ddddd')  ,'Test-de: ddddd'); //dd.mm.yy
+    $this->assertEquals('Sonntag, 1. Februar 2004', Format('2004-02-01', 'dddddd') ,'Test-de: dddddd'); //dd.mmmm.yyyy
   }
   function testFormat_Date_Month()
   {

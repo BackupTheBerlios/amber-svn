@@ -19,13 +19,7 @@ require_once 'adodb/adodb-time.inc.php';
 
 function Format($value, $fmt, $prec=2)
 {
-  static $fmtCache;               //speed: cache _format object (0.9sec)
-  $f = $fmtCache[$fmt][$prec];
-  if (!$f) {
-    $f =& new _format($fmt, $prec);
-    $fmtCache[$fmt][$prec] =& $f;
-  } else {
-  }
+  $f =& new _format($fmt, $prec);
   return $f->format($value, $fmt);
 }
 
@@ -339,8 +333,14 @@ class _format
   function format($value, $fmt, $prec=2)
   {
     if (($this->fmt === '') or is_null($this->fmt)) {
-      return $this->stdFormat($value);
-      #return $value;
+      if (is_numeric($value)) {
+        return $this->stdFormat($value);
+      }  
+      elseif (preg_match("|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ -]?(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", $value)) {
+        return $this->formatDate($value);        
+      } else {
+        return $value;
+      }
     }
     if ($this->type == 'd') return $this->formatDate($value);
     elseif ($this->type == 's') return $this->formatString($value);
@@ -700,7 +700,19 @@ class _format
       if (is_null($value)) {
         return '';
       } else {
-        return $this->stdFormat($value);
+        if (($year == 1899) && ($month == 12) && ($day = 30)) {
+          if (($hour == 0) && ($min == 0) && ($sec == 0)) {
+            return null;
+          } else {
+            return format($value, 'long time');
+          } 
+        } else {
+          if (($hour == 0) && ($min == 0) && ($sec == 0)) {
+            return format($value, 'short date');
+          } else {
+            return format($value, 'general date');
+          } 
+        }
       }
     }
 
@@ -724,10 +736,10 @@ class _format
         $res .= strftime('%A', $_day_power*(3+$dow));
         break;
       case 'ddddd':
-        $res .= format($value, 'dd.mm.yy');
+        $res .= format($value, 'short date');
         break;
       case 'dddddd':
-        $res .= format($value, 'dd.mmmm.yyyy');
+        $res .= format($value, 'long date');
         break;
       case 'm':
         $res .= $month;
@@ -774,7 +786,7 @@ class _format
         $res .= $this->twoDigits($secs);
         break;
       case 'ttttt':
-        $res .= format('h:mm:ss', $value);
+        $res .= format($value, 'long time');
         break;
       case '/':
         $res .= $this->getDateSep();

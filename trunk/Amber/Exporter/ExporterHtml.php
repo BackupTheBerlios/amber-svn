@@ -346,10 +346,9 @@ class ExporterHtml extends Exporter
 
   function getCssStyle(&$control, $prefix)
   {
-    $nil = array('ForeColor' => 16777216, 'BackColor' => 16777216, 'BorderColor' => 16777216, 'BorderWidth' => -9999); // illegal values
+    $nil = array('ForeColor' => 16777216, 'BackColor' => 16777216, 'BorderColor' => 16777216, 'BorderWidth' => -9999, 'TextAlign' => 1); // illegal values
     $cssClassName = '.' . $prefix . $control->id;
-
-    return $cssClassName . "\t/* " . $control->Name . ' */ { ' . $control->_exporter->getStyle($control, $control->Properties, $nil) . '}';
+    return $cssClassName . "\t/* " . $control->Name . ' */ { ' . $control->_exporter->getStyle($control, $nil) . '}';
   }
 }
 
@@ -389,13 +388,9 @@ Class ControlExporterHtml
     $out =  "\t\t<div class=\"" . $cssClassName . '"';
 
     $this->_stdValues['Value'] =  $control->Properties['Value'];
-    if ($control->Properties == $this->_stdValues) {
-
-    } else {
-      $style = $this->getStyle($control, $control->Properties, $this->_stdValues);
-      if (!empty($style)) {
-        $out .= ' style="' . trim($style) . '"';
-      }
+    $style = $this->getStyle($control, $this->_stdValues);
+    if (!empty($style)) {
+      $out .= ' style="' . trim($style) . '"';
     }
     $out .= ">";
 
@@ -405,10 +400,10 @@ Class ControlExporterHtml
     return $out;
   }
 
-  function getStyle(&$ctrl, &$value, &$std)
+  function getStyle(&$ctrl, &$std)
   {
     $out = '';
-
+    $value =& $ctrl->Properties;
     $LeftPaddingHtml = 0;  // 0
     $RightPaddingHtml = 0; // 0
     $TopPaddignHtml = 0;
@@ -516,9 +511,10 @@ class RectangleExporterHtml extends ControlExporterHtml
  */
 class FontBoxExporterHtml extends ControlExporterHtml
 {
-  function getStyle(&$ctrl, &$value, &$std)
+  function getStyle(&$ctrl, &$std)
   {
-    $out = parent::getStyle($ctrl, $value, $std);
+    $out = parent::getStyle($ctrl, $std);
+    $value =& $ctrl->Properties;
 
     if ($value['FontItalic'] <> $std['FontItalic']) {
       if ($ctrl->Properties['FontItalic'] == true) {
@@ -552,8 +548,9 @@ class FontBoxExporterHtml extends ControlExporterHtml
       }
     }
 
-    if ($value['TextAlign'] <> $std['TextAlign']) {
-      $out .= 'text-align: ' . $this->_html_textalign($ctrl->Properties['TextAlign']) . '; ';
+    $align = $ctrl->TextAlign();
+    if ($align <> $std['TextAlign']) {
+      $out .= 'text-align: ' . $this->_html_textalign($align) . '; ';
     }
 
     if ($value['ForeColor'] <> $std['ForeColor']) {
@@ -572,9 +569,10 @@ class FontBoxExporterHtml extends ControlExporterHtml
  */
 class TextBoxExporterHtml extends FontBoxExporterHtml
 {
-  function getStyle(&$ctrl, &$value, &$std)
+  function getStyle(&$ctrl, &$std)
   {
-    $out = parent::getStyle($ctrl, $value, $std);
+    $out = parent::getStyle($ctrl, $std);
+    $value =& $ctrl->Properties;
 
     // CanGrow
     if ($value['CanGrow'] <> $std['CanGrow']) {
@@ -663,9 +661,9 @@ class CheckBoxExporterHtml extends ControlExporterHtml
     return parent::getTag($tmpCtrl, $value);
   }
 
-  function getStyle(&$ctrl, &$value, &$std)
+  function getStyle(&$ctrl, &$std)
   {
-    $out = parent::getStyle($ctrl, $value, $std);
+    $out = parent::getStyle($ctrl, $std);
 
     $out .= ' font-family: "small fonts", sans-serif; ';
     $out .= ' font-size: ' . (6 * __SCALE__) . 'pt; ';
