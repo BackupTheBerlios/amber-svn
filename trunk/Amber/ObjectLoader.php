@@ -218,7 +218,7 @@ class ObjectLoaderFile extends ObjectLoader
     }
 
     if (!is_dir($path)) {
-      Amber::showError('ObjectLoaderFile::setBasePath(): Argument given is not a directory: ' . $path);
+      Amber::showError('ObjectLoaderFile::setBasePath()' , 'Argument given is not a directory: ' . $path);
       die();
     }
     $this->_basePath = $path;
@@ -372,7 +372,8 @@ class ObjectLoaderFile extends ObjectLoader
   {
     $repPath = $this->_basePath . '/reports/';
     if (!is_dir($repPath)) {
-      Amber::showError('ObjectLoaderFile', 'Directory does not exist: ' . $repPath);
+      Amber::showError('ObjectLoaderFile::saveReport()', 'Directory does not exist: ' . $repPath);
+      die();
     }
     
     $fileNameSpec = $repPath . $name . '.xml';
@@ -402,6 +403,16 @@ class ObjectLoaderFile extends ObjectLoader
    */
   function saveModule($name, &$obj)
   {
+    $modPath = $this->_basePath . '/modules/';
+    if (!is_dir($modPath)) {
+      Amber::showError('ObjectLoaderFile::saveModule()', 'Directory does not exist: ' . $modPath);
+      die();
+    }
+
+    $fileNameCode = $modPath . $name . '.php';
+
+    $fp = fopen($fileNameCode, 'w');
+    fwrite($fp, $obj->code);
   }
 }
 

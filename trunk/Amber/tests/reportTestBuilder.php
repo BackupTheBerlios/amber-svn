@@ -150,7 +150,6 @@ class reportTestBuilder
       $s  .= $blanks . "<$tagName>\n";
     } else {
       $s .= $blanks . '<item id="' . $tagName . "\">\n";
-      $s .= $blanks2 . "<index>$tagName</index>\n";
     }  
     $keys = array_keys($data);
     $idx = 0;
