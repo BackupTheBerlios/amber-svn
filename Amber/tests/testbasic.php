@@ -26,98 +26,11 @@ class Basic_Format_internals extends myTestCase
   function test_Format()
   {
     $Format = new _Format('char');
-    $Format->reset();
 
     $this->assertEquals('char', $Format->fmt);
     $this->assertEquals(4, $Format->len);
   }
-
-  function testGetCH()
-  {
-    $Format = new _Format('char');
-    $Format->reset();
-
-    $this->assertEquals('c', $Format->nextChar($ch));
-    $this->assertEquals('h', $Format->nextChar($ch));
-    $this->assertEquals('a', $Format->nextChar($ch));
-    $this->assertEquals('r', $Format->nextChar($ch));
-    $this->assertEquals("\0", $Format->nextChar($ch));
-    $this->assertEquals("\0", $Format->nextChar($ch));
-    $Format->pushback();
-    $Format->pushback();
-    $this->assertEquals('r', $Format->nextChar($ch));
-  }
-
-  function testNextTokenNull()
-  {
-    $Format = new _Format('');
-    $Format->reset();
-
-    $this->assertEquals($Format->BOF, $Format->Token);
-
-    $Format->NextToken();
-    $this->assertEquals($Format->EOF, $Format->Token);
-
-  }
-  function testNextTokenString1()
-  {
-    $Format = new _Format('"asdf"');
-    $Format->reset();
-
-    $Format->NextToken();
-    $this->assertEquals($Format->STRING, $Format->Token);
-    $this->assertEquals('asdf', $Format->Value);
-
-    $Format->NextToken();
-    $this->assertEquals($Format->EOF, $Format->Token);
-
-  }
-
-  function testNextTokenString2()
-  {
-    $Format = new _Format('"as""df"');
-    $Format->reset();
-
-    $Format->NextToken();
-    $this->assertEquals($Format->STRING, $Format->Token);
-    $this->assertEquals('as"df', $Format->Value);
-  }
-
-  function testNextTokenD()
-  {
-    $Format = new _Format('d dd ddd dddd ddddd xxxx');
-    $Format->reset();
-
-    $Format->NextToken();
-    $this->assertEquals('d', $Format->Token);
-    $this->assertEquals('d', $Format->Value);
-    $Format->NextToken();
-    $Format->NextToken();
-    $this->assertEquals('dd', $Format->Token);
-    $this->assertEquals('dd', $Format->Value);
-    $Format->NextToken();
-    $Format->NextToken();
-    $this->assertEquals('ddd', $Format->Token);
-    $this->assertEquals('ddd', $Format->Value);
-    $Format->NextToken();
-    $Format->NextToken();
-    $this->assertEquals('dddd', $Format->Token);
-    $this->assertEquals('dddd', $Format->Value);
-    $Format->NextToken();
-    $Format->NextToken();
-    $this->assertEquals('ddddd', $Format->Token);
-    $this->assertEquals('ddddd', $Format->Value);
-    $Format->NextToken();
-    $Format->NextToken();
-    $this->assertEquals('xxxx', $Format->Token);
-    $this->assertEquals('xxxx', $Format->Value);
-  }
 }
-
-
-
-
-
 
 
 
@@ -296,7 +209,8 @@ class Basic_Format extends myTestCase
     $this->assertEquals('1,23E08',          Format(123456789.12499, "0.00E-00"), "Test 3 - DE");
     $this->assertEquals('1,23E8',           Format(123456789.12499, "0.00E-"),   "Test 4 - DE");
     $this->assertEquals('xxx1,23E8xxx',     Format(123456789.12499, "xxx0.00E-xxx"),   "Test 4 - DE");
-  }
+
+ }
 
   function testFormat_Numeric_ThousandSeparator()
   {

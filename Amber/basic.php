@@ -752,9 +752,11 @@ class _format
   }
 
   var $_DecimalPoint;
+  var $_locale_Monetary;
+  var $_locale_Numeric;
   function getDecimalPoint()
   {
-    if (!$this->_DecimalPoint) {
+    if ((!$this->_DecimalPoint)  or ($this->_locale_Monetary <> setlocale(LC_MONETARY, 0)) or ($this->_locale_Monetary = setlocale(LC_MONETARY, 0))) {
       $locale_info = localeconv();
       if ($locale_info['mon_decimal_point']) {
         $this->_DecimalPoint = $locale_info['mon_decimal_point'];
@@ -763,7 +765,9 @@ class _format
       } else {
         $this->_DecimalPoint = '.';
       }
-    }
+      $this->_locale_Monetary = setlocale(LC_MONETARY, 0);
+      $this->_locale_Numeric  = setlocale(LC_NUMERIC,  0);
+    }  
     return $this->_DecimalPoint;
   }
 
