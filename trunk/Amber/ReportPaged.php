@@ -121,14 +121,16 @@ class ReportPaged extends Report
   
   function printPageFooter()
   {
-    if (!$this->layout->noHeadFoot) {  
+    if (!$this->layout->noHeadFoot) {
+      $this->PageFooter->_setControlValues($this);
       $this->_printNormalSection($this->PageFooter);
     }  
   }
   
   function printPageHeader()
   {
-    if (!$this->layout->noHeadFoot) {  
+    if (!$this->layout->noHeadFoot) {
+      $this->PageHeader->_setControlValues($this);
       $this->_printNormalSection($this->PageHeader);
     }  
   }
