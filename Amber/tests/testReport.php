@@ -55,14 +55,14 @@ class testReport extends PHPUnit_TestCase
     $rep =& new Report();
     $rep->setConfig($cfg);
 
-    $rep->setReportDir('reports');
+    $rep->setReportDir(__AMBER_BASE__ . '/../examples/reports');
     $rep->setLoader('file');
-    $rep->load('Bericht1');
-    
+    $rep->load('Bericht2');
+
     return $rep;
-    
+
   }
-  
+
   function test_ReportRuns()
   {
     $rep =& $this->makeBericht1();
@@ -80,45 +80,27 @@ class testReport extends PHPUnit_TestCase
     ob_end_clean();
     $this->assertEquals('[<html>]', "[" . substr($s, 0, 6) . "]",    'Test2a html, design: <html> without leading stuff');
     $this->assertEquals("[</html>\n]", "[" . substr($s, -8) . "]",   'Test2b html, design: </html>\n');
-    
+
     ob_start();
     $rep->run('testpdf');
     $s = ob_get_contents();
     ob_end_clean();
     $this->assertEquals('[%PDF-]', "[" . substr($s, 0, 5) . "]",  'Test3a pdf, normal');
     $this->assertEquals("[%%EOF\n]", "[" . substr($s, -6) . "]",     'Test3b pdf, normal');
-    
+
     ob_start();
     $rep->printDesign('testpdf');
     $s = ob_get_contents();
     ob_end_clean();
     $this->assertEquals('[%PDF-]', "[" . substr($s, 0, 5) . "]",  'Test4a pdf, Design');
     $this->assertEquals("[%%EOF\n]", "[" . substr($s, -6) . "]",     'Test4b pdf, Design');
-    
-   
+
+
   }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 }
 
 $suite  = new PHPUnit_TestSuite("testReport");
 $result = PHPUnit::run($suite);
-echo $result -> toHTML();
+echo $result->toHTML();
 
 ?>

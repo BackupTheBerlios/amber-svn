@@ -5,6 +5,7 @@ TODO for first public release
 - finish work on documentation
 - sequence diagram (especially for triggers)
 - list of supported attributes
+- combine <report>.xml and <report>-Design.xml
 
 - nice to have: modify sql statement to reflect grouping given in xml
 

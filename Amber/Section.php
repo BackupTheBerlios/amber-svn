@@ -99,7 +99,10 @@ class Section
     if (!empty($data['Controls'])) {
       foreach ($data['Controls'] as $c) {
         $ctl =& ControlFactory::create($c['ControlType'], $c);
-        if (isset($ctl)) {
+        if ($ctl == false) {
+          showError('Error', 'Unknown control type: ' . htmlentities($c['ControlType']));
+          die();
+        } else {
           $this->Controls[] =& $ctl;
           $parent->Controls[$ctl->Name] =& $ctl;
           $parent->ControlValues[$ctl->Name] =& $ctl->Value;
@@ -224,7 +227,7 @@ class Section
       if (($this->ForceNewPage == 1) or ($this->ForceNewPage == 3)) {
         $exporter->newPage();
       }
-    }  
+    }
     $exporter->startSection($this, $this->_parent->Width, $buffer);
   }
 

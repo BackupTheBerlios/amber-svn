@@ -59,7 +59,7 @@ class ControlFactory
     // if classname is still invalid
     if (!class_exists($className)) {
       // FIXME: raise error
-      return;
+      return false;
     }
 
     $ctl =& new $className();
