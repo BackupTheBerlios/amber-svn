@@ -46,6 +46,10 @@ class Amber
     static $instance = null;
 
     if (is_null($instance)) {
+      if (is_null($config)) {
+        // config parameter must be present on singleton creation
+        return false;
+      }
       $instance = new Amber();
       if (!is_a($config, 'AmberConfig')) {
         die(Amber::showError('Error', 'Given parameter is not an instance of AmberConfig', true));
