@@ -53,7 +53,7 @@ class GLS extends AmberReport_UserFunctions
     //kleine Schweinerei die aber sein muss...
     if ($FormatCount == 1) {
       if ($report->_exporter->type == 'fpdf') {
-        $report->_exporter->BookMark($Me['PBetreuer'],0,-1);
+        $report->BookMark($Me['PBetreuer'],0,-1);
       }
     }
   }

@@ -25,161 +25,6 @@ ExporterFactory::register('testpdf', 'ExporterFPdf');
  */
 
 
-class mayflower
-{
-  var $pdf;
-
-  var $subReportIndex = 0;
-  var $subReportbuff;
-  var $sectionIndex = 0;
-  var $sectionBuff;
-  
-  var $reportBuff;
-  var $sectionType;    // 'Head', 'Foot' or ''
-  var $layout;
-  
-  function mayflower(&$layout, &$pdf)
-  {
-    $this->actpageNo = -1;
-    $this->layout =& $layout;
-    $this->pdf =& $pdf;
-  }  
-
-  function &getInstance(&$layout, &$pdf, $reset)
-  {
-    static $instance;
-    if (is_null($instance) || $reset) {
-      $instance = new mayflower($layout, $pdf);
-    }  
-    return $instance;
-  }
-
-  function _setOutBuff()
-  { 
-    if ($this->sectionIndex > $this->subReportIndex) {
-      $this->pdf->setOutBuffer($this->sectionBuff[$this->sectionIndex], 'section');
-    } elseif ($this->subReportIndex > 0) {
-      $this->pdf->setOutBuffer($this->subReportbuff[$this->subReportIndex], 'subReport');
-    } elseif ($this->inReport()) {
-      $this->pdf->setOutBuffer($this->reportPages[$this->actpageNo][$this->sectionType], "report page".$this->sectionType.$this->actpageNo);
-    } else {
-      $this->pdf->unsetBuffer();
-    }  
-  }
-  
-  function page()
-  {
-    return $this->actpageNo + 1;
-  }
-  
-  function newPage()
-  {
-    $this->posY = ($this->actpageNo + 1) * $this->layout->printHeight;
-  }
-
-  function posYinPage()
-  {
-    return ($this->posY - ($this->actpageNo * $this->layout->printHeight));
-  }
-  
-  function setPageIndex($index)
-  {
-    $this->actpageNo = $index;
-    $this->_setOutBuff();
-  }        
-  
-  function getPageIndex()
-  {
-    return $this->actpageNo;
-  }  
-  
-  function reportStartPageHeader()
-  {
-    $this->sectionType = 'Head';
-    $this->_setOutBuff();
-  }
-    
-  function reportStartPageBody()
-  {
-    $this->sectionType = '';
-    $this->_setOutBuff();
-  }
-    
-  function reportStartPageFooter()
-  {
-    $this->sectionType = 'Foot';
-    $this->_setOutBuff();
-  }  
-   
-  function inSubReport()
-  {
-    return  ($this->subReportIndex > 0);
-  }   
-
-  function subReportPush()
-  {
-   $this->subReportIndex++;
-   $this->subReportBuff[$this->subReportIndex] = '';
-   $this->_setOutBuff();
-  }
-   
-  function subReportPop()
-  {
-    $this->subReportIndex--;
-    $this->_setOutBuff();
-    return $this->subReportbuff[$this->subReportIndex + 1];
-  }
-  
-  function subReportGetPopped()
-  {
-    return $this->subReportbuff[$this->subReportIndex + 1];  
-  }
-  
-  function sectionPush()
-  {
-    $this->sectionIndex++;
-    $this->sectionBuff[$this->sectionIndex] = '';
-    $this->_setOutBuff();
-  }
-  
-  function sectionPop()
-  {
-    $this->sectionIndex--;
-    $this->_setOutBuff();
-    return $this->sectionBuff[$this->sectionIndex + 1];
-  }
-  
-  function getSectionIndexForCommentOnly()
-  {
-    return $this->sectionIndex;
-  } 
-  
-  
-  function startReportBuffering()
-  {
-    if ($this->inReport()) {
-      Amber::showError('Error', 'startReport: a report is already started!');
-      die();
-    }  
-    $this->posY = 0;
-  }
-  
-  function endReportBuffering()
-  {
-    if (!$this->inReport()) {
-      Amber::showError('Error', 'endReport: no report open');
-      die();
-    }  
-    $this->posY = 0;
-    $this->actpageNo = -1;
-    $this->_setOutBuff();
-  }
-
-  function inReport()
-  {
-    return ($this->actpageNo >= 0);
-  }      
-} 
  
 
 class ExporterFPdf extends Exporter
@@ -203,7 +48,6 @@ class ExporterFPdf extends Exporter
   {
     $reset = (!$asSubreport);
     $this->_pdf =& $this->getExporterBasicClass($report->layout, $reset);
-    $this->mayflower =& mayflower::getInstance($report->layout, $this->_pdf, $reset);
 
     if ($report->Controls) {
       foreach (array_keys($report->Controls) as $ctrlName) {
@@ -237,21 +81,6 @@ class ExporterFPdf extends Exporter
     }
   }
   
-  function comment($s)
-  {
-    $this->_pdf->comment($s);
-  }  
-
-  function startcomment($s)
-  {
-    $this->_pdf->startcomment($s);
-  }  
-  
-  function Bookmark($txt,$level=0,$y=0)
-  {
-    $this->_pdf->Bookmark($txt, $level, $y, $this->mayflower->page(), $this->mayflower->posYinPage(), $this->mayflower->inReport());
-  }
-
 
   /*********************************
    *  Controls - pdf
@@ -373,7 +202,7 @@ class ExporterFPdf extends Exporter
     } else {
       $rep->resetMargin(true);
       $rep->run('pdf', true);
-      $para->content = "\n%Start SubReport\n" . $this->mayflower->subReportGetPopped() . "\n%End SubReport\n"; 
+      $para->content = "\n%Start SubReport\n" . $rep->subReportBuff . "\n%End SubReport\n"; 
     }
     #$para->content = "(TEST)";
     $this->_pdf->printBoxPdf($para);            

@@ -25,17 +25,17 @@ class reportPaged extends Report
     }
     $this->layout =& new pageLayout($this, $isSubreport, $isDesignMode);
     $this->_pdf =& $this->_exporter->getExporterBasicClass($this->layout, !$isSubreport);
+    $this->mayflower =& mayflower::getInstance($this->layout, $this->_pdf, !$isSubreport);
     $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
-    $this->mayflower=& $this->_exporter->mayflower;
     if ($isSubreport) {
       $this->mayflower->subReportPush();
-      $this->_exporter->startcomment("StartSubreport"); // remove this!!!
+      $this->_pdf->startcomment("StartSubreport"); // remove this!!!
     } else {  
       $this->mayflower->StartReportBuffering();
     }
   }
   
-  /**
+  /** 
    * @access private
    */
   function _endReport()
@@ -45,8 +45,9 @@ class reportPaged extends Report
     }
     if ($this->_asSubReport) {
       $this->newPage();
-      $this->_exporter->comment("EndSubreport");
-      return $this->mayflower->subReportPop();
+      $this->_pdf->comment("EndSubreport");
+      $this->subReportBuff = $this->mayflower->subReportPop(); //a real copy
+      return;
     } else {
       if (!$this->layout->designMode) {
         $this->_printNormalSection($this->PageFooter);
@@ -118,7 +119,7 @@ class reportPaged extends Report
   {
     $this->_exporter->startSection($section, $width, $buffer);
     $this->mayflower->sectionPush();
-    $this->_exporter->comment('Start Section:' . ($this->mayflower->getSectionIndexForCommentOnly()));
+    $this->_pdf->comment('Start Section:' . ($this->mayflower->getSectionIndexForCommentOnly()));
     $this->_pdf->fillBackColorInWindow($section->BackColor, $section->_report->Width, $section->Height);
   }  
 
@@ -161,7 +162,7 @@ class reportPaged extends Report
       $this->endSectionInSubReport($sectionHeight, $keepTogether);
       return;
     }  
-    $this->_exporter->comment("end Body-Section:1\n");
+    $this->_pdf->comment("end Body-Section:1\n");
     $secBuff = $this->mayflower->sectionPop();
     $startPage = floor($this->mayflower->posY / $this->mayflower->layout->printHeight);
     $endPage   = floor(($this->mayflower->posY + $sectionHeight) / $this->mayflower->layout->printHeight);
@@ -198,7 +199,7 @@ class reportPaged extends Report
   
   function endSectionInSubReport($sectionHeight, $keepTogether)
   {
-    $this->_exporter->comment("end Subreport-Body-Section:2\n");
+    $this->_pdf->comment("end Subreport-Body-Section:2\n");
     $buff = $this->mayflower->sectionPop();
 
     $this->mayflower->reportStartPageBody();
@@ -240,6 +241,11 @@ class reportPaged extends Report
     }  
   }
   
+  function Bookmark($txt,$level=0,$y=0)
+  {
+    $this->_pdf->Bookmark($txt, $level, $y, $this->mayflower->page(), $this->mayflower->posYinPage(), $this->mayflower->inReport());
+  }
+
 
 
 
@@ -309,3 +315,153 @@ class pageLayout
   }
 }
 
+class mayflower
+{
+  var $pdf;
+
+  var $subReportIndex = 0;
+  var $subReportbuff;
+  var $sectionIndex = 0;
+  var $sectionBuff;
+  
+  var $reportBuff;
+  var $sectionType;    // 'Head', 'Foot' or ''
+  var $layout;
+  
+  function mayflower(&$layout, &$pdf)
+  {
+    $this->actpageNo = -1;
+    $this->layout =& $layout;
+    $this->pdf =& $pdf;
+  }  
+
+  function &getInstance(&$layout, &$pdf, $reset)
+  {
+    static $instance;
+    if (is_null($instance) || $reset) {
+      $instance = new mayflower($layout, $pdf);
+    }  
+    return $instance;
+  }
+
+  function _setOutBuff()
+  { 
+    if ($this->sectionIndex > $this->subReportIndex) {
+      $this->pdf->setOutBuffer($this->sectionBuff[$this->sectionIndex], 'section');
+    } elseif ($this->subReportIndex > 0) {
+      $this->pdf->setOutBuffer($this->subReportbuff[$this->subReportIndex], 'subReport');
+    } elseif ($this->inReport()) {
+      $this->pdf->setOutBuffer($this->reportPages[$this->actpageNo][$this->sectionType], "report page".$this->sectionType.$this->actpageNo);
+    } else {
+      $this->pdf->unsetBuffer();
+    }  
+  }
+  
+  function page()
+  {
+    return $this->actpageNo + 1;
+  }
+  
+  function newPage()
+  {
+    $this->posY = ($this->actpageNo + 1) * $this->layout->printHeight;
+  }
+
+  function posYinPage()
+  {
+    return ($this->posY - ($this->actpageNo * $this->layout->printHeight));
+  }
+  
+  function setPageIndex($index)
+  {
+    $this->actpageNo = $index;
+    $this->_setOutBuff();
+  }        
+  
+  function getPageIndex()
+  {
+    return $this->actpageNo;
+  }  
+  
+  function reportStartPageHeader()
+  {
+    $this->sectionType = 'Head';
+    $this->_setOutBuff();
+  }
+    
+  function reportStartPageBody()
+  {
+    $this->sectionType = '';
+    $this->_setOutBuff();
+  }
+    
+  function reportStartPageFooter()
+  {
+    $this->sectionType = 'Foot';
+    $this->_setOutBuff();
+  }  
+   
+  function inSubReport()
+  {
+    return  ($this->subReportIndex > 0);
+  }   
+
+  function subReportPush()
+  {
+   $this->subReportIndex++;
+   $this->subReportBuff[$this->subReportIndex] = '';
+   $this->_setOutBuff();
+  }
+   
+  function subReportPop()
+  {
+    $this->subReportIndex--;
+    $this->_setOutBuff();
+    return $this->subReportbuff[$this->subReportIndex + 1];
+  }
+  
+  function sectionPush()
+  {
+    $this->sectionIndex++;
+    $this->sectionBuff[$this->sectionIndex] = '';
+    $this->_setOutBuff();
+  }
+  
+  function sectionPop()
+  {
+    $this->sectionIndex--;
+    $this->_setOutBuff();
+    return $this->sectionBuff[$this->sectionIndex + 1];
+  }
+  
+  function getSectionIndexForCommentOnly()
+  {
+    return $this->sectionIndex;
+  } 
+  
+  
+  function startReportBuffering()
+  {
+    if ($this->inReport()) {
+      Amber::showError('Error', 'startReport: a report is already started!');
+      die();
+    }  
+    $this->posY = 0;
+  }
+  
+  function endReportBuffering()
+  {
+    if (!$this->inReport()) {
+      Amber::showError('Error', 'endReport: no report open');
+      die();
+    }  
+    $this->posY = 0;
+    $this->actpageNo = -1;
+    $this->_setOutBuff();
+  }
+
+  function inReport()
+  {
+    return ($this->actpageNo >= 0);
+  }      
+}
