@@ -46,18 +46,7 @@ class ExporterFPdf extends Exporter
     if ($report->Controls) {
       foreach (array_keys($report->Controls) as $ctrlName) {
         if (!empty($report->Controls[$ctrlName]->FontName)) {
-          $font = strtolower($report->Controls[$ctrlName]->FontName);
-          if (!$this->_pdf->_fontList[$font]) {
-            // if You get
-            // FPDF error: Could not include font definition file
-            // uncomment the following line to find font-file
-            //echo $font . '<br>';
-            $this->_pdf->AddFont($font);
-            $this->_pdf->AddFont($font, 'B');
-            $this->_pdf->AddFont($font, 'I');
-            $this->_pdf->AddFont($font, 'BI');
-            $this->_pdf->_fontList[$font] = $font;
-          }
+          $this->_pdf->registerFontFamily($report->Controls[$ctrlName]->FontName);
         }
       }
     }

@@ -385,6 +385,22 @@ $this->_out("\n%end Head/Foot-Section:" . ($this->_inSection + 1) . "\n\n");
     //echo "pdf->SetFillColor($r, $g, $b);<br>";
   }
 
+  function registerFontFamily($name)
+  {
+    $font = strtolower($name);
+    if (!$this->_fontList[$font]) {
+      // if You get
+      // FPDF error: Could not include font definition file
+      // uncomment the following line to find font-file
+      //echo $font . '<br>';
+      $this->AddFont($font);
+      $this->AddFont($font, 'B');
+      $this->AddFont($font, 'I');
+      $this->AddFont($font, 'BI');
+      $this->_fontList[$font] = $font;
+    }
+  }
+
 
   
   
