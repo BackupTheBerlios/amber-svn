@@ -372,7 +372,7 @@ class TextBox extends FontBox
   
   function setControlValue(&$report)
   { 
-      if (!isset($this->ControlSource)) {
+    if (!isset($this->ControlSource)) {
       # $this->Value = '#NoValue#';
     } elseif ($this->ControlSource == '') {
       $this->Value = Null;

@@ -455,7 +455,9 @@ class Report extends AmberObject
       $keys = array_keys($this->Controls);
       foreach ($keys as $index) {
         $ctrl  =& $this->Controls[$index];
-        $ctrl->setControlValue($this);
+        if (isset($this->ControlSource)) {  // Control can be bound
+          $ctrl->setControlValue($this);
+        }  
       }
     }
   }
