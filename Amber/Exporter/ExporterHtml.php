@@ -32,7 +32,6 @@ class ExporterHtml extends Exporter
 
   function startReport(&$report)
   {
-    //ob_start();
     parent::startReport($report);
     $this->_blankPage = true;
 
@@ -272,7 +271,8 @@ Class ControlExporterHtml
 
   function getTag(&$control, $value=Null)
   {
-    $out =  "\t\t<!-- " . $control->Name . " --><div class=\"s" . $control->id . '"';
+    //$out =  "\t\t<!-- " . $control->Name . " --><div class=\"s" . $control->id . '"';
+    $out =  "\t\t<div class=\"s" . $control->id . '"';
 
     $this->_stdValues['Value'] =  $control->Properties['Value'];
     if ($control->Properties == $this->_stdValues) {
@@ -283,7 +283,7 @@ Class ControlExporterHtml
     }
     $out .= ">";
 
-    $out .= isset($value) ? $value : '&nbsp;';
+    $out .= isset($value) ? htmlspecialchars($value) : '&nbsp;';
     $out .= "</div>\n";
 
     return $out;
