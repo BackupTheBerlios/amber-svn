@@ -197,7 +197,8 @@ class ExporterHtml extends Exporter
       'rectangle' => 'RectangleExporterHtml',
       'textbox'   => 'TextBoxExporterHtml',
       'subreport' => 'SubReportExporterHtml',
-      'combobox' => 'ComboBoxExporterHtml'
+      'combobox' => 'ComboBoxExporterHtml',
+      'dummy' => 'DummyExporterHtml'
     );
     $type = strtolower(get_class($ctrl));
     if (!array_key_exists($type, $classList)) {
@@ -507,6 +508,16 @@ class ComboBoxExporterHtml extends ControlExporterHtml
     $out .= "</select>\n";
     echo $out;
   }
+}
+
+/**
+ *
+ * @package PHPReport
+ * @subpackage Exporter
+ *
+ */
+class DummyExporterHtml extends ControlExporterHtml
+{
 }
 
 ?>

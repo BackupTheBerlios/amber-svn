@@ -193,8 +193,8 @@ class Amber
       }
       while (list($key, $val) = each($v)) {
         $result .= '<tr><td><font size="1" color="blue">' . htmlspecialchars($key) . '</font></td><td>';
-        if (is_array($v[$key]) || is_object($v[$key]) || is_resource($v[$key])) {
-          $result .= Amber::_dumpArray($v[$key]);
+        if (is_array($val) || is_object($val) || is_resource($val)) {
+          $result .= Amber::_dumpArray($val);
         } else {
           if (empty($val)) {
             $result .= '<font color="lightgrey" size="1">' . htmlspecialchars('<Empty>') . '</font><br />';

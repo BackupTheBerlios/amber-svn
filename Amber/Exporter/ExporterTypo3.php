@@ -190,7 +190,8 @@ class ExporterTypo3 extends Exporter
       'rectangle' => 'RectangleExporterHtml',
       'textbox'   => 'TextBoxExporterHtml',
       'subreport' => 'SubReportExporterHtml',
-      'combobox' => 'ComboBoxExporterHtml'
+      'combobox' => 'ComboBoxExporterHtml',
+      'dummy' => 'DummyExporterHtml'
     );
     $type = strtolower(get_class($ctrl));
     if (!array_key_exists($type, $classList)) {

@@ -10,6 +10,7 @@
 ControlFactory::register('100', 'Label');
 ControlFactory::register('101', 'Rectangle');
 //ControlFactory::register('104', 'CommandButton');
+ControlFactory::register('106', 'Dummy'); // Line
 ControlFactory::register('109', 'TextBox');
 ControlFactory::register('111', 'ComboBox');
 ControlFactory::register('112', 'SubReport');
@@ -453,7 +454,7 @@ class SubReport extends Control
     if (!$this->report) {
       $amber =& Amber::getInstance();
       #$this->report = $this->_parent->....  // make a copy of the report
-      $this->report =& $amber->LoadReport($this->SourceObject);
+      $this->report =& $amber->OpenReport($this->SourceObject);
     }
 
     # $this->report->setFilter(....)
@@ -535,6 +536,35 @@ class ComboBox extends Control
     foreach ($data as $idx => $row) {
       $this->_data[$row[$bound]] = $row[1];
     }
+  }
+}
+
+/**
+*
+* @package PHPReport
+* @subpackage Controls
+*
+**/
+class Dummy extends Control
+{
+  /**
+  *
+  * @access public
+  *
+  */
+  function Dummy()
+  {
+    parent::Control();
+  }
+
+  function printNormal()
+  {
+    return 0;
+  }
+
+  function printDesign(&$buffer)
+  {
+    return 0;
   }
 }
 
