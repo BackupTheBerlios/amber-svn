@@ -27,9 +27,12 @@ class reportPaged extends Report
     $this->_pdf =& $this->_exporter->getExporterBasicClass($this->layout, !$this->_asSubReport);
     $this->mayflower =& mayflower::getInstance($this->_pdf, !$this->_asSubReport);
     $this->_exporter->startReport($this, $isSubreport, $isDesignMode);
+    if ($isDesignMode) {
+      $this->initDesignHeader();
+    }  
     if ($isSubreport) {
       $this->mayflower->bufferPush();
-      $this->_pdf->startcomment("StartSubreport"); // remove this!!!
+      $this->_pdf->comment("StartSubreport"); // remove this!!!
     } else {  
       $this->mayflower->StartReportBuffering();
       $this->posY = 0;
@@ -116,15 +119,15 @@ class reportPaged extends Report
     $this->_exporter->startSection($section, $width, $buffer);
     $this->mayflower->bufferPush();
     $this->_pdf->comment('Start Section:');
-    $this->_pdf->fillBackColorInWindow($section->BackColor, $section->_report->Width, $section->Height);
+#    $this->_pdf->fillBackColorInWindow($section->BackColor, $section->_report->Width, $section->Height);
   }  
 
   function _endSection(&$section, $height, &$buffer)
   {
     if (!$section->_PagePart) {
-      $this->endNormalSection($height, $section->KeepTogether);
+      $this->endNormalSection($section, $height, $section->KeepTogether);
     } elseif ($this->layout->designMode) {
-      $this->endNormalSection($height, false);
+      $this->endNormalSection($section, $height, false);
     } elseif ($section->_PagePart == 'Foot') {
       $this->pageFooterEnd();
     } else {
@@ -133,29 +136,71 @@ class reportPaged extends Report
     $this->_exporter->endSection($section, $height, $buffer);
   }
   
-  function sectionPrintDesignHeader($text)
+  function initDesignHeader()
   {
-    $this->mayflower->bufferPush();
-    $this->_pdf->comment('Start Section:');
-    $height = 240; //12pt
+    $this->_designSection =& new section('');
+    $this->_designSection->Name = '';
+    $this->_designSection->Height = 240;
+    $this->_designSection->Visible = true;
+    $this->_designSection->BackColor = 0xFFFFFF;
+    $this->_designSection->CanGrow = false;
+    $this->_designSection->CanShrink = false;
+    $this->_designSection->KeepTogether = false;
+    $this->_designSection->EventProcPrefix = '';
+    $this->_designSection->_parent =& $this;
+    $this->_designSection->_OnFormatFunc = 'allSections_Format';
+    
+    $ctlProp = array(
+      'Name' => '',
+      'Left' => 2,
+      'Top' => 2,
+      'Width' => $this->Width-4,
+      'Height' => 236,
+      'Visible' => true,
+      'BackStyle' => 1,
+      'BackColor' => 0xDDDDDD, //gray
+      'BorderStyle' => 1,
+      'BorderColor' => 0, // black
+      'BorderWidth' => 0, // as small as possible ("Haarlinie")
+      'BorderLineStyle' => 0,
+      'zIndex' => 0,
+      'Value' => '',
+      '_OldValue' => '',
 
-    $this->_pdf->_backColor(0xDDDDDD);
-    $this->_pdf->_textColor(0x000000);
-    $this->_pdf->SetFont('helvetica', '', 8);
-    $this->_pdf->SetLineWidth(10); // 0.5pt
-    $this->_pdf->_borderColor(0x000000);
+      'ForeColor' => 0x000000,
+      'FontName' => 'Arial',
+      'FontSize' => 8,
+      'FontWeight' => 500,
+      'TextAlign' => 0,
+      'FontItalic' => false,
+      'FontUnderline' => false,
+      
+      'Caption' => 'Test'
+    );
 
-    $border = 1;
-    $this->_pdf->SetXY(0, 0);
-    $this->_pdf->Cell($this->Width, $height, $text, $border, 1, 'L', 1);
-
-    $this->endNormalSection($height+1, true);
+    $ctl =& ControlFactory::create(100, $ctlProp, $this->hReport);
+    $this->_exporter->setControlExporter($ctl);
+    $this->_designSection->Controls['Label'] =& $ctl;
   }
   
-  function endNormalSection($sectionHeight, $keepTogether)
+  function sectionPrintDesignHeader($text)
+  {
+    $this->_designSection->Controls['Label']->Caption = $text;
+    $buffer = '';
+    
+    $this->_startSection($this->_designSection, $this->Width, $buffer);
+    $height = $this->_designSection->printNormal($buffer);
+    $this->_endSection($this->_designSection, $height, $buffer);
+
+#    $this->mayflower->bufferPush();
+#    $this->endNormalSection($height+1, true);
+  }
+  
+  
+  function endNormalSection(&$section, $sectionHeight, $keepTogether)
   {
     if ($this->_asSubReport) {
-      $this->endSectionInSubReport($sectionHeight, $keepTogether);
+      $this->endSectionInSubReport($section, $sectionHeight, $keepTogether);
       return;
     }  
     $this->_pdf->comment("end Body-Section:1\n");
@@ -184,16 +229,16 @@ class reportPaged extends Report
         $formatCount = $page - $startPage + 1;
         $this->_exporter->onPrint($cancel, $formatCount);
         if (!$cancel) {
-          $this->_pdf->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $secBuff);
+          $this->_pdf->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $secBuff);
         }
       } else {
-        $this->_pdf->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $secBuff);
+        $this->_pdf->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $secBuff);
       }      
     }
     $this->posY += $sectionHeight;
   }
   
-  function endSectionInSubReport($sectionHeight, $keepTogether)
+  function endSectionInSubReport(&$section, $sectionHeight, $keepTogether)
   {
     $this->_pdf->comment("end Subreport-Body-Section:2\n");
     $buff = $this->mayflower->bufferPop();
@@ -203,7 +248,7 @@ class reportPaged extends Report
     $formatCount = 1;
     $this->_exporter->onPrint($cancel, $formatCount);
     if (!$cancel) {
-      $this->_pdf->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $buff);
+      $this->_pdf->outSection(0, $this->posY, $this->layout->reportWidth, $sectionHeight, $section->BackColor, $buff);
     }
 
     $this->posY += $sectionHeight;

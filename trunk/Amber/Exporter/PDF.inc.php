@@ -95,12 +95,6 @@ class PDF extends FPDF
     $this->_out("\n%$s\n");
   }
   
-  function startComment($s)
-  // this function mere for identity during refactoring. replace with comment
-  {
-    $this->_out("\n%$s\n");
-  }      
-  
   function outWindowRelative($deltaX, $deltaY, $x, $y, $w, $h, &$dataBuff)
   {
     $this->SetClipping($x, $y, $w, $h);
@@ -120,27 +114,24 @@ class PDF extends FPDF
     $this->RemoveCoordinate();
   }
   
-  function outSection($x, $y, $w, $h, &$secBuff)
+  function outSection($x, $y, $w, $h, $backColor, &$secBuff)
   {
     $this->SetCoordinate(-$x, -$y);
     $this->SetClipping(0, 0, $w, $h);
-    $this->_out($secBuff);
-    $this->RemoveClipping();
-    $this->RemoveCoordinate();
-  }
-
-  
-  function fillBackColorInWindow($color, $maxWidth, $maxHeight)
-  {
+    
     $this->SetXY(0, 0);
-    $this->_backColor($color);
+    $this->_backColor($backColor);
     $fill = true;
     $text = '';
     $border = 0;
     $ln = 0; //pos after printing
     $align = 'C';
     $backstyle= 1;
-    $this->Cell($maxWidth, $maxHeight, $text, $border, $ln, $align, $fill);
+    $this->Cell($w, $h, $text, $border, $ln, $align, $fill);
+
+    $this->_out($secBuff);
+    $this->RemoveClipping();
+    $this->RemoveCoordinate();
   }
 
   function printBox(&$para)
