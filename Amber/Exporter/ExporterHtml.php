@@ -30,13 +30,15 @@ class ExporterHtml extends Exporter
 
   // Report - html
 
-  function startReport(&$report)
+  function startReport(&$report, $asSubreport=false)
   {
-    parent::startReport($report);
+    parent::startReport($report, $asSubreport);
     $this->_blankPage = true;
 
-    $ret = "<html>\n<head>\n";
-    $ret .= "\t<title>" . $this->_docTitle . "</title>\n";
+    if (!$this->_asSubreport) {
+      $ret = "<html>\n<head>\n";
+      $ret .= "\t<title>" . $this->_docTitle . "</title>\n";
+    }  
     $ret .= "\t<style type=\"text/css\">\n";
     if (is_array($report->Controls)) {
       foreach ($report->Controls as $ctrl) {
@@ -45,15 +47,20 @@ class ExporterHtml extends Exporter
       }
     }
     $ret .= "</style>\n";
-    $ret .= "</head>\n";
-    $ret .= "<body style=\"background-color: #aaaaaa;\">\n";
+    
+    if (!$this->_asSubreport) {
+      $ret .= "</head>\n";
+      $ret .= "<body style=\"background-color: #aaaaaa;\">\n";
+    }  
     echo $ret;
   }
 
   function endReport(&$report)
   {
     parent::endReport($report);
-    echo "</body>\n</html>\n";
+    if (!$this->_asSubreport) {
+      echo "</body>\n</html>\n";
+    }  
   }
 
   // Section - html

@@ -234,17 +234,19 @@ class Report extends AmberObject
   {
     $this->_installExporter($type);
     $this->_exporter->setDocumentTitle($this->Name);
-
+    $this->_startReport();
+    
     $this->OnOpen($cancel);
     if ($cancel) {
+      $this->_endReport();
       return;
     }
     $this->_fetchDataFromDatabase();
-    $this->_startReport();
     $this->_setHasData();
     if ($this->HasData == 0) {
       $this->OnNoData($cancel);
       if ($cancel) {
+        $this->_endReport();
         return;
       }
     }
@@ -276,8 +278,8 @@ class Report extends AmberObject
     $this->_printNormalGroupFooters($maxLevel, 0);
     $this->_printNormalSection('ReportFooter');
     $this->_exporter->newPage();
-    $this->_endReport();
     $this->OnClose();
+    $this->_endReport();
   }
 
   function resetMargin()

@@ -40,10 +40,11 @@ class Exporter
   }
 
   // Report
-  function startReport(&$report)
+  function startReport(&$report, $asSubreport=false)
   {
     $this->_start = microtime();
     $this->_report =& $report;
+    $this->_asSubreport = $asSubreport;
   }
 
   function endReport(&$report)
