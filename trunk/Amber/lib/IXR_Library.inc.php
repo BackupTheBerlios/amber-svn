@@ -147,7 +147,9 @@ class IXR_Message {
         if (trim($this->message) == '') {
             return false;
         }
-        $this->_parser = xml_parser_create('');
+        $this->message = '<?xml version="1.0" encoding="ISO-8859-1"?>' . $this->message;   //explicitly set input codepage
+        $this->_parser = xml_parser_create('ISO-8859-1');                                  //FIXME: set codepage by parameter
+        
         // Set XML parser to take the case of tags in to account
         xml_parser_set_option($this->_parser, XML_OPTION_CASE_FOLDING, false);
         // Set XML parser callback functions
