@@ -13,7 +13,9 @@ if (isset($_POST['doUpdate'])) {
       'Username', 'Password', 'Host', 'Driver', 'DbName', 'Medium', 'BasePath',
       'SysUsername', 'SysPassword', 'SysHost', 'SysDriver', 'SysDbName'
     );
-    $cfg->fromXML($filename);
+    if (file_exists($filename)) {
+      $cfg->fromXML($filename);
+    }
 
     foreach ($props as $p) {
       $methodName = 'set' . $p;
@@ -33,7 +35,9 @@ if (isset($_POST['doUpdate'])) {
 
 // Re-read for display
 $cfg = new AmberConfig();
-$cfg->fromXML($filename);
+if (file_exists($filename)) {
+  $cfg->fromXML($filename);
+}
 
 ?>
 
@@ -110,6 +114,7 @@ $cfg->fromXML($filename);
   </table>
 
   <input name="driver" type="hidden" value="mysql"></td>
+  <input name="sysdriver" type="hidden" value="mysql">
 
 </form>
 
