@@ -1,17 +1,3 @@
-<?php
-
-require_once '../XMLLoader.php';
-
-$filename = '../conf/localconf.xml';
-
-if (isset($_POST['doUpdate'])) {
-  updateLocalconf($filename, $_POST);
-}
-$conf = readLocalconf($filename);
-$conf = $conf['config'];
-
-?>
-
 <html>
   <head>
     <title>Amber</title>
@@ -54,6 +40,30 @@ $conf = $conf['config'];
     </tr>
   </table>
 </p>
+
+
+<?php
+
+require_once '../XMLLoader.php';
+
+$filename = '../conf/localconf.xml';
+
+if (isset($_POST['doUpdate'])) {
+  if (!updateLocalconf($filename, $_POST)) {
+    if (!is_writable($filename)) {
+      $msg = "Unable to update localconf.xml<p />" . htmlentities(dirname(__FILE__) . '/' . $filename) . " needs to be writeable";
+    } else {
+      $msg = "Unable to update localconf.xml<p /> Unknown error, please report!";
+    }
+  } else {
+    $msg = "Configuraton successfully written to:<p />" . htmlentities(realpath($filename));
+  }
+  echo '<div align="center"><div style="text-align: left; color: #000000; width: 450; font-size: 10pt; border: #ee0000 2pt solid; background-color: #ffffff; padding: 5px;"><strong>' . $msg . '</strong></div></div>';
+}
+$conf = readLocalconf($filename);
+$conf = $conf['config'];
+
+?>
 
 <p />
 
@@ -121,12 +131,17 @@ function updateLocalconf($fileName, $p)
     'sys_objects' => array('medium')
   );
 
-  $fp = fopen($fileName, 'w');
+  $fp = @fopen($fileName, 'w');
+  if ($fp == false) {
+    return false;
+  }
   fwrite($fp, '<?xml version="1.0" encoding="iso-8859-1"?>' . "\n");
   fwrite($fp, "<config>\n");
   writeArray($fp, $properties);
   fwrite($fp, "</config>\n");
   fclose($fp);
+
+  return true;
 }
 
 function writeArray($filehandle, $confArray)
