@@ -19,9 +19,6 @@ class PDF extends FPDF
   var $_inSubReport;    // integer index to subReportBuff
   var $_subReportBuff;  //
   var $_sectionBuff;    // array buffer for sections (to make sections re-entrand)
-#  var $reportBuff->reportPages;    // buffer when inReport
-#  var $reportBuff->actpageNo;      // pageNumber
-#  var $reportBuff->sectionType;    // 'Head', 'Foot' or ''
 
 
   //////////////////////////////////////////////////////////////////////////
@@ -39,12 +36,6 @@ class PDF extends FPDF
   //
   //////////////////////////////////////////////////////////////////////////
        
-
-
-  function page()
-  {
-    return $this->reportBuff->actpageNo + 1;
-  }
 
   function newPage()
   {
@@ -87,7 +78,7 @@ class PDF extends FPDF
     } elseif ($this->_inSubReport) {
       $this->_subReportBuff[$this->_inSubReport] .= $s . "\n";     
     } elseif ($this->_inReport) {
-      $this->reportBuff->reportPages[$this->reportBuff->actpageNo][$this->reportBuff->sectionType] .= $s . "\n";
+      $this->reportBuff->out($s);
     } else {
       parent::_out($s);
     }

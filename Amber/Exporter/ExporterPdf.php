@@ -68,6 +68,12 @@ class reportBuff
   var $reportPages;    // buffer when inReport
   var $actpageNo;      // pageNumber
   var $sectionType;    // 'Head', 'Foot' or ''
+  
+  
+  function out(&$s)
+  {
+    $this->reportPages[$this->actpageNo][$this->sectionType] .= $s . "\n";
+  }
 }
 
 
@@ -262,7 +268,7 @@ class ExporterFPdf extends Exporter
 
   function page()
   {
-    return $this->_pdf->page();
+    return $this->reportBuff->actpageNo + 1;
   }
 
   function newPage()
