@@ -8,7 +8,7 @@ require_once 'Amber/Amber.php';
 require_once 'Amber/AmberConfig.php';
 require_once 'Amber/XMLLoader.php';
 
-$filename = __AMBER_BASE__ . '/conf/localconf.xml';
+$filename = dirname(__FILE__) . '/../conf/localconf.xml';
 
 /**
  * @ignore

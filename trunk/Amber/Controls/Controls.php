@@ -359,7 +359,7 @@ class TextBox extends FontBox
   {
     if ($this->RunningSum) {
       $this->_sum += $this->Value;
-      $this->Value = $this->_sum;
+      $this->Value += $this->_sum;
     }
   }
 
@@ -367,6 +367,21 @@ class TextBox extends FontBox
   {
     if ($this->RunningSum == 1) {
       $this->_sum = 0;
+    }
+  }
+  
+  function setControlValue(&$report)
+  { 
+      if (!isset($this->ControlSource)) {
+      # $this->Value = '#NoValue#';
+    } elseif ($this->ControlSource == '') {
+      $this->Value = Null;
+    } elseif ($ctrl->ControlSource[0] == '=') {
+      $this->Value = '#exp';
+    } elseif ($this->RunningSum == 1) {
+      $this->Value = $report->Cols[$this->ControlSource];
+    } else {
+      $this->Value = $report->Cols[$this->ControlSource];
     }
   }
 }

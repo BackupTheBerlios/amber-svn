@@ -455,15 +455,7 @@ class Report extends AmberObject
       $keys = array_keys($this->Controls);
       foreach ($keys as $index) {
         $ctrl  =& $this->Controls[$index];
-        if (!isset($ctrl->ControlSource)) {
-          # $ctrl->Value = '#NoValue#';
-        } else if ($ctrl->ControlSource == '') {
-          $ctrl->Value = Null;
-        } else if ($ctrl->ControlSource[0] == '=') {
-          $ctrl->Value = '#exp';
-        } else {
-          $ctrl->Value = $this->Cols[$ctrl->ControlSource];
-        }
+        $ctrl->setControlValue($this);
       }
     }
   }
@@ -617,7 +609,7 @@ class Report extends AmberObject
   {
     for ($i = $maxLevel-1; $i >= $level; $i--) {
       if (isset($this->GroupFooters[$i])) {
-        $this->GroupFooters[$i]->printDesign($this->GroupLevels[$i]->ControlSource);
+        $this->_printDesignSection($this->GroupFooters[$i], $this->GroupLevels[$i]->ControlSource);
       }
     }
   }
