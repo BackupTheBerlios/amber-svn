@@ -10,16 +10,13 @@
 
 class ReportSubReport extends ReportPaged
 {
-  function _startReport($isSubreport)
+/*  function _startReport($isSubreport)
   {
     parent::_startReport($isSubreport);
 
     $this->_exporter->bufferStart();
   }
   
-    /** 
-   * @access private
-   */
   function _endReport()
   {
     #$this->newPage();
@@ -39,5 +36,5 @@ class ReportSubReport extends ReportPaged
 
     $this->posY += $height;
   }
-
+*/
 }

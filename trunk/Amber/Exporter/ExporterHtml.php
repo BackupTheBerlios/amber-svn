@@ -102,12 +102,12 @@ class ExporterHtml extends Exporter
     echo $secBuff;
   }
     
-  function outSectionEnd1()
+  function outSectionEnd()
   {
     echo "\t</div name='sectionEND'>\n";
   }
   
-  function outSectionStart1($y, $w, $h, $backColor, $sectionName='')
+  function outSectionStart($y, $w, $h, $backColor, $sectionName='')
   {
     $style['left'] = 0;
     $style['top'] = $this->_html_twips($y);
@@ -119,13 +119,13 @@ class ExporterHtml extends Exporter
   }
 
   
-  function startPage()
+  function startPage($paperHeight)
   {
     $style['position'] = 'relative';
     #$style['left'] = 0;
     #$style['top'] = 0;
     $style['background-color'] = "#FFFFFF";
-    $style['height'] = $this->_html_twips($this->layout->paperHeight);
+    $style['height'] = $this->_html_twips($paperHeight);
     $style['width'] = $this->_html_twips($this->layout->paperWidth);
     echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">\n";
     $this->comment('###PAGE Start###');
@@ -164,7 +164,7 @@ class ExporterHtml extends Exporter
 
   // Section - html
 
-  function outSectionStart($y, $width, $height, $backColor, $sectionName='')
+  function outSectionStart1($y, $width, $height, $backColor, $sectionName='')
   {
     $cheatWidth  = 59; // cheat: add 1.5pt to height and 3pt to width so borders get printed in Mozilla ###FIX ME
     if ($height == 0) {
@@ -198,7 +198,7 @@ class ExporterHtml extends Exporter
 
   }
   
-  function outSectionEnd()
+  function outSectionEnd1()
   {
     $out .= "\t</div></div>\n";
     $this->_base->_out($out);
@@ -619,11 +619,12 @@ class SubReportExporterHtml extends ControlExporterHtml
       return $out;
     }
 
-    ob_start();
-    $rep->resetMargin(true);
+    #ob_start();
+    #$rep->resetMargin(true);
     $rep->run('html', true);
-    $repHtml = ob_get_contents();
-    ob_end_clean();
+    #$repHtml = ob_get_contents();
+    $repHtml = $rep->subReportBuff;
+    #ob_end_clean();
 
     // Get tags for subreport control
     $out = parent::getTag($control, '##CONTENT##');

@@ -709,15 +709,19 @@ class Report extends AmberObject
 //
 //////////////////////////////////////////////////
 
-  /**
-   * @access private
-   */
+
+  function setContinous()
+  {
+    $this->isContinous = true;
+  }  
+
+
   function _startReport($isSubreport)
   {
     if ($this->designMode) {
       $this->initDesignHeader();
     }
-    $this->layout =& new pageLayout($this, $this->_asSubReport, $this->designMode);
+    $this->layout =& new pageLayout($this, $isSubreport, $this->designMode, $this->isContinous);
     $this->_exporter->startReport($this, $isSubreport, $this->designMode);
   }
 

@@ -16,7 +16,6 @@ class reportPaged extends Report
   function _startReport($isSubreport)
   {
     parent::_startReport($isSubreport);
-    $this->actPage =& new WidePage($this->layout);
   }
 
   /** 
@@ -24,36 +23,45 @@ class reportPaged extends Report
    */
   function _endReport()
   {
-    if (!$this->designMode) {
-      $this->_printNormalSection($this->PageFooter);
-    }  
-
-    $this->actPage->body = $this->_exporter->bufferEnd();
-    $this->outPage($this->actPage);
-    
+    $this->closePage();
     $this->_exporter->endReport($this);
   }
 
-  function outPage(&$page)
+  function closePage()
   {
-    for($pageX = 0; $pageX <= $this->layout->pagesHorizontal - 1; $pageX++) {
-      $this->_exporter->startPage();
-      $deltaX = $pageX * $this->layout->printWidth;
-      $x = $this->layout->leftMargin;
-      $w = $this->layout->printWidth;
-
-      $y = $this->layout->topMargin;
-      $h = $this->layout->pageHeaderHeight;
-      $this->_exporter->outWindowRelative($deltaX, $x, $y, $w, $h, $page->header);
-
-      $y = $this->layout->topMargin + $this->layout->pageHeaderHeight;
-      $h = $this->layout->printHeight;
-      $this->_exporter->outWindowRelative($deltaX, $x, $y, $w, $h, $page->body);
-
-      $y = $this->layout->topMargin + $this->layout->pageHeaderHeight + $this->layout->printHeight;
-      $h = $this->layout->pageFooterHeight;
-      $this->_exporter->outWindowRelative($deltaX, $x, $y, $w, $h, $page->footer);
-      $this->_exporter->endPage();
+    if ($this->layout->pageNo >= 0) {
+      if (!$this->layout->noHeadFoot) {  
+        $this->_printNormalSection($this->PageFooter);
+      }  
+      $this->layout->body = $this->_exporter->bufferEnd();
+      $this->outPage();
+    }  
+  }
+  
+  function outPage()
+  {
+    if ($this->layout->asSubReport) {
+      $this->subReportBuff = $this->layout->body;
+    } else {
+      for($pageX = 0; $pageX <= $this->layout->pagesHorizontal - 1; $pageX++) {
+        $this->_exporter->startPage($this->layout->paperHeight());
+        $deltaX = $pageX * $this->layout->printWidth;
+        $x = $this->layout->leftMargin;
+        $w = $this->layout->printWidth;
+  
+        $y = $this->layout->topMargin;
+        $h = $this->layout->pageHeaderHeight;
+        $this->_exporter->outWindowRelative($deltaX, $x, $y, $w, $h, $this->layout->header);
+  
+        $y = $this->layout->topMargin + $this->layout->pageHeaderHeight;
+        $h = $this->layout->printHeight();
+        $this->_exporter->outWindowRelative($deltaX, $x, $y, $w, $h, $this->layout->body);
+  
+        $y = $this->layout->topMargin + $this->layout->pageHeaderHeight + $this->layout->printHeight();
+        $h = $this->layout->pageFooterHeight;
+        $this->_exporter->outWindowRelative($deltaX, $x, $y, $w, $h, $this->layout->footer);
+        $this->_exporter->endPage();
+      }
     }
   }
   
@@ -75,33 +83,27 @@ class reportPaged extends Report
     }
   }
   
-  
-  
   function endNormalSection(&$section, $sectionHeight, $keepTogether)
   {
     $secBuff = $this->_exporter->bufferEnd();
     if ($keepTogether) {                 // section doesn't fit on page and keepTogether
-      if ($this->actPage->newPageAvoidsSectionSplit($sectionHeight)) {
+      if ($this->layout->newPageAvoidsSectionSplit($sectionHeight)) {
         $this->newPage();
       }
     }
-    $startPage = $this->actPage->getPageWithOffset(0);
-    $endPage   = $this->actPage->getPageWithOffset($sectionHeight);
+    $startPage = $this->layout->getPageWithOffset(0);
+    $endPage   = $this->layout->getPageWithOffset($sectionHeight);
 
     for ($page = $startPage; $page <= $endPage; $page++) {
-      if (($page <> $this->actPage->pageNo)) {
-        if ($this->actPage->pageNo >= 0) {
-          $this->printPageFooter();
-          $this->actPage->body = $this->_exporter->bufferEnd();
-          $this->outPage($this->actPage);
-        }
-        $this->actPage->nextPage();
+     if (($page <> $this->layout->pageNo)) {
+        $this->closePage();
+        $this->layout->nextPage();
         $this->_exporter->bufferStart();
         $this->printPageHeader();
       }
-      $this->outSection($page - $startPage + 1, $this->actPage->posYinPage(), $sectionHeight, $secBuff, $section);
+      $this->outSection($page - $startPage + 1, $this->layout->posYinPage(), $sectionHeight, $secBuff, $section);
     }
-    $this->actPage->addHeight($sectionHeight);
+    $this->layout->addHeight($sectionHeight);
   }
   
   function pageHeaderEnd(&$section)
@@ -109,7 +111,7 @@ class reportPaged extends Report
     $buff = $this->_exporter->bufferEnd();
     $this->_exporter->bufferStart();
     $this->outSection(1, 0, $this->layout->pageHeaderHeight, $buff, $section);
-    $this->actPage->header = $this->_exporter->bufferEnd();
+    $this->layout->header = $this->_exporter->bufferEnd();
   }
 
   function pageFooterEnd(&$section)
@@ -117,31 +119,31 @@ class reportPaged extends Report
     $buff = $this->_exporter->bufferEnd();
     $this->_exporter->bufferStart();
     $this->outSection(1, 0, $this->layout->pageFooterHeight, $buff, $section);
-    $this->actPage->footer = $this->_exporter->bufferEnd();
+    $this->layout->footer = $this->_exporter->bufferEnd();
   }
   
   function printPageFooter()
   {
-    if (!$this->designMode) {  
+    if (!$this->layout->noHeadFoot) {  
       $this->_printNormalSection($this->PageFooter);
     }  
   }
   
   function printPageHeader()
   {
-    if (!$this->designMode) {  
+    if (!$this->layout->noHeadFoot) {  
       $this->_printNormalSection($this->PageHeader);
     }  
   }
   
   function Bookmark($txt,$level=0,$y=0)
   {
-    $this->_exporter->Bookmark($txt, $level, $y, $this->page(), $this->actPage->getposYinPage());
+    $this->_exporter->Bookmark($txt, $level, $y, $this->page(), $this->layout->getposYinPage());
   }
   
   function newPage()
   {
-    $this->actPage->fillRestOfPage();
+    $this->layout->fillRestOfPage();
   }
 
   
@@ -154,7 +156,7 @@ class reportPaged extends Report
       
   function page()
   {
-    return $this->actPage->pageNo + 1;
+    return $this->layout->pageNo + 1;
   }
 }
 
@@ -182,16 +184,42 @@ class pageLayout
   
   var $reportWidth;
   
+
+  var $header;
+  var $body;
+  var $footer;
+  var $pageNo = -1;
+  var $pagePosY;
+  var $posY;
+  
+
+  
+  
+  
   //////////////////////
   // 'calculated' fields
   /////////////////////
   var $printWidth;
   var $printHeight;
 
-  function pageLayout(&$report, $asSubReport, $designMode)
+  function pageLayout(&$report, $asSubReport, $designMode, $continous=false)
   { 
     $this->designMode = $designMode;
     $this->asSubReport = $asSubReport;   
+    if ($this->asSubReport) {
+      $this->noAutoPageY = true;
+      $this->noAutoPageX = true;
+      $this->noMargins = true;
+      $this->noHeadFoot = true;
+    }    
+    if ($this->designMode) {
+      $this->noHeadFoot = true;
+    }    
+    if ($continous) {
+      $this->noAutoPageY = true;
+      $this->noAutoPageX = true;
+    }
+    
     $this->unit = 1/20;
     $this->reportWidth = $report->Width;
     if ($report->Orientation == 'portrait') {
@@ -201,59 +229,41 @@ class pageLayout
       $this->paperWidth = $report->PaperHeight;
       $this->paperHeight = $report->PaperWidth;
     }  
-    #Amber::dump($size);
-    if ($asSubReport) {
+
+    if ($this->noMargins) {
       $this->rightMargin = 0;
       $this->leftMargin = 0;
       $this->topMargin = 0;
       $this->bottomMargin = 0;
-      $this->pageHeaderHeight = 0;
-      $this->pageFooterHeight = 0;
-    } else {  
+    } else {
       $this->rightMargin = $report->RightMargin;
       $this->leftMargin = $report->LeftMargin;
       $this->topMargin = $report->TopMargin;
       $this->bottomMargin = $report->BottomMargin;
-      if ($designMode) {
-        $this->pageHeaderHeight = 0;
-        $this->pageFooterHeight = 0;
-      } else {
-        $this->pageHeaderHeight = $report->PageHeader->Height;
-        $this->pageFooterHeight = $report->PageFooter->Height;
-      }
     }
-    $this->printWidth  = ($this->paperWidth - $this->leftMargin - $this->rightMargin); //width of printable area of page (w/o morgins)
-    $this->printHeight = ($this->paperHeight - $this->topMargin - $this->bottomMargin - $this->pageHeaderHeight - $this->pageFooterHeight); //height of printable area of page (w/o morgins)
-    $this->pagesHorizontal = floor($this->reportWidth / $this->printWidth) + 1; // No of pages needed to print report
-  }
-}
+      
+    if ($this->noHeadFoot) {
+      $this->pageHeaderHeight = 0;
+      $this->pageFooterHeight = 0;
+    } else {
+      $this->pageHeaderHeight = $report->PageHeader->Height;
+      $this->pageFooterHeight = $report->PageFooter->Height;
+    }
+    
+    if ($this->noAutoPageX) {
+      $this->printWidth  = $this->reportWidth; 
+      $this->pagesHorizontal = 1;
+    } else {
+      $this->printWidth  = ($this->paperWidth - $this->leftMargin - $this->rightMargin); //width of printable area of page (w/o morgins)
+      $this->pagesHorizontal = floor($this->reportWidth / $this->printWidth) + 1; // No of pages needed to print report
+    }
 
+    if (!$this->noAutoPageY) {
+      $this->_printHeight = ($this->paperHeight - $this->topMargin - $this->bottomMargin - $this->pageHeaderHeight - $this->pageFooterHeight); //height of printable area of page (w/o margins)
+    }  
 
-/**
- *
- * @package PHPReport
- * @subpackage ReportEngine
- * this class represents a 'wide' page with the parts header, body and footer
- *  
- */
-
-
-class WidePage
-{
-  var $layout;
-
-  var $header;
-  var $body;
-  var $footer;
-  var $pageNo = -1;
-  var $pagePosY;
-  var $posY;
-  
-  function WidePage(&$layout)
-  {
-    $this->layout =& $layout;
     $this->pageNo = -1;
-  }  
+  }
   
   function nextPage()
   {
@@ -261,12 +271,20 @@ class WidePage
     $this->body = '';
     $this->footer = '';
     $this->pageNo++;
-    $this->pagePosY = $this->pageNo * $this->layout->printHeight;
+    if ($this->noAutoPageY) {
+      $this->pagePosY = $this->posY;
+    } else {  
+      $this->pagePosY = $this->pageNo * $this->_printHeight;
+    }  
   }
   
   function getPageWithOffset($offset)
   {
-    return floor(($offset + $this->posY) / $this->layout->printHeight);
+    if ($this->noAutoPageY) {
+      return 0;
+    } else { 
+      return floor(($offset + $this->posY) / $this->_printHeight);
+    }  
   }
   
   function posYinPage()
@@ -276,7 +294,9 @@ class WidePage
   
   function fillrestOfPage()
   {
-    $this->actPage->posY = $this->actPage->pagePosY + $this->layout->printHeight;
+    if (!$this->noAutoPageY) {
+      $this->posY = $this->pagePosY + $this->_printHeight;
+    }  
   }
   
   function addHeight($height)
@@ -284,13 +304,34 @@ class WidePage
     $this->posY += $height;
   }  
   
-  
-  function newPageAvoidsSectionSplit($sectionHeight)           // end of section will be on same page, wether with or without pagebreak
+  function paperHeight()
   {
-    $endPageWithoutNewPage = floor(($this->posY + $sectionHeight) / $this->layout->printHeight);
-    $startNewPage =  (floor($this->posY / $this->layout->printHeight) + 1) * $this->layout->printHeight;
-    $endPageWithNewPage = floor(($startNewPage + $sectionHeight) / $this->layout->printHeight);
-    return ($endPageWithoutNewPage == $endPageWithNewPage);           // end of section will be on same page, wether with or without pagebreak
+    if ($this->noAutoPageY) {
+      return $this->topMargin + $this->bottomMargin + $this->pageHeaderHeight + $this->pageFooterHeight + ($this->posY - $this->pagePosY);
+    } else {
+      return $this->paperHeight;
+    }
+  }
+  
+  function printHeight()
+  {
+    if ($this->noAutoPageY) {
+      return ($this->posY - $this->pagePosY);
+    } else {
+      return $this->_printHeight; 
+    }
+  }      
+  
+  function newPageAvoidsSectionSplit($sectionHeight)  // end of section will be on same page, wether with or without pagebreak
+  {
+    if ($this->noAutoPageY) {
+      return false;
+    } else {  
+      $startNewPage =  (floor($this->posY / $this->_printHeight) + 1) * $this->_printHeight;
+      $endPageWithoutNewPage = floor(($this->posY + $sectionHeight) / $this->_printHeight);
+      $endPageWithNewPage = floor(($startNewPage + $sectionHeight) / $this->_printHeight);
+      return ($endPageWithoutNewPage == $endPageWithNewPage);
+    }
   }
 
 }

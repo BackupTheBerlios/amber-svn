@@ -50,20 +50,25 @@
 <!-- Start of AmberReport // -->
 
 <div class="AmberReport">
-	<div name="<designBorder>-border" style="top: 0px; height: 19px; left: 0; width: 871px; background-color: #ffffff; ">
-	<div name="<designBorder>" style="position: absolute; overflow: hidden; height: 18px; left: 106px; width: 664px; background-color: #dddddd; ">
+	<div style="position: relative; background-color: #FFFFFF; height: 1185px; width: 1235px; ">
+<!-- ###PAGE Start### -->
+<!-- ***deltaX: 0, x: 1440, y: 720 -->
+	<div  style="left: 106px; top: 53px; height: 0px; width: 660px; overflow: hidden; ">
+	<div  style="left: 0px; overflow: visible; ">
+	</div></div>
+<!-- ***deltaX: 0, x: 1440, y: 720 -->
+	<div  style="left: 106px; top: 53px; height: 1089px; width: 660px; overflow: hidden; ">
+	<div  style="left: 0px; overflow: visible; ">
+	<div  name='sectionStart' style="left: 0; top: 0px; height: 18px; width: 660px; background-color: #dddddd; ">
 		<div class="75" style="height: 18px; width: 660px; background-color: #dddddd; border-width: 1pt; visibility: visible; font-weight: 500; font-size: 8pt; font-family: 'Arial';">Seitenkopfbereich</div>
-	</div></div>
-	<div name="Seitenkopfbereich-border" style="top: 18px; height: 76px; left: 0; width: 871px; background-color: #ffffff; ">
-	<div name="Seitenkopfbereich" style="position: absolute; overflow: hidden; height: 75px; left: 106px; width: 664px; background-color: #ccffff; ">
+	</div name='sectionEND'>
+	<div  name='sectionStart' style="left: 0; top: 18px; height: 75px; width: 660px; background-color: #ccffff; ">
 		<div class="s42" style="visibility: visible;">Page Header</div>
-	</div></div>
-	<div name="<designBorder>-border" style="top: 92px; height: 19px; left: 0; width: 871px; background-color: #ffffff; ">
-	<div name="<designBorder>" style="position: absolute; overflow: hidden; height: 18px; left: 106px; width: 664px; background-color: #dddddd; ">
+	</div name='sectionEND'>
+	<div  name='sectionStart' style="left: 0; top: 92px; height: 18px; width: 660px; background-color: #dddddd; ">
 		<div class="75" style="height: 18px; width: 660px; background-color: #dddddd; border-width: 1pt; visibility: visible; font-weight: 500; font-size: 8pt; font-family: 'Arial';">Detailbereich</div>
-	</div></div>
-	<div name="Detailbereich-border" style="top: 110px; height: 852px; left: 0; width: 871px; background-color: #ffffff; ">
-	<div name="Detailbereich" style="position: absolute; overflow: hidden; height: 851px; left: 106px; width: 664px; background-color: #ffffff; ">
+	</div name='sectionEND'>
+	<div  name='sectionStart' style="left: 0; top: 110px; height: 851px; width: 660px; background-color: #ffffff; ">
 		<div class="s43" style="visibility: visible;">Arial 8pt</div>
 		<div class="s44" style="visibility: visible;">Times New Roman 12 pt</div>
 		<div class="s45" style="visibility: visible;">Times New Roman 12 pt bold</div>
@@ -93,17 +98,23 @@
 		<div class="s69" style="visibility: visible;">Bericht1</div>
 		<div class="s70" style="border-color: #cccccc; border-style: solid; visibility: visible;">Bericht1:</div>
 		<div class="s71" style="visibility: visible;">Report header/footer should be visible, page header/footer should not be visible</div>
-	</div></div>
-	<div name="<designBorder>-border" style="top: 961px; height: 19px; left: 0; width: 871px; background-color: #ffffff; ">
-	<div name="<designBorder>" style="position: absolute; overflow: hidden; height: 18px; left: 106px; width: 664px; background-color: #dddddd; ">
+	</div name='sectionEND'>
+	<div  name='sectionStart' style="left: 0; top: 961px; height: 18px; width: 660px; background-color: #dddddd; ">
 		<div class="75" style="height: 18px; width: 660px; background-color: #dddddd; border-width: 1pt; visibility: visible; font-weight: 500; font-size: 8pt; font-family: 'Arial';">Seitenfuﬂbereich</div>
-	</div></div>
-	<div name="Seitenfuﬂbereich-border" style="top: 979px; height: 111px; left: 0; width: 871px; background-color: #ffffff; ">
-	<div name="Seitenfuﬂbereich" style="position: absolute; overflow: hidden; height: 110px; left: 106px; width: 664px; background-color: #ccffff; ">
+	</div name='sectionEND'>
+	<div  name='sectionStart' style="left: 0; top: 979px; height: 110px; width: 660px; background-color: #ccffff; ">
 		<div class="s72" style="visibility: visible;">Page Footer (align left)</div>
 		<div class="s73" style="visibility: visible;">Page Footer (align right)</div>
 		<div class="s74" style="visibility: visible;">Page Footer (centered)</div>
+	</div name='sectionEND'>
 	</div></div>
+<!-- ***deltaX: 0, x: 1440, y: 15569 -->
+	<div  style="left: 106px; top: 1142px; height: 0px; width: 660px; overflow: hidden; ">
+	<div  style="left: 0px; overflow: visible; ">
+	</div></div>
+<!-- ###PAGE End ### -->
+</div>
+	<div style="position: relative; height: 2px; width: 1px; "> &nbsp; </div>
 
 </div>
 

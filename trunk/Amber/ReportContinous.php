@@ -8,9 +8,9 @@
  *  this class handles paged report types 
  */
 
-class ReportContinous extends Report
+class ReportContinous extends ReportPaged
 {
-  var $_blankPage = true;
+/*  var $_blankPage = true;
   var $_pageNo = 1;
   var $_posY;
 
@@ -61,6 +61,6 @@ class ReportContinous extends Report
     }
     $this->_blankPage = true;
   }
-
+*/
 }
 ?>

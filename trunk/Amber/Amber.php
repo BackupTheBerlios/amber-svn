@@ -167,6 +167,10 @@ class Amber
       $rep->resetMargin();
     }
 
+    if ($type == 'html') {
+      $rep->setContinous();
+    }  
+    
     // Run it
     switch ($mode) {
       case AC_DESIGN:
