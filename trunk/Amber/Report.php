@@ -155,6 +155,7 @@ class Report extends AmberObject
     }
     if (class_exists($className)) {
       $this->_Code =& new $className;
+      $this->_Code->setReport($this);
       $classLoaded = true;
     } else {
       Amber::showError('Error', 'Cannot instantiate undefined class "' . $className . '"');
@@ -275,48 +276,56 @@ class Report extends AmberObject
         return;
       }
     }
+    
     $maxLevel = count($this->_groupFields);
-    $this->Cols =& $this->_data[0];
-    $this->_setControlValues();
-    $this->OnFirstFormat($cancel);
-
-    if (!$cancel) {
-      $this->_printNormalSection($this->ReportHeader);
-      $this->_printNormalGroupHeaders($maxLevel, 0);
-    }
-
+    $isFirstRecord = true;
+    
     if (is_null($this->RecordSource)) {   // if no data expected print Detail only once
       $this->_printNormalSection($this->Detail);
-    } else {                              // Loop through all records
-      $oldRow =& $this->Cols;
+    }
+    else  // Loop through all records
+    {                              
       $keys = array_keys($this->_data);
+
       foreach ($keys as $rowNumber) {
         $this->Cols =& $this->_data[$rowNumber];
-        //$this->onLoadData()
-        $level = $this->_getGroupLevel($this->Cols, $oldRow);
 
-        $this->_printNormalGroupFooters($maxLevel, $level);
-
-        $this->_setControlValues();
-        $this->OnFirstFormat($cancel);
-        
-        if (!$cancel) {          
-          $this->_resetRunningSum($maxLevel, $level);
-          $this->_calcRunningSum();
-          $this->OnNextRecord();
-          
-          $this->_printNormalGroupHeaders($maxLevel, $level);
-          //$this->onDetailFormat()
-          $this->_printNormalSection($this->Detail);
-          $oldRow =& $this->Cols;
+        // Load Data
+        $this->onLoadData();
+        if ($isFirstRecord) {
+          $level = 0;
+        } else {
+          $level = $this->_getGroupLevel($this->Cols, $oldRow);
+          $this->_printNormalGroupFooters($maxLevel, $level);
         }
+
+        // Evaluate Expressions
+        $this->_setControlValues($maxLevel, $level);
+        $this->_resetRunningSum($maxLevel, $level);
+        $this->OnEvaluateExpressions();
+        $this->_runningSum($maxLevel, $level);
+
+        // Next Record
+        $this->OnNextRecord();
+        if ($isFirstRecord) {
+          $this->_printNormalSection($this->ReportHeader);
+        }
+        $this->_printNormalGroupHeaders($maxLevel, $level);
+
+        // Detail
+        $this->_printNormalSection($this->Detail);
+        
+        $oldRow =& $this->Cols;
+        $isFirstRecord = false;
       }
     }
+
     $this->_printNormalGroupFooters($maxLevel, 0);
     $this->_printNormalSection($this->ReportFooter);
     $this->newPage();
     $this->OnClose();
     $this->_endReport();
+    unset($this->Cols);
   }
 
   /**
@@ -391,7 +400,6 @@ class Report extends AmberObject
     return trim($sql);
   }
 
-
   /**
    *
    * @access protected
@@ -461,37 +469,21 @@ class Report extends AmberObject
   /**
    * @access protected
    */
-  function _setControlValues()
+  function _setControlValues($maxLevel, $level)
   {
-    // set values of control bound to columns
-    if (is_array($this->Controls)) {
-      $keys = array_keys($this->Controls);
-      foreach ($keys as $index) {
-        $ctrl  =& $this->Controls[$index];
-        if (isset($ctrl->ControlSource)) {  // Control can be bound
-          $ctrl->setControlValue($this);
-        }
-      }
-    }
-  }
-
-   /**
-   * 
-   * @access protected
-   */
-  function _calcRunningSum()
-  {
-    // set values of control bound to columns
-    if (is_array($this->Controls)) {
-      $keys = array_keys($this->Controls);
-      foreach ($keys as $index) {
-        $ctrl  =& $this->Controls[$index];
-        if (method_exists($ctrl, '_runningSum') && isset($ctrl->RunningSum)) {
-          $ctrl->_runningSum();
-        }
+    for ($i = $level; $i < $maxLevel; $i++) {
+      if (isset($this->GroupHeaders[$i])) {
+        $this->GroupHeaders[$i]->_setControlValues($this);
       }
     }
 
+    for ($i = $level; $i < $maxLevel; $i++) {
+      if (isset($this->GroupFooters[$i])) {
+        $this->GroupFooters[$i]->_setControlValues($this);
+      }
+    }
+
+    $this->Detail->_setControlValues($this);
   }
 
   /**
@@ -500,30 +492,9 @@ class Report extends AmberObject
    */
   function OnOpen(&$cancel)
   {
-    // Design is loaded, Data will come now
+    // Design is loaded, Data not yet loaded
     $cancel = false;
-    $this->_Code->Report_Open($this, $cancel);
-  }
-
-    /**
-   * @access protected
-   * @param int
-   */
-  function OnNextRecord()
-  {
-    $this->_Code->Report_OnNextRecord($this);
-  }
-
-
-  /**
-   * @access protected
-   * @param int
-   */
-  function OnFirstFormat(&$cancel)
-  {
-    // Datarow has changed
-    $cancel = false;
-    $this->_Code->Report_FirstFormat($this, $cancel);
+    $this->_Code->Report_Open($cancel);
   }
 
   /**
@@ -534,16 +505,32 @@ class Report extends AmberObject
   {
     //Data expected but none given
     $cancel = false;
-    $this->_Code->Report_NoData($this, $cancel);
+    $this->_Code->Report_NoData($cancel);
   }
 
   /**
    * @access protected
    */
-  function OnClose()
+  function OnLoadData()
   {
-    // Datarow has changed
-    $this->_Code->Report_Close($this);
+    // Datarow has been fetched
+    $this->_Code->Report_OnLoadData();
+  }
+
+  /**
+   * @access protected
+   */
+  function OnEvaluateExpressions()
+  {
+    $this->_Code->Report_OnEvaluateExpressions();
+  }
+
+    /**
+   * @access protected
+   */
+  function OnNextRecord()
+  {
+    $this->_Code->Report_OnNextRecord();
   }
 
   /**
@@ -552,7 +539,15 @@ class Report extends AmberObject
   function OnPage()
   {
     // NewPage is executed; gets only called from class pdage...
-    $this->_Code->Report_Page($this);
+    $this->_Code->Report_Page();
+  }
+
+  /**
+   * @access protected
+   */
+  function OnClose()
+  {
+    $this->_Code->Report_Close();
   }
 
   /**
@@ -570,7 +565,6 @@ class Report extends AmberObject
       $this->_startSection($section, $this->Width);
       $height = $section->printNormal();
       $this->_endSection($section, $height);
-
 
       if ($section->hasForceNewPageAfter()) {
         $this->newPageIfDirty();
@@ -599,7 +593,6 @@ class Report extends AmberObject
       $this->_endSection($section, $section->Height);
     }
   }
-
 
  /**
    * @access protected
@@ -688,9 +681,8 @@ class Report extends AmberObject
    */
   function _resetRunningSum($maxLevel, $level)
   {
-    $s = '';
     $resetLevel = $maxLevel;
-    for ($i = $maxLevel-1; $i >= $level; $i--) {
+    for ($i = $maxLevel - 1; $i >= $level; $i--) {
       if (isset($this->GroupHeaders[$i]) or (isset($this->GroupFooters[$i]))) {
         $resetLevel = $i;
       }
@@ -710,6 +702,28 @@ class Report extends AmberObject
     }
   }
 
+  /**
+   * @access protected
+   * @param int
+   * @param int
+   */
+  function _runningSum($maxLevel, $level)
+  {
+    for ($i = $level; $i < $maxLevel; $i++) {
+      if (isset($this->GroupHeaders[$i])) {
+        $this->GroupHeaders[$i]->_RunningSum();
+      }
+    }
+
+    for ($i = $level; $i < $maxLevel; $i++) {
+      if (isset($this->GroupFooters[$i])) {
+        $this->GroupFooters[$i]->_RunningSum();
+      }
+    }
+
+    $this->Detail->_RunningSum();
+  }
+  
   /**
    * @access protected
    * @param array

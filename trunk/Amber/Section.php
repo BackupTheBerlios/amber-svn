@@ -212,7 +212,7 @@ class Section
   /**
    * @access private
    */
-  /*function _RunningSum()
+  function _RunningSum()
   {
     if (is_array($this->Controls)) {
       $keys = array_keys($this->Controls);
@@ -223,7 +223,7 @@ class Section
         }
       }
     }
-  }*/
+  }
 
   /**
    * @access private
@@ -235,6 +235,23 @@ class Section
       foreach($keys as $key) {
         if (isset($this->Controls[$key]->RunningSum)) {
           $this->Controls[$key]->_resetRunningSum();
+        }
+      }
+    }
+  }
+
+  /**
+   * @access private
+   * @param Report
+   */
+  function _setControlValues(&$report)
+  {
+    if (is_array($this->Controls)) {
+      $keys = array_keys($this->Controls);
+      foreach($keys as $key) {
+        $ctrl =& $this->Controls[$key];
+        if (isset($ctrl->ControlSource)) {
+          $ctrl->setControlValue($report);
         }
       }
     }

@@ -373,17 +373,19 @@ class TextBox extends FontBox
   }
   
   function setControlValue(&$report)
-  { 
-    if (!isset($this->ControlSource)) {
+  {
+    $source = trim($this->ControlSource);
+  
+    if (!isset($source)) {
       # $this->Value = '#NoValue#';
-    } elseif ($this->ControlSource == '') {
+    } elseif ($source == '') {
       $this->Value = Null;
-    } elseif ($ctrl->ControlSource[0] == '=') {
+    } elseif ($source[0] == '=') {
       $this->Value = '#exp';
     } elseif ($this->RunningSum == 1) {
-      $this->Value = $report->Cols[$this->ControlSource];
+      $this->Value = $report->Cols[$source];
     } else {
-      $this->Value = $report->Cols[$this->ControlSource];
+      $this->Value = $report->Cols[$source];
     }
   }
 }
