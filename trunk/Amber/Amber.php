@@ -37,8 +37,7 @@ class Amber
 
   function init()
   {
-    $dummy =& new nullObject();
-    if (!$this->loadObject('module', '', $dummy)) {
+    if (!$this->loadObject('module', '')) {
       Amber::showError('Amber::init():', 'Error loading modules');
       die();
     }
@@ -121,44 +120,10 @@ class Amber
     return $amber->_sysdb;
   }
 
-  function &createAmberObject($type='html', $exporter=null)
-  {
-    $amber =& Amber::getInstance();
-
-    if ($exporter == null) {
-      $exporter = $amber->_stdExporter;
-    }
-    if ($exporter == null) {
-      return new AmberObject();
-    }
-
-    $amber->_stdExporter = $exporter;
-        
-    if ($type == 'reportSubReport') {
-      if (stristr($exporter, 'p') != false) {
-        return  new ReportSubReport();
-      } else {
-        return  new reportContinous();
-      }  
-    } elseif ($type == 'report') {
-      if (stristr($exporter, 'p') != false) {
-        return  new reportPaged();
-      } else {
-        return  new reportContinous();
-      }  
-     } elseif ($type == 'form') {
-      return  new form();
-    } else {
-      return  new AmberObject();
-    }  
-  }
-  
-  
-  
   function OpenReport($reportName, $mode = AC_NORMAL, $filter = '', $type = 'html', $noMargin = false)
   {
-    $rep = Amber::createAmberObject('report', $type);
-    if (!$this->loadObject('report', $reportName, $rep)) {
+    $rep =& $this->loadObject('report', $reportName);
+    if (!$rep) {
       return false;
     }
 
@@ -193,7 +158,7 @@ class Amber
     $form->run($type);
   }
 
-  function &loadObject($type, $name, &$obj)
+  function &loadObject($type, $name)
   {
     if (!isset($this->_objectLoader)) {
       if ($this->_config->getMedium() == 'db') {
@@ -206,7 +171,7 @@ class Amber
       $this->_objectLoader->setConfig($this->_config);
     }
 
-    $result =& $this->_objectLoader->load($type, $name, $obj);
+    $result =& $this->_objectLoader->load($type, $name);
     if ($result == false) {
       Amber::showError('Error', $this->_objectLoader->getLastError());
       die();

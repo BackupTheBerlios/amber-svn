@@ -27,7 +27,7 @@ class ObjectLoader
    * @param string
    * @param string
    */
-  function &load($type, $objectName, &$obj)
+  function &load($type, $objectName)
   {
     $types = array_keys($this->objectTypes);
 
@@ -41,7 +41,7 @@ class ObjectLoader
         return $this->loadModule($objectName);
         break;
       case 'report':
-        return $this->loadReport($objectName, $obj);
+        return $this->loadReport($objectName);
         break;
       case 'form':
         return $this->loadForm($objectName);
@@ -142,7 +142,7 @@ class ObjectLoaderDb extends ObjectLoader
   /*
    * @returns true on success, false on error
    */
-  function &loadReport($reportName, &$report)
+  function &loadReport($reportName)
   {
     $rs =& $this->fetchRecord('report', $reportName);
     if(!$rs) {
@@ -156,10 +156,11 @@ class ObjectLoaderDb extends ObjectLoader
     }
 
     $data['code'] = '<?php ' . $data['code'] . ' ?>';
-
+    
+    $report =& new ReportPaged();
     $report->setConfig($this->_globalConfig);
     $report->initialize($data);
-    return true;
+    return $report;
   }
 
   function &fetchRecord($type, $name = '')
@@ -228,7 +229,7 @@ class ObjectLoaderFile extends ObjectLoader
     return true;
   }
 
-  function &loadReport($reportName, &$report)
+  function &loadReport($reportName)
   {
     $repPath = $this->_basePath . '/reports/';
     $xmlLoader = new XMLLoader();
@@ -246,10 +247,11 @@ class ObjectLoaderFile extends ObjectLoader
       $data['code'] = file_get_contents($repPath . '/' . $param['FileNameCode']);
     }
 
+    $report =& new ReportPaged();
     $report->setConfig($this->_globalConfig);
     $report->initialize($data);
 
-    return true;
+    return $report;
   }
 
   function &loadForm($formName)

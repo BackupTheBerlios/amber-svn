@@ -192,10 +192,6 @@ class pageLayout
   var $pagePosY;
   var $posY;
   
-
-  
-  
-  
   //////////////////////
   // 'calculated' fields
   /////////////////////
@@ -281,14 +277,12 @@ class pageLayout
   
   function getPageWithOffset($offset)
   {
-    if ($this->noAutoPageY) {
-      if ($this->pageNo < 0) {
-        return 0;
-      } else {
-        return $this->pageNo + $this->newpage;
-      }    
-    } else { 
+    if (!$this->noAutoPageY) {
       return floor(($offset + $this->posY) / $this->printHeight);
+    } elseif ($this->pageNo < 0) {
+      return 0;
+    } else {
+      return $this->pageNo + $this->newpage;
     }  
   }
   
@@ -304,7 +298,7 @@ class pageLayout
       $this->posY = $this->pagePosY + $this->printHeight;  //move posY to end of page (fill rest of page with space)
     } else {
       $this->printHeight = $this->posY - $this->pagePosY;  //set page size to actual position 
-    }  
+    }
   }
   
   function addHeight($height)
