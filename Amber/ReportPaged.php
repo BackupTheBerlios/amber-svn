@@ -90,8 +90,6 @@ class reportBuff
   var $actpageNo;      // pageNumber
   var $sectionType;    // 'Head', 'Foot' or ''
   
-  var $pageLayout;
-  
   var $posY;
   
   function reportBuff($layout)

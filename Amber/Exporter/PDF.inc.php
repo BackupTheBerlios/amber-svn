@@ -15,6 +15,12 @@ class mayflower
   
   var $inReport = false;
   
+  function mayflower(&$reportBuff, &$layout)
+  {
+    $this->reportBuff =& $reportBuff;
+    $this->layout =& $layout;
+  }  
+  
   function out($s)
   { 
     if ($this->sectionIndex > $this->subReportIndex) {
@@ -102,10 +108,10 @@ class PDF extends FPDF
   // startReport / endReport 
   //
   // inside a report the FPDF's output gets cached in 
-  //      $this->reportBuff->_reportPages[$this->reportBuff->actpageNo][$this->reportBuff->sectionType]
+  //      $this->mayflower->reportBuff->_reportPages[$this->mayflower->reportBuff->actpageNo][$this->mayflower->reportBuff->sectionType]
   // where 
-  //      $this->reportBuff->actpageNo     is the current page number and
-  //      $this->reportBuff->sectionType   is 'Head' for page header, 'Foot' for page footer or '' for page body
+  //      $this->mayflower->reportBuff->actpageNo     is the current page number and
+  //      $this->mayflower->reportBuff->sectionType   is 'Head' for page header, 'Foot' for page footer or '' for page body
   //
   // when the report ends, the output is processed and possible divided horizontal
   // among several pages, if the report is wider than one page
@@ -116,14 +122,14 @@ class PDF extends FPDF
 
   function pageHeaderEnd()
   {
-   $this->reportBuff->sectionType = 'Head';
-   $this->_pageHeaderOrFooterEnd($this->reportBuff->actpageNo * $this->layout->printHeight, $this->layout->pageHeaderHeight);
+   $this->mayflower->reportBuff->sectionType = 'Head';
+   $this->_pageHeaderOrFooterEnd($this->mayflower->reportBuff->actpageNo * $this->layout->printHeight, $this->layout->pageHeaderHeight);
   }
 
   function pageFooterEnd()
   {
-    $this->reportBuff->sectionType = 'Foot';
-    $this->_pageHeaderOrFooterEnd($this->reportBuff->actpageNo * $this->layout->printHeight, $this->layout->pageFooterHeight);
+    $this->mayflower->reportBuff->sectionType = 'Foot';
+    $this->_pageHeaderOrFooterEnd($this->mayflower->reportBuff->actpageNo * $this->layout->printHeight, $this->layout->pageFooterHeight);
   }
 
         
@@ -148,20 +154,19 @@ class PDF extends FPDF
     } elseif ($this->mayflower->inSectionOrSubReport()) {
       $this->mayflower->out($s);
     } elseif ($this->mayflower->inReport()) {
-      $this->reportBuff->out($s);
+      $this->mayflower->reportBuff->out($s);
     } else {
       parent::_out($s);
     }
   }
   
-  function startReportBuffering(&$reportBuff)
+  function startReportBuffering()
   {
     if ($this->mayflower->inReport()) {
       Amber::showError('Error', 'startReport: a report is already started!');
       die();
     }  
     $this->mayflower->enterReport();
-    $this->reportBuff =& $reportBuff;
   }
 
   function endReportBuffering()
@@ -205,28 +210,28 @@ class PDF extends FPDF
     }  
     $this->comment("end Body-Section:" . ($this->mayflower->getSectionIndexForCommentOnly()) . "\n");
     $secBuff = $this->mayflower->sectionPop();
-    $startPage = floor($this->reportBuff->posY / $this->layout->printHeight);
-    $endPage   = floor(($this->reportBuff->posY + $sectionHeight) / $this->layout->printHeight);
+    $startPage = floor($this->mayflower->reportBuff->posY / $this->layout->printHeight);
+    $endPage   = floor(($this->mayflower->reportBuff->posY + $sectionHeight) / $this->layout->printHeight);
     if ($keepTogether and ($startPage <> $endPage)) {
-      if ($this->reportBuff->posY > ($startPage * $this->layout->printHeight)) { // page not blank
-        $this->reportBuff->newPage();
-        $startPage = floor($this->reportBuff->posY / $this->layout->printHeight);
-        $endPage   = floor(($this->reportBuff->posY + $sectionHeight) / $this->layout->printHeight);
+      if ($this->mayflower->reportBuff->posY > ($startPage * $this->layout->printHeight)) { // page not blank
+        $this->mayflower->reportBuff->newPage();
+        $startPage = floor($this->mayflower->reportBuff->posY / $this->layout->printHeight);
+        $endPage   = floor(($this->mayflower->reportBuff->posY + $sectionHeight) / $this->layout->printHeight);
       }
     }
 
     for ($page = $startPage; $page <= $endPage; $page++) {
-      if (($page <> $this->reportBuff->actpageNo)) {
-        if ($this->reportBuff->actpageNo >= 0) {
+      if (($page <> $this->mayflower->reportBuff->actpageNo)) {
+        if ($this->mayflower->reportBuff->actpageNo >= 0) {
           $this->_exporter->printPageFooter();
         }
-        $this->reportBuff->actpageNo = $page;
+        $this->mayflower->reportBuff->actpageNo = $page;
         $this->_exporter->printPageHeader();
       }
-      $this->reportBuff->sectionType = '';
-      $this->outSection(0, $this->reportBuff->posY, $this->layout->reportWidth, $sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
+      $this->mayflower->reportBuff->sectionType = '';
+      $this->outSection(0, $this->mayflower->reportBuff->posY, $this->layout->reportWidth, $sectionHeight, $page - $startPage + 1, $this->_exporter, $secBuff);
     }
-    $this->reportBuff->posY += $sectionHeight;
+    $this->mayflower->reportBuff->posY += $sectionHeight;
   }
 
   function endSectionSubReport($sectionHeight, $keepTogether)
@@ -234,8 +239,8 @@ class PDF extends FPDF
     $this->comment("end Subreport-Body-Section:" . ($this->mayflower->getSectionIndexForCommentOnly()) . "\n");
     $buff = $this->mayflower->sectionPop();
 
-    $this->reportBuff->sectionType = '';
-    $this->SetCoordinate(0, -$this->reportBuff->posY);
+    $this->mayflower->reportBuff->sectionType = '';
+    $this->SetCoordinate(0, -$this->mayflower->reportBuff->posY);
     $this->SetClipping(0, 0, $this->layout->reportWidth, $sectionHeight);
 
     $formatCount = 1;
@@ -246,7 +251,7 @@ class PDF extends FPDF
 
     $this->RemoveClipping();
     $this->RemoveCoordinate();
-    $this->reportBuff->posY += $sectionHeight;
+    $this->mayflower->reportBuff->posY += $sectionHeight;
   }
 
   function _pageHeaderOrFooterEnd($posY, $height)
@@ -288,14 +293,13 @@ class PDF extends FPDF
    *
    */
    
-  function &getInstance(&$layout, $reset)
+  function &getInstance(&$reportBuff, &$layout, $reset)
   {
     static $instance = null;
-
     if (is_null($instance) or $reset) {
       $size = array($layout->paperWidth, $layout->paperHeight);
       $instance = new PDF('p', $layout->unit, $size);
-      $instance->mayflower =& new mayflower();
+      $instance->mayflower =& new mayflower($reportBuff, $layout);
     }
 
     return $instance;
@@ -306,7 +310,7 @@ class PDF extends FPDF
     $this->_exporter =& $exporter;
     $this->layout = $layout;
     $this->SetCompression(false);
-    $this->reportBuff->posY = 0;
+    $this->mayflower->reportBuff->posY = 0;
 
     $this->SetCompression(false);
     $this->SetRightMargin($layout->rightMargin);
@@ -505,8 +509,8 @@ class PDF extends FPDF
       $this->outlines[]=array('t'=>$txt,'l'=>$level,'y'=>$y,'p'=>$this->PageNo());
     } else {
       if($y == -1)
-        $y = $this->reportBuff->posY - ($this->reportBuff->actpageNo * $this->layout->printHeight);
-      $p = $this->reportBuff->actpageNo + 1;
+        $y = $this->mayflower->reportBuff->posY - ($this->mayflower->reportBuff->actpageNo * $this->layout->printHeight);
+      $p = $this->mayflower->reportBuff->actpageNo + 1;
       if ($p <= 0)
         $p = 1;
 
@@ -862,4 +866,4 @@ class PDF extends FPDF
   }
 
 
-?>
+?> 

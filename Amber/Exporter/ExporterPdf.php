@@ -39,7 +39,7 @@ class ExporterFPdf extends Exporter
   {
     parent::startReport($report, $asSubreport, $isDesignMode);
     $reset = (!$asSubreport);
-    $this->_pdf =& PDF::getInstance($report->layout, $reset);
+    $this->_pdf =& PDF::getInstance($report->reportBuff, $report->layout, $reset);
     if ($report->Controls) {
       foreach (array_keys($report->Controls) as $ctrlName) {
         if (!empty($report->Controls[$ctrlName]->FontName)) {
@@ -51,8 +51,8 @@ class ExporterFPdf extends Exporter
       $this->_pdf->mayflower->subReportPush();
       $this->startcomment("StartSubreport");
     } else {  
-      $this->_pdf->init($this, $this->_report->layout);
-      $this->_pdf->StartReportBuffering($this->_report->reportBuff);
+      $this->_pdf->init($this, $report->layout);
+      $this->_pdf->StartReportBuffering();
     }
   }
   
