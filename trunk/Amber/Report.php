@@ -559,20 +559,26 @@ class Report extends AmberObject
    */
   function sort(&$keys)
   {
+    if (!is_array($this->GroupLevels)) {
+      return;
+    }
+
     $sorter = new quicksort();
     $sorter->array =& $this->_data;
     $sorter->keys =& $keys;
+    
     $levelIdxs = array_keys($this->GroupLevels);
     foreach ($levelIdxs as $levelIdx) {
       $grp =& $this->GroupLevels[$levelIdx];
       if ($grp->ControlSource[1] != '=') {
-        if ($grp->SortOrder == 0) { 
+        if ($grp->SortOrder == 0) {
           $sorter->sortColumns[$grp->ControlSource] = 1;   // ascending
         } else {
           $sorter->sortColumns[$grp->ControlSource] = -1;  // descending
-        }        
+        }
       }
     }
+    
     $sorter->sort();
   }
 
@@ -583,7 +589,7 @@ class Report extends AmberObject
   function reTypeNumericColumns()                                        
   { 
     $rowNo = count($this->_data);
-    if ((!$rowNo) || (!$this->_dataIsNumeric)) {
+    if ((!$rowNo) || (!is_array($this->_dataIsNumeric))) {
       return;
     }  
     foreach ($this->_dataIsNumeric as $colname => $type) {
