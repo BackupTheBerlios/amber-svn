@@ -74,6 +74,8 @@ class Report extends AmberObject
   var $_reportDir = '.';
   var $_globalConfig;
 
+  var $asSubReport;
+
   //////////////////////////////////////////////////////////////////
   // PUBLIC METHODS
   //////////////////////////////////////////////////////////////////
@@ -98,7 +100,7 @@ class Report extends AmberObject
       $this->Filter = $filter;
     }
   }
-  
+
   /**
    *
    * @access public
@@ -168,10 +170,11 @@ class Report extends AmberObject
     foreach ($sections as $secName) {
       if (isset($xml[$secName])) {
         $this->$secName =& new Section($secName);
+        $this->$secName->load($this, $xml[$secName]);
       } else {
         $this->$secName =& new SectionNull($secName);
+        $this->$secName->load($this, array());
       }
-      $this->$secName->load($this, $xml[$secName]);
     }
 
     /*
@@ -373,10 +376,10 @@ class Report extends AmberObject
     }
     $db =& Amber::currentDb();
     $createdTemporaryTable = false;
-    
+
     // Apply where clause
     $sql = $this->_makeSqlFilter($this->RecordSource, $this->Where);
-    
+
     // Select into temporary table if necessary
     // NOTE: Filter is only implemented for use with MySQL
     if (($this->Filter != '') && ($db->databaseType == 'mysql')) {

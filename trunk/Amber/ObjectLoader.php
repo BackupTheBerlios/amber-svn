@@ -36,20 +36,23 @@ class ObjectLoader
       return false;
     }
 
+    $obj = null;
     switch ($type) {
       case 'module':
-        return $this->loadModule($objectName);
+        $obj =& $this->loadModule($objectName);
         break;
       case 'report':
-        return $this->loadReport($objectName);
+        $obj = $this->loadReport($objectName);
         break;
       case 'form':
-        return $this->loadForm($objectName);
+        $obj = $this->loadForm($objectName);
         break;
     }
 
-    $this->_lastError = 'ObjectLoader::load(): An unknown error occured';
-    return false;
+    if (is_null($obj)) {
+      $this->_lastError = 'ObjectLoader::load(): An unknown error occured';
+    }
+    return $obj;
   }
 
   /**
@@ -156,7 +159,7 @@ class ObjectLoaderDb extends ObjectLoader
     }
 
     $data['code'] = '<?php ' . $data['code'] . ' ?>';
-    
+
     $report =& new ReportPaged();
     $report->setConfig($this->_globalConfig);
     $report->initialize($data);
