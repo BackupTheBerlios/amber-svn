@@ -21,7 +21,6 @@ class Exporter
 {
   var $type = 'null';
   var $_docTitle;
-  var $_report;
   var $_section;
 
   var $_base; // ref to pdf/html

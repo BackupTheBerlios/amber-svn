@@ -65,7 +65,7 @@ class AmberObject
    */
   function _installExporter($type)
   {
-    $this->_exporter =& ExporterFactory::create($type, $this);
+    $this->_exporter =& ExporterFactory::create($type);
     $this->exporterType = $type;
     if (is_array($this->Controls)) {
       $ctlNames = array_keys($this->Controls);

@@ -44,6 +44,7 @@ class ExporterFactory
 
     if (is_null($instance)) {
       $instance = new ExporterFactory();
+      $instance->_classList = array();
     }
 
     return $instance;
@@ -52,11 +53,10 @@ class ExporterFactory
   /**
    * @static
    * @access public
-   * @param string
-   * @param Report
+   * @param string Exporter type string
    * @return Exporter
    */
-  function &create($type, &$report)
+  function &create($type)
   {
     $factory =& ExporterFactory::getInstance();
     $className = $factory->_classList[$type];
@@ -65,7 +65,6 @@ class ExporterFactory
     }
 
     $ex =& new $className;
-    $ex->_report =& $report;
     $ex->createdAs = $type;
 
     return $ex;
@@ -77,7 +76,7 @@ class ExporterFactory
    *
    * @static
    * @access public
-   * @param string Unique type
+   * @param string Exporter type string
    * @param string Name of the class which must be instantiated for this type of exporter
    */
   function register($type, $className)
