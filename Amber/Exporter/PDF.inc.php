@@ -189,13 +189,13 @@ class PDF extends FPDF
   function pageHeaderEnd()
   {
    $this->mayflower->reportStartPageHeader();
-   $this->_pageHeaderOrFooterEnd($this->mayflower->reportBuff->getPageIndex() * $this->layout->printHeight, $this->layout->pageHeaderHeight);
+   $this->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->layout->printHeight, $this->layout->pageHeaderHeight);
   }
 
   function pageFooterEnd()
   {
     $this->mayflower->reportStartPageFooter();
-    $this->_pageHeaderOrFooterEnd($this->mayflower->reportBuff->getPageIndex() * $this->layout->printHeight, $this->layout->pageFooterHeight);
+    $this->_pageHeaderOrFooterEnd($this->mayflower->getPageIndex() * $this->layout->printHeight, $this->layout->pageFooterHeight);
   }
 
         
