@@ -104,10 +104,8 @@ class mayflower
 
   function _setOutBuff()
   { 
-    if ($this->sectionIndex > $this->subReportIndex) {
+    if ($this->sectionIndex) {
       $this->pdf->setOutBuffer($this->sectionBuff[$this->sectionIndex], 'section');
-    } elseif ($this->subReportIndex > 0) {
-      $this->pdf->setOutBuffer($this->subReportbuff[$this->subReportIndex], 'subReport');
     } elseif ($this->inReport()) {
       $this->pdf->setOutBuffer($this->reportPages[$this->actpageNo][$this->sectionType], "report page".$this->sectionType.$this->actpageNo);
     } else {
@@ -118,16 +116,6 @@ class mayflower
   function page()
   {
     return $this->actpageNo + 1;
-  }
-  
-  function newPage()
-  {
-    $this->posY = ($this->actpageNo + 1) * $this->layout->printHeight;
-  }
-
-  function posYinPage()
-  {
-    return ($this->posY - ($this->actpageNo * $this->layout->printHeight));
   }
   
   function setPageIndex($index)
@@ -159,25 +147,16 @@ class mayflower
     $this->_setOutBuff();
   }  
    
-  function inSubReport()
-  {
-    return  ($this->subReportIndex > 0);
-  }   
-
   function subReportPush()
   {
-   $this->subReportIndex++;
-   $this->subReportBuff[$this->subReportIndex] = '';
-   $this->_setOutBuff();
+    $this->sectionPush();
   }
    
   function subReportPop()
   {
-    $this->subReportIndex--;
-    $this->_setOutBuff();
-    return $this->subReportbuff[$this->subReportIndex + 1];
+    return $this->sectionPop();
   }
-  
+
   function sectionPush()
   {
     $this->sectionIndex++;
@@ -191,20 +170,14 @@ class mayflower
     $this->_setOutBuff();
     return $this->sectionBuff[$this->sectionIndex + 1];
   }
-  
-  function getSectionIndexForCommentOnly()
-  {
-    return '';
-  } 
-  
-  
+
+
   function startReportBuffering()
   {
     if ($this->inReport()) {
       Amber::showError('Error', 'startReport: a report is already started!');
       die();
     }  
-    $this->posY = 0;
   }
   
   function endReportBuffering()
@@ -213,7 +186,6 @@ class mayflower
       Amber::showError('Error', 'endReport: no report open');
       die();
     }  
-    $this->posY = 0;
     $this->actpageNo = -1;
     $this->_setOutBuff();
   }
