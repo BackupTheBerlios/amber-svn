@@ -499,9 +499,30 @@ class ComboBoxExporterHtml extends ControlExporterHtml
 {
   function getTag(&$control, $value=Null)
   {
-    echo "test";
-    $out = 'huhu';
-    return $out;
+    $db =& Amber::currentDb();
+
+    if ($control->RowSourceType == 'Table/Query') {
+      $db->SetFetchMode(ADODB_FETCH_BOTH);
+      $data = $db->GetAll($control->RowSource);
+    }
+
+    if (isset($control->BoundColumn)) {
+      // Indexes in Access start with 1
+      $bound = $control->BoundColumn - 1;
+    } else {
+      $bound = 0;
+    }
+
+    // FIXME: Determine first visible row -> option value
+
+
+    $out .= "\n<select>\n";
+    foreach ($data as $idx => $row) {
+      $out .= "  " . '<option id="' . htmlspecialchars($row[$bound]) . '">';
+      $out .= htmlspecialchars($row[1]) . "</option>\n";
+    }
+    $out .= "</select>\n";
+    echo $out;
   }
 }
 

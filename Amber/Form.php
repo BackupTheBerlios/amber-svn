@@ -86,7 +86,30 @@ class Form extends AmberObject
     $this->_installExporter($type);
     $this->_exporter->setDocumentTitle($this->Name);
 
+    $this->_startForm();
     $this->_printNormalSection('Detail');
+    $this->_endForm();
+  }
+
+  /**
+   * @access private
+   */
+  function _startForm(){
+    /*if (isset($this->_exporter)) {
+      $this->_exporter->startReport($this);
+    }*/
+
+    echo '<form>';
+  }
+
+  /**
+   * @access private
+   */
+  function _endForm(){
+    /*if (isset($this->_exporter)) {
+      $this->_exporter->endReport($this);
+    }*/
+    echo '</form>';
   }
 
   /**

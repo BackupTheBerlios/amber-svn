@@ -281,7 +281,7 @@ class Report extends AmberObject
     $this->_installExporter($type);
     //dump($this->_exporter->type);
     $this->_exporter->setDocumentTitle($this->Name);
-    $this->_exporter->setDesignMode();
+    $this->_exporter->setDesignMode(true);
 
     $this->_startReport();
 

@@ -25,9 +25,13 @@ class Exporter
   var $_section;
   var $DesignMode = false;
 
-  function setDesignMode()
+  /**
+   * @access public
+   * @param bool
+   */
+  function setDesignMode($value)
   {
-    $this->DesignMode = true;
+    $this->DesignMode = $value;
   }
 
   function setDocumentTitle($title)
