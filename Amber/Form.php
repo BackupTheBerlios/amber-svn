@@ -6,7 +6,7 @@
  * @subpackage ReportEngine
  *
  */
- 
+
 require_once 'misc.php';
 require_once 'AmberConfig.php';
 require_once 'AmberObject.php';
@@ -22,6 +22,7 @@ class Form extends AmberObject
 {
   var $Name;
 
+  var $_Code;
   var $_ClassName;
 
    /**
@@ -31,37 +32,37 @@ class Form extends AmberObject
   {
     parent::AmberObject();
   }
-  
+
   function initialize(&$data)
   {
     $this->Name = $data['name'];
-    
+
     $res =& XMLLoader::_makeXMLTree($data['design']);
     $xml = $res['form'];
 
     // TODO
     $classLoaded = false;
     $className = $data['class'];
-    
-    /*if ((isset($className)) && (!class_exists($className))) {
+
+    if ((isset($className)) && (!empty($className)) && (!class_exists($className))) {
       //eval($data['code']); // code in database is currently being stored without php tags! fix this!
       eval(' ?' . '>' . $data['code'] . '<' . '?php ');
       if (class_exists($className)) {
         $this->_Code =& new $className;
         $classLoaded = true;
       } else {
-        Amber::showError('Error', 'Cannot instantiate undefined class "' . $className . '"');
+        Amber::showError('Warning', 'Cannot instantiate undefined class "' . $className . '"');
       }
-    }*/
+    }
     if (!$classLoaded) {
       $this->_Code =& new AmberForm_UserFunctions();
     }
     $this->_ClassName = get_class($this->_Code);
-    
+
     if (isset($xml['RecordSource']) && ($xml['RecordSource'] != '')) {
       $this->RecordSource = $xml['RecordSource'];
     }
-    
+
     /*
      * Sections
      */
@@ -76,10 +77,10 @@ class Form extends AmberObject
       $this->$secName->load($this, $xml[$secName]);
     }
 
-    
+
     //Amber::dump($this);
   }
-  
+
   function run($type)
   {
     $this->_installExporter($type);
@@ -87,7 +88,7 @@ class Form extends AmberObject
 
     $this->_printNormalSection('Detail');
   }
-  
+
   /**
    * @access private
    * @param string

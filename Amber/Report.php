@@ -114,7 +114,7 @@ class Report extends AmberObject
     $classLoaded = false;
     $className = $data['class'];
 
-    if ((isset($className)) && (!class_exists($className))) {
+    if ((isset($className)) && (!empty($className)) && (!class_exists($className))) {
       //eval($data['code']); // code in database is currently being stored without php tags! fix this!
       eval(' ?' . '>' . $data['code'] . '<' . '?php ');
       if (class_exists($className)) {
@@ -603,21 +603,6 @@ class Report extends AmberObject
     }
 
     return count($this->_groupFields);
-  }
-
-  /**
-   * @access private
-   * @param string
-   */
-  function _installExporter($type)
-  {
-    $this->_exporter =& ExporterFactory::create($type, $this);
-    if (is_array($this->Controls)) {
-      $ctlNames = array_keys($this->Controls);
-      foreach ($ctlNames as $ctlName) {
-        $this->_exporter->setControlExporter($this->Controls[$ctlName]);
-      }
-    }
   }
 }
 
