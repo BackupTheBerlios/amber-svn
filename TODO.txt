@@ -1,0 +1,18 @@
+TODO for first public release
+-----------------------------
+
+- examples
+- finish work on documentation
+- sequence diagram (especially for triggers)
+- list of supported attributes
+
+- nice to have: modify sql statement to reflect grouping given in xml
+
+
+Important details for inclusion into documentation
+--------------------------------------------------
+- ctype extension required (--> lexer)
+- remember to set locale if your language has special characters
+- ExporterPdf: if detail section is larger than the height of the page it will
+  nontheless be printed without page break
+- grouping: atm the sql statement must include corresponding order by clauses

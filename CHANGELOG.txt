@@ -1,0 +1,93 @@
+20040711:
+- Display error message if phpDocumentor cannot be found
+
+20040708:
+- Introduced class Amber
+- Index.php: use of Amber instead of Report
+- Some code cleanups
+- examples/index.php: switching from in to pt in html made CSS invariant to locale change: setlocale (LC_ALL, 'de_DE', 'de_DE@euro') is ok now 
+
+20040707:
+- Report: introduced loadDb() and renamed load() to loadFile()
+
+20040706:
+- ExporterHtml, ExporterPdf, Control, Section: crammed in support for CanGrowCanShrink for Section.
+- ExporterHtml: removed cheat for section height, still dark lines in Mozilla (solution for hicup still not found :-( )
+
+20040702:
+- ExporterHtml: added design mode (for Amber intro and debugging)
+- ExporterHtml: switched units from inch to points (Mozilla hic-up)
+- ExporterHtml: added padding-left:1pt; to getCssStyle(). First letter no longer cut off
+- ExporterHtml: sectionPrintStart: added cheat so borders get printed in Mozilla -- but now test report GLS looks bad :-(
+- ExporterPDF:  Design mode added
+- basic: added functions Mid, Left Right, Iif, Now, IsNull
+- SBZ: added function druckStatusR (database and version still missing)
+
+20040701:
+- SimpleSelectParser: drop semicolons and whitespaces at the end of sql statement
+
+20040630:
+- Lexer: supports square brackets as delimiter
+- SimpleSqlParser: "with owneraccess option" will be removed from sql statements
+- Report: Sql statement will be parsed, even if there is no filter set
+
+20040628:
+- ControlFactory: fixed behaviour if report contains unknown controls
+- ExporterHtml: fixed html output to be xhtml compliant (tags are now all lowercase)
+- ExporterHtml: use control's id as part of the css class name (control's name might have blanks in it)
+
+20040627:
+- deleted unused files
+- index.html for tests
+- removed some comments (mainly unused code)
+
+20040625:
+- examples: introduced modules-subfolder
+- basic.php: development of basic's format function started
+
+20040623:
+- Access exporter: translated into english
+- Access exporter: simplified user interface (less buttons, options are invisible now)
+
+20040620:
+- Section (and subclasses): changed constructor parameters
+- Section: renamed attributes _OnFormat and _OnPrint to avoid mixing it up with identical method names
+- Control (and subclasses): changed constructor parameters
+- Control: added setProperty() and setProperties() (used by ControlFactory)
+- Control: _registerProperties() must now be called after calling the parents constructor (otherwise it would have been broken with PHP5)
+- Control: removed afterInit()
+- ControlFactory: modified create()
+- Report, Section, Control, Exporter, ExporterHtml, ExporterPDF: removed indentation parameter
+- ExporterHtml: removed calls to blanks()
+- documentation updates (Section)
+
+- Access adapter: Access Printer object introduced,  pagemargins moved into <printer> subsection
+- Report, ExporterPdf: pagesize and page orientation introduced.
+- ExporterHTML: page margins now work (looks good in normal mode and bad in print preview)
+- Section: new trigger <sectionname>_Print() introduced
+
+20040617:
+- new XMLLoader class used by Config and Report
+- documentation updates
+- Report: new methods setReportDir(), getReportDir()
+- Report::load(): empty _reportDir string will be handled correctly
+
+20040616:
+- Report::_loadXMLFile(): added error handling if cache directory is invalid
+- rearranged files (examples, cache)
+- config switch in examples/index.php depending on servername
+- modified TestReport
+- rewrote config file support (use sax parser, drop domxml)
+- documentation updates
+
+20040615:
+- documentation updates
+- fix color conversion in Controls
+- ExporterPDF: font support
+- config file support
+
+20040614:
+- created ControlFactory to be used instead of Importer class
+- introduced Makefile
+- documentation updates
+- added COPYING file
