@@ -1,27 +1,31 @@
 <?php
 
 /**
- *
- * @package PHPReport
- * @subpackage ReportEngine
- *
- */
+*
+* @package PHPReport
+* @subpackage ReportEngine
+*
+*/
 
 require_once 'XMLLoader.php';
 
 /**
- *
- * @package PHPReport
- * @subpackage ReportEngine
- *
- */
-class Config
+*
+* @package PHPReport
+* @subpackage ReportEngine
+*
+*/
+class AmberConfig
 {
   var $driver;
   var $host;
   var $database;
   var $username;
   var $password;
+
+  function AmberConfig()
+  {
+  }
 
   function fromXML($fileName)
   {
@@ -42,12 +46,12 @@ class Config
 }
 
 /**
- *
- * @package PHPReport
- * @subpackage ReportEngine
- *
- */
-class ConfigNull extends Config
+*
+* @package PHPReport
+* @subpackage ReportEngine
+*
+*/
+class AmberConfigNull extends AmberConfig
 {
   var $driver ='';
   var $host = '';

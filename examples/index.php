@@ -5,6 +5,7 @@ ini_set('max_execution_time', '600');
 ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/../lib/');
 
 require_once '../Amber/Amber.php';
+require_once '../Amber/Config.php';
 
 if (isset($_GET['rep'])) {
   $repName = $_GET['rep'];
@@ -29,7 +30,9 @@ if (!file_exists($cfgFileName)) {
   die();
 }
 
-$cfg = new Config();
+
+$cfg = new AmberConfig;
+$rc=new ReflectionClass('AmberConfig');
 $cfg->fromXML($cfgFileName);
 
 setlocale (LC_CTYPE, 'de_DE', 'de_DE@euro');

@@ -9,7 +9,6 @@
 
 require_once 'misc.php';
 require_once 'Section.php';
-require_once 'Config.php';
 require_once 'ObjectLoader.php';
 require_once 'SimpleSQLParser.php';
 require_once 'Exporter/ExporterFactory.php';
@@ -83,7 +82,7 @@ class Report
    */
   function Report()
   {
-    $this->_globalConfig = new ConfigNull();
+    $this->_globalConfig = new AmberConfigNull();
   }
 
   /**
