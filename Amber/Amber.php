@@ -117,6 +117,14 @@ class Amber
     }
   }
 
+  function OpenForm($formName, $mode = AC_NORMAL, $filter = '')
+  {
+    $form =& $this->loadObject('form', $formName);
+    if ($form == false) {
+      return false;
+    }
+  }
+
   function &loadObject($type, $name)
   {
     if (!isset($this->_objectLoader)) {
@@ -139,11 +147,20 @@ class Amber
     return $result;
   }
 
-  function dump($var)
+  /**
+   *
+   * @param mixed
+   * @param bool return If set to true the output will be returned as string, otherwise it will be echoed
+   */
+  function dump($var, $ret = false)
   {
     $v = $var;
 
-    echo Amber::_dumpArray($v);
+    if ($ret) {
+      return Amber::_dumpArray($v);
+    } else {
+      echo Amber::_dumpArray($v);
+    }
   }
 
   function _dumpScalar($var)
@@ -173,7 +190,7 @@ class Amber
       }
       while (list($key, $val) = each($v)) {
         $result .= '<tr><td><font size="1" color="blue">' . htmlspecialchars($key) . '</font></td><td>';
-        if (is_array($v[$key]) || is_object($v[$key])) {
+        if (is_array($v[$key]) || is_object($v[$key]) || is_resource($v[$key])) {
           $result .= Amber::_dumpArray($v[$key]);
         } else {
           if (empty($val)) {

@@ -20,7 +20,7 @@ require_once 'Report.php';
 class ObjectLoader
 {
   var $_lastError = 'ObjectLoader: No error message set';
-  var $objectTypes = array('report' => 1, 'module' => 2);
+  var $objectTypes = array('report' => 1, 'module' => 2, 'form' => 3);
 
   /**
    * @access public
@@ -32,7 +32,7 @@ class ObjectLoader
     $types = array_keys($this->objectTypes);
 
     if (!in_array($type, $types)) {
-      Amber::showError('Error', 'Requested loading of unsupported object type: "' . $type . '"');
+      $this->_lastError = 'Requested loading of unsupported object type: "' . $type . '"';
       return false;
     }
 
@@ -42,6 +42,9 @@ class ObjectLoader
         break;
       case 'report':
         return $this->loadReport($objectName);
+        break;
+      case 'form':
+        return $this->loadForm($objectName);
         break;
     }
 
@@ -100,17 +103,8 @@ class ObjectLoaderDb extends ObjectLoader
 
   function loadModule()
   {
-    if (!isset($this->_db)) {
-      $this->_lastError = 'ObjectLoader: Database needs to be set before attempting to load an object';
-      return false;
-    }
-
-    $dict = NewDataDictionary($this->_db);
-    $sql = 'Select * from ' . $dict->TableName($this->sysTable) . ' where type=' . $this->objectTypes['module'];
-
-    $rs = $this->_db->Execute($sql);
-    if (!$rs) {
-      $this->_lastError = 'ObjectLoader: ' . $this->_db->ErrorMsg();
+    $rs =& $this->fetchRecord('module');
+    if(!$rs) {
       return false;
     }
 
@@ -123,23 +117,31 @@ class ObjectLoaderDb extends ObjectLoader
     return true;
   }
 
+  function &loadForm($formName)
+  {
+    $rs =& $this->fetchRecord('form', $formName);
+    if(!$rs) {
+      return false;
+    }
+
+    $data = $rs->FetchRow();
+    if (!$data) {
+      $this->_lastError = 'Form "' . $formName . '" not found in database';
+      return false;
+    }
+
+    Amber::dump($data);
+
+    return true;
+  }
+
   /*
    * @returns true on success, false on error
    */
   function &loadReport($reportName)
   {
-    if (!isset($this->_db)) {
-      $this->_lastError = 'ObjectLoader: Database needs to be set before attempting to load an object';
-      return false;
-    }
-
-    $dict = NewDataDictionary($this->_db);
-    $sql = 'SELECT * FROM ' . $dict->TableName($this->sysTable) . ' WHERE name=' . $this->_db->qstr($reportName);
-    $sql .= ' AND type=' . $this->objectTypes['report'];
-
-    $rs = $this->_db->SelectLimit($sql, 1);
-    if (!$rs) {
-      $this->_lastError = 'Query failed: "' . $sql . '"';
+    $rs =& $this->fetchRecord('report', $reportName);
+    if(!$rs) {
       return false;
     }
 
@@ -156,6 +158,29 @@ class ObjectLoaderDb extends ObjectLoader
     $report->initialize($data);
 
     return $report;
+  }
+
+  function &fetchRecord($type, $name = '')
+  {
+     if (!isset($this->_db)) {
+      $this->_lastError = 'ObjectLoader: Database needs to be set before attempting to load an object';
+      return false;
+    }
+
+    $dict = NewDataDictionary($this->_db);
+    $sql = 'SELECT * FROM ' . $dict->TableName($this->sysTable) . ' WHERE';
+    if ($type != 'module') {
+      $sql .= ' name=' . $this->_db->qstr($name) . ' AND';
+    }
+    $sql .= ' type=' . $this->objectTypes[$type];
+
+    $rs = $this->_db->Execute($sql);
+    if (!$rs) {
+      $this->_lastError = 'Query failed: "' . $sql . '"';
+      return false;
+    }
+
+    return $rs;
   }
 }
 
@@ -199,6 +224,11 @@ class ObjectLoaderFile extends ObjectLoader
     }
 
     return true;
+  }
+
+  function &loadForm($formName)
+  {
+    return 'dummy';
   }
 
   function &loadReport($reportName)
