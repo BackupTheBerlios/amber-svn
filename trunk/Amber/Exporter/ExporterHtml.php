@@ -153,7 +153,8 @@ class ExporterHtml extends Exporter
 
     if (is_array($report->Controls)) {
       $css = '';
-      foreach ($report->Controls as $ctrl) {
+      foreach ($report->Controls as $cname => $ctrl) {
+        $ctrl =& $report->Controls[$cname];
         $ctrl->_exporter->_saveStdValues($ctrl);
         $css .= $this->getCssStyle($ctrl, $cssClassPrefix) . "\n";
         $ctrl->_exporter->cssClassPrefix = $cssClassPrefix;
