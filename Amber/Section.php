@@ -221,7 +221,7 @@ class Section
    */
   function _sectionPrintStart(&$buffer)
   {
-    $this->_parent->_exporter->sectionPrintStart($this, $this->_parent->width, $buffer);
+    $this->_parent->_exporter->sectionPrintStart($this, $this->_parent->Width, $buffer);
   }
 
   /**

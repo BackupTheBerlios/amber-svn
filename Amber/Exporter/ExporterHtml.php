@@ -29,10 +29,10 @@ class ExporterHtml extends Exporter
   var $_report;
 
   var $_posY; //
-  
+
   // Report - html
-  
-  
+
+
 
   function getPreamble(&$report)
   {
@@ -67,18 +67,18 @@ class ExporterHtml extends Exporter
   /**
   *
   * for design mode: print border between sections
-  * 
+  *
   * @access public
   * @param  string name of header to print
   * @return integer height printed in twips
   */
-  function sectionPrintDesignHeader($text) 
+  function sectionPrintDesignHeader($text)
   {
     $cheatHeight = 29;
     $cheatWidth  = 59;
 
     $height = 12; //12pt
-       
+
     $out .= "\t<div name=\"{$sec->Name}\" style = \"position: absolute; overflow: hidden; ";
     $out .= 'top: '    . $this->_html_twips($this->_posY) .'; ';
     $out .= 'height: ' . $height . 'pt; ';
@@ -93,8 +93,8 @@ class ExporterHtml extends Exporter
     $out .= "\t</div>\n";
     echo $out;
     $this->_posY += ($height + 2) * 20;
-  }  
-  
+  }
+
   function sectionPrintStart(&$sec, $width, &$buffer)
   {
     $buffer = null;
@@ -102,10 +102,10 @@ class ExporterHtml extends Exporter
 
   function sectionPrintEnd(&$sec, $height, &$buffer)
   {
-    $cheatWidth  = 59; // cheat: add 1.5pt to height and 3pt to width so borders get printed in Mozilla ###FIX ME 
+    $cheatWidth  = 59; // cheat: add 1.5pt to height and 3pt to width so borders get printed in Mozilla ###FIX ME
     if ($height == 0) {
       $cheatHeight = 0;
-    } else {       
+    } else {
       $cheatHeight = 15;
     }
     if (!$this->DesignMode) {
@@ -136,7 +136,7 @@ class ExporterHtml extends Exporter
       $out .= "\t</div>\n";
     } else {
       $out .= "\t</div></div>\n";
-    }  
+    }
     echo $out;
     $this->_posY += $height;
   }
@@ -171,7 +171,7 @@ class ExporterHtml extends Exporter
   {
     if ($this->DesignMode) {
       return;
-    }  
+    }
     if (($section->ForceNewPage == 1) or ($section->ForceNewPage == 3)) {
       $this->newPage();
     }
@@ -194,7 +194,7 @@ class ExporterHtml extends Exporter
   {
     if ($this->DesignMode) {
       return;
-    }  
+    }
     if (($section->ForceNewPage == 2) or ($section->ForceNewPage == 3)) {
       $this->newPage();
     }
@@ -207,10 +207,10 @@ class ExporterHtml extends Exporter
   {
     $classList = array(
       #'null'      => 'NullExporterHtml'
-      'label'     => 'LabelExporterHtml',
-      'rectangle' => 'RectangleExporterHtml',
-      'textbox'   => 'TextBoxExporterHtml',
-      'subreport' => 'SubReportExporterHtml');
+      'Label'     => 'LabelExporterHtml',
+      'Rectangle' => 'RectangleExporterHtml',
+      'TextBox'   => 'TextBoxExporterHtml',
+      'SubReport' => 'SubReportExporterHtml');
     $type = get_class($ctrl);
     if (!array_key_exists($type, $classList)) {
       $type = 'SubReport';  // FIXME: Null-Object for unknown Controltypes
@@ -277,7 +277,7 @@ Class ControlExporterHtml
   {
    $buffer .= $this->getTag($control, $content);
   }
-  
+
   function printDesign(&$control, &$buffer, $content)
   {
     $this->printNormal($control, $buffer, $content);
