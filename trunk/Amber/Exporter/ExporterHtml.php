@@ -432,14 +432,15 @@ Class ControlExporterHtml
       $leftHtml = $value['Left'] + 1/2 * $BorderWidthHtml + $LeftPaddingHtml;
       $out .= 'left: ' . ExporterHTML::_html_twips($leftHtml) . '; ';
     }
-    if ($value['Height'] <> $std['Height']) {
+    /*if ($value['Height'] <> $std['Height']) {
       // Fix IE display bug
       if (($ctrl->Properties['Height'] == 0) && (ExporterHTML::getUserAgent() == 'msie')) {
         $out .= 'height: 1px;';
       } else {
         $out .= 'height: ' . ExporterHTML::_html_twips($ctrl->Properties['Height']) . '; ';
       }
-    }
+    }*/
+    $out .= 'height: ' . ExporterHTML::_html_twips($ctrl->Properties['Height']) . '; ';
     if (($value['Width'] <> $std['Width']) or ($value['BorderWidth'] <> $std['BorderWidth'])) {
       $widthHtml = $value['Width'] - $BorderWidthHtml - $LeftPaddingHtml- $RightPaddingHtml;
       $out .= 'width: ' . ExporterHTML::_html_twips($widthHtml) . '; ';
