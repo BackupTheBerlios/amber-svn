@@ -182,8 +182,9 @@ class Section
    * @access private
    * @param int
    */
-  function _OnFormat(&$cancel) {
-    $funct =$this->_OnFormatFunc;
+  function _OnFormat(&$cancel)
+  {
+    $funct = $this->_OnFormatFunc;
     $obj =& $this->_parent->_Code;
     $cancel = false;
     $obj->$funct($this->_parent, $cancel, 1);
@@ -315,7 +316,6 @@ class GroupSection extends Section
 
 class SectionNull extends Section
 {
-// eventprocPrefix: 'allSections'
   /**
    *
    * @access public

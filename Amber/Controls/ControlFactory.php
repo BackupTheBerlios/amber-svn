@@ -51,7 +51,7 @@ class ControlFactory
    * @param array Array generated from XML
    * @return Control
    */
-  function create($type, &$data)
+  function &create($type, &$data)
   {
     $factory =& ControlFactory::getInstance();
     $className = $factory->_classList[$type];

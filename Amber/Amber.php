@@ -104,17 +104,17 @@ class Amber
 
   function dump($var)
   {
-    echo '<div align="center"><pre style="text-align: left; width: 80%; border: solid 1px #ff0000; font-size: 9pt; color: #000000; background-color: #ffffff; padding: 5px; z-index: 99999; position: relative;">' . htmlentities(print_r($var, 1)) . '</pre></div>';
-  }
-
-  function dumpArray($var)
-  {
     $v = $var;
 
-    echo Amber::dumpArrayString($v);
+    echo Amber::dumpArray($v);
+  }
+  
+  function _dumpScalar($var)
+  {
+    return '<div align="center"><pre style="text-align: left; width: 80%; border: solid 1px #ff0000; font-size: 9pt; color: #000000; background-color: #ffffff; padding: 5px; z-index: 99999; position: relative;">' . htmlentities(print_r($var, 1)) . '</pre></div>';
   }
 
-  function dumpArrayString(&$var)
+  function _dumpArray(&$var)
   {
     static $level = 0;
     $level++;
@@ -136,11 +136,11 @@ class Amber
       while (list($key, $val) = each($v)) {
         $result .= '<tr><td><font size="1" color="blue">' . htmlspecialchars($key) . '</font></td><td>';
         if (is_array($v[$key]) || is_object($v[$key])) {
-          $result .= Amber::dumpArrayString($v[$key]);
+          $result .= Amber::_dumpArray($v[$key]);
           $level--;
         } else {
           if (empty($val)) {
-            $result .= '<font color="lightgrey" size="1">' .htmlspecialchars('<Empty>') . '</font><br />';
+            $result .= '<font color="lightgrey" size="1">' . htmlspecialchars('<Empty>') . '</font><br />';
           } else {
             $result .= '<font color="green" size="1">' . nl2br(htmlspecialchars($val)) . '</font><br />';
           }
@@ -149,9 +149,8 @@ class Amber
       }
       $result .= '</table>';
     } else {
-      Amber::dump($v);
+      Amber::_dumpScalar($v);
     }
-
 
     return $result;
   }
@@ -166,7 +165,9 @@ class Amber
     echo '<p align="center"><input type="button" value="Ok" onclick="document.getElementById(\'' . $id . '\').style.display = \'none\';" style="width: 80px;" /></p>';
     echo '<p />';
     if (function_exists('debug_backtrace')) {
+      echo '<p align="center">';
       Amber::dump(next(debug_backtrace()));
+      echo '</p>';
     }
     echo '</div>';
   }
