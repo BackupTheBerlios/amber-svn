@@ -118,7 +118,6 @@ class reportBuff
 class pageLayout
 {
   var $unit;          //unit in pt
-  var $asSubReport;   // bool: I am a subreport (no paging, no page-header/-footers)
   var $designMode;    // bool: I am designmode  (no page-header/-footer)
   
   var $paperwidth;
@@ -142,7 +141,6 @@ class pageLayout
 
   function pageLayout(&$report, $asSubReport, $designMode)
   { 
-    $this->asSubReport = $asSubReport;
     $this->designMode = $designMode;   
     $this->unit = 1/20;
     $this->reportWidth = $report->Width;

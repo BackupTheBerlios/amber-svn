@@ -38,7 +38,7 @@ class ExporterFPdf extends Exporter
   function _exporterInit()
   {
     $report =& $this->_report;
-    $reset = (!$this->_report->layout->_asSubreport);
+    $reset = (!$this->_asSubreport);
     $this->_pdf =& PDF::getInstance($report->layout, $reset);
     if ($report->Controls) {
       foreach (array_keys($report->Controls) as $ctrlName) {
@@ -47,7 +47,7 @@ class ExporterFPdf extends Exporter
         }
       }
     }
-    if ($this->_report->layout->_asSubreport) {
+    if ($this->_asSubreport) {
       $this->_pdf->startSubReport();
     } else {  
       $this->_pdf->init($this, $this->_report->layout);
@@ -58,10 +58,10 @@ class ExporterFPdf extends Exporter
   function _exporterExit()
   {
     #echo "pdf->Output();<br>";
-    if ($this->$this->_report->layout->_asSubreport) {
+    if ($this->_asSubreport) {
       $this->_pdf->endSubReport();
     } else {
-      if (!$this->DesignMode) {
+      if (!$this->_report->layout->designMode) {
         $this->_report->_printNormalSection('PageFooter');
       }  
    
@@ -148,7 +148,7 @@ class ExporterFPdf extends Exporter
   {
     if (!$section->_PagePart) {
       $this->_pdf->endSection($height, $section->KeepTogether);
-    } elseif ($this->DesignMode) {
+    } elseif ($this->_report->layout->designMode) {
       $this->_pdf->endSection($height, false);
     } elseif ($section->_PagePart == 'Foot') {
       $this->_pdf->pageFooterEnd();
@@ -165,7 +165,7 @@ class ExporterFPdf extends Exporter
   */
   function printPageFooter()
   {
-    if (!$this->DesignMode) {
+    if (!$this->_report->layout->designMode) {  
       $this->_report->_printNormalSection('PageFooter');
     }  
   }
@@ -177,7 +177,7 @@ class ExporterFPdf extends Exporter
   */
   function printpageHeader()
   {
-    if (!$this->DesignMode) {  
+    if (!$this->_report->layout->designMode) {  
       $this->_report->_printNormalSection('PageHeader');
     }  
   }
