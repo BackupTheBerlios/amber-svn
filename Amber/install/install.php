@@ -9,7 +9,10 @@ $filename = __AMBER_BASE__ . '/conf/localconf.xml';
 
 $cfg = new AmberConfig();
 if (isset($_POST['doUpdate'])) {
-    $props = array('Username', 'Password', 'Host', 'Driver', 'DbName', 'Medium', 'BasePath');
+    $props = array(
+      'Username', 'Password', 'Host', 'Driver', 'DbName', 'Medium', 'BasePath',
+      'SysUsername', 'SysPassword', 'SysHost', 'SysDriver', 'SysDbName'
+    );
     $cfg->fromXML($filename);
 
     foreach ($props as $p) {
@@ -75,6 +78,31 @@ $cfg->fromXML($filename);
     </tr>
 
     <?php } ?>
+    <?php
+      if ($cfg->getMedium() == 'db') {
+        $syscfg = $cfg->getSysDbConfig();
+    ?>
+
+    <tr>
+      <td>Host:</td><td>
+      <input name="syshost" type="text" value="<?php echo htmlspecialchars($syscfg['host']) ?>"></td>
+    </tr>
+    <tr>
+      <td>Username:</td><td>
+      <input name="sysusername" type="text" value="<?php echo htmlspecialchars($syscfg['username']) ?>"></td>
+    </tr>
+    <tr>
+      <td>Password:</td>
+      <td><input name="syspassword" type="text" value="<?php echo htmlspecialchars($syscfg['password']) ?>"></td>
+    </tr>
+    <tr>
+      <td>Database:</td>
+      <td><input name="sysdbname" type="text" value="<?php echo htmlspecialchars($syscfg['dbname']) ?>"></td>
+    </tr>
+
+
+    <?php } ?>
+
 
     <tr>
       <td colspan="2" align="center"><input type="submit" name="doUpdate" value="Update localconf.xml"></td>

@@ -27,9 +27,15 @@ class Amber
   var $_config;
   var $_objectLoader;
 
+  var $_db; // ADODB database containing data
+  var $_sysdb; // ADODB database containig tx_amber_sys_objects
+
   function init()
   {
-    $this->loadObject('module', '');
+    if (!$this->loadObject('module', '')) {
+      Amber::showError('Amber::init():', 'Error loading modules');
+      die();
+    }
   }
 
   /**
@@ -67,6 +73,25 @@ class Amber
     return $amber->_db;
   }
 
+  function &sysDb()
+  {
+    $amber =& Amber::getInstance();
+
+    if (!isset($amber->_sysdb)) {
+      $sysdbCfg =& $amber->_config->getSysDbConfig();
+      $sysdb =& ADONewConnection($sysdbCfg['driver']);
+      $conResult = @$sysdb->PConnect($sysdbCfg['host'], $sysdbCfg['username'], $sysdbCfg['password'], $sysdbCfg['dbname']);
+      $sysdb->SetFetchMode(ADODB_FETCH_ASSOC);
+      if ($conResult == false) {
+        Amber::showError('Database Error '  . $sysdb->ErrorNo(), $sysdb->ErrorMsg());
+        die();
+      }
+      $amber->_sysdb =& $sysdb;
+    }
+
+    return $amber->_sysdb;
+  }
+
 
   function OpenReport($reportName, $mode = AC_NORMAL, $filter = '', $type = 'html', $noMargin = false)
   {
@@ -97,7 +122,7 @@ class Amber
     if (!isset($this->_objectLoader)) {
       if ($this->_config->getMedium() == 'db') {
         $this->_objectLoader =& new ObjectLoaderDb();
-        $this->_objectLoader->setDatabase(Amber::currentDb());
+        $this->_objectLoader->setDatabase(Amber::sysDb());
       } else {
         $this->_objectLoader =& new ObjectLoaderFile();
         $this->_objectLoader->setBasePath($this->_config->getBasePath());
@@ -108,6 +133,7 @@ class Amber
     $result =& $this->_objectLoader->load($type, $name);
     if ($result == false) {
       Amber::showError('Error', $this->_objectLoader->getLastError());
+      die();
     }
 
     return $result;
@@ -128,7 +154,7 @@ class Amber
   function _dumpArray(&$var)
   {
     static $level = 0;
-    
+
     $level++;
     if ($level > 5) {
       return '<font color="red" size="1">' . htmlspecialchars('<...>') . '</font>';

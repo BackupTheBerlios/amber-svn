@@ -586,7 +586,7 @@ class Report
           $ctrl  =& $this->Controls[$index];
           $ctrl->_OldValue = null;
         }
-      }    
+      }
       //set _oldValue of section
       if (is_array($section->Controls)) {
         $keys = array_keys($section->Controls);
@@ -594,10 +594,10 @@ class Report
           $ctrl  =& $section->Controls[$index];
           $ctrl->_OldValue = $ctrl->Value;
         }
-      }    
+      }
     }
   }
-  
+
   /**
    * @access private
    * @param int

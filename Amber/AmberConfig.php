@@ -126,6 +126,36 @@ class AmberConfig
     $this->sys_objects['basepath'] = $value;
   }
 
+  function getSysDbConfig()
+  {
+    return $this->sys_objects['database'];
+  }
+
+  function setSysUsername($value)
+  {
+    $this->sys_objects['database']['username'] = $value;
+  }
+
+  function setSysPassword($value)
+  {
+    $this->sys_objects['database']['password'] = $value;
+  }
+
+  function setSysHost($value)
+  {
+    $this->sys_objects['database']['host'] = $value;
+  }
+
+  function setSysDriver($value)
+  {
+    $this->sys_objects['database']['driver'] = $value;
+  }
+
+  function setSysDbName($value)
+  {
+    $this->sys_objects['database']['dbname'] = $value;
+  }
+
   /**
    * @private
    */

@@ -15,8 +15,9 @@ CREATE TABLE tx_amber_sys_objects (
   design mediumtext,
   class varchar(255) DEFAULT '',
   code mediumtext,
-  type tinyint(4) unsigned DEFAULT '0' NOT NULL,
+  `type` tinyint(4) unsigned DEFAULT '0' NOT NULL,
   version int(11) unsigned DEFAULT '0' NOT NULL,
   PRIMARY KEY (uid),
+  UNIQUE KEY (`type`, name),
   KEY parent (pid)
 );

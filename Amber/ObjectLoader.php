@@ -55,7 +55,9 @@ class ObjectLoader
    */
   function getLastError()
   {
-    return $this->_lastError;
+    $tmp = $this->_lastError;
+    $this->_lastError = 'ObjectLoader: No error message set';
+    return $tmp;
   }
 
   /**
@@ -107,6 +109,11 @@ class ObjectLoaderDb extends ObjectLoader
     $sql = 'Select * from ' . $dict->TableName($this->sysTable) . ' where type=' . $this->objectTypes['module'];
 
     $rs = $this->_db->Execute($sql);
+    if (!$rs) {
+      $this->_lastError = 'ObjectLoader: ' . $this->_db->ErrorMsg();
+      return false;
+    }
+
     if ($rs->numRows() > 0) {
       while ($row = $rs->FetchRow()) {
         eval($row['code']);
