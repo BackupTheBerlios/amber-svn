@@ -31,7 +31,6 @@ class pageLayout
   
   var $paperwidth;
   var $paperheight;
-  var $orientation;
   
   var $rightMargin;
   var $leftMargin;
@@ -41,14 +40,15 @@ class pageLayout
   var $pageHeaderHeight;
   var $pageFooterHeight;
 
-  function set_orientation($orientation)
+  function set_orientation($orientation, $width, $height)
   {
-    $orientations = array('portrait' => 'p', 'landscape' => 'l');
-    if (!isset($orientations[$orientation])) {
-      $this->orientation = 'p';
+    if ($orientation == 'portrait') {
+      $this->paperWidth = $width;
+      $this->paperHeight = $height;
     } else {
-      $this->orientation = $orientations[$orientation];
-    }
+      $this->paperWidth = $height;
+      $this->paperHeight = $width;
+    } 
   }
 }
 
@@ -72,9 +72,7 @@ class ExporterFPdf extends Exporter
     $report =& $this->_report;
     $layout =& new pageLayout();
     $layout->unit = 1/20;
-    $layout->set_orientation($report->Orientation);
-    $layout->paperWidth = $report->PaperWidth;
-    $layout->paperHeight = $report->PaperHeight;
+    $layout->set_orientation($report->Orientation, $report->PaperWidth, $report->PaperHeight);
     #Amber::dump($size);
     $reset = (!$this->_asSubreport);
     $this->_pdf =& PDF::getInstance($layout, $reset);
@@ -89,16 +87,20 @@ class ExporterFPdf extends Exporter
       $this->_pdf->startSubReport();
     } else {  
       $this->_pdf->SetCompression(false);
-      $this->_pdf->SetRightMargin($report->RightMargin);
-      $this->_pdf->SetLeftMargin($report->LeftMargin);
-      $this->_pdf->SetTopMargin($report->TopMargin);
-      $this->_pdf->SetAutoPageBreak(false, $report->BottomMargin);
+      $layout->rightMargin = $report->RightMargin;
+      $layout->leftMargin = $report->LeftMargin;
+      $layout->topMargin = $report->TopMargin;
+
+      $layout->bottomMargin = $report->BottomMargin;
       $this->_pdf->_actPageNo = -1;
       if ($this->DesignMode) {
-        $this->_pdf->init($this, $report->Width, 0, 0);
+        $layout->pageHeaderHeight = 0;
+        $layout->pageFooterHeight = 0;
       } else {
-        $this->_pdf->init($this, $report->Width, $report->PageHeader->Height, $report->PageFooter->Height);
+        $layout->pageHeaderHeight = $report->PageHeader->Height;
+        $layout->pageFooterHeight = $report->PageFooter->Height;
       }
+      $this->_pdf->init($this, $report->Width, $layout);
       $this->_pdf->StartReportBuffering();
     }
   }
