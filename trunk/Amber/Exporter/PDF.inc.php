@@ -101,11 +101,11 @@ class PDF extends FPDF
     $this->SetXY($para->x, $para->y);
     $this->SetClipping($para->x, $para->y, $para->width, $para->height);    
     
-    // clipping area must be at least 1.4 * font size, then we'll try to wrap if necessary
-    $lines = $this->WordWrap($para->content, $para->width);
+    // clipping area must be at least 1.4 * font size, then we'll try to wrap if necessary    
+    $needsWrapping = $this->GetStringWidth($para->content) > $para->width;
     $fsize = $this->FontSize;
-    if (($lines > 1) && ($para->height > (1.4 * $fsize))) {
-      $this->Multicell($para->width, $fsize, $para->content, '0', $para->falign, $para->backstyle);
+    if (($needsWrapping) && ($para->height > (1.4 * $fsize))) {
+      $this->MultiCell($para->width, $fsize, $para->content, '0', $para->falign, $para->backstyle);
     } else {
       $this->Cell($para->width, $para->height, $para->content, '0', 0, $para->falign, $para->backstyle);
     }
@@ -321,56 +321,11 @@ class PDF extends FPDF
       }
   }
 
-  /*****************************************
-  * special Bookmark function from Ron Korving (see http://www.fpdf.org/en/script/script49.php)
-  *****************************************/
-
-  function WordWrap(&$text, $maxwidth)
-  {
-      $text = trim($text);
-      if ($text==='')
-          return 0;
-      $space = $this->GetStringWidth(' ');
-      $lines = explode("\n", $text);
-      $text = '';
-      $count = 0;
-  
-      foreach ($lines as $line)
-      {
-          $words = preg_split('/ +/', $line);
-          $width = 0;
-  
-          foreach ($words as $word)
-          {
-              $wordwidth = $this->GetStringWidth($word);
-              if ($width + $wordwidth <= $maxwidth)
-              {
-                  $width += $wordwidth + $space;
-                  $text .= $word.' ';
-              }
-              else
-              {
-                  $width = $wordwidth + $space;
-                  $text = rtrim($text)."\n".$word.' ';
-                  $count++;
-              }
-          }
-          $text = rtrim($text)."\n";
-          $count++;
-      }
-      $text = rtrim($text);
-      return $count;
-  }
-  
-  
-
   /********************************************
   *
   *  changed methods of fpdf
   *
   *********************************************/
-
-
 
  /*********
   *  constructor (add new unit)
