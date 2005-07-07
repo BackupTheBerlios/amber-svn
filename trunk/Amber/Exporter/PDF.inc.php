@@ -99,9 +99,17 @@ class PDF extends FPDF
     $this->_backColor($para->backcolor);
     $this->_textColor($para->forecolor);
     $this->SetXY($para->x, $para->y);
-    $this->SetClipping($para->x, $para->y, $para->width, $para->height);
-    $this->Cell($para->width, $para->height, $para->content, '0', 0, $para->falign, $para->backstyle);
-    $this->RemoveClipping();
+    $this->SetClipping($para->x, $para->y, $para->width, $para->height);    
+    
+    // clipping area must be at least 1.4 * font size, then we'll try to wrap if necessary
+    $lines = $this->WordWrap($para->content, $para->width);
+    $fsize = $this->FontSize;
+    if (($lines > 1) && ($para->height > (1.4 * $fsize))) {
+      $this->Multicell($para->width, $fsize, $para->content, '0', $para->falign, $para->backstyle);
+    } else {
+      $this->Cell($para->width, $para->height, $para->content, '0', 0, $para->falign, $para->backstyle);
+    }
+    $this->RemoveClipping();    
     $this->SetXY($para->x, $para->y);
     if ($para->borderstyle <> 0) {
       $this->_borderColor($para->bordercolor);
