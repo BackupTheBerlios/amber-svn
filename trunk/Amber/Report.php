@@ -179,16 +179,19 @@ class Report extends AmberObject
   {
     //
     // Common initialization
-    //                      
-
-
+    //
     $res =& XMLLoader::_makeXMLTree($strXML);
+    if (count($res) == 0) {
+      Amber::showError('Parse error', 'Invalid XML format');
+      die();
+    }
     $xml = $res['report'];
     $this->Width = $xml['Width'];
 
     if (!$this->Name) {
       $this->Name = $xml['Name'];
     }
+    
     if (isset($xml['Printer'])) {
       $prt =& $xml['Printer'];
       $this->LeftMargin = empty($prt['LeftMargin']) ? 720 : $prt['LeftMargin'];
