@@ -182,7 +182,7 @@ class Report extends AmberObject
     //
     $res =& XMLLoader::_makeXMLTree($strXML);
     if (count($res) == 0) {
-      Amber::showError('Parse error', 'Invalid XML format');
+      Amber::showError('Parse error', XMLLoader::getParseError());
       die();
     }
     $xml = $res['report'];

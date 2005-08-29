@@ -17,6 +17,7 @@ class XMLLoader
 {
   var $_cacheEnabled;
   var $_cacheDir = '.';
+  var $_parseError = '';
 
   /**
    *
@@ -132,6 +133,11 @@ class XMLLoader
     return $res;
   }
 
+  function getParseError()
+  {
+    return $this->_parseError;
+  }
+  
   /**
    * @access private
    * @param string XML
@@ -147,9 +153,12 @@ class XMLLoader
     xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 1);
     $status = xml_parse_into_struct($parser, $data, $values, $tags);
     // check for parse error
-    if ($status == 0) {      
+    if ($status == 0) {
+      $this->_parseError = 'Line ' . xml_get_current_line_number($parser);
+      $this->_parseError .= ': ' . xml_error_string(xml_get_error_code($parser));
       return array();
     }
+    $this->_parseError = '';
     xml_parser_free($parser); 
 
     $hash_stack = array();
