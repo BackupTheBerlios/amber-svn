@@ -7,7 +7,6 @@
 *
 */
 
-require_once 'adodb/adodb.inc.php';
 require_once 'ReportPaged.php';
 require_once 'Module.php';
 

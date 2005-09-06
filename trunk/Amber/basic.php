@@ -5,8 +5,6 @@
 * @subpackage Basic
 *
 */
-require_once 'adodb/adodb-time.inc.php';
-
 
 /**
  *
@@ -22,7 +20,6 @@ function Format($value, $fmt, $prec=2)
   $f =& new _format($fmt, $prec);
   return $f->format($value, $fmt);
 }
-
 
 
 /**

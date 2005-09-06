@@ -6,11 +6,28 @@
 * @subpackage ReportEngine
 *
 */
-ini_set('include_path', dirname(__FILE__). '/../lib:' . ini_get('include_path'));
+
+if (!defined('AMBER_ROOT')) {
+    define('AMBER_ROOT', dirname(__FILE__));
+}
+
+if (!defined('AMBER_LIBS')) {
+    define('AMBER_LIBS', AMBER_ROOT . '/../lib');
+}
+
+if (!defined('AMBER_LIBS_ADODB')) {
+    define('AMBER_LIBS_ADODB', AMBER_LIBS . '/adodb');
+}
+
+if (!defined('AMBER_LIBS_FPDF')) {
+    define('AMBER_LIBS_FPDF', AMBER_LIBS . '/fpdf');
+}
+
+require_once AMBER_LIBS_ADODB . '/adodb.inc.php';
+require_once AMBER_LIBS_ADODB . '/adodb-time.inc.php';
 
 require_once 'ReportPaged.php';
 require_once 'ObjectManager.php';
-require_once 'adodb/adodb.inc.php';
 
 define('AC_DESIGN', 1);
 define('AC_NORMAL', 2);
