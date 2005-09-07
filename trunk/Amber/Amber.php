@@ -374,7 +374,8 @@ class Amber
     $out .= '&nbsp;<input type="button" value="Close" onclick="document.getElementById(\'' . $id . '\').style.display = \'none\';" style="width: 80px;" /></p>';
     $out .= '<p />';
     if (function_exists('debug_backtrace')) {
-      $out .= '<div id="' . $btId . '" align="center" style="display:none;">' . Amber::dump(next(debug_backtrace()), true) . '</div>';
+      $trace = debug_backtrace();
+      $out .= '<div id="' . $btId . '" align="center" style="display:none;">' . Amber::dump(next($trace), true) . '</div>';
     }
     $out .= '</div>';
 

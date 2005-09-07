@@ -94,6 +94,35 @@ class testSimpleSelectParser extends PHPUnit_TestCase
     $expected = "customer INNER JOIN bill ON `customer`.`id` = `bill`.`customer`";
     $this->assertEquals($expected, $result['from']); 
   }
+  
+  function testAccessKeywordRemoval()
+  {
+    $parser =& new SimpleSelectParser('SELECT * FROM a WITH OWNERACCESS OPTION;');
+    $result = $parser->parse();
+
+    $expected = '*';
+    $this->assertEquals($expected, $result['select']);
+    
+    $expected = 'a';
+    $this->assertEquals($expected, $result['from']);
+  }
+  
+  function testGermanUmlauts()
+  {
+    $currentLocale = setlocale(LC_CTYPE, null);
+    setlocale(LC_CTYPE, 'de_DE', 'de_DE@euro');
+    $parser =& new SimpleSelectParser('SELECT a.a, a.xxäöüÄÖÜxx, a.b FROM a, b WHERE a.b = 1;');
+    $result = $parser->parse();
+
+    $expected = 'a.a, a.xxäöüÄÖÜxx, a.b';
+    $this->assertEquals($expected, $result['select']);
+    
+    $expected = 'a, b';
+    $this->assertEquals($expected, $result['from']);
+    
+    // switch back to previous locale
+    setlocale(LC_CTYPE, $currentLocale);
+  } 
 }
 
 $suites[]  = new PHPUnit_TestSuite("testSimpleSelectParser");

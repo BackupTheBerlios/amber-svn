@@ -76,11 +76,12 @@ class Section
     if (isset($data['KeepTogether'])) {
       $this->KeepTogether = $data['KeepTogether'];
     }
-    if (isset($this->$data['EventProcPrefix'])) {
+    if (isset($data['EventProcPrefix'])) {
       $this->EventProcPrefix = $data['EventProcPrefix'];
     } else {
       $this->EventProcPrefix = $data['Name'];
     }
+    
     $s = $data['EventProcPrefix'] . '_Format';
     if (method_exists($this->_parent->_Code, $s)) {
       $this->_OnFormatFunc = $s;

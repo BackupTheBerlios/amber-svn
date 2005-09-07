@@ -38,7 +38,6 @@ setlocale (LC_TIME, 'de_DE', 'de_DE@euro'); // needed for date, time
 setlocale (LC_MONETARY, 'de_DE', 'de_DE@euro'); // needed for numbers
 //setlocale (LC_ALL, 'de_DE', 'de_DE@euro');
 
-//$filter = 'BetreutePsy.NPNr > 2500';
 if (isset($_GET['filter'])) {
   $filter = $_GET['filter'];
 }

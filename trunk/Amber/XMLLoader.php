@@ -150,7 +150,7 @@ class XMLLoader
     $parser = xml_parser_create('');
     xml_parser_set_option($parser, XML_OPTION_TARGET_ENCODING, 'iso-8859-1');
     xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
-    xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 1);
+    xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 0);
     $status = xml_parse_into_struct($parser, $data, $values, $tags);
     // check for parse error
     if ($status == 0) {

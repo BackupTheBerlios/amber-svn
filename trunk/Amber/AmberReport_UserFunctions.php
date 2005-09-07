@@ -28,10 +28,13 @@ class AmberReport_UserFunctions
   
     // Controls
     if ($report->Controls) {
-      $keys = array_keys($report->Controls);
-      foreach ($keys as $key) {
-        $prefix = $report->Controls[$key]->EventProcPrefix;
-        $this->$prefix =& $report->Controls[$key];
+      if (is_array($report->Controls)) {
+        $keys = array_keys($report->Controls);
+        
+        foreach ($keys as $key) {
+          $prefix = $report->Controls[$key]->EventProcPrefix;
+          $this->$prefix =& $report->Controls[$key];
+        }
       }
     }
     $this->ctl =& $report->Controls;
@@ -41,10 +44,12 @@ class AmberReport_UserFunctions
     $this->col =& $report->Cols;
     
     // Sections
-    $keys = array_keys($report->Sections);
-    foreach ($keys as $key) {
-      $prefix = $report->Sections[$key]->EventProcPrefix;
-      $this->$prefix =& $report->Sections[$key];
+    if (is_array($report->Sections)) {
+      $keys = array_keys($report->Sections);
+      foreach ($keys as $key) {
+        $prefix = $report->Sections[$key]->EventProcPrefix;
+        $this->$prefix =& $report->Sections[$key];
+      }
     }
     
     // GroupLevels
