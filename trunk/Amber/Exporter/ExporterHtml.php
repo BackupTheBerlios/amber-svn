@@ -418,18 +418,22 @@ Class ControlExporterHtml
 
     // Border
     if ($value['BorderWidth'] <> $std['BorderWidth']) {
+      $out .= 'border: ';    
       if ($value['BorderWidth'] == 0) {
-        $out .= 'border-width:  ' . __HAIRLINEWIDTH__ / 20 * __SCALE__ . 'pt; ';
+        $out .= __HAIRLINEWIDTH__ / 20 * __SCALE__ . 'pt ';
       } else {
-        $out .= 'border-width: ' . $value['BorderWidth'] * __SCALE__ . 'pt; ';
+        $out .= $value['BorderWidth'] * __SCALE__ . 'pt ';
       }
+      
+      if ($value['BorderColor'] <> $std['BorderColor']) {
+        $out .= ExporterHTML::_html_color($ctrl->Properties['BorderColor']) . ' ';
+      }
+      if ($value['BorderStyle'] <> $std['BorderStyle']) {
+        $out .= $this->_html_borderstyle($ctrl->Properties['BorderStyle'], $ctrl->Properties['BorderLineStyle']) . ' ';
+      }
+      $out .= '; ';      
     }
-    if ($value['BorderColor'] <> $std['BorderColor']) {
-        $out .= 'border-color: ' . ExporterHTML::_html_color($ctrl->Properties['BorderColor']) . '; ';
-    }
-    if ($value['BorderStyle'] <> $std['BorderStyle']) {
-      $out .= 'border-style: ' . $this->_html_borderstyle($ctrl->Properties['BorderStyle'], $ctrl->Properties['BorderLineStyle']) . '; ';
-    }
+    
 
     if ($value['zIndex'] <> $std['zIndex']) {
       $out .= 'z-index: ' . $ctrl->Properties['zIndex'] . '; ';
@@ -491,28 +495,34 @@ class FontBoxExporterHtml extends ControlExporterHtml
     $out = parent::getStyle($ctrl, $std);
     $value =& $ctrl->Properties;
 
+    $fontProperties = array();
+    
     if ($value['FontItalic'] <> $std['FontItalic']) {
       if ($ctrl->Properties['FontItalic'] == true) {
-        $out .= 'font-style: italic; ';
+        $fontProperties['style'] = 'italic';
       } else {
-        $out .= 'font-style: normal; ';
+        $fontProperties['style'] = 'normal';
       }
     }
 
     if ($value['FontWeight'] <> $std['FontWeight']) {
       if ($ctrl->Properties['FontWeight'] == 400) {
-        $out .= 'font-weight: normal; ';
+        $fontProperties['weight'] = 'normal';
       } else {
-        $out .= 'font-weight: ' . $ctrl->Properties['FontWeight'] . '; ';
+        $fontProperties['weight'] = $ctrl->Properties['FontWeight'];
       }
     }
 
     if ($value['FontSize'] <> $std['FontSize']) {
-      $out .= 'font-size: ' . floor(__SCALE__ * $ctrl->Properties['FontSize']) . 'pt; ';
+      $fontProperties['size'] = floor(__SCALE__ * $ctrl->Properties['FontSize']) . 'pt';
     }
 
     if ($value['FontName'] <> $std['FontName']) {
-      $out .= "font-family: '" . $ctrl->Properties['FontName'] . "'; ";
+      $fontProperties['family'] = $ctrl->Properties['FontName'];
+    }
+    
+    if (count($fontProperties) > 0) {
+      $out .= 'font: ' . implode(' ', $fontProperties) . '; ';
     }
 
     if ($value['FontUnderline'] <> $std['FontUnderline']) {
