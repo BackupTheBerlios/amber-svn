@@ -153,8 +153,6 @@ class ExporterHtml extends Exporter
 
   }
 
-
-
   function getReportCssStyles(&$report, $cssClassPrefix)
   {
     $this->cssClassPrefix = $cssClassPrefix;
@@ -417,10 +415,10 @@ Class ControlExporterHtml
     }
 
     // Border
-    if ($value['BorderWidth'] <> $std['BorderWidth']) {
+    if (($ctrl->Properties['BorderStyle'] != 0) && ($value['BorderWidth'] <> $std['BorderWidth'])) {
       $out .= 'border: ';    
       if ($value['BorderWidth'] == 0) {
-        $out .= __HAIRLINEWIDTH__ / 20 * __SCALE__ . 'pt ';
+        $out .= ExporterHTML::_html_twips(__HAIRLINEWIDTH__);
       } else {
         $out .= $value['BorderWidth'] * __SCALE__ . 'pt ';
       }
