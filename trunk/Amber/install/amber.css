@@ -36,3 +36,27 @@ td.install_header {
   border-top: 2px solid #000000;
   border-bottom: 2px solid #000000;
 }
+
+fieldset
+{
+  border: none;
+  align: center;
+}
+
+fieldset br {
+	display: none;
+}
+
+label {
+	margin: 0;
+	display: block;
+  font-weight: bold;
+  font-color: #fff;
+  font-size: 0.8em;
+  margin-top: 10px;
+}
+
+.button
+{
+  margin-top: 2em;
+}

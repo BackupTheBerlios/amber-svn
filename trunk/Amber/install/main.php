@@ -2,36 +2,6 @@
   require_once 'header.inc';
 ?>
 
-<style>
-
-fieldset
-{
-  border: none;
-  align: center;
-}
-
-fieldset br {
-	display: none;
-}
-
-label {
-	margin: 0;
-	display: block;
-  font-weight: bold;
-  font-color: #fff;
-  font-size: 0.8em;
-  margin-top: 10px;
-}
-
-.button
-{
-  margin-top: 2em;
-}
-
-</style>
-
-
-
 <table align="center" style="width: 450px; border: #b08454 1px dashed;">
   <tr>
     <td>
@@ -48,11 +18,6 @@ label {
               } else {              
                 $cfg = new AmberConfig;
                 $cfg->fromXML($cfgFileName);
-                
-                setlocale (LC_CTYPE, 'de_DE', 'de_DE@euro');
-                setlocale (LC_TIME, 'de_DE', 'de_DE@euro'); // needed for date, time
-                setlocale (LC_MONETARY, 'de_DE', 'de_DE@euro'); // needed for numbers
-                //setlocale (LC_ALL, 'de_DE', 'de_DE@euro');
                 
                 $amber =& Amber::getInstance($cfg);
                 $mgr =& $amber->getObjectManager();
@@ -97,17 +62,6 @@ label {
           <?php endif; ?>
         </fieldset>
       </form>
-    </td>
-  </tr>
-</table>
-
-<br />
-
-<table align="center" style="width: 450px; border: #b08454 1px dashed;">
-  <tr>
-    <td>
-      <a href="doc/index.html" target="_blank">Class documentation</a><br>
-      <a href="Amber/install/mmcache.php" target="_blank">MMCache</a><br>
     </td>
   </tr>
 </table>
