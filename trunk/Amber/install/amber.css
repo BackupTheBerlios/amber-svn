@@ -1,19 +1,37 @@
 body {
   background: #f4b675;
-  color: #ffffff;
+  color: #400000;
   font-family: arial;
 }
 
 a {
-  color: #ffffff;
+  color: #fff;
+  font-weight: bold;
 }
 
 h1 {
   color: #000000;
 }
 
+#menu
+{
+  list-style: none;
+  text-align: center;
+}
+
+#menu li
+{
+  background: #e4a665;
+  display: inline;
+  margin: 0.4em;
+  padding: 0.2em;
+  border: solid 1px #b08454;
+  cursor: pointer;
+  font-weight: bold;
+}
+
 td.install_header {
-  background: #DEA66A;
+  background: #e4a665;
   height: 2em;
   border-top: 2px solid #000000;
   border-bottom: 2px solid #000000;

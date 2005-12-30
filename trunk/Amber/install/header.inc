@@ -6,7 +6,7 @@
   <!--
     function showContent(id)
     {
-      content.location = "content.php?id=" + id;
+		document.getElementById("content2").src = "content.php?id=" + id;
     }
   //-->
   </script>
