@@ -32,7 +32,7 @@
 *
 */
 
-ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/../../Amber/');
+ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . dirname(__FILE__). '/../../Amber/');
 ini_set('max_execution_time', 600);
 ini_set('memory_limit', '48M');
 

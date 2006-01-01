@@ -7,14 +7,14 @@
 <hr />
 
 <ul id="menu">
-  <li id="0" onclick="showContent(this.id);">Amber - Main</li>
-  <li id="1" onclick="showContent(this.id);">Amber - Tests</li>
-  <li id="2" onclick="showContent(this.id);">Amber - Install Tool</li>
+  <li id="0" onclick="showContent(this.id);">Reports</li>  
+  <li id="1" onclick="showContent(this.id);">Install Tool</li>
+  <li id="2" onclick="showContent(this.id);">Development</li>
 </ul>
 
 <hr />
 
-<iframe id="content2" src="content.php?id=0" width="100%" height="100%" frameborder="0"><!-- CONTENT --></div>
+<iframe id="content" src="content.php?id=0" width="100%" height="100%" frameborder="0"><!-- CONTENT --></div>
 
 <?php
   require_once 'Amber/install/footer.inc';

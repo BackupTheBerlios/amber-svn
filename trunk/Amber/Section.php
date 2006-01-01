@@ -114,7 +114,7 @@ class Section
   function isVisible()
   {
     $this->_OnFormat($cancel);
-    return (($cancel == true) || ($this->Visible == false));
+    return (($cancel == false) && ($this->Visible == true));
   }
   
   function hasForceNewPageBefore()

@@ -6,7 +6,7 @@
 * @subpackage Tests
 *
 */
-ini_set('include_path', ini_get('include_path') . ':' . dirname(__FILE__). '/../../Amber/');
+ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . dirname(__FILE__). '/../../Amber/');
 
 require_once 'unit.php';
 require_once '../basic.php';

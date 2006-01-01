@@ -418,7 +418,7 @@ Class ControlExporterHtml
     if (($ctrl->Properties['BorderStyle'] != 0) && ($value['BorderWidth'] <> $std['BorderWidth'])) {
       $out .= 'border: ';    
       if ($value['BorderWidth'] == 0) {
-        $out .= ExporterHTML::_html_twips(__HAIRLINEWIDTH__);
+        $out .= ExporterHTML::_html_twips(__HAIRLINEWIDTH__) . ' ';
       } else {
         $out .= $value['BorderWidth'] * __SCALE__ . 'pt ';
       }
@@ -516,7 +516,7 @@ class FontBoxExporterHtml extends ControlExporterHtml
     }
 
     if ($value['FontName'] <> $std['FontName']) {
-      $fontProperties['family'] = $ctrl->Properties['FontName'];
+      $fontProperties['family'] = '"' . $ctrl->Properties['FontName'] . '"';
     }
     
     if (count($fontProperties) > 0) {
@@ -602,6 +602,7 @@ class SubReportExporterHtml extends ControlExporterHtml
 
     $rep->run('html');
     $repHtml = $rep->subReportBuff;
+    $control->Height = $rep->getTotalHeight();
 
     // Get tags for subreport control
     $out = parent::getTag($control, '##CONTENT##');

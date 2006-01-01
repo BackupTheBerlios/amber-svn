@@ -9,7 +9,7 @@ echo getContent($id);
 
 function getContent($id)
 {
-  $files = array('main.php', 'tests.php', 'install.php');
+  $files = array('main.php', 'install.php', 'tests.php');
 
   include_once 'Amber/install/' . $files[$id];
 }

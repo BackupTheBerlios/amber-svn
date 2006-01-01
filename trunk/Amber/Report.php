@@ -74,6 +74,7 @@ class Report extends AmberObject
   var $_data; // Holds result of the database query
   var $_exporter;
   var $layout;
+  var $_totalHeight;
 
   var $_Code;     // user defined call back methods
 
@@ -284,7 +285,8 @@ class Report extends AmberObject
     $this->_setDocumentTitle($this->Name);
 
     $this->SectionSlip = BorderCheat; 
-
+    $this->_totalHeight = 0;
+    
     $this->OnOpen($cancel);
     if ($cancel) {
       $this->_endReport();
@@ -389,6 +391,11 @@ class Report extends AmberObject
     $this->_printDesignSection($this->PageFooter);
     $this->newPage();
     $this->_endReport();
+  }
+  
+  function getTotalHeight()
+  {
+    return $this->_totalHeight;
   }
 
   //////////////////////////////////////////////////////////////////
@@ -682,7 +689,7 @@ class Report extends AmberObject
    */
   function _printNormalSection(&$section)
   {
-    if ($section->isVisible()) {
+    if (!$section->isVisible()) {
       $height = 0;
     } else {
       if ($section->hasForceNewPageBefore()) {
@@ -697,6 +704,7 @@ class Report extends AmberObject
       }
       $this->_prepareDuplicates($section);
     }
+    $this->_totalHeight += $height;
   }
 
    /**

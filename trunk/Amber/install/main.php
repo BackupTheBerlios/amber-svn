@@ -56,6 +56,13 @@
           
           <br />
           
+          <div>
+            <label for="filter">Filter:</label>
+            <input type="text" name="filter" id="filter" />
+          </div>
+          
+          <br />
+          
           <div class="button">
             <input type="submit" value="Show report"></input>
           </div>

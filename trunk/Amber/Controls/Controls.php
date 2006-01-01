@@ -148,11 +148,11 @@ class Control
     if (!$this->isVisible()) {
       $ret = 0;
     } elseif ($this->BorderStyle == 0) { //Borderstyle none
-      $ret = $this->Top + $this->Height;
+      $ret = $this->Height;
     } elseif ($this->BorderWidth == 0) { //BorderWidth 'as small as possible -- we leave 1/2 pt
-      $ret = $this->Top + $this->Height +  10;
+      $ret = $this->Height +  20;
     } else {
-      $ret = $this->Top + $this->Height +  $this->BorderWidth * 20;
+      $ret = $this->Height +  2 * $this->BorderWidth * 20;
     }
     return $ret;
   }

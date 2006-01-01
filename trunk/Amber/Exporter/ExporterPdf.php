@@ -272,8 +272,7 @@ class ExporterFPdf extends Exporter
     $para->x = $control->Left;
     $para->y = $control->Top;
     $para->width = $control->Width;
-    $para->height = $control->Height;
-
+    
     $para->forecolor = 0;
     $para->backcolor = 0xFFFFFF;
 
@@ -286,8 +285,10 @@ class ExporterFPdf extends Exporter
       $para->content = '';
     } else {
       $rep->run('pdf');
+      $control->Height = $rep->getTotalHeight();
       $para->content = "\n%Start SubReport\n" . $rep->subReportBuff . "\n%End SubReport\n";
     }
+    $para->height = $control->Height;
     #$para->content = "(TEST)";
     $this->_pdf->printBoxPdf($para);
 
