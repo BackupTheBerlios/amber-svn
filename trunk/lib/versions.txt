@@ -1,6 +1,6 @@
 Versions
 
 Name	Vers.	Vers.Date	Date last checked
-fpdf	1.53	2004-12-31	2005-02-23 
-ADOdb 4.60	2005-01-23	2005-02-23 
+fpdf	1.53	2004-12-31	2005-01-02 
+ADOdb 4.68	2005-11-25	2005-01-02 
 PHPunit 	no more changes	
