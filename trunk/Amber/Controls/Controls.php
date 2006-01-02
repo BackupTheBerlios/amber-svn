@@ -130,7 +130,7 @@ class Control
   function &prepareDesign()
   {
     $ctrl = $this;
-    $ctrl->visible = true;
+    $ctrl->Visible = true;
     if ($ctrl->BorderStyle == 0) {
       $ctrl->BorderStyle = 1;
       $ctrl->BorderColor = 0xcccccc;
