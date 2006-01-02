@@ -74,7 +74,7 @@ class SimpleSelectParser extends Parser
   {
     $this->tree = array();
 
-    $tokenTextList = array();
+    $tokenTextList = '';
     $delimiter = array('select', 'from', 'where', 'group', 'order', 'having', 'order', 'limit');
 
     foreach ($delimiter as $idx) {

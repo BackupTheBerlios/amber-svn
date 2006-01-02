@@ -426,6 +426,8 @@ class TextBox extends FontBox
 */
 class Label extends FontBox
 {
+  var $Parent;
+
   /**
   *
   * @access public

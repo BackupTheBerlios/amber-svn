@@ -246,6 +246,7 @@ class ExporterHtml extends Exporter
 
   function arrayToStyle(&$arr)
   {
+    $styleString = '';
     if (is_array($arr)) {
       foreach ($arr as $key => $style) {
         $styleString .= $key . ': ' . $style .'; ';

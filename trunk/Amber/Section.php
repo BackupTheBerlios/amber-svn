@@ -45,6 +45,7 @@ class Section
   {
     $types = array('PageHeader' => 'Head', 'PageFooter' => 'Foot');
     $this->_PagePart = $types[$type];
+    $this->_Aggregates = array();
   }
 
   /**
@@ -248,7 +249,7 @@ class Section
   function &createAggregate($type)
   { 
     $agg =& AggregateFactory::create($type);
-    $this->Aggregates[] =& $agg;
+    $this->_Aggregates[] =& $agg;
     return $agg; 
   }
 
@@ -257,10 +258,10 @@ class Section
    */
   function _resetAggregate()
   {
-    if (is_array($this->Aggregates)) {
-      $keys = array_keys($this->Aggregates);
+    if (is_array($this->_Aggregates)) {
+      $keys = array_keys($this->_Aggregates);
       foreach($keys as $key) {
-        $this->Aggregates[$key]->reset();
+        $this->_Aggregates[$key]->reset();
       }
     }
     

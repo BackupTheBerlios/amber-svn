@@ -485,7 +485,7 @@ class Report extends AmberObject
     $this->_data =& $recordSet->GetArray();
 
     $recNo = $recordSet->FieldCount();
-    for ($i = 1; $i <= $recNo; $i++) {
+    for ($i = 0; $i < $recNo; $i++) {
     	$fld = $recordSet->FetchField($i);
     	$type = $recordSet->MetaType($fld->type);
       if (($type == 'L') || ($type == 'I') || ($type == 'N') || ($type == 'R')) {
@@ -533,7 +533,7 @@ class Report extends AmberObject
       $ctrl  =& $this->Controls[$index];
       if (isset($ctrl->ControlSource)) {  // Control can be bound
         $src = trim($ctrl->ControlSource);
-        if ($ctrl->_aggregate) {          // Aggregates have to be set by hand
+        if (isset($ctrl->_aggregate)) {          // Aggregates have to be set by hand
         } elseif ($src == '') {
           $ctrl->Value = Null;
         } elseif ($src[0] == '=') {

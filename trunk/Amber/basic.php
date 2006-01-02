@@ -180,7 +180,10 @@ class _format
   {
     $stdFormats = getStdFormat(null, $prec);
     $this->prec = $prec;
-    $f = $stdFormats[strtolower($fmt)];
+    $f = null;
+    if (isset($stdFormats[strtolower($fmt)])) {
+      $f = $stdFormats[strtolower($fmt)];
+    }
     if (!is_null($f)) {
       $this->fmt = $f;
     } elseif ($this->fmt === '') { //General Number
@@ -195,7 +198,7 @@ class _format
     $this->Token = $this->BOF;
     $this->formatParts = $this->getTokenArray();
     $this->type = '#null';
-    if (is_null($this->formatParts[0])) {
+    if (!isset($this->formatParts[0])) {
       return;
     }
 
@@ -221,7 +224,7 @@ class _format
       'w' => 'd');
     foreach($this->formatParts[0] as $token) {
       $ch = $token['token'][0];
-      if (!is_null($fmtChars[$ch])) {
+      if (isset($fmtChars[$ch])) {
         $this->type = $fmtChars[$ch];
         return;
       }
@@ -314,6 +317,7 @@ class _format
    */
   function getTokenArray()
   {
+    $arr = array();
     $i = 0;
     $this->NextToken();
     while ($this->Token !== $this->EOF) {
@@ -406,6 +410,8 @@ class _format
     $haveExpo = false;  # have exponent
     $expoDigits = 0;
     $haveThousandDelim = false;
+    $havePercent = false;
+    
     //leading #
     for ($pos = 0; $pos < count($fmt); $pos++) {
       if ($fmt[$pos]['token'] == '#') {
@@ -828,7 +834,7 @@ class _format
   }
 
 
-  var $_dateSep = 0; // 0: don't know, 1: dd.mm.yyyy, 2: mm/dd/yyyy
+  var $_dateSepType = 0; // 0: don't know, 1: dd.mm.yyyy, 2: mm/dd/yyyy
 
   function OnDayFormat()
   {
