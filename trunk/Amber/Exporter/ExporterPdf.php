@@ -264,14 +264,12 @@ class ExporterFPdf extends Exporter
 
   function printNormalSubReport(&$control, $content)
   {
-    if (!$control->isVisible()) {
-      return;
-    }
     $para = new printBoxparameter;
 
     $para->x = $control->Left;
     $para->y = $control->Top;
     $para->width = $control->Width;
+    $para->height = $control->Height;
     
     $para->forecolor = 0;
     $para->backcolor = 0xFFFFFF;
@@ -279,23 +277,22 @@ class ExporterFPdf extends Exporter
     $para->borderstyle = $control->BorderStyle;
     $para->bordercolor = $control->Bordercolor;
     $para->borderwidth = $control->BorderWidth;
-
-    $rep =& $control->_subReport;
-    if (is_null($rep)) {
-      $para->content = '';
+    
+    if (!$content) {
+      $para->content = $control->Name;
+      $this->_pdf->printBox($para, false);
     } else {
-      $rep->run('pdf');
-      $control->Height = $rep->getTotalHeight();
-      $para->content = "\n%Start SubReport\n" . $rep->subReportBuff . "\n%End SubReport\n";
+      $para->content = $content;
+      $this->_pdf->printBox($para, true);
     }
-    $para->height = $control->Height;
-    #$para->content = "(TEST)";
-    $this->_pdf->printBoxPdf($para);
-
   }
 
   function printDesign(&$control, $content)
   {
+    $type = strtolower(get_class($control));
+    if ($type == 'subreport') {
+      return $this->printNormal($control, '');
+    }
     $this->printNormal($control, $content);
   }
 

@@ -80,7 +80,7 @@ class PDF extends FPDF
     return $instance;
   }
   
-  function printBox(&$para)
+  function printBox(&$para, $rawContent = false)
   {
     if ($para->italic) {
       $fstyle .= 'I';
@@ -101,13 +101,19 @@ class PDF extends FPDF
     $this->SetXY($para->x, $para->y);
     $this->SetClipping($para->x, $para->y, $para->width, $para->height);    
     
-    // clipping area must be at least 1.4 * font size, then we'll try to wrap if necessary    
-    $needsWrapping = $this->GetStringWidth($para->content) > $para->width;
-    $fsize = $this->FontSize;
-    if (($needsWrapping) && ($para->height > (1.4 * $fsize))) {
-      $this->MultiCell($para->width, $fsize, $para->content, '0', $para->falign, $para->backstyle);
-    } else {
-      $this->Cell($para->width, $para->height, $para->content, '0', 0, $para->falign, $para->backstyle);
+    if ($rawContent) {
+      $this->SetCoordinate($para->x, -$para->y);
+      $this->_out("\n%Start Raw\n" . $para->content . "\n%End Raw\n");    
+      $this->RemoveCoordinate();
+    } else {    
+      // clipping area must be at least 1.4 * font size, then we'll try to wrap if necessary    
+      $needsWrapping = $this->GetStringWidth($para->content) > $para->width;
+      $fsize = $this->FontSize;
+      if (($needsWrapping) && ($para->height > (1.4 * $fsize))) {
+        $this->MultiCell($para->width, $fsize, $para->content, '0', $para->falign, $para->backstyle);
+      } else {
+        $this->Cell($para->width, $para->height, $para->content, '0', 0, $para->falign, $para->backstyle);
+      }
     }
     $this->RemoveClipping();    
     $this->SetXY($para->x, $para->y);

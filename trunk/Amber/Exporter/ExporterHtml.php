@@ -277,28 +277,6 @@ class ExporterHtml extends Exporter
     return '#' . substr(('000000' . dechex($color)), -6);
   }
 
-  /**
-   * @static
-   * @access public
-   * @return string User agent
-   */
-  function getUserAgent()
-  {
-    $agent = strtolower($_SERVER['HTTP_USER_AGENT']);
-
-    if (strstr($agent, 'konqueror')) {
-      return 'konqu';
-    } elseif (strstr($agent, 'opera')) {
-      return 'opera';
-    } elseif (strstr($agent, 'msie'))  {
-      return 'msie';
-    } elseif (strstr($agent, 'mozilla')) {
-      return 'moz';
-    }
-
-    return '';
-  }
-
   // Local functions
   /**
    * @access private
@@ -345,7 +323,7 @@ Class ControlExporterHtml
     $this->printNormal($control, $content);
   }
 
-  function getTag(&$control, $value = null)
+  function getTag(&$control, $value = null, $encode = true)
   {
     $cssClassName = $this->cssClassPrefix . $control->id;
     $out =  "\t\t<div class=\"" . $cssClassName . '"';
@@ -357,7 +335,11 @@ Class ControlExporterHtml
     }
     $out .= ">";
 
-    $out .= isset($value) ? nl2br(htmlentities($value)) : '&nbsp;';
+    if ($encode) {
+      $out .= isset($value) ? nl2br(htmlentities($value)) : '&nbsp;';
+    } else {
+      $out .= isset($value) ? $value : ' ';
+    }
     $out .= "</div>\n";
 
     return $out;
@@ -595,23 +577,7 @@ class SubReportExporterHtml extends ControlExporterHtml
 {
   function getTag(&$control, $value = null)
   {
-    $rep =& $control->_subReport;
-    if (is_null($rep)) {
-      $out = parent::getTag($control, $value);
-      return $out;
-    }
-
-    $rep->run('html');
-    $repHtml = $rep->subReportBuff;
-    $control->Height = $rep->getTotalHeight();
-
-    // Get tags for subreport control
-    $out = parent::getTag($control, '##CONTENT##');
-
-    // Insert result of subreport execution
-    $out = str_replace('##CONTENT##', $repHtml, $out);
-
-    return $out;
+    return parent::getTag($control, $value, false);
   }
 }
 

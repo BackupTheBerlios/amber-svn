@@ -143,16 +143,22 @@ class Control
   * @access public
   *
   **/
-  function stdHeight()
+  function stdHeight($height = null)
   {
     if (!$this->isVisible()) {
-      $ret = 0;
-    } elseif ($this->BorderStyle == 0) { //Borderstyle none
-      $ret = $this->Height;
+      return 0;
+    }
+    
+    if (is_null($height)) {
+      $height = $this->Height;
+    }
+    
+    if ($this->BorderStyle == 0) { //Borderstyle none
+      $ret = $this->Top + $height;
     } elseif ($this->BorderWidth == 0) { //BorderWidth 'as small as possible -- we leave 1/2 pt
-      $ret = $this->Height +  20;
+      $ret = $this->Top + $height +  20;
     } else {
-      $ret = $this->Height +  2 * $this->BorderWidth * 20;
+      $ret = $this->Top + $height +  2 * $this->BorderWidth * 20;
     }
     return $ret;
   }
@@ -181,12 +187,6 @@ class Control
     foreach (array_keys($newProperties) as $key) {
       $this->$key =& $this->Properties[$key];
     }
-    /*
-      // Alternative implementation (little bit slower)
-      foreach ($newProperties as $key => $value) {
-      $this->Properties[$key] = $value;
-      $this->$key =& $this->Properties[$key];
-    }*/
   }
 }
 
@@ -504,7 +504,7 @@ class SubReport extends Control
   {
     if (!$this->SourceObject) {
       $this->_exporter->printNormal($this, '');
-      return $this->stdHeight(); ##FIX ME: actual height
+      return $this->stdHeight();
     }
 
     // Convert SourceObject to name and type
@@ -518,11 +518,9 @@ class SubReport extends Control
     $mgr =& $amber->getObjectManager();
     $this->_subReport =& $mgr->loadReport($name);
     if (!$this->_subReport) {
-      Amber::showError('Error', 'Could not load subreport "' . htmlspecialchars($name) . '"');
-      return 0;
+      $this->_exporter->printNormal($this, '');
+      return $this->stdHeight();
     }
-
-    $this->_subReport->setSubReport(true);
 
     // Construct filter
     if (($this->LinkChildFields != null) && ($this->LinkMasterFields != null)) {
@@ -539,17 +537,44 @@ class SubReport extends Control
         // - filter value has to be handled according to it's type
         //   We need to have the recordset instead of a plain array here
         if ($value === null) {
-          $reportFilterArray[] = $lchild . ' is null';
+          $reportFilterArray[] = '(' . $lchild . ' is null)';
         } else {
-          $reportFilterArray[] = $lchild . '=' . $rep->Cols[$lmaster];
+          $reportFilterArray[] = '(' . $lchild . '=' . $rep->Cols[$lmaster] . ')';
         }
       }
       $this->_subReport->Filter = implode(' AND ', $reportFilterArray);
     }
 
-    $this->_exporter->printNormal($this, $this->Value);
+    $this->_subReport->setSubReport(true);
+    $this->_subReport->run($rep->exporterType);
+    
+    // Adjust control height before passing it to the exporter
+    $originalHeight = $this->Height;
+    $requestedHeight = $this->Height;
+    $subReportHeight = $this->_subReport->getTotalHeight();
+    if ($this->CanShrink) {
+      if ($subReportHeight == 0) {
+        // No output at all
+        return 0;
+      }
+      
+      // Shrink
+      if ($this->Height > $subReportHeight) {
+        $requestedHeight = $subReportHeight;
+      }
+    }
+    // Grow
+    if (($this->CanGrow) && ($this->Height < $subReportHeight) ) {
+      $requestedHeight = $subReportHeight;
+    }
+    $this->Height = $requestedHeight;
+    
+    $this->_exporter->printNormal($this, $this->_subReport->subReportBuff);
 
-    return $this->stdHeight(); ##FIX ME: actual height
+    // Reset control height
+    $this->Height = $originalHeight;
+
+    return $this->stdHeight($requestedHeight);
   }
 
   function printDesign()
