@@ -143,22 +143,23 @@ class Section
   */
   function printNormal()
   {
-    $maxHeight = 0;
     if (isset($this->Controls)) {
       $keys = array_keys($this->Controls);
+      $diffHeight = 0;
       foreach ($keys as $key) {
         if ($this->Controls[$key]->isVisible()) {
-          $height = $this->Controls[$key]->printNormal();
-          if ($height > $maxHeight) {
-            $maxHeight = $height;
+          $designHeight = $this->Controls[$key]->stdHeight();
+          $printedHeight = $this->Controls[$key]->printNormal();
+          if ($printedHeight <> $designHeight) {
+            $diffHeight += $printedHeight - $designHeight;
           }
         }
       }
     }
-    if (isset($this->CanGrow) && ($this->CanGrow) && ($this->Height < $maxHeight)) {
-      return $maxHeight;
-    } elseif (isset($this->CanShrink) && ($this->CanShrink) && ($this->Height > $maxHeight)) {
-      return $maxHeight;
+    if (isset($this->CanGrow) && ($this->CanGrow) && ($diffHeight > 0)) {
+      return $this->Height + $diffHeight;
+    } elseif (isset($this->CanShrink) && ($this->CanShrink) && ($diffHeight < 0)) {
+      return $this->Height + $diffHeight;
     } else {
       return $this->Height;
     }

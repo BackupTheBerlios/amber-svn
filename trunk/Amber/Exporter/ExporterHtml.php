@@ -130,7 +130,7 @@ class ExporterHtml extends Exporter
 
   function startPage($paperHeight)
   {
-    $this->comment('---PAGE---');
+    $this->comment('###PAGE###');
     $style['position'] = 'relative';
     #$style['left'] = 0;
     #$style['top'] = 0;
@@ -616,7 +616,7 @@ class CheckBoxExporterHtml extends ControlExporterHtml
   {
     $out = parent::getStyle($ctrl, $std);
 
-    $out .= ' font-family: "small fonts", sans-serif; ';
+    $out .= " font-family: 'small fonts', sans-serif; ";
     $out .= ' font-size: ' . (6 * __SCALE__) . 'pt; ';
     $out .= ' font-weight: 700; ';
     $out .= ' text-align: center;';
