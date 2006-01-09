@@ -9,7 +9,6 @@
  
 class HTML
 {
-
   function _out($s)
   {
     echo $s;
@@ -25,10 +24,6 @@ class HTML
     return ob_get_clean();
   }      
 
-
-
-
-  
   function &getInstance(&$layout, $reset)
   {
     static $instance = null;
@@ -37,11 +32,6 @@ class HTML
     }
     return $instance;
   }
-
-  function AddPage()
-  {
-  }
-  
 }
 
 ?>

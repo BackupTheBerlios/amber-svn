@@ -140,7 +140,7 @@ class ExporterHtml extends Exporter
 
   function endPage()
   {
-    echo "</div>\n";
+    $this->_base->_out("</div>\n");
     $style['position'] = 'relative';
     $style['height'] = '2pt';
     $style['width'] = '1pt';
@@ -309,7 +309,9 @@ Class ControlExporterHtml
 
   function printNormal(&$control, $content)
   {
-    echo $this->getTag($control, $content);
+    $dummy = null;
+    $html = HTML::getInstance($dummy, false);
+    $html->_out($this->getTag($control, $content));
   }
 
   function printDesign(&$control, $content)
