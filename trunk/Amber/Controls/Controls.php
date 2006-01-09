@@ -112,7 +112,6 @@ class Control
   *
   * @access public
   * @abstract
-  * @param int
   *
   */
   function printDesign() { }
@@ -715,12 +714,12 @@ class Dummy extends Control
 
   function printNormal()
   {
-    return 0;
+    return $this->stdHeight();
   }
 
   function printDesign()
   {
-    return 0;
+    return $this->stdHeight();
   }
 }
 

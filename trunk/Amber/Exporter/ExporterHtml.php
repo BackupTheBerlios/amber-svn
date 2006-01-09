@@ -95,17 +95,17 @@ class ExporterHtml extends Exporter
     $out .= $dataBuff;
 
     $out .= "\t</div></div>\n";
-    echo $out;
+    $this->_base->_out($out);
   }
 
   function out(&$secBuff)
   {
-    echo $secBuff;
+    $this->_base->_out($secBuff);
   }
 
   function outSectionEnd()
   {
-    echo "\t</div>\n";
+    $this->_base->_out("\t</div>\n");
   }
 
   function outSectionStart($y, $w, $h, $backColor, $sectionName='')
@@ -115,16 +115,16 @@ class ExporterHtml extends Exporter
     $style['height'] = $this->_html_twips($h + 2 * $this->SectionSlip);
     $style['width'] = $this->_html_twips($w + 2 * $this->SectionSlip);
 
-    echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">";
+    $this->_base->_out("\t<div style=\"" . $this->arrayToStyle($style) . "\">");
 
     //background Box
     if ($backColor <> 0xFFFFFF) { //not white
       $style['top'] = $this->_html_twips(2 * $this->SectionSlip);
       $style['height'] = $this->_html_twips($h);
       $style['background-color'] = $this->_html_color($backColor);
-      echo "\t<div style=\"" . $this->arrayToStyle($style) . "\">&nbsp;</div>";
+      $this->_base->_out("\t<div style=\"" . $this->arrayToStyle($style) . "\">&nbsp;</div>");
     }
-    echo "\n";
+    $this->_base->_out("\n");
   }
 
 
@@ -132,25 +132,19 @@ class ExporterHtml extends Exporter
   {
     $this->comment('###PAGE###');
     $style['position'] = 'relative';
-    #$style['left'] = 0;
-    #$style['top'] = 0;
     $style['background-color'] = "#ffffff";
     $style['height'] = $this->_html_twips($paperHeight);
     $style['width'] = $this->_html_twips($this->layout->paperWidth);
-    echo "<div style=\"" . $this->arrayToStyle($style) . "\">\n";
+    $this->_base->_out("<div style=\"" . $this->arrayToStyle($style) . "\">\n");
   }
 
   function endPage()
   {
     echo "</div>\n";
     $style['position'] = 'relative';
-    #$style['left'] = 0;
-    #$style['top'] = 0;
-    #$style['background-color'] = "#DDDDDD";
     $style['height'] = '2pt';
     $style['width'] = '1pt';
-    echo "<div style=\"" . $this->arrayToStyle($style) . "\"> &nbsp; </div>\n";
-
+    $this->_base->_out("<div style=\"" . $this->arrayToStyle($style) . "\"> &nbsp; </div>\n");
   }
 
   function getReportCssStyles(&$report, $cssClassPrefix)

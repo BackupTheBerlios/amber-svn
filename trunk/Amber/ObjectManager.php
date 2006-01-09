@@ -29,7 +29,7 @@ class ObjectManager
   function ObjectManager(&$amber)
   {
     $this->amber =& $amber;
-    $this->_config =& $amber->_config;
+    $this->_config =& $amber->getConfig();
 
     if (!isset($this->objectLoader)) {
       $medium = $this->_config->get('sys/medium');
