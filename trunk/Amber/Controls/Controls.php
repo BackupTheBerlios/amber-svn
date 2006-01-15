@@ -67,7 +67,7 @@ class Control
       $this->$key =& $this->Properties[$key];
     }
   }
-
+  
   /**
   *
   * @access public
@@ -686,11 +686,15 @@ class CheckBox extends Control
   function printNormal()
   {
     $this->_exporter->printNormal($this, $this->Value);
+    
+    return $this->stdHeight();
   }
 
   function printDesign()
   {
     $this->_exporter->printDesign($this, true);
+    
+    return $this->stdHeight();
   }
 }
 

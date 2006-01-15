@@ -585,9 +585,18 @@ class SubReportExporterHtml extends ControlExporterHtml
  */
 class CheckBoxExporterHtml extends ControlExporterHtml
 {
+  function cloneObject(&$o)
+  {
+    if (version_compare(PHP_VERSION, '5.0.0') < 0) {
+      return $o;
+    } else {
+      return unserialize(serialize($o));
+    }
+  }
+
   function getTag(&$control, $value=Null)
   {
-    $tmpCtrl = $control;
+    $tmpCtrl = $this->cloneObject($control);
 
     $tmpCtrl->Width = 11 * 15;
     $tmpCtrl->Height = 11 * 15;
