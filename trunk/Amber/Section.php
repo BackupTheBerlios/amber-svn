@@ -342,14 +342,13 @@ class SectionNull extends Section
   /**
    *
    * @access public
-   * @param int
    *
    */
-  function printReport()
+  function printNormal()
   {
   }
 
-  function printDesign($GroupLevel = null)
+  function printDesign()
   {
   }
 

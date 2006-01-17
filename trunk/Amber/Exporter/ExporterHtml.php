@@ -133,7 +133,7 @@ class ExporterHtml extends Exporter
     $this->comment('###PAGE###');
     $style['position'] = 'relative';
     $style['background-color'] = "#ffffff";
-    $style['height'] = $this->_html_twips($paperHeight);
+    $style['height'] = $this->_html_twips($paperHeight + 2 * $this->SectionSlip);
     $style['width'] = $this->_html_twips($this->layout->paperWidth);
     $this->_base->_out("<div style=\"" . $this->arrayToStyle($style) . "\">\n");
   }
@@ -531,11 +531,27 @@ class FontBoxExporterHtml extends ControlExporterHtml
  */
 class TextBoxExporterHtml extends FontBoxExporterHtml
 {
+  function getTag(&$control, $value=Null)
+  {
+    if (isset($control->HyperLinkAddress)) {
+      $value = '<a href="' . htmlentities($control->HyperLinkAddress) . '">' . nl2br(htmlentities($value)) . '</a>';
+      $pOut = parent::getTag($control, $value, false); 
+    } else {
+      $pOut = parent::getTag($control, $value);
+    }
+  
+    if (isset($control->HyperLinkAddress)) {
+      //$pOut = '<a href="' . htmlentities($control->HyperLinkAddress) . '">' . $pOut . '</a>';
+    }
+  
+    return $pOut;
+  }
+
   function getStyle(&$ctrl, &$std)
   {
     $out = parent::getStyle($ctrl, $std);
     $value =& $ctrl->Properties;
-
+    
     // CanGrow
     if ($value['CanGrow'] <> $std['CanGrow']) {
       if ($std['CanGrow'] == false) {
@@ -621,7 +637,7 @@ class CheckBoxExporterHtml extends ControlExporterHtml
   {
     $out = parent::getStyle($ctrl, $std);
 
-    $out .= " font-family: 'small fonts', sans-serif; ";
+    $out .= ' font-family: "small fonts", sans-serif; ';
     $out .= ' font-size: ' . (6 * __SCALE__) . 'pt; ';
     $out .= ' font-weight: 700; ';
     $out .= ' text-align: center;';

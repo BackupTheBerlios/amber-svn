@@ -113,8 +113,8 @@ class ExporterFPdf extends Exporter
 
   function outWindowRelative($deltaX, $x, $y, $w, $h, &$dataBuff)
   {
-    $this->_pdf->SetClipping($x, $y, $w, $h);
-    $this->_pdf->SetCoordinate($x - $deltaX, -$y);
+    $this->_pdf->SetClipping($x, $y, $w + 2*$this->SectionSlip, $h + 2*$this->SectionSlip);
+    $this->_pdf->SetCoordinate($x - $deltaX + $this->SectionSlip, -($y + $this->SectionSlip));
     $this->_pdf->_out($dataBuff);
     $this->_pdf->RemoveCoordinate();
     $this->_pdf->RemoveClipping();
