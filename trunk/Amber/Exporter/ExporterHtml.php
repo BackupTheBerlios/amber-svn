@@ -11,7 +11,7 @@ require_once 'HTML.inc.php';
 
 define('__SCALE__', 1);           // scaling factor. Don't use fractions or errors will occur:
                                   // fractions in border-width are not shown with current browsers
-define('__HAIRLINEWIDTH__', 20);  // width of hairline in twips; here 1pt
+define('__HAIRLINEWIDTH__', 20);  // width of hairline in twips; here 1px
 
 
 ExporterFactory::register('html', 'ExporterHtml');
@@ -256,8 +256,8 @@ class ExporterHtml extends Exporter
       return '0pt';
     }
 
-    //return number_format(__SCALE__ * $twips / 15, 0, '.', '') . 'px';
-    return number_format(__SCALE__ * $twips / 20, 2, '.', '') . 'pt';
+    return number_format(__SCALE__ * $twips / 15, 0, '.', '') . 'px';
+    //return number_format(__SCALE__ * $twips / 20, 2, '.', '') . 'pt';
     //return number_format(__SCALE__ * $twips / 1440, 5, '.', '') . 'in';
     //return number_format(__SCALE__ * $twips / 1440 * 2.54, 4, '.', '') . 'cm';
   }
@@ -399,7 +399,7 @@ Class ControlExporterHtml
       if ($value['BorderWidth'] == 0) {
         $out .= ExporterHTML::_html_twips(__HAIRLINEWIDTH__) . ' ';
       } else {
-        $out .= $value['BorderWidth'] * __SCALE__ . 'pt ';
+        $out .= ExporterHTML::_html_twips(__HAIRLINEWIDTH__ * $value['BorderWidth']) . ' ';
       }
       
       if ($value['BorderColor'] <> $std['BorderColor']) {
@@ -641,7 +641,7 @@ class CheckBoxExporterHtml extends ControlExporterHtml
     $out .= ' font-size: ' . (6 * __SCALE__) . 'pt; ';
     $out .= ' font-weight: 700; ';
     $out .= ' text-align: center;';
-    $out .= ' border-width: ' . (1 * __SCALE__) . 'pt;';      //border properties do exist, but Access doesn't care about them
+    $out .= ' border-width: ' . (1 * __SCALE__) . 'px;';      //border properties do exist, but Access doesn't care about them
     $out .= ' border-color:#000000;';
     $out .= ' border-style:solid;';
     return $out;
