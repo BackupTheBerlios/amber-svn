@@ -44,7 +44,9 @@ class Section
   function Section($type)
   {
     $types = array('PageHeader' => 'Head', 'PageFooter' => 'Foot');
-    $this->_PagePart = $types[$type];
+    if (array_key_exists($type, $types)) {
+      $this->_PagePart = $types[$type];
+    }
     $this->_Aggregates = array();
   }
 
