@@ -482,26 +482,23 @@ class FontBoxExporterHtml extends ControlExporterHtml
       }
     }
 
-    if ($value['FontWeight'] <> $std['FontWeight']) {
+    if (($value['FontSize'] <> $std['FontSize']) ||
+      ($value['FontName'] <> $std['FontName']) ||
+      ($value['FontWeight'] <> $std['FontWeight']))
+    {
       if ($ctrl->Properties['FontWeight'] == 400) {
         $fontProperties['weight'] = 'normal';
       } else {
         $fontProperties['weight'] = $ctrl->Properties['FontWeight'];
       }
-    }
-
-    if ($value['FontSize'] <> $std['FontSize']) {
       $fontProperties['size'] = floor(__SCALE__ * $ctrl->Properties['FontSize']) . 'pt';
+      $fontProperties['family'] = '\'' . $ctrl->Properties['FontName'] . '\'';
     }
 
-    if ($value['FontName'] <> $std['FontName']) {
-      $fontProperties['family'] = '"' . $ctrl->Properties['FontName'] . '"';
-    }
-    
     if (count($fontProperties) > 0) {
       $out .= 'font: ' . implode(' ', $fontProperties) . '; ';
     }
-
+    
     if ($value['FontUnderline'] <> $std['FontUnderline']) {
       if ($ctrl->Properties['FontUnderline'] <> 0) {
         $out .= 'text-decoration: underline; ';
@@ -510,9 +507,8 @@ class FontBoxExporterHtml extends ControlExporterHtml
       }
     }
 
-    $align = $ctrl->TextAlign();
-    if ($align <> $std['TextAlign']) {
-      $out .= 'text-align: ' . $this->_html_textalign($align) . '; ';
+    if ($ctrl->TextAlign() <> $std['TextAlign']) {
+      $out .= 'text-align: ' . $this->_html_textalign($ctrl->TextAlign()) . '; ';
     }
 
     if ($value['ForeColor'] <> $std['ForeColor']) {
