@@ -7,7 +7,7 @@
  */
  
  
-class HTML
+class AmberHtmlHelper
 {
   function _out($s)
   {
@@ -28,7 +28,7 @@ class HTML
   {
     static $instance = null;
     if (is_null($instance) or $reset) {
-      $instance = new HTML();
+      $instance = new AmberHtmlHelper();
     }
     return $instance;
   }

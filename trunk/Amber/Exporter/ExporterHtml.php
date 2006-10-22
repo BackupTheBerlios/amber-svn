@@ -7,7 +7,7 @@
  *
  */
 
-require_once 'HTML.inc.php';
+require_once 'AmberHtmlHelper.php';
 
 define('__SCALE__', 1);           // scaling factor. Don't use fractions or errors will occur:
                                   // fractions in border-width are not shown with current browsers
@@ -35,7 +35,7 @@ class ExporterHtml extends Exporter
 
   function &getExporterBasicClass(&$layout, $reset)
   {
-    return HTML::getInstance($layout, $reset);
+    return AmberHtmlHelper::getInstance($layout, $reset);
   }
 
   function startReportSubExporter(&$report, $asSubreport = false)
@@ -310,7 +310,7 @@ Class ControlExporterHtml
   function printNormal(&$control, $content)
   {
     $dummy = null;
-    $html = HTML::getInstance($dummy, false);
+    $html = AmberHtmlHelper::getInstance($dummy, false);
     $html->_out($this->getTag($control, $content));
   }
 
