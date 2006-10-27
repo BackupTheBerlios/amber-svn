@@ -42,6 +42,7 @@ class Amber
 {
   var $_config;
   var $_objectManager;
+  var $_errorCallback; // callback handler
 
   var $_db; // ADODB database containing data
   var $_sysdb; // ADODB database containig tx_amber_sys_objects
@@ -355,6 +356,14 @@ class Amber
     return $result;
   }
 
+  public function setErrorCallback($callback)
+  {
+    if (!is_array($callback) && !is_string(callback)) {
+      Amber::showError('Error', 'Invalid callback handler');
+    }
+    $this->_errorCallback = $callback;
+  }
+  
   /**
    * @static
    * @access public
@@ -364,6 +373,21 @@ class Amber
    */
   function showError($title, $text, $ret = false)
   {
+    $amber =& Amber::getInstance();
+    $callb = $amber->_errorCallback;
+  
+    if (isset($callb)) {
+      if (is_array($callb) && (count($callb) == 2)) {
+        $object =& $callb[0];
+        $method = $callb[1];
+        if (method_exists($object, $method)) {
+          return call_user_method($method, $object, $title, $text, $ret);
+        }
+      } else if (is_string($callb) && function_exists($callb)) {
+        return call_user_func($callb, $title, $text, $ret);
+      }
+    }
+  
     $id = 'AmberError' . mt_rand();
     $btId = 'AmberBacktrace' . mt_rand();
 
